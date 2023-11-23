@@ -29,17 +29,23 @@ nitpicky = True
 
 extensions = [
         'sphinx.ext.intersphinx',
+        'sphinxcontrib.plantuml',
         'sphinx_copybutton',
         ]
 
 templates_path = ['_templates']
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'README.md']
 
 # -- Options for InterSphinx -------------------------------------------------
 
 intersphinx_mapping = {
         'python': ('https://docs.python.org/3', None),
         }
+
+# -- Options for PlantUML ----------------------------------------------------
+
+plantuml_output_format = "png"
+plantuml_latex_output_format = "pdf"
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output

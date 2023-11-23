@@ -10,7 +10,7 @@ Welcome to edgegraph's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-Hello, world!
+   usage/index
 
 Indices and tables
 ==================
