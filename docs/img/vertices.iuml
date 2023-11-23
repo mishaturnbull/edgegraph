@@ -1,0 +1,59 @@
+@startuml
+
+class Vertex {
+    {field} +links: Link[]
+}
+
+class Universe {
+    {field} +objects: BaseObject[]
+    {field} +laws: dict
+}
+
+json UniverseLaws {
+    "edge_whitelist": {
+        "*": {
+            "*": "*"
+        }
+    },
+    "mixed_links": false,
+    "cycles": true,
+    "multipath": true,
+    "multiverse": true
+}
+
+class Operation<Callable> {
+    {field} +parameters: dict
+    {field} +output: object
+    {field} #state: dict
+    {method} +run()
+}
+
+json BatteriesIncludedOperations {
+    "Traversals": [
+        "Depth-first traversal",
+        "Breadth-first traversal"
+    ],
+    "Searches": [
+        "Depth-first search",
+        "Breadth-first search"
+    ],
+    "Categorization": [
+        "Cycle detection",
+        "Component detection",
+        "Island detection"
+    ],
+    "Rendering": [
+        "PlantUML",
+        "?? TikZ ??",
+        "?? MatPlotLib ??"
+    ],
+    "Ingest": [
+        "Node-list dictionary",
+        "Adjacency matrix",
+        "Edge-pair list",
+        "Direct linkage"
+    ]
+}
+
+@enduml
+

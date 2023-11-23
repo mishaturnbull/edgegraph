@@ -1,0 +1,23 @@
+@startuml
+
+!include baseobj.iuml!0
+!include vertices.iuml!0
+!include links.iuml!0
+!include mixins.iuml!0
+
+BaseObject --|> Vertex
+BaseObject --|> Link
+
+Vertex --|> Universe
+Universe ..> UniverseLaws
+Vertex --|> Operation
+Operation --|> BatteriesIncludedOperations
+
+Link --|> DirectedEdge
+Link --|> UndirectedEdge
+
+SemiSingleton ..> Vertex
+Conditional ..> Link
+
+@enduml
+

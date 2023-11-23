@@ -1,0 +1,22 @@
+@startuml
+
+class Link {
+    {field} +vertices: Vertex[]
+}
+
+class DirectedEdge {
+    v1 --> v2
+    __
+    {field} +v1: Vertex
+    {field} +v2: Vertex
+}
+
+class UndirectedEdge {
+    v1 -- v2
+    __
+    {field} +v1: Vertex
+    {field} +v2: Vertex
+}
+
+@enduml
+

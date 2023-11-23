@@ -1,0 +1,15 @@
+@startuml
+
+annotation SemiSingleton {
+    {static}{field} +allinstances: dict
+    {static}{method} +sst_exists(hashable): bool
+    {static}{method} +sst_flush()
+}
+
+annotation Conditional {
+    {field} +predicate: function
+    {method} +condition_check(): bool
+}
+
+@enduml
+
