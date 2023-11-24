@@ -11,6 +11,7 @@ Welcome to edgegraph's documentation!
    :caption: Contents:
 
    usage/index
+   developer/index
 
 Indices and tables
 ==================

@@ -8,4 +8,5 @@ __pycache__/
 
 # doc output
 docs/_build
+docs/developer/_autosummary
 

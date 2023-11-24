@@ -5,10 +5,14 @@
 
 import os
 import sys
+import tomlkit
 
 topdir = os.path.split(os.path.split(__file__)[0])[0]
 sys.path.insert(0, topdir)
 from edgegraph import version as eg_version
+
+with open(os.path.join(topdir, "pyproject.toml"), 'r') as ppyfile:
+    pyproject = tomlkit.parse(ppyfile.read())
 
 
 # -- Project information -----------------------------------------------------
@@ -23,11 +27,13 @@ release = eg_version.__version__
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-primary_domain = "python"
+primary_domain = "py"
 keep_warnings = True
 nitpicky = True
 
 extensions = [
+        'sphinx.ext.autodoc',
+        'sphinx.ext.autosummary',
         'sphinx.ext.intersphinx',
         'sphinxcontrib.plantuml',
         'sphinx_copybutton',
@@ -36,15 +42,24 @@ extensions = [
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'README.md']
 
+rst_prolog = """
+.. role:: python(code)
+   :language: python
+"""
+
 # -- Options for InterSphinx -------------------------------------------------
 
 intersphinx_mapping = {
         'python': ('https://docs.python.org/3', None),
         }
 
+# -- Options for autodoc / autosummary ---------------------------------------
+
+autosummary_generate = True
+
 # -- Options for PlantUML ----------------------------------------------------
 
-plantuml_output_format = "png"
+plantuml_output_format = "svg"
 plantuml_latex_output_format = "pdf"
 
 # -- Options for HTML output -------------------------------------------------
@@ -54,6 +69,12 @@ html_theme = 'sphinx_book_theme'
 html_static_path = ['_static']
 
 html_theme_options = {
+        "repository_url": pyproject['project']['urls']['Repository'],
+        "path_to_docs": "docs",
+        "use_repository_button": True,
+        "use_source_button": True,
+        "use_edit_page_button": True,
+        "use_issues_button": True,
         }
 
 if eg_version.VERSION_MAJOR == 0:
