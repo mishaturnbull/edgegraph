@@ -1,6 +1,9 @@
 @startuml
 
 class Link {
+    Represents a link between
+    multiple vertices.
+    __
     {field} +vertices: Vertex[]
 }
 

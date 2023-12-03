@@ -1,9 +1,11 @@
 @startuml
 
 class BaseObject<getsetattr> {
+    Base class for all objects.
+    __
     {field} +uid: int
     {field} +attributes: dict
-    {field} +universe: Universe
+    {field} +universes: Universe[]
     {method} +jsonify(): dict
     {method} +dejson(json)
 }

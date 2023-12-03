@@ -5,6 +5,7 @@
 Contains the BaseObject class.
 """
 
+from __future__ import annotations
 import uuid
 
 class BaseObject (object):
@@ -44,27 +45,30 @@ class BaseObject (object):
     """
 
     #: names of attributes that are *not* dynamic attributes
-    fixed_attrs = (
+    fixed_attrs: set[str] = {
             "_uid",
             "_attributes",
-            "_universe",
+            "_universes",
             "uid",
-            "universe",
-            )
+            "universes",
+            }
 
 
-    def __init__(self,
-                 uid=None,
-                 attributes=None,
-                 universe=None,
+    def __init__(self, *,
+            uid: int=None,
+            attributes: dict=None,
+            # WHY does this work??  __future__ annotations??  Universe isn't
+            # imported!!
+            universes: set[Universe]=None,
                 ):
         """
         Instantiate a BaseObject.
 
-        :param uuid: universally unique identifier of this object, or None.  If
+        :param uid: universally unique identifier of this object, or None.  If
             :python:`None`, one will automatically be generated.
         :param attributes: dictionary of attributes to apply to this object.
-        :param universe: the universe that this object belongs to.
+        :param universes: a set of universes that this object belongs to.
+        :raises TypeError: if ``attributes`` argument is of invalid type
         """
 
         #: Internal UID value
@@ -86,18 +90,21 @@ class BaseObject (object):
         #: :type: dict
         #: :meta private:
         self._attributes = attributes or {}
+        if not isinstance(self._attributes, dict):
+            raise TypeError(f"attributes argument must be dict, got " \
+                    f"{type(attributes)}!")
 
-        #: Internal reference to the universe this object is a part of
+        #: Internal reference to the universes this object is a part of
         #:
         #: :meta private:
-        self._universe = universe
+        self._universes = universes or set()
+        if not isinstance(self._universes, set):
+            self._universes = set(self._universes)
 
     @property
-    def uid(self):
+    def uid(self) -> int:
         """
         Get the UID of this object.
-
-        :rtype: int
         """
         return self._uid
 
@@ -106,17 +113,31 @@ class BaseObject (object):
         raise NotImplementedError("UID may not be written!")
 
     @property
-    def universe(self):
+    def universes(self) -> frozenset[Universe]:
         """
-        Get the universe this object belongs to.
+        Get the universes this object belongs to.
 
-        :rtype: None
+        :rtype: frozenset[Universe]
         """
-        return self._universe
-    
-    @universe.setter
-    def universe(self, new):
-        self._universe = new
+        return frozenset(self._universes)
+
+    def add_to_universe(self, universe: Universe) -> None:
+        """
+        Adds this object to a new universe.  If it is already there, no action
+        is taken.
+
+        :param universe: the new universe to add this object to
+        """
+        self._universes.add(universe)
+
+    def remove_from_universe(self, universe: Universe) -> None:
+        """
+        Remove this object from the specified universe.
+        
+        :param universe: the universe that this object will be removed from
+        :raises KeyError: if this object is not present in the given universe
+        """
+        self._universes.remove(universe)
 
     def __getattr__(self, name):
         if name in type(self).fixed_attrs:

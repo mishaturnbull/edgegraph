@@ -14,7 +14,6 @@ from edgegraph import version as eg_version
 with open(os.path.join(topdir, "pyproject.toml"), 'r') as ppyfile:
     pyproject = tomlkit.parse(ppyfile.read())
 
-
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
@@ -35,6 +34,7 @@ extensions = [
         'sphinx.ext.autodoc',
         'sphinx.ext.autosummary',
         'sphinx.ext.intersphinx',
+        'sphinx.ext.todo',
         'sphinxcontrib.plantuml',
         'sphinx_copybutton',
         ]
@@ -55,7 +55,15 @@ intersphinx_mapping = {
 
 # -- Options for autodoc / autosummary ---------------------------------------
 
+# may be "both", "signature", "description", or "none"
+autodoc_typehints = "description"
+autodoc_typehints_description_target = "documented"
+autodoc_typehints_format = "short"
 autosummary_generate = True
+
+# -- Options for ToDo ext ----------------------------------------------------
+
+todo_include_todos = True
 
 # -- Options for PlantUML ----------------------------------------------------
 

@@ -1,11 +1,18 @@
 @startuml
 
 class Vertex {
+    Represents a vertex
+    in a graph.
+    __
     {field} +links: Link[]
 }
 
 class Universe {
-    {field} +objects: BaseObject[]
+    Represents a collection of 
+    vertices and edges.
+    Effectively, a single graph.
+    __
+    {field} +vertices: Vertex[]
     {field} +laws: dict
 }
 
@@ -22,6 +29,10 @@ json UniverseLaws {
 }
 
 class Operation<Callable> {
+    A special type of vertex
+    representing a callable
+    operation (function).
+    __
     {field} +parameters: dict
     {field} +output: object
     {field} #state: dict
