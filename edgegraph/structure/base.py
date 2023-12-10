@@ -108,10 +108,6 @@ class BaseObject (object):
         """
         return self._uid
 
-    @uid.setter
-    def uid(self, new):
-        raise NotImplementedError("UID may not be written!")
-
     @property
     def universes(self) -> frozenset[Universe]:
         """

@@ -10,3 +10,6 @@ __pycache__/
 docs/_build
 docs/developer/_autosummary
 
+# code coverage info
+.coverage
+

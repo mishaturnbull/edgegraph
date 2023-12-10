@@ -16,6 +16,19 @@ class UniverseLaws (base.BaseObject):
 
     This class is effectively a namespace that controls the rules / constraints
     that a universe must obey.
+
+    Pay close attention to the difference in meaning between the
+    :py:attr:`applies_to` and :py:attr:`universes` attributes.  The former
+    (applies_to) refers to the universe that these laws apply to.  This object
+    is not necessarily a vertex / object present in that universe.  The latter
+    (universes) is the set of universes this object *appears in*; see also
+    :py:attr:`edgegraph.structure.base.BaseObject.universes`, where the latter
+    (universes) is inherited from.
+
+    Likewise, the :py:meth:`add_to_universe` and
+    :py:meth:`remove_from_universe` are inherited from
+    :py:meth:`edgegraph.structure.base.BaseObject.add_to_universe` and
+    :py:meth:`edgegraph.structure.base.BaseObject.remove_from_universe`.
     """
 
     fixed_attrs: set[str] = base.BaseObject.fixed_attrs | {
@@ -24,7 +37,7 @@ class UniverseLaws (base.BaseObject):
             "cycles",
             "multipath",
             "multiverse",
-            "universe",
+            "applies_to",
             }
 
     def __init__(self,
@@ -33,7 +46,7 @@ class UniverseLaws (base.BaseObject):
             cycles: bool=True,
             multipath: bool=True,
             multiverse: bool=False,
-            universe: Universe=None
+            applies_to: applies_to=None
             ):
         """
         Instantiate a set of universal laws.
@@ -50,12 +63,17 @@ class UniverseLaws (base.BaseObject):
             allowed (not necessarily cycles)
         :param multiverse: whether or not universes may be connected inside
             this universe
-        :param universe: the universe these laws apply to
+        :param applies_to: the universe these laws apply to
         """
         super().__init__()
 
         #: edge types allowed
         self._edge_whitelist = edge_whitelist
+        try:
+            self.edge_whitelist
+        except (ValueError, AttributeError):
+            # re-raise, but with a more clear message of what's happening
+            raise ValueError("Given edge_whitelist is of incorrect structure!")
 
         #: whether or not mixed link types are allowed
         #:
@@ -72,7 +90,7 @@ class UniverseLaws (base.BaseObject):
         self._multiverse = multiverse
 
         #: the universe these laws apply to
-        self._universe = universe
+        self._applies_to = applies_to
 
     @property
     def edge_whitelist(self):
@@ -85,11 +103,14 @@ class UniverseLaws (base.BaseObject):
            See https://stackoverflow.com/a/30624034 and link to a Python bug
            in that answer.
 
-        :rtype: types.MappingProxyType[type: types.MappingProxyType[type: type]]
+        :rtype: types.MappingProxyType[type: types.MappingProxyType[type: type]] or None
         """
+        if self._edge_whitelist is None:
+            return None
+
         out = types.MappingProxyType({
-            l: types.MappingProxyType({v1: v2 for v1, v2 in linkset}) \
-                    for l, linkset in self._edge_whitelist
+            t: types.MappingProxyType({s: d for s, d in linkset.items()}) \
+                    for t, linkset in self._edge_whitelist.items()
             })
         return out
 
@@ -124,26 +145,45 @@ class UniverseLaws (base.BaseObject):
         return self._multiverse
 
     @property
-    def universe(self) -> Universe:
+    def applies_to(self) -> Universe:
         """
         Returns the universe that these laws apply to.
         """
-        return self._universe
+        return self._applies_to
 
-    @universe.setter
-    def universe(self, new: Universe):
+    @applies_to.setter
+    def applies_to(self, new: Universe):
         """
         Set the universe these laws apply to.
         """
-        if new is self._universe:
+        if new is self._applies_to:
             return
 
-        self._universe = new
-        self._universe.laws = self
+        self._applies_to = new
+
+        if self._applies_to is not None:
+            self._applies_to.laws = self
 
 class Universe (vertex.Vertex):
     """
     Represents a universe that can contain vertices and links.
+
+    This is the container of vertices.  It may also reasonably be called a
+    "graph" object -- the collection of all edges and vertices under
+    examination at any given moment.  However, it is more flexible in
+    implementation, and can actually contain any subclass of
+    :py:class:`~edgegraph.structure.base.BaseObject` (though they may not
+    appear in graph-related operations, such as traversals or searches, if they
+    do not subclass :py:class:`~edgegraph.structure.vertex.Vertex`.)
+
+    Pay attention that this class itself is a subclass of
+    :py:class:`~edgegraph.structure.vertex.Vertex`; this means that while
+    containing an entire graph (or more) on its own, this object can also be
+    treated as a vertex inside another universe.  In this way, you can create
+    graphs *of other graphs*, even recursively if you like.  Whether or not
+    this is a good idea greatly depends on the situation, but the
+    implementation allows it (this is a *feature*, not an implementation
+    detail).
     """
     
     fixed_attrs: set[str] = vertex.Vertex.fixed_attrs | {
@@ -172,20 +212,44 @@ class Universe (vertex.Vertex):
         """
         super().__init__(uid=uid, attributes=attributes)
 
-        #: Internal set of vertices
-        #:
-        #: :type: set[vertex.Vertex]
-        self._vertices = vertices or set()
-        if not isinstance(self._vertices, set):
-            self._vertices = set(self._vertices)
-
         #: Laws of the universe
         #:
         #: :type: UniverseLaws
         self._laws = laws
         if self._laws is None:
-            self._laws = UniverseLaws(universe=self)
-        self._laws.universe = self
+            self._laws = UniverseLaws(applies_to=self)
+        self._laws.applies_to = self
+
+        #: Internal set of vertices
+        #:
+        #: :type: set[vertex.Vertex]
+        self._vertices = set()
+        if vertices is not None:
+            for v in vertices:
+                self.add_vertex(v)
+
+
+    @property
+    def vertices(self):
+        """
+        Return a (frozen) set of the vertices in this universe.
+
+        :rtype: frozenset[Vertex]
+        """
+        return frozenset(self._vertices)
+
+    def add_vertex(self, vert: vertex.Vertex):
+        """
+        Adds a new vertex to this universe.
+
+        The vertex in question will automatically have its universes updated to
+        include this one, if needed.
+
+        :param vert: the vertex to be added
+        """
+        self._vertices.add(vert)
+        if self not in vert.universes:
+            vert.add_to_universe(self)
 
     @property
     def laws(self) -> UniverseLaws:
@@ -202,6 +266,8 @@ class Universe (vertex.Vertex):
         if new is self._laws:
             return
 
+        self._laws.applies_to = None
+
         self._laws = new
-        self._laws.universe = self
+        self._laws.applies_to = self
 

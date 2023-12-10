@@ -6,7 +6,7 @@ Unit tests for structure.base module.
 """
 
 import pytest
-from edgegraph.structure import base
+from edgegraph.structure import base, universe
 
 def test_base_obj_creation():
     bo = base.BaseObject()
@@ -20,28 +20,30 @@ def test_base_obj_attributes():
     bo.y = 15
     bo.z = "Twelve"
 
-    assert bo.x == 7
-    assert bo.y == 15
-    assert bo.z == "Twelve"
+    assert bo.x == 7,        "bo.x did not getattr!"
+    assert bo.y == 15,       "bo.y did not getattr!"
+    assert bo.z == "Twelve", "bo.z did not getattr!"
 
     assert bo._attributes == {
             'x': 7,
             'y': 15,
             'z': "Twelve"
-            }
+            }, \
+                    "BaseObject attributes were not stored correctly!"
 
 def test_base_obj_init_attributes():
     bo = base.BaseObject(
             attributes={"fifteen": 15, "twelve": 12}
             )
 
-    assert bo.fifteen == 15
-    assert bo.twelve == 12
+    assert bo.fifteen == 15, "bo attributes not read from __init__"
+    assert bo.twelve == 12, "bo attributes not read from __init__"
 
     assert bo._attributes == {
             "fifteen": 15,
             "twelve": 12,
-            }
+            }, \
+                    "bo attriutes not read from __init__"
 
 def test_base_obj_init_attributes_wrong():
     with pytest.raises(TypeError):
@@ -59,75 +61,106 @@ def test_base_obj_init_attributes_wrong():
                 attributes=123456789
                 )
 
+def test_base_obj_del_attr():
+    b = base.BaseObject()
+    b.x = 12
+    b.y = 15
+    del b.x
+
+    assert b._attributes == {'y': 15}, \
+            "bo delattr didn't (assigned post-init)"
+
+    b1 = base.BaseObject(attributes={'z': 25, 'a': 1})
+    del b1.z
+
+    assert b1._attributes == {'a': 1}, \
+            "bo delattr didn't (assigned in init)"
+
 def test_base_obj_uid():
     bo = base.BaseObject()
 
-    assert 'uid' not in bo._attributes
-    assert '_uid' not in bo._attributes
-    assert bo.uid is bo._uid
+    assert 'uid' not in bo._attributes,  "BaseObject UID exposed"
+    assert '_uid' not in bo._attributes, "BaseObject _uid exposed"
+    assert bo.uid is bo._uid, "BaseObject uid property not returning _uid"
 
-    with pytest.raises(NotImplementedError):
+    # UID should be read-only
+    with pytest.raises(AttributeError):
         bo.uid = 15
 
-    assert bo.uid != 15
-    assert bo._uid != 15
+    assert bo.uid != 15, "BaseObject UID was changed!"
+    assert bo._uid != 15, "BaseObject _uid was changed!"
 
 def test_base_obj_universes():
     bo = base.BaseObject()
 
-    assert 'universe' not in bo._attributes
-    assert '_universe' not in bo._attributes
-    assert bo.universes == bo._universes
+    assert 'universes' not in bo._attributes, "BaseObject universes exposed"
+    assert '_universes' not in bo._attributes, "BaseObject _universes exposed"
+    assert bo.universes == bo._universes, \
+            "BaseObject universes not returning _universes"
 
-    uni = object()
+    uni = universe.Universe()
     bo.add_to_universe(uni)
 
-    assert uni in bo.universes
-    assert uni in bo._universes
+    assert uni in bo.universes, "add_to_universe didn't!"
+    assert uni in bo._universes, "add_to_universe didn't!"
 
     bo.remove_from_universe(uni)
 
-    assert uni not in bo.universes
-    assert uni not in bo._universes
+    assert uni not in bo.universes, "remove_from_universe didn't!"
+    assert uni not in bo._universes, "remove_from_universe didn't!"
 
+    # should fail, as the universe has already been removed.  when trying to
+    # remove an object from a set that does not contain it, you get a KeyError
     with pytest.raises(KeyError):
         bo.remove_from_universe(uni)
 
 def test_base_obj_init_universes_list():
-    unis = [object(), object(), object()]
+    unis = []
+    for i in range(3):
+        unis.append(universe.Universe())
 
     bo = base.BaseObject(universes=unis)
 
     # sets are unordered, can't just compare to a list
     for obj in bo.universes:
-        assert obj in unis
-    assert len(bo.universes) == len(unis)
-    assert isinstance(bo.universes, frozenset)
+        assert obj in unis, "found something unexpected in .universes"
+    assert len(bo.universes) == len(unis), \
+            "universes passed to __init__ is not same len as .universes!"
+    assert isinstance(bo.universes, frozenset), \
+            ".universes gave wrong type"
 
 def test_base_obj_init_universes_set():
-    unis = set([object(), object(), object()])
+    unis = set()
+    for i in range(3):
+        unis.add(universe.Universe())
 
     bo = base.BaseObject(universes=unis)
 
     # sets are unordered, can't just compare to a list
     for obj in bo.universes:
-        assert obj in unis
-    assert len(bo.universes) == len(unis)
-    assert isinstance(bo.universes, frozenset)
+        assert obj in unis, "found something unexpected in .universes"
+    assert len(bo.universes) == len(unis), \
+            "universes passed to __init__ is not same len as .universes!"
+    assert isinstance(bo.universes, frozenset), \
+            ".universes gave wrong type"
 
 def test_base_obj_init_universes_tuple():
-    unis = (object(), object(), object())
+    unis = (universe.Universe(), universe.Universe(), universe.Universe())
 
     bo = base.BaseObject(universes=unis)
 
     # sets are unordered, can't just compare to a list
     for obj in bo.universes:
-        assert obj in unis
-    assert len(bo.universes) == len(unis)
-    assert isinstance(bo.universes, frozenset)
+        assert obj in unis, "found something unexpected in .universes"
+    assert len(bo.universes) == len(unis), \
+            "universes passed to __init__ is not same len as .universes!"
+    assert isinstance(bo.universes, frozenset), \
+            ".universes gave wrong type"
 
 def test_base_obj_init_universes_generator():
-    unis = [object(), object(), object()]
+    unis = []
+    for i in range(3):
+        unis.append(universe.Universe())
 
     def gen():
         for u in unis:
@@ -136,15 +169,17 @@ def test_base_obj_init_universes_generator():
 
     # sets are unordered, can't just compare to a list
     for obj in bo.universes:
-        assert obj in unis
-    assert len(bo.universes) == len(unis)
-    assert isinstance(bo.universes, frozenset)
+        assert obj in unis, "found something unexpected in .universes"
+    assert len(bo.universes) == len(unis), \
+            "universes passed to __init__ is not same len as .universes!"
+    assert isinstance(bo.universes, frozenset), \
+            ".universes gave wrong type"
 
 def test_base_obj_init_universes_deduplicate():
-    obj = object()
-    unis = [obj] * 50
+    uni = universe.Universe()
+    unis = [uni] * 50
 
     bo = base.BaseObject(universes=unis)
 
-    assert len(bo.universes) == 1
+    assert len(bo.universes) == 1, "duplicate universes got through __init__"
 

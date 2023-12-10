@@ -49,3 +49,19 @@ class Vertex (base.BaseObject):
         if not isinstance(self.links, list):
             self.links = list(self.links)
 
+    def add_to_universe(self, universe: Universe) -> None:
+        """
+        Adds this object to a new universe.  If it is already there, no action
+        is taken.
+
+        In addition to the action(s) taken by the superclass
+        (:py:meth:`~edgegraph.structure.base.BaseObject.add_to_universe`), this
+        method also adds this vertex to the universes' reference of vertices,
+        if needed.
+
+        :param universe: the new universe to add this object to
+        """
+        super().add_to_universe(universe)
+        if self not in universe.vertices:
+            universe.add_vertex(self)
+
