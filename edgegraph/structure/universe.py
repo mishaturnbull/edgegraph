@@ -7,8 +7,7 @@ Holds the Universe class.
 
 from __future__ import annotations
 import types
-import edgegraph.structure.base as base
-import edgegraph.structure.vertex as vertex
+from edgegraph.structure import base, vertex
 
 class UniverseLaws (base.BaseObject):
     """
@@ -46,7 +45,7 @@ class UniverseLaws (base.BaseObject):
             cycles: bool=True,
             multipath: bool=True,
             multiverse: bool=False,
-            applies_to: applies_to=None
+            applies_to: Universe=None
             ):
         """
         Instantiate a set of universal laws.
@@ -71,9 +70,10 @@ class UniverseLaws (base.BaseObject):
         self._edge_whitelist = edge_whitelist
         try:
             self.edge_whitelist
-        except (ValueError, AttributeError):
+        except (ValueError, AttributeError) as exc:
             # re-raise, but with a more clear message of what's happening
-            raise ValueError("Given edge_whitelist is of incorrect structure!")
+            raise ValueError("Given edge_whitelist is of " \
+                             "incorrect structure!") from exc
 
         #: whether or not mixed link types are allowed
         #:
@@ -109,7 +109,7 @@ class UniverseLaws (base.BaseObject):
             return None
 
         out = types.MappingProxyType({
-            t: types.MappingProxyType({s: d for s, d in linkset.items()}) \
+            t: types.MappingProxyType(dict(linkset.items())) \
                     for t, linkset in self._edge_whitelist.items()
             })
         return out
@@ -185,7 +185,7 @@ class Universe (vertex.Vertex):
     implementation allows it (this is a *feature*, not an implementation
     detail).
     """
-    
+
     fixed_attrs: set[str] = vertex.Vertex.fixed_attrs | {
             "_vertices",
             "vertices",

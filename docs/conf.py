@@ -14,6 +14,13 @@ from edgegraph import version as eg_version
 with open(os.path.join(topdir, "pyproject.toml"), 'r') as ppyfile:
     pyproject = tomlkit.parse(ppyfile.read())
 
+# -- PyReverse calls ---------------------------------------------------------
+# import and run the helper script that generates the plantuml diagrams, which
+# are then rendered by sphinx-plantuml.
+
+from docs._scripts import pyrev_helper
+pyrev_helper.main()
+
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
@@ -40,7 +47,7 @@ extensions = [
         ]
 
 templates_path = ['_templates']
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'README.md']
+exclude_patterns = ['_auto', '_build', 'Thumbs.db', '.DS_Store', 'README.md']
 
 rst_prolog = """
 .. role:: python(code)

@@ -7,10 +7,6 @@ This file defines version information for edgegraph.
 This is the ONLY place version information should be updated!!
 """
 
-import shlex
-import subprocess
-import time
-
 #: major version number (the X in vX.Y.Z)
 #:
 #: :type: int

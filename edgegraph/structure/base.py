@@ -143,6 +143,14 @@ class BaseObject (object):
 
     def __setattr__(self, name, val):
         if name in type(self).fixed_attrs:
+            # TODO: figure out this return statement VVV
+            #
+            # pylint complains about it, with good reason (inconsistent returns
+            # from this method).  logically, this method sets attributes -- it
+            # should not need to return anything.  yet, remove the return, and
+            # try the unit test suite...  kaboom!
+            #
+            # pylint: disable=inconsistent-return-statements
             return super().__setattr__(name, val)
 
         self._attributes[name] = val

@@ -6,7 +6,7 @@ Holds the Vertex class.
 """
 
 from __future__ import annotations
-import edgegraph.structure.base as base
+from edgegraph.structure import base
 
 class Vertex (base.BaseObject):
     """
