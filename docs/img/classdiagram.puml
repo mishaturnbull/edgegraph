@@ -10,11 +10,11 @@ BaseObject --|> Link
 
 Vertex --|> Universe
 Universe ..> UniverseLaws
-Vertex --|> Operation
-Operation --|> BatteriesIncludedOperations
+Universe --|> State 
 
 Link --|> DirectedEdge
 Link --|> UndirectedEdge
+DirectedEdge --|> Transition
 
 SemiSingleton ..> Vertex
 Conditional ..> Link

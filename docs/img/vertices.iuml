@@ -18,8 +18,9 @@ class Universe {
 
 json UniverseLaws {
     "edge_whitelist": {
-        "*": {
-            "*": "*"
+        "LinkT": {
+            "VertT": "VertT",
+            "VertT": "VertT"
         }
     },
     "mixed_links": false,
@@ -28,10 +29,10 @@ json UniverseLaws {
     "multiverse": true
 }
 
-class Operation<Callable> {
+class State {
     A special type of vertex
-    representing a callable
-    operation (function).
+    representing a state in
+    a call graph.
     __
     {field} +parameters: dict
     {field} +output: object

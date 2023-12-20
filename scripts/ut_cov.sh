@@ -12,7 +12,9 @@ then
    rm -rf docs/_build/htmlcov
 fi
 
-pytest --cov=edgegraph
+pytest --cov=edgegraph \
+    --cov-branch
+
 coverage html
 mv htmlcov docs/_build/
 

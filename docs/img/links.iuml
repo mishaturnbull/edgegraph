@@ -21,5 +21,12 @@ class UndirectedEdge {
     {field} +v2: Vertex
 }
 
+class Transition {
+    A transition between two States.
+    __
+    {field} +parameters: dict
+    {method} +run()
+}
+
 @enduml
 
