@@ -6,7 +6,7 @@ Unit tests for structure.vertex.Vertex class.
 """
 
 import pytest
-from edgegraph.structure import base, vertex, universe
+from edgegraph.structure import base, vertex, universe, link
 
 def test_vertex_subclass():
     assert issubclass(vertex.Vertex, base.BaseObject)
@@ -33,37 +33,38 @@ def test_vertex_creation():
     assert len(dir(v)) == 0, "vertex init'd with attributes!!"
 
 def test_vertex_create_with_links():
-    links = [object(), object(), object()]
+    links = [link.Link(), link.Link(), link.Link()]
 
     v1 = vertex.Vertex(links=links)
-    assert v1.links is links, "vertex did not accept list of links!"
+    assert v1._links is links, "vertex did not accept list of links!"
+    assert v1.links == tuple(links), "vertex did not return tuple of links!"
 
 def test_vertex_create_with_links_set():
-    links = set([object(), object(), object()])
+    links = set([link.Link(), link.Link(), link.Link()])
 
     v2 = vertex.Vertex(links=links)
     # sets are unordered, can't just compare to a list
     for obj in v2.links:
-        assert obj in links, "found unexpected object in vertex links!"
+        assert obj in links, "found unexpected linkin vertex links!"
     assert len(v2.links) == len(links), "vertex links is not expected length!"
-    assert isinstance(v2.links, list), "vertex links is not correct type!"
+    assert isinstance(v2.links, tuple), "vertex links is not correct type!"
 
 def test_vertex_create_with_tuple():
-    links = (object(), object(), object())
+    links = (link.Link(), link.Link(), link.Link())
 
     v3 = vertex.Vertex(links=links)
-    assert v3.links == list(links), "vertex .links did not equal expected!"
-    assert isinstance(v3.links, list), "vertex links is not correct type!"
+    assert v3.links == links, "vertex .links did not equal expected!"
+    assert isinstance(v3.links, tuple), "vertex links is not correct type!"
 
 def test_vertex_create_with_generator():
-    links = [object(), object(), object()]
+    links = [link.Link(), link.Link(), link.Link()]
 
     def gen():
         for l in links:
             yield l
     v4 = vertex.Vertex(links=gen())
-    assert v4.links == links, "vertex .links did not equal expected!"
-    assert isinstance(v4.links, list), "vertex links is not correct type!"
+    assert v4.links == tuple(links), "vertex .links did not equal expected!"
+    assert isinstance(v4.links, tuple), "vertex links is not correct type!"
 
 def test_vert_add_to_uni():
     v = vertex.Vertex()

@@ -18,6 +18,7 @@ class Vertex (base.BaseObject):
     """
 
     fixed_attrs: set[str] = base.BaseObject.fixed_attrs | {
+            "_links",
             "links",
             }
 
@@ -45,9 +46,9 @@ class Vertex (base.BaseObject):
         #: linked vertices.
         #:
         #: :type: list
-        self.links = links or []
-        if not isinstance(self.links, list):
-            self.links = list(self.links)
+        self._links = links or []
+        if not isinstance(self._links, list):
+            self._links = list(self._links)
 
     def add_to_universe(self, universe: Universe) -> None:
         """
@@ -64,4 +65,16 @@ class Vertex (base.BaseObject):
         super().add_to_universe(universe)
         if self not in universe.vertices:
             universe.add_vertex(self)
+
+    @property
+    def links(self):
+        """
+        Return a tuple of links that are attached to this object.
+
+        A tuple is given specifically to prevent the addition or removal of
+        link objects using this attribute; it is intended to be immutable.
+
+        :rtype: tuple[Link]
+        """
+        return tuple(self._links)
 

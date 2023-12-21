@@ -16,11 +16,11 @@ DEFAULT_OPTS = [
         ]
 
 CALLS = [
-        "pyreverse edgegraph -A -S0 -my --colorized",
+        "pyreverse {options} -A -S0 -my --colorized edgegraph",
         ]
 
 def call_one(call):
-    call += ' ' + ' '.join(DEFAULT_OPTS)
+    call = call.format(options=' '.join(DEFAULT_OPTS))
     print(call)
     os.system(call)
 

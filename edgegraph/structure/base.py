@@ -136,7 +136,8 @@ class BaseObject (object):
         self._universes.remove(universe)
 
     def __getattr__(self, name):
-        if name in type(self).fixed_attrs:
+        if ((name in type(self).fixed_attrs) or
+                (name.startswith('__'))):
             return super().__getattribute__(name)
 
         return self._attributes[name]
