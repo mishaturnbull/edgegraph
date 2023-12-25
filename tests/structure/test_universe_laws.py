@@ -77,6 +77,9 @@ def test_uni_laws_attr_readonly():
     with pytest.raises(TypeError):
         l.edge_whitelist['dog'] = 'cat'
 
+    with pytest.raises(TypeError):
+        l.edge_whitelist[int][str] = 'cat'
+
     with pytest.raises(AttributeError):
         l.mixed_links = not l.mixed_links
 

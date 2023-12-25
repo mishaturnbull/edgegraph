@@ -12,8 +12,8 @@ Vertex --|> Universe
 Universe ..> UniverseLaws
 Universe --|> State 
 
-Link --|> DirectedEdge
 Link --|> UndirectedEdge
+UnDirectedEdge --|> DirectedEdge
 DirectedEdge --|> Transition
 
 SemiSingleton ..> Vertex

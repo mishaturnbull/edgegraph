@@ -6,20 +6,25 @@ Holds the Link class.
 """
 
 from __future__ import annotations
+import warnings
 from edgegraph.structure import base
 
 class Link (base.BaseObject):
     """
     Represents an edge in the edge-vertex graph.
 
-    This object is the base class for edge types, and should not be used on its
-    own.  Its meaning and semantics are undefined (it is neither a directed
-    edge nor an undirected edge).
+    .. warning::
+
+       This object is the base class for edge types, and should not be used on
+       its own.  Its meaning and semantics are undefined (it is neither a
+       directed edge nor an undirected edge).
 
     .. seealso::
 
-       :py:cls:`~edgegraph.structure.directededge.DirectedEdge`
-       :py:cls:`~edgegraph.structure.undirectededge.UnDirectedEdge`
+       * :py:class:`~edgegraph.structure.undirectededge.UnDirectedEdge`, a
+         subclass representing an undirected edge between two vertices
+       * :py:class:`~edgegraph.structure.directededge.DirectedEdge`, a subclass
+         representing a directed edge between two vertices
 
     """
 
@@ -32,6 +37,7 @@ class Link (base.BaseObject):
             vertices: list[Vertex]=None,
             uid: int=None,
             attributes: dict=None,
+            _force_creation: bool=False,
             ):
         """
         Instantiate a new link ("edge").
@@ -43,6 +49,8 @@ class Link (base.BaseObject):
            implement directed or undirected edges.
 
         :param vertices: list of Vertex objects that this link links
+        :param _force_creation: force the instantiation of this object without
+           error
 
         .. seealso::
 
@@ -50,6 +58,10 @@ class Link (base.BaseObject):
              superclass constructor
         """
         super().__init__(uid=uid, attributes=attributes)
+
+        if (type(self) == Link) and not _force_creation:
+            raise TypeError("Base class <Link> may not be instantiated "
+                    "directly!")
 
         #: Vertices that this link links
         #:
@@ -60,6 +72,29 @@ class Link (base.BaseObject):
         self._vertices = vertices or []
         if not isinstance(self._vertices, list):
             self._vertices = list(self._vertices)
+
+    def _add_linkage(self, new: Vertex):
+        """
+        Adds a vertex to the internal list of vertices.
+
+        :param new: the vertex to add to our list of vertices
+        """
+        if new not in self._vertices:
+            self._vertices.append(new)
+            self._update_vertex_linkages()
+
+    def _update_vertex_linkages(self):
+        """
+        Ensure that all of our vertices know about this link.
+
+        While this is mainly intended for internal use only, calling it
+        directly shouldn't really do any harm.
+
+        Takes no arguments and has no return.
+        """
+        for vert in self._vertices:
+            if not (self in vert.links):
+                vert._add_linkage(self)
 
     @property
     def vertices(self):

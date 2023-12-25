@@ -42,33 +42,23 @@ class UnDirectedEdge (link.Link):
         """
         super().__init__(vertices=[v1, v2], uid=uid, attributes=attributes)
 
-        #: Origin vertex
-        #:
-        #: :type: Vertex
-        self._v1 = v1
-        if ((self._v1 is not None) and
-                (not issubclass(type(self._v1), vertex.Vertex))):
-            raise TypeError(f"v1 is not a Vertex object!  got {self._v1}")
+        if ((v1 is not None) and (not issubclass(type(v1), vertex.Vertex))):
+            raise TypeError(f"v1 is not a Vertex object!  got {v1}")
 
-        #: Destination vertex
-        #:
-        #: :type: Vertex
-        self._v2 = v2
-        if ((self._v2 is not None) and
-                (not issubclass(type(self._v2), vertex.Vertex))):
-            raise TypeError(f"v2 is not a Vertex object!  got {self._v2}")
+        if ((v2 is not None) and (not issubclass(type(v2), vertex.Vertex))):
+            raise TypeError(f"v2 is not a Vertex object!  got {v2}")
 
     @property
     def v1(self) -> Vertex:
         """
         Return one vertex of this edge.
         """
-        return self._v1
+        return self.vertices[0]
 
     @property
     def v2(self) -> Vertex:
         """
         Return the other vertex of this edge.
         """
-        return self._v2
+        return self.vertices[1]
 

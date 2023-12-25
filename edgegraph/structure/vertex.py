@@ -23,7 +23,7 @@ class Vertex (base.BaseObject):
             }
 
     def __init__(self, *,
-            links: list=None,
+            links: list[Link]=None,
             uid: int=None,
             attributes: dict=None,
             universes: set[Universe]=None,
@@ -45,7 +45,7 @@ class Vertex (base.BaseObject):
         #: This is a list of links that include this vertex as one of the
         #: linked vertices.
         #:
-        #: :type: list
+        #: :type: list[Link]
         self._links = links or []
         if not isinstance(self._links, list):
             self._links = list(self._links)
@@ -66,15 +66,34 @@ class Vertex (base.BaseObject):
         if self not in universe.vertices:
             universe.add_vertex(self)
 
+    def _add_linkage(self, new: Link):
+        """
+        Adds a linkage to the internal list of links.
+
+        :param new: the link to add to our list of links
+        """
+        if new not in self._links:
+            self._links.append(new)
+            self._update_link_linkages()
+
+    def _update_link_linkages(self):
+        """
+        Ensure that all of our links know about that this vertex is an
+        endpoint.
+
+        Takes no arguments and has no return.
+        """
+        for link in self._links:
+            if not (self in link.vertices):
+                link._add_linkage(self)
+
     @property
-    def links(self):
+    def links(self) -> tuple[Link]:
         """
         Return a tuple of links that are attached to this object.
 
         A tuple is given specifically to prevent the addition or removal of
         link objects using this attribute; it is intended to be immutable.
-
-        :rtype: tuple[Link]
         """
         return tuple(self._links)
 

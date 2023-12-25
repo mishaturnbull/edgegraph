@@ -37,8 +37,8 @@ VERSION_PREREL = "prealpha"
 VERSION_BUILD = ""
 
 __version__ = f"{VERSION_MAJOR}.{VERSION_MINOR}.{VERSION_PATCH}"
-if VERSION_PREREL:
+if VERSION_PREREL:  # pragma: no cover
     __version__ += '-' + VERSION_PREREL
-if VERSION_BUILD:
+if VERSION_BUILD:  # pragma: no cover
     __version__ += '+' + VERSION_BUILD
 

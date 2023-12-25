@@ -6,10 +6,10 @@ Holds the DirectedEdge class.
 """
 
 from __future__ import annotations
-from edgegraph.structure import link, vertex
+from edgegraph.structure import undirectededge, vertex
 
 
-class DirectedEdge (link.Link):
+class DirectedEdge (undirectededge.UnDirectedEdge):
     """
     Represents a directed edge (v1 --> v2) in the vertex-edge graph.
 
@@ -17,10 +17,11 @@ class DirectedEdge (link.Link):
     one vertex directs to the other.
     """
 
-    fixed_attrs: set[str] = link.Link.fixed_attrs | {
-            '_v1', 'v1',
-            '_v2', 'v2',
-            }
+    # to be completely honest, this class is IDENTICAL in implementation to
+    # UnDirectedEdge.  however, it's still getting its own type -- makes it
+    # much easier for graph algos to spot the difference (as opposed to a
+    # simple TwoEndedEdge.directed == True flag), and this approach allows us
+    # to document the directed edge in a much cleaner manner.
 
     def __init__(self,
             v1: Vertex=None,
@@ -39,26 +40,10 @@ class DirectedEdge (link.Link):
 
         .. seealso::
 
-           * :py:meth:`edgegraph.structure.link.Link.__init__`, the
-             superclass constructor
+           * :py:meth:`edgegraph.structure.undirectededge.UnDirectedEdge.__init__`,
+             the superclass constructor
         """
-        super().__init__(vertices=[v1, v2], uid=uid, attributes=attributes)
-
-        #: Origin vertex
-        #:
-        #: :type: Vertex
-        self._v1 = v1
-        if ((self._v1 is not None) and
-                (not issubclass(type(self._v1), vertex.Vertex))):
-            raise TypeError(f"v1 is not a Vertex object!  got {self._v1}")
-
-        #: Destination vertex
-        #:
-        #: :type: Vertex
-        self._v2 = v2
-        if ((self._v2 is not None) and
-                (not issubclass(type(self._v2), vertex.Vertex))):
-            raise TypeError(f"v2 is not a Vertex object!  got {self._v2}")
+        super().__init__(v1=v1, v2=v2, uid=uid, attributes=attributes)
 
     @property
     def v1(self) -> Vertex:
@@ -67,7 +52,7 @@ class DirectedEdge (link.Link):
 
         This edge comes *FROM* this object: v1 --> v2.
         """
-        return self._v1
+        return super().v1
 
     @property
     def v2(self) -> Vertex:
@@ -76,5 +61,5 @@ class DirectedEdge (link.Link):
 
         This edge goes *TO* this object: v1 --> v2.
         """
-        return self._v2
+        return super().v2
 
