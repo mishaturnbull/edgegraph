@@ -46,9 +46,10 @@ class Vertex (base.BaseObject):
         #: linked vertices.
         #:
         #: :type: list[Link]
-        self._links = links or []
-        if not isinstance(self._links, list):
-            self._links = list(self._links)
+        self._links = []
+        if links is not None:
+            for link in links:
+                self.add_to_link(link)
 
     def add_to_universe(self, universe: Universe) -> None:
         """
@@ -84,7 +85,7 @@ class Vertex (base.BaseObject):
         Takes no arguments and has no return.
         """
         for link in self._links:
-            if not (self in link.vertices):
+            if (self not in link.vertices):
                 link._add_linkage(self)
 
     @property
@@ -96,4 +97,25 @@ class Vertex (base.BaseObject):
         link objects using this attribute; it is intended to be immutable.
         """
         return tuple(self._links)
+
+    def add_to_link(self, link: Link):
+        """
+        Add this vertex to a link.
+
+        Roughly equivalent to calling the
+        :py:class:`~edgegraph.structure.link.Link`'s
+        :py:meth:`~edgegraph.structure.link.Link.add_vertex` with this object
+        as an argument.
+
+        If the given link is already associated with this vertex, no action is taken.
+
+        .. attention::
+
+           Duplicate links ARE allowed!  However, the **same** link twice is
+           not.  The difference is that of a ``==`` vs ``is`` comparison.  ``==``
+           duplicate links are allowed, ``is`` duplicate links are ignored.
+        
+        :param link: the link to add this vertex to
+        """
+        self._add_linkage(link)
 

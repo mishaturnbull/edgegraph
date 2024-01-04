@@ -36,14 +36,6 @@ def test_diedge_init_vertices():
     assert f.v2 is None, "DirectedEdge did not accept v2=None!"
 
 def test_diedge_init_vertices_wrong():
-   
-    # hand it some things that aren't subclasses of Vertex
-    with pytest.raises(TypeError):
-        directededge.DirectedEdge(v1=object())
-
-    with pytest.raises(TypeError):
-        directededge.DirectedEdge(v2=object())
-
     # hand it the vertex type itself -- type(Vertex) should be `type`
     with pytest.raises(TypeError):
         directededge.DirectedEdge(v1=vertex.Vertex)

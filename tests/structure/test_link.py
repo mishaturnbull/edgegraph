@@ -45,7 +45,7 @@ def test_link_creation_vertices():
 
     l = link.Link(vertices=verts, _force_creation=True)
 
-    assert l._vertices is verts, "Link init'd with wrong vertices!"
+    assert l._vertices == verts, "Link init'd with wrong vertices!"
     assert l.vertices == tuple(verts), "Link init'd with wrong vertices!"
 
 def test_link_creation_vertices_set():

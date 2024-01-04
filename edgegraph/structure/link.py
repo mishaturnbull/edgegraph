@@ -59,6 +59,7 @@ class Link (base.BaseObject):
         """
         super().__init__(uid=uid, attributes=attributes)
 
+        # prevent direct usage of this class -- its meaning is undefined
         if (type(self) == Link) and not _force_creation:
             raise TypeError("Base class <Link> may not be instantiated "
                     "directly!")
@@ -69,9 +70,10 @@ class Link (base.BaseObject):
         #: class.
         #:
         #: :type: list[Vertex]
-        self._vertices = vertices or []
-        if not isinstance(self._vertices, list):
-            self._vertices = list(self._vertices)
+        self._vertices = []
+        if vertices is not None:
+            for vert in vertices:
+                self.add_vertex(vert)
 
     def _add_linkage(self, new: Vertex):
         """
@@ -79,9 +81,8 @@ class Link (base.BaseObject):
 
         :param new: the vertex to add to our list of vertices
         """
-        if new not in self._vertices:
-            self._vertices.append(new)
-            self._update_vertex_linkages()
+        self._vertices.append(new)
+        self._update_vertex_linkages()
 
     def _update_vertex_linkages(self):
         """
@@ -93,7 +94,7 @@ class Link (base.BaseObject):
         Takes no arguments and has no return.
         """
         for vert in self._vertices:
-            if not (self in vert.links):
+            if (vert is not None) and (self not in vert.links):
                 vert._add_linkage(self)
 
     @property
@@ -108,4 +109,12 @@ class Link (base.BaseObject):
         :rtype: tuple[Vertex]
         """
         return tuple(self._vertices)
+
+    def add_vertex(self, new: Vertex):
+        """
+        Adds a vertex to this link.
+
+        :param new: the vertex to add to the link
+        """
+        self._add_linkage(new)
 

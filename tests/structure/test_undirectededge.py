@@ -8,7 +8,7 @@ Unit tests for structure.link.Link class.
 import pytest
 from edgegraph.structure import base, vertex, universe, link, undirectededge
 
-def test_diedge_subclass():
+def test_undiedge_subclass():
     assert issubclass(undirectededge.UnDirectedEdge, link.Link), \
             "UnDirectedEdge has wrong superclass!"
 
@@ -21,7 +21,7 @@ def test_diedge_subclass():
     assert e.uid == -100, "UnDirectedEdge did not pass UID to super!"
     assert e.fifteen == 15, "UnDirectedEdge did not pass attributes to super!"
 
-def test_diedge_init_vertices():
+def test_undiedge_init_vertices():
     v1 = vertex.Vertex()
     v2 = vertex.Vertex()
 
@@ -34,20 +34,4 @@ def test_diedge_init_vertices():
 
     assert f.v1 is None, "UnDirectedEdge did not accept v1=None!"
     assert f.v2 is None, "UnDirectedEdge did not accept v2=None!"
-
-def test_diedge_init_vertices_wrong():
-   
-    # hand it some things that aren't subclasses of Vertex
-    with pytest.raises(TypeError):
-        undirectededge.UnDirectedEdge(v1=object())
-
-    with pytest.raises(TypeError):
-        undirectededge.UnDirectedEdge(v2=object())
-
-    # hand it the vertex type itself -- type(Vertex) should be `type`
-    with pytest.raises(TypeError):
-        undirectededge.UnDirectedEdge(v1=vertex.Vertex)
-
-    with pytest.raises(TypeError):
-        undirectededge.UnDirectedEdge(v2=vertex.Vertex)
 

@@ -38,7 +38,7 @@ def test_vertex_create_with_links():
         links.append(link.Link(_force_creation=True))
 
     v1 = vertex.Vertex(links=links)
-    assert v1._links is links, "vertex did not accept list of links!"
+    assert v1._links == links, "vertex did not accept list of links!"
     assert v1.links == tuple(links), "vertex did not return tuple of links!"
 
 def test_vertex_create_with_links_set():
