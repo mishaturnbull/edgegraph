@@ -15,13 +15,18 @@ class DirectedEdge (undirectededge.UnDirectedEdge):
 
     This object is intended to join two vertices in a directed fashion; i.e.,
     one vertex directs to the other.
-    """
 
-    # to be completely honest, this class is IDENTICAL in implementation to
-    # UnDirectedEdge.  however, it's still getting its own type -- makes it
-    # much easier for graph algos to spot the difference (as opposed to a
-    # simple TwoEndedEdge.directed == True flag), and this approach allows us
-    # to document the directed edge in a much cleaner manner.
+    DirectedEdge is a subclass of UnDirectedEdge.  The DirectedEdge class
+    itself does ... absolutely NOTHING differently behaviorally to its
+    symmetrical brother.  It is its own class in order to document it
+    differently, and to allow ``isinstance()`` checks on link types to spot the
+    differing types of edges.
+
+    .. attention::
+
+       This means that ``issubclass(DirectedEdge, UnDirectedEdge)`` returns
+       ``True``!
+    """
 
     def __init__(self,
             v1: Vertex=None,
@@ -54,6 +59,20 @@ class DirectedEdge (undirectededge.UnDirectedEdge):
         """
         return super().v1
 
+    @v1.setter
+    def v1(self, new: Vertex):
+        """
+        Set the origin vertex of this edge.
+
+        This edge comes *FROM* this object: v1 --> v2.
+
+        :param new: the new vertex to associate as the start of this edge
+        """
+        # TODO: is there a cleaner way to do this?? check property docs
+        #
+        # need to (effectively) call super().v1 = v1, but that doesn't work
+        super()._set_v1(new)
+
     @property
     def v2(self) -> Vertex:
         """
@@ -62,4 +81,15 @@ class DirectedEdge (undirectededge.UnDirectedEdge):
         This edge goes *TO* this object: v1 --> v2.
         """
         return super().v2
+
+    @v2.setter
+    def v2(self, new: Vertex):
+        """
+        Set the destination vertex of this edge.
+
+        This edge goes *TO* this object: v1 --> v2.
+        
+        :param new: the new vertex to associate as the destination of this edge.
+        """
+        super()._set_v2(new)
 

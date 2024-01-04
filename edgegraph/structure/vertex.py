@@ -119,3 +119,15 @@ class Vertex (base.BaseObject):
         """
         self._add_linkage(link)
 
+    def remove_from_link(self, link: Link):
+        """
+        Remove this vertex from a link.
+
+        :param link: the link to remove this vertex from.
+        """
+
+        if link in self._links:
+            self._links.remove(link)
+            link.unlink_from(self)
+
+

@@ -95,4 +95,44 @@ def test_link_dup_verts():
 
     assert v1.links == (l,), \
             "Vertex accepted a duplicate (``is``) link!"
+
+def test_link_removal_by_vertex():
+    v1 = vertex.Vertex()
+    v2 = vertex.Vertex()
+    l = link.Link(vertices=[v1, v2], _force_creation=True)
+
+    v1.remove_from_link(l)
+
+    assert v1.links == tuple(), \
+            "Vertex remove_from_link did not unassociate link!"
+    assert l.vertices == (v2,), \
+            "Vertex remove_from_link did not unassociate vertex from link!"
+
+    # test that removing something not present has no action
+    v1.remove_from_link(l)
+
+    assert v1.links == tuple(), \
+            "Removing link-not-present from vertex readded it??"
+    assert l.vertices == (v2,), \
+            "Removing link-not-present from vertex reassoc'd it to link??"
+
+def test_link_removal_by_link():
+    v1 = vertex.Vertex()
+    v2 = vertex.Vertex()
+    l = link.Link(vertices=[v1, v2], _force_creation=True)
+
+    l.unlink_from(v1)
+    
+    assert v1.links == tuple(), \
+            "Link unlink_from did not unassociate link from vertex!"
+    assert l.vertices == (v2,), \
+            "Link unlink_from did not unassociate link!"
+
+    # test that removing something not present has no action
+    l.unlink_from(v1)
+
+    assert v1.links == tuple(), \
+            "Removing vertex-not-present from link reassoc'd it to vert??"
+    assert l.vertices == (v2,), \
+            "Removing vertex-not-present from link readded it??"
     

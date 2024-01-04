@@ -35,3 +35,13 @@ def test_undiedge_init_vertices():
     assert f.v1 is None, "UnDirectedEdge did not accept v1=None!"
     assert f.v2 is None, "UnDirectedEdge did not accept v2=None!"
 
+def test_undiedge_init_vertices_wrong():
+    with pytest.raises(TypeError):
+        undirectededge.UnDirectedEdge(object(), vertex.Vertex())
+
+    with pytest.raises(TypeError):
+        undirectededge.UnDirectedEdge(vertex.Vertex(), object())
+
+    with pytest.raises(TypeError):
+        undirectededge.UnDirectedEdge(object(), object())
+

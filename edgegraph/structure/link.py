@@ -118,3 +118,19 @@ class Link (base.BaseObject):
         """
         self._add_linkage(new)
 
+    def unlink_from(self, kill: Vertex):
+        """
+        Remove the link association from the given vertex.
+
+        This is effectively "unlinking" the specified vertex from this link.
+        If this link is not associated with the given vertex, no action is
+        taken.
+
+        :param kill: the vertex to unlink
+        """
+        if kill in self._vertices:
+            self._vertices.remove(kill)
+
+            if kill is not None:
+                kill.remove_from_link(self)
+
