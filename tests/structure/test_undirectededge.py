@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Unit tests for structure.link.Link class.
+Unit tests for structure.undirectededge.UnDirectedEdge class.
 """
 
 import pytest

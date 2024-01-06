@@ -6,10 +6,10 @@ Holds the DirectedEdge class.
 """
 
 from __future__ import annotations
-from edgegraph.structure import undirectededge, vertex
+from edgegraph.structure import twoendedlink, vertex
 
 
-class DirectedEdge (undirectededge.UnDirectedEdge):
+class DirectedEdge (twoendedlink.TwoEndedLink):
     """
     Represents a directed edge (v1 --> v2) in the vertex-edge graph.
 
@@ -68,9 +68,6 @@ class DirectedEdge (undirectededge.UnDirectedEdge):
 
         :param new: the new vertex to associate as the start of this edge
         """
-        # TODO: is there a cleaner way to do this?? check property docs
-        #
-        # need to (effectively) call super().v1 = v1, but that doesn't work
         super()._set_v1(new)
 
     @property
