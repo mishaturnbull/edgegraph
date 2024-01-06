@@ -16,7 +16,7 @@ DEFAULT_OPTS = [
         ]
 
 CALLS = [
-        "pyreverse {options} -A -S0 -my --colorized edgegraph",
+        "pyreverse {options} -A -s0 -my --colorized edgegraph",
         ]
 
 def call_one(call):
