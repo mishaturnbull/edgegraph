@@ -14,3 +14,6 @@ docs/_auto/**/*.plantuml
 # code coverage info
 .coverage
 
+# developer mental sanity tracker
+TODO.md
+

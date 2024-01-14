@@ -14,7 +14,7 @@ structure classes can occur without breaking everyone's code -- instead, these
 functions will get the necessary updates to match, and the API stays unchanged.
 """
 
-from edgegraph.structure import (Universe, Vertex, TwoEndedLink, DirectedEdge,
+from edgegraph.structure import (Universe, Vertex, DirectedEdge,
         UnDirectedEdge)
 
 def link_from_to(v1: Vertex, lnktype: type, v2: Vertex):
