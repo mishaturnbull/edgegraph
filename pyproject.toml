@@ -26,5 +26,13 @@ disable = [
             # "explicit is better than implicit"  - the zen of Python
             # why is this even a warning??
             "useless-object-inheritance",
+
+            # see https://github.com/pylint-dev/pylint/issues/8215
+            # using ``from __future__ import annotations`` does not silence
+            # pylint's undefined variable error -- because that is used all
+            # over the place, everything goes to shite if this error isn't
+            # silenced.  instead, i'll assume (hopefully) that such errors are
+            # caught by unit testing.
+            "undefined-variable",
            ]
 

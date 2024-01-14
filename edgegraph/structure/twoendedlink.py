@@ -136,8 +136,7 @@ class TwoEndedLink (link.Link):
         """
         if end is self.v1:
             return self.v2
-        elif end is self.v2:
+        if end is self.v2:
             return self.v1
-        else:
-            return None
+        return None
 

@@ -6,7 +6,7 @@ Holds the DirectedEdge class.
 """
 
 from __future__ import annotations
-from edgegraph.structure import twoendedlink, vertex
+from edgegraph.structure import twoendedlink
 
 
 class DirectedEdge (twoendedlink.TwoEndedLink):

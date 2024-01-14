@@ -113,6 +113,15 @@ class BaseObject (object):
         """
         Get the universes this object belongs to.
 
+        Note that this gives you a :py:class:`frozenset`; you cannot add or
+        remove universes from this attribute.
+
+        .. seealso::
+
+           :py:meth:`~edgegraph.structure.base.BaseObject.add_to_universe`,
+           :py:meth:`~edgegraph.structure.base.BaseObject.remove_from_universe`
+           to add or remove this object from a given universe
+
         :rtype: frozenset[Universe]
         """
         return frozenset(self._universes)
