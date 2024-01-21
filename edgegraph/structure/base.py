@@ -144,7 +144,18 @@ class BaseObject (object):
         """
         self._universes.remove(universe)
 
+    def __dir__(self):
+        """
+        Called by :py:func:`dir`.
+        """
+        return self._attributes.keys()
+
+    # These three control attrib access via DOTs; bobj.x; bobj.y = 7; del
+    # bobj.y etc
     def __getattr__(self, name):
+        """
+        Called by :py:`bobj.x` to access the ``x`` attribute.
+        """
         if ((name in type(self).fixed_attrs) or
                 (name.startswith('__'))):
             return super().__getattribute__(name)
@@ -152,6 +163,9 @@ class BaseObject (object):
         return self._attributes[name]
 
     def __setattr__(self, name, val):
+        """
+        Called by :py:`bobj.x = y` to set the ``x`` attribute.
+        """
         if name in type(self).fixed_attrs:
             # TODO: figure out this return statement VVV
             #
@@ -166,8 +180,43 @@ class BaseObject (object):
         self._attributes[name] = val
 
     def __delattr__(self, name):
+        """
+        Called by :py:`del bobj.x` to delete the ``x`` attribute.
+        """
+        if (name in type(self).fixed_attrs):
+            raise ValueError(f"Cannot delete attribute {name}; it is fixed!")
         del self._attributes[name]
 
-    def __dir__(self):
-        return self._attributes.keys()
+    # These three control attrib access via KEYS; bobj['x'], bobj['y'] = y; del
+    # bobj['y']
+    def __getitem__(self, name):
+        """
+        Called by :py:`bobj['x']` to get the ``x`` item.
+        """
+        if ((name in type(self).fixed_attrs) or
+                (name.startswith('__'))):
+            return self.__getattr__(name)
+
+        return self._attributes[name]
+
+    def __setitem__(self, name, val):
+        """
+        Called by :py:`bobj['x'] = y` to set the ``x`` item.
+        """
+        if ((name in type(self).fixed_attrs) or
+                (name.startswith('__'))):
+            self.__setattr__(name, val)
+            return
+
+        self._attributes[name] = val
+
+    def __delitem__(self, name):
+        """
+        Called by :py:`del bobj['x']` to delete the ``x`` item.
+        """
+        if ((name in type(self).fixed_attrs) or
+                (name.startswith('__'))):
+            self.__delattr__(name)
+        else:
+            del self._attributes[name]
 

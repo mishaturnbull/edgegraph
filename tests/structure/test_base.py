@@ -31,6 +31,60 @@ def test_base_obj_attributes():
             }, \
                     "BaseObject attributes were not stored correctly!"
 
+def test_base_obj_items():
+    bo = base.BaseObject()
+
+    bo['x'] = 7
+    bo['y'] = 15
+    bo['z'] = 'Twelve'
+
+    assert bo['x'] == 7,        "bo['x'] did get getitem!"
+    assert bo['y'] == 15,       "bo['y'] did not getitem!"
+    assert bo['z'] == 'Twelve', "bo['z'] did not getitem!"
+
+    assert bo._attributes == {
+            'x': 7,
+            'y': 15,
+            'z': "Twelve"
+            }, \
+                    "BaseObject attributes were not stored correctly!"
+
+def test_base_obj_item_attr_interop():
+    bo = base.BaseObject()
+
+    bo.a = 9
+    bo.b = -123
+    bo.c = "Fourteen"
+    bo['x'] = 7
+    bo['y'] = 15
+    bo['z'] = 'Twelve'
+
+    assert bo['a'] == 9,          "bo['a'] did not getitem!"
+    assert bo['b'] == -123,       "bo['b'] did not getitem!"
+    assert bo['c'] == "Fourteen", "bo['c'] did not getitem!"
+    assert bo.x == 7,             "bo.x did not getattr!"
+    assert bo.y == 15,            "bo.y did not getattr!"
+    assert bo.z == "Twelve",      "bo.z did not getattr!"
+
+def test_base_obj_getitem_protected():
+    bo = base.BaseObject()
+    bo['a'] = 15
+
+    assert bo['a'] == 15, "bo['a'] did not getitem!"
+    assert bo['_attributes'] == {'a': 15}, \
+            "bo getitem did not forward to getattr!"
+
+def test_base_obj_setitem_protected():
+    bo = base.BaseObject()
+    bo['a'] = 15
+
+    assert bo['a'] == 15, "bo['a'] did not getitem!"
+
+    bo['_attributes'] = {'b': 25}
+
+    assert bo._attributes == {'b': 25}, \
+            "bo setitem did not forward to setattr!"
+
 def test_base_obj_init_attributes():
     bo = base.BaseObject(
             attributes={"fifteen": 15, "twelve": 12}
@@ -75,6 +129,28 @@ def test_base_obj_del_attr():
 
     assert b1._attributes == {'a': 1}, \
             "bo delattr didn't (assigned in init)"
+
+def test_base_obj_del_item():
+    b = base.BaseObject()
+    b.x = 12
+    b.y = 15
+    del b['x']
+
+    assert b._attributes == {'y': 15}, \
+            "bo delitem didn't (assigned post-init)"
+
+    b1 = base.BaseObject(attributes={'z': 25, 'a': 1})
+    del b1['z']
+
+    assert b1._attributes == {'a': 1}, \
+            "bo delitem didn't (assigned in init)"
+
+def test_base_obj_del_item_protected():
+    b = base.BaseObject()
+    b.x = 12
+
+    with pytest.raises(ValueError):
+        del b['_uid']
 
 def test_base_obj_uid():
     bo = base.BaseObject()
