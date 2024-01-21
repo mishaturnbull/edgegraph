@@ -6,12 +6,17 @@
 Welcome to edgegraph's documentation!
 =====================================
 
+EdgeGraph is an object-oriented approach to vertex-edge network graphs.
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
+   auto_readme
    usage/index
    developer/index
+
+   bib
 
 Indices and tables
 ==================

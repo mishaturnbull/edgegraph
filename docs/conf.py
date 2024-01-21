@@ -25,7 +25,7 @@ pyrev_helper.main()
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'edgegraph'
-copyright = '2023, Misha Turnbull'
+copyright = '2023, Michael Turnbull'
 author = 'Misha Turnbull'
 version = f'v{eg_version.VERSION_MAJOR}.{eg_version.VERSION_MINOR}'
 release = eg_version.__version__
@@ -44,13 +44,21 @@ extensions = [
         'sphinx.ext.todo',
         'sphinxcontrib.plantuml',
         'sphinx_copybutton',
+        'myst_parser',
         ]
 
 templates_path = ['_templates']
 exclude_patterns = ['_auto', '_build', 'Thumbs.db', '.DS_Store', 'README.md']
 
+source_suffix = {
+        '.rst': 'restructuredtext',
+        '.md': 'markdown',
+        }
+
 rst_prolog = """
 .. role:: python(code)
+   :language: python
+.. role:: py(code)
    :language: python
 """
 
@@ -71,6 +79,13 @@ autosummary_generate = True
 # -- Options for ToDo ext ----------------------------------------------------
 
 todo_include_todos = True
+
+# -- Options for MyST Markdown Parser ----------------------------------------
+
+myst_enable_extensions = [
+        'tasklist',
+        ]
+myst_enable_checkboxes = True
 
 # -- Options for PlantUML ----------------------------------------------------
 
