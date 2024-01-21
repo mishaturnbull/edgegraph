@@ -28,6 +28,7 @@ def graph():
             t: [x, y],
             u: [y],
             v: [w],
+            w: [s],
             x: [z],
             y: [q],
             z: [x],
@@ -86,4 +87,50 @@ def test_bfs_search_wrong_attr(graph):
     right = breadthfirst.bfs(uni, verts[0], 'j', 10)
     assert search is None, f"BFS found an answer when shouldn't: i={search.i}"
     assert right is verts[6], "BFS did not find right answer!"
+
+###############################################################################
+# traversal!
+
+# test the overall answer
+bft_data = [
+        [0, [0, 2, 3, 6, 5, 7, 8, 9]],
+        [1, [1, 4, 8, 0, 2, 3, 6, 5, 7, 9]],
+        [2, [2, 5, 6]],
+        [3, [3, 7, 8, 9, 0, 2, 6, 5]],
+        [4, [4, 8, 0, 2, 3, 6, 5, 7, 9]],
+        [5, [5, 6, 2]],
+        [6, [6, 2, 5]],
+        [7, [7, 9]],
+        [8, [8, 0, 2, 3, 6, 5, 7, 9]],
+        [9, [9, 7]],
+        ]
+
+@pytest.mark.parametrize("start,expected", bft_data)
+def test_bft_from(graph, start, expected):
+    uni, verts = graph
+    trav = breadthfirst.bft(uni, verts[start])
+    vals = [v.i for v in trav]
+
+    assert vals == expected, "BFT gave wrong answer!"
+
+# odd / edge cases
+
+def test_bft_empty():
+    trav = breadthfirst.bft(Universe(), None)
+    assert trav is None, "BFT did not return None on empty universe!"
+
+def test_bft_nonuniverse_vert(graph):
+    uni, verts = graph
+    extra = Vertex(attributes={'i': -1})
+
+    with pytest.raises(ValueError):
+        search = breadthfirst.bft(uni, extra)
+
+def test_bft_trav_out_of_uni(graph):
+    uni, verts = graph
+    extra = Vertex(attributes={'i': -1})
+    explicit.link_undirected(verts[6], extra)
+    trav = breadthfirst.bft(uni, verts[0])
+    vals = [v.i for v in trav]
+    assert -1 not in vals, "BFT found an out-of-universe vert!"
 
