@@ -160,7 +160,10 @@ class BaseObject (object):
                 (name.startswith('__'))):
             return super().__getattribute__(name)
 
-        return self._attributes[name]
+        try:
+            return self._attributes[name]
+        except KeyError as exc:
+            raise AttributeError from exc
 
     def __setattr__(self, name, val):
         """

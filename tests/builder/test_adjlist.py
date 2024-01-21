@@ -29,11 +29,7 @@ def test_adjlist_edgetype():
 
 def test_adjlist_build_case01():
     """
-    This graph is taken from
-
-       Introduction to Algorithms, 3rd edition
-       Thomas H. Cormen; Charles E. Leiserson; Ronald L. Rivest; Clifford Stein
-       Figure 22.1
+    This graph is taken from [CLRS09]_, figure 22.1.
 
     .. uml::
 
