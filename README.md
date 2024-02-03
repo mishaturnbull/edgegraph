@@ -26,7 +26,8 @@ Planned features include:
 * [x] Class-based edges, can associate arbitrary data with edges
 * [x] Automatic edge update propagation to necessary endpoints
 * [x] Adjacency list / matrix build-a-graph
-* [ ] Breadth-first search and traversal
+* [ ] Build-an-adjlist / build-an-adjmat from graphs
+* [x] Breadth-first search and traversal
 * [ ] Depth-first search and traversal
 * [ ] Topological sorting
 * [ ] Strongly connected component detection
@@ -37,6 +38,7 @@ Planned features include:
 * [ ] Operation flow graph modelling (nodes as operations instead of states)
 * [ ] "Functional graphs" -- attach executable code to nodes and run a graph as
       a program
+* [ ] Object serialization, save-to- and load-from-file
 
 These features, as with the API, may be changed or dropped at any time without
 warning.  I do have a day job, after all :)

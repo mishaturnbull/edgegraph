@@ -17,3 +17,7 @@ docs/_auto/**/*.plantuml
 # developer mental sanity tracker
 TODO.md
 
+# distributon files
+dist/
+edgegraph.egg-info/
+

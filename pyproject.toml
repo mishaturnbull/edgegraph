@@ -12,6 +12,9 @@ readme = "README.md"
 Homepage = "https://github.com/mishaturnbull/edgegraph"
 Repository = "https://github.com/mishaturnbull/edgegraph"
 
+[tool.setuptools.dynamic]
+version = {attr = "edgegraph.version.__version__"}
+
 # Pylint settings
 [tool.pylint.main]
 # 0 = automatically detect # of cores for multiprocessing
