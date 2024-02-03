@@ -9,8 +9,10 @@ from __future__ import annotations
 
 import collections
 
-from edgegraph.structure import Universe, Vertex, DirectedEdge, UnDirectedEdge
+from edgegraph.structure import Universe, Vertex
 from edgegraph.traversal import helpers
+
+# TODO: add (to both these fn's) passthru kwargs to neighbors() options
 
 def bfs(uni: Universe,
         start: Vertex,

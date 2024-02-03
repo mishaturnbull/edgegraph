@@ -12,8 +12,7 @@ adjacency list structure, as is common in graph algorithms and software.
    * https://en.wikipedia.org/wiki/Adjacency_list
 """
 
-from edgegraph.structure import (Universe, Vertex, DirectedEdge,
-        UnDirectedEdge)
+from edgegraph.structure import Universe, UnDirectedEdge
 from edgegraph.builder import explicit
 
 def load_adj_dict(adjdict: dict,

@@ -12,8 +12,7 @@ adjacency matrix structure, as is common in graph algorithms and software.
    * https://en.wikipedia.org/wiki/Adjacency_matrix
 """
 
-from edgegraph.structure import (Universe, Vertex, DirectedEdge,
-        UnDirectedEdge)
+from edgegraph.structure import Universe, Vertex, DirectedEdge
 from edgegraph.builder import explicit
 
 def load_adj_matrix(matrix: list[list[bool]],
@@ -141,6 +140,6 @@ def load_adj_matrix(matrix: list[list[bool]],
         for j, cell in enumerate(row):
             if cell:
                 explicit.link_from_to(vertices[i], linktype, vertices[j])
-    
+
     return uni
 
