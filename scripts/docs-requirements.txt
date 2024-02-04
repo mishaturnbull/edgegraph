@@ -1,0 +1,4 @@
+sphinxcontrib-plantuml
+sphinx-copybutton
+sphinx-book-theme
+myst-parser
