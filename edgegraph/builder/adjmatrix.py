@@ -12,6 +12,8 @@ adjacency matrix structure, as is common in graph algorithms and software.
    * https://en.wikipedia.org/wiki/Adjacency_matrix
 """
 
+from __future__ import annotations
+
 from edgegraph.structure import Universe, Vertex, DirectedEdge
 from edgegraph.builder import explicit
 
