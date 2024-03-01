@@ -17,9 +17,8 @@ def main():
     graph = randgraph.randgraph()
     print(plaintext.basic_render(graph, rfunc=lambda v: v.i, sort=lambda v: v.i))
 
-    src = pu.render_to_plantuml_src(graph, pu.PLANTUML_RENDER_OPTIONS)
-    with open("out.puml", 'w') as fp:
-        fp.write(src)
+    with open('out2.puml', 'w') as wfp:
+        wfp.write(pu.render_to_plantuml_src(graph, pu.PLANTUML_RENDER_OPTIONS))
 
     code.interact(local={**locals(), **globals()})
 

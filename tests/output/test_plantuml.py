@@ -6,6 +6,7 @@ Unit tests for output.plantuml module.
 """
 
 import pytest
+import os
 from edgegraph.structure import Vertex, DirectedEdge, Universe
 from edgegraph.builder import adjlist
 from edgegraph.traversal import helpers
@@ -36,4 +37,12 @@ def graph():
     uni = adjlist.load_adj_dict(adj, DirectedEdge)
     assert len(uni.vertices) == 10, "BFS graph setup wrong # verts??"
     return uni, verts
+
+def test_plantuml_e2e(graph, tmpdir):
+    src = plantuml.render_to_plantuml_src(graph[0],
+            plantuml.PLANTUML_RENDER_OPTIONS)
+    plantuml.render_to_image(src, os.path.join(tmpdir, "out2.png"))
+
+    files = os.listdir(tmpdir)
+    assert "out2.png" in files, "final image is missing!"
 
