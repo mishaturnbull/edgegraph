@@ -46,3 +46,15 @@ def test_plantuml_e2e(graph, tmpdir):
     files = os.listdir(tmpdir)
     assert "out2.png" in files, "final image is missing!"
 
+def test_plantuml_out_file_format():
+    with pytest.raises(ValueError):
+        plantuml.render_to_image("", "out.not-a-png")
+
+    with pytest.raises(ValueError):
+        plantuml.render_to_image("", "out.jpeg")
+
+def test_plantuml_src_empty():
+    u = Universe()
+    src = plantuml.render_to_plantuml_src(u, {})
+    assert src is None
+

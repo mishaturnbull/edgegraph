@@ -34,17 +34,55 @@ note as n1
 end note
 """
 
-#: rendering options, based on type
+#: Default options for PlantUML rendering.
 #:
-#: keys:
+#: Keys as follows:
 #:
-#:   * ``"type"``: the plantuml type used (default ``"object"``)
-#:   * ``"stereotype"``: stereotype definition
-#:   * ``"show_attrs"``: list of regex of attribute names to show.  passed to
-#:     :py:func:`re.match`.
-#:   * ``"user_render_func"``: function to call instead of performing builtin
-#:     rendering
-#:   * ``"title_format"``: format string for object title.
+#: * ``"skinparams"``: :py:class:`dict`, controls diagram-wide skinparams.
+#:
+#:   * ``"dpi"``: :py:class:`str`, controls DPI skinparam (dots per inch)
+#:
+#: * :py:class:`~edgegraph.structure.vertex.Vertex`: (yes, the actual Vertex
+#:   *class*): controls rendering for the Vertex class and any subclasses
+#:   thereof
+#:
+#:   * ``"type"``: :py:class:`str` (default ``"object"``), PlantUML class used
+#:   * ``"stereotype_skinparams"``: :py:class:`dict`, controls skinparams
+#:     applied to relevant objects in the diagram
+#:
+#:     * Any stereotype-specific skinparam can go here, and it'll be applied
+#:       automatically.  For example:
+#:     * ``"BackgroundColor": "White"`` causes the skinparam
+#:       ``BackgroundColor<<Vertex>> White`` to be applied diagram-wide.
+#:
+#:   * ``"show_attrs"``: :py:class:`list` of :py:class:`str`, representing
+#:     regular expressions.  if any match an instance attribute's name, that
+#:     attribute (name and value) are included on the diagram.
+#:   * ``"title_format"``: :py:class:`str`, format string used to create the
+#:     object title.  if set to ``"$id"``, will result in ``hex(id(obj))``.
+#:     all instance attributes are available to this format string.
+#:
+#: * :py:class:`~edgegraph.structure.directededge.DirectedEdge`: (yes, the
+#:   actual *class*): controls rendering for DirectedEdges and any subclasses
+#:   thereof.
+#:
+#:   * ``"v1side"``: :py:class:`str`, controls the ending of the arrow at the
+#:     :py:attr:`~edgegraph.structure.directededge.DirectedEdge.v1` end of the
+#:     link.  default ``""``.
+#:   * ``"v2side"``: :py:class:`str`, controls the ending of the arrow at the
+#:     :py:attr:`~edgegraph.structure.directededge.DirectedEdge.v2` end of the
+#:     link.  default ``">"``.
+#:
+#: * :py:class:`~edgegraph.structure.undirectededge.UnDirectedEdge`: (yes, the
+#:   actual *class*): controls rendering for UnDirectedEdges and any subclasses
+#:   thereof.
+#:
+#:   * ``"v1side"``: :py:class:`str`, controls the ending of the arrow at the
+#:     :py:attr:`~edgegraph.structure.undirectededge.UnDirectedEdge.v1` end of
+#:     the link.  default ``""``.
+#:   * ``"v2side"``: :py:class:`str`, controls the ending of the arrow at the
+#:     :py:attr:`~edgegraph.structure.undirectededge.UnDirectedEdge.v2` end of
+#:     the link.  default ``""``.
 PLANTUML_RENDER_OPTIONS = {
         "skinparams": {
             "dpi": "300",
@@ -148,10 +186,18 @@ def render_to_plantuml_src(uni: Universe,
     """
     Render a universe to PlantUML source.
 
-    .. todo::
-    
-       document this
+    This function creates a PlantUML object diagram sourcecode to represent the
+    given universe.  Vertices are treated as objects, and a number of thematic
+    options can be applied based on their types, attributes, and the supplied
+    options.
 
+    .. seealso::
+
+       This function works smoothly with :py:func:`render_to_image`.
+
+    :param uni: The universe to render.
+    :param options: Rendering options and customizations.
+    :return: A (multi-line) string, representing PlantUML code.
     """
 
     if len(uni.vertices) == 0:
@@ -194,11 +240,24 @@ def render_to_image(src: str,
     """
     Accept string PlantUML source, and create an image.
 
-    .. todo::
+    This function accepts a string and a desired output filename, and invokes
+    PlantUML to create the image from the given PlantUML sourcecode.
 
-       document this
+    .. seealso::
+
+       This function works smoothly with :py:func:`render_to_plantuml_src`.
+       Feed that function's output into this one!
+
+    For this function to work, PlantUML must be installed on the system.  Only
+    PNG output is supported at this time.  Specifying an output filename not
+    ending in ``"png"`` will raise an exception.
+
+    :param src: The PlantUML sourcecode to create a diagram from.
+    :param out_file: The output filename you want the image to appear at.
+    :param plantuml: The command to invoke PlantUML with.
+    :raises ValueError: If the specified filename is invalid.
     """
-    if not out_file.endswith('png'):
+    if not out_file.endswith('.png'):
         raise ValueError("Only PNG's are supported at the moment!")
 
     tmpdir = tempfile.mkdtemp(prefix="edgegraph_puml_renderer_")
