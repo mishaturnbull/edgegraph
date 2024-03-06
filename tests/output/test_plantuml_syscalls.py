@@ -67,5 +67,13 @@ def test_plantuml_syscall_badsrc(tmpdir):
 def test_plantuml_syscall_empty(tmpdir):
     with pytest.raises(ValueError):
         plantuml.render_to_image("", os.path.join(tmpdir, "out.png"))
-    
+
+def test_plantuml_detect_not_there(tmpdir):
+    # we need a file that definitely does not exist -- so, make a tmpdir, and
+    # try to call a file that we haven't created in there
+    #
+    # thanks, https://unix.stackexchange.com/a/643527 !
+    not_there = os.path.join(tmpdir, "nothing")
+    exists = plantuml.is_plantuml_installed(plantuml=not_there)
+    assert exists is False
 

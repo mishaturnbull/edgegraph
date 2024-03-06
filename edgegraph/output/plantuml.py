@@ -130,13 +130,11 @@ def _resolve_options(clas, options):
     while search not in options:
         # we did not find the thing we were looking for
         mro_idx += 1
+        if mro_idx >= len(clas.__mro__):
+            raise ValueError(f"Cannot identify useful superclass of {clas}!")
         search = clas.__mro__[mro_idx]
 
-    # TODO: replace EAFP with LBYL in while loop?
-    try:
-        opts = options[search]
-    except KeyError:
-        return None
+    opts = options[search]
 
     # combine into a super-regex to use only one
     if "show_attrs" in opts and not isinstance(opts['show_attrs'], re.Pattern):
@@ -190,6 +188,9 @@ def _one_link_to_puml(lnk, options):
 
 def _one_vert_to_skinparam(vert, options):
     opts = _resolve_options(type(vert), options)
+    if 'stereotype_skinparams' not in opts:
+        return []
+
     stereo = opts['stereotype_skinparams']
     typename = type(vert).__name__
     output = []
@@ -229,7 +230,7 @@ def render_to_plantuml_src(uni: Universe,
         skinparams |= set(_one_vert_to_skinparam(vert, options))
 
     # these are the overall, diagram-wide skinparams
-    if len(options['skinparams']):
+    if 'skinparams' in options and len(options['skinparams']):
         for spkey, spval in options['skinparams'].items():
             components.append(f"skinparam {spkey} {spval}\n")
 
