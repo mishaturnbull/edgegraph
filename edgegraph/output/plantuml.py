@@ -107,6 +107,22 @@ PLANTUML_RENDER_OPTIONS = {
         },
     }
 
+def is_plantuml_installed(plantuml: str="plantuml") -> bool:
+    """
+    Checks if PlantUML is installed and usable on this system.
+
+    This function checks if the PlantUML program is available for use on the
+    current system.  If so, it returns ``True``.  If not, ``False``.
+
+    :param plantuml: PlantUML syscall invocation to use.
+    :return: Whether or not PlantUML is usable.
+    """
+    try:
+        subprocess.run([plantuml, '--version'], check=True)
+        return True
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        return False
+
 def _resolve_options(clas, options):
     search = clas
     mro_idx = 0
@@ -259,6 +275,8 @@ def render_to_image(src: str,
     """
     if not out_file.endswith('.png'):
         raise ValueError("Only PNG's are supported at the moment!")
+    if not len(src):
+        raise ValueError("Cannot render PlantUML image with empty string src!")
 
     tmpdir = tempfile.mkdtemp(prefix="edgegraph_puml_renderer_")
     
@@ -271,7 +289,7 @@ def render_to_image(src: str,
             wfp.write(src)
 
         # https://plantuml.com/command-line
-        subprocess.run([plantuml, srcfile], capture_output=True)
+        subprocess.run([plantuml, srcfile], capture_output=True, check=True)
         shutil.move(outfile, out_file)
     except Exception:
         raise

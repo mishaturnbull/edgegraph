@@ -7,10 +7,15 @@ Unit tests for output.plantuml module.
 
 import pytest
 import os
+import subprocess
 from edgegraph.structure import Vertex, DirectedEdge, Universe
 from edgegraph.builder import adjlist
 from edgegraph.traversal import helpers
 from edgegraph.output import plantuml
+
+if not plantuml.is_plantuml_installed():
+    pytest.skip("PlantUML not installed, cannot run PlantUML syscall tests",
+            allow_module_level=True)
 
 @pytest.fixture
 def graph():
@@ -53,8 +58,14 @@ def test_plantuml_out_file_format():
     with pytest.raises(ValueError):
         plantuml.render_to_image("", "out.jpeg")
 
-def test_plantuml_src_empty():
-    u = Universe()
-    src = plantuml.render_to_plantuml_src(u, {})
-    assert src is None
+# really, this confirms that subprocess.run errors are happening
+def test_plantuml_syscall_badsrc(tmpdir):
+    bad = "@startuml\nWrong syntax!!\n@enduml"
+    with pytest.raises(subprocess.CalledProcessError):
+        plantuml.render_to_image(bad, os.path.join(tmpdir, "out.png"))
+
+def test_plantuml_syscall_empty(tmpdir):
+    with pytest.raises(ValueError):
+        plantuml.render_to_image("", os.path.join(tmpdir, "out.png"))
+    
 
