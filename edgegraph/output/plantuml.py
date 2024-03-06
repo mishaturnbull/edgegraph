@@ -114,6 +114,12 @@ def is_plantuml_installed(plantuml: str="plantuml") -> bool:
     This function checks if the PlantUML program is available for use on the
     current system.  If so, it returns ``True``.  If not, ``False``.
 
+    .. seealso::
+
+       It may be useful to check this function before trying to use
+       :py:func:`render_to_image`.  If this function returns ``True``, that one
+       should be safe to use!
+
     :param plantuml: PlantUML syscall invocation to use.
     :return: Whether or not PlantUML is usable.
     """
@@ -262,8 +268,11 @@ def render_to_image(src: str,
 
     .. seealso::
 
-       This function works smoothly with :py:func:`render_to_plantuml_src`.
-       Feed that function's output into this one!
+       * This function works smoothly with :py:func:`render_to_plantuml_src`.
+         Feed that function's output into this one!
+       * The :py:func:`is_plantuml_installed` function can tell you if PlantUML
+         is installed on your system at runtime -- it may be beneficial to
+         check that function before trying to call this one.
 
     For this function to work, PlantUML must be installed on the system.  Only
     PNG output is supported at this time.  Specifying an output filename not
