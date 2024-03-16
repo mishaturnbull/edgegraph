@@ -107,6 +107,16 @@ PLANTUML_RENDER_OPTIONS = {
         },
     }
 
+#: list of arguments to always invoke plantuml with
+#:
+#: this list contains strings that are always passed as arguments to all
+#: invocations of plantuml issued by this module
+#:
+#: :type: list[str]
+PLANTUML_INVOKE_ARGS = [
+        "-Djava.awt.headless=true",
+    ]
+
 def is_plantuml_installed(plantuml: str="plantuml") -> bool:
     """
     Checks if PlantUML is installed and usable on this system.
@@ -124,7 +134,8 @@ def is_plantuml_installed(plantuml: str="plantuml") -> bool:
     :return: Whether or not PlantUML is usable.
     """
     try:
-        subprocess.run([plantuml, '--version'], check=True)
+        subprocess.run([plantuml, *PLANTUML_INVOKE_ARGS, '--version'], 
+                check=True)
         return True
     except (FileNotFoundError, subprocess.CalledProcessError):
         return False
@@ -299,7 +310,8 @@ def render_to_image(src: str,
             wfp.write(src)
 
         # https://plantuml.com/command-line
-        subprocess.run([plantuml, srcfile], capture_output=True, check=True)
+        subprocess.run([plantuml, *PLANTUML_INVOKE_ARGS, srcfile], 
+                capture_output=True, check=True)
         shutil.move(outfile, out_file)
     except Exception:
         raise
