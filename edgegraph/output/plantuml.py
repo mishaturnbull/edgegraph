@@ -114,8 +114,15 @@ PLANTUML_RENDER_OPTIONS = {
 #:
 #: :type: list[str]
 PLANTUML_INVOKE_ARGS = [
-        "-Djava.awt.headless=true",
     ]
+
+#: environment variable overrides to invoke plantuml with
+#:
+#: this list contains overrides to :py:data:`os.environ` that will be passed
+#: to :py:func:`subprocess.run`.
+PLANTUML_INVOKE_ENV = {
+        'DISPLAY': ''
+    }
 
 def is_plantuml_installed(plantuml: str="plantuml") -> bool:
     """
@@ -135,6 +142,7 @@ def is_plantuml_installed(plantuml: str="plantuml") -> bool:
     """
     try:
         subprocess.run([plantuml, *PLANTUML_INVOKE_ARGS, '--version'], 
+                env=os.environ | PLANTUML_INVOKE_ENV,
                 check=True)
         return True
     except (FileNotFoundError, subprocess.CalledProcessError):
@@ -311,6 +319,7 @@ def render_to_image(src: str,
 
         # https://plantuml.com/command-line
         subprocess.run([plantuml, *PLANTUML_INVOKE_ARGS, srcfile], 
+                env=os.environ | PLANTUML_INVOKE_ENV,
                 capture_output=True, check=True)
         shutil.move(outfile, out_file)
     except Exception:
