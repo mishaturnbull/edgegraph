@@ -141,8 +141,8 @@ def is_plantuml_installed(plantuml: str="plantuml") -> bool:
     :return: Whether or not PlantUML is usable.
     """
     try:
-        subprocess.run([plantuml, *PLANTUML_INVOKE_ARGS, '--version'], 
-                env=os.environ | PLANTUML_INVOKE_ENV,
+        subprocess.run([plantuml, *PLANTUML_INVOKE_ARGS, '-version'],
+                env=dict(os.environ, **PLANTUML_INVOKE_ENV),
                 check=True)
         return True
     except (FileNotFoundError, subprocess.CalledProcessError):
@@ -319,7 +319,7 @@ def render_to_image(src: str,
 
         # https://plantuml.com/command-line
         subprocess.run([plantuml, *PLANTUML_INVOKE_ARGS, srcfile], 
-                env=os.environ | PLANTUML_INVOKE_ENV,
+                env=dict(os.environ, **PLANTUML_INVOKE_ENV),
                 capture_output=True, check=True)
         shutil.move(outfile, out_file)
     except Exception:
