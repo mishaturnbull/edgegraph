@@ -23,6 +23,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
+        sudo apt install plantuml
         python -m pip install --upgrade pip
         pip install -r scripts/test-requirements.txt
 
@@ -37,7 +38,12 @@ jobs:
         # plugin seems can't cause it to exit nonzero on a "not enough coverage"
         # condition... so we'll just save off the coverage info here, and check
         # it in the next step.
-        pytest --cov=edgegraph --cov-branch
+        #
+        # we also collect the longest handful of unit test durations here --
+        # mainly for trend detection, to see if "oh hey, this particular test
+        # is always slow".  nothing is programmatically using the data, at
+        # least, yet.
+        pytest --cov=edgegraph --cov-branch --durations=0
     - name: Check unit test coverage
       run: |
         # fail-under option causes a nonzero exit
