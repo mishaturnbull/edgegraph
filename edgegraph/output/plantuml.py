@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Create PlantUML sourcecode for a graph.
+Create PlantUML sourcecode for a graph, and generate images from it.
 
 This module *mostly* does not require PlantUML installed to operate.  It only
 needs PlantUML installed to actually generate the images -- for only sourcecode
@@ -11,6 +11,49 @@ generation, it does not need to be installed.
 .. seealso::
 
    PlantUML's homepage: https://plantuml.com/
+
+The intended usage pattern is something like:
+
+.. code-block:: python
+
+   from edgegraph.builder import randgraph
+   from edgegraph.output import plantuml
+
+   graph = randgraph.randgraph()
+
+   # don't need PlantUML installed for this!
+   #
+   # puml_src is just a big long string.  you can print it out, write it to a
+   # file, do whatever you want with it if you don't want to render it
+   # immediately
+   puml_src = plantuml.render_to_plantuml_src(graph,
+       plantuml.PLANTUML_RENDER_OPTIONS)
+
+   if plantuml.is_plantuml_installed():
+
+       # after this, my_graph.png will exist in current working directory
+       plantuml.render_to_image(puml_src, "my_graph.png")
+
+   else:
+       print("Sorry, couldn't render!  Please ensure PlantUML is installed.")
+
+Of course, much customization is available, primarily via the second argument
+to :func:`render_to_plantuml_src`.  :data:`PLANTUML_RENDER_OPTIONS`  should
+have some pretty sensible defaults, and would be a good place to start reading
+about customization.
+
+If your installation of PlantUML needs non-standard invocations, that is
+handled in three possible ways:
+
+1. If you need to customize the arguments to PlantUML, use the
+   :data:`PLANTUML_INVOKE_ARGS` list.  This affects all invocations to PlantUML
+   that this module will make.
+2. If you need to customize environs available to PlantUML, use the
+   :data`PLANTUML_INVOKE_ENV` dict.  This affects all invocations to PlantUML
+   that this module will make.
+3. If you need to change the location / execution of PlantUML, see the
+   ``plantuml`` argument to :func:`is_plantuml_installed` and
+   :func:`render_to_image`.
 """
 
 from __future__ import annotations
@@ -107,19 +150,31 @@ PLANTUML_RENDER_OPTIONS = {
         },
     }
 
-#: list of arguments to always invoke plantuml with
+#: List of arguments to always invoke plantuml with.
 #:
-#: this list contains strings that are always passed as arguments to all
-#: invocations of plantuml issued by this module
+#: This list contains strings that are always passed as arguments to all
+#: invocations of plantuml issued by this module.
+#:
+#: These arguments come *after* the ``plantuml.jar`` call -- for example,
+#: putting :py:`"-Djava.awt.headless=true"` in this list results in :samp:`java
+#: -jar plantuml.jar -Djava.awt.headless=true {...}`.  This may cause
+#: unintended effects, as it is not possible to pass arguments to the java
+#: executor itself by this method.
 #:
 #: :type: list[str]
 PLANTUML_INVOKE_ARGS = [
     ]
 
-#: environment variable overrides to invoke plantuml with
+#: Environment variable overrides to invoke plantuml with.
 #:
-#: this list contains overrides to :py:data:`os.environ` that will be passed
-#: to :py:func:`subprocess.run`.
+#: This list contains overrides to :py:data:`os.environ` that will be passed
+#: to :py:func:`subprocess.run` when plantuml is invoked.
+#:
+#: By default, this sets the X11 ``DISPLAY`` environ to the empty string
+#: (unsets it).  This is needed to prevent PlantUML attempting to open GUIs in
+#: non-graphical environments, even when called in command-line mode.
+#:
+#: :type: dict[str, str]
 PLANTUML_INVOKE_ENV = {
         'DISPLAY': ''
     }
