@@ -14,12 +14,11 @@ from edgegraph.traversal import helpers
 
 def _dft_recur(uni: Universe,
                v: Vertex,
-               visited: set[Vertex]) -> list[Vertex]:
-    #print(f"_dft_recur: {uni}, {v}, {visited}")
+               visited: dict[Vertex, None]) -> list[Vertex]:
     if v in visited:
         assert "wrong!"
     else:
-        visited.add(v)
+        visited[v] = None
 
     out = [v]
     for w in helpers.neighbors(v):
@@ -38,6 +37,6 @@ def dft_recursive(uni: Universe,
        document this
     """
 
-    visited = set()
+    visited = {}
     return _dft_recur(uni, start, visited)
 
