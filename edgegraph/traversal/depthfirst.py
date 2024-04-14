@@ -40,3 +40,24 @@ def dft_recursive(uni: Universe,
     visited = {}
     return _dft_recur(uni, start, visited)
 
+def dft_iterative(uni: Universe,
+                  start: Vertex) -> list[Vertex]:
+    """
+    Perform an iterative depth-first traversal of the given universe, starting
+    at the given vertex.
+
+    .. todo::
+    
+       document this too
+    """
+
+    stack = [start]
+    discovered = []
+    while len(stack):
+        v = stack.pop()
+        if v not in discovered:
+            discovered.append(v)
+            for w in helpers.neighbors(v):
+                stack.append(w)
+    return discovered
+
