@@ -7,8 +7,6 @@ Depth-first search and traversal functions.
 
 from __future__ import annotations
 
-import collections
-
 from edgegraph.structure import Universe, Vertex
 from edgegraph.traversal import helpers
 
@@ -61,7 +59,7 @@ def dft_iterative(uni: Universe,
 
     stack = [start]
     discovered = []
-    while len(stack):
+    while len(stack) != 0:
         v = stack.pop()
         if v not in discovered:
             if (uni is not None) and (v not in uni.vertices):
