@@ -34,36 +34,8 @@ def graph():
             z: [x],
         }
     uni = adjlist.load_adj_dict(adj, DirectedEdge)
-    assert len(uni.vertices) == 10, "BFS graph setup wrong # verts??"
+    assert len(uni.vertices) == 10, "DFS graph setup wrong # verts??"
     return uni, verts
-
-###############################################################################
-# make sure they do the same thing every time, given the same inputs.  this was
-# an issue during development due to the use of unordered sets
-
-def test_dftr_deterministic(graph):
-    uni, verts = graph
-    prev = None
-    ans = None
-    for i in range(1000):
-        if prev is None:
-            continue
-
-        ans = depthfirst.dft_recursive(graph, verts[0])
-        assert ans == prev, "dft_recursive is not deterministic!"
-        prev = ans
-
-def test_dfti_deterministic(graph):
-    uni, verts = graph
-    prev = None
-    ans = None
-    for i in range(1000):
-        if prev is None:
-            continue
-
-        ans = depthfirst.dft_iterative(graph, verts[0])
-        assert ans == prev, "dft_iterative is not deterministic!"
-        prev = ans
 
 ###############################################################################
 # traversals!
@@ -110,3 +82,47 @@ def test_dfti_from(graph, start, expected):
 
     assert vals == expected, f"{vals}"
 
+# test odd / edge cases
+travs = [
+        depthfirst.dft_recursive,
+        depthfirst.dft_iterative,
+    ]
+
+@pytest.mark.parametrize("func", travs)
+def test_dft_empty(func):
+    uni = Universe()
+    start = None
+    res = func(uni, start)
+    assert res is None, f"{func} did not return None on empty universe!"
+
+@pytest.mark.parametrize("func", travs)
+def test_dft_nonuniverse(graph, func):
+    uni, verts = graph
+    extra = Vertex(attributes={'i': -1})
+
+    with pytest.raises(ValueError):
+        search = func(uni, extra)
+
+@pytest.mark.parametrize("func", travs)
+def test_dft_trav_out_of_uni(graph, func):
+    uni, verts = graph
+    extra = Vertex(attributes={'i': -1})
+    explicit.link_undirected(verts[6], extra)
+    trav = func(uni, verts[0])
+    vals = [v.i for v in trav]
+    assert -1 not in vals, f"{func} found an out-of-universe vert!"
+
+# make sure they do the same thing every time, given the same inputs.  this was
+# an issue during development due to the use of unordered sets
+@pytest.mark.parametrize("func", travs)
+def test_dft_deterministic(graph, func):
+    uni, verts = graph
+    prev = None
+    ans = None
+    for i in range(1000):
+        if prev is None:
+            continue
+
+        ans = func(graph, verts[0])
+        assert ans == prev, "dft_recursive is not deterministic!"
+        prev = ans
