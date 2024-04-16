@@ -53,7 +53,7 @@ def _dfs_recur(uni: Universe,
         if w not in visited:
             # check for a match first -- then we can exit early
             if hasattr(w, attrib):
-                print(f"checking {w.i} for {attrib}={val}...", end='')
+                print(f"checking {w[attrib]} for {attrib}={val}...", end='')
                 if w[attrib] == val:
                     print("HIT!")
                     return w
@@ -80,6 +80,10 @@ def dfs_recursive(uni: Universe,
         return None
     if (uni is not None) and (start not in uni.vertices):
         raise ValueError("Start vertex not in specified universe!")
+
+    if hasattr(start, attrib):
+        if start[attrib] == val:
+            return start
 
     visited = {}
     return _dfs_recur(uni, start, visited, attrib, val)
@@ -138,6 +142,8 @@ def dfs_iterative(uni: Universe,
     discovered = []
     while len(stack) != 0:
         v = stack.pop()
+        if (uni is not None) and (v not in uni.vertices):
+            continue
         if hasattr(v, attrib):
             print(f"checking {v[attrib]} for {attrib}={val}...", end='')
             if v[attrib] == val:
@@ -145,8 +151,6 @@ def dfs_iterative(uni: Universe,
                 return v
             print("nope")
         if v not in discovered:
-            if (uni is not None) and (v not in uni.vertices):
-                continue
             discovered.append(v)
             for w in helpers.neighbors(v):
                 stack.append(w)
