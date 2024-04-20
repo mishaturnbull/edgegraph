@@ -154,6 +154,8 @@ def test_dfs_search_for(graph, func, sdat):
     else:
         assert search is None, "also wrong!"
 
+# test the odd / edge cases
+
 @pytest.mark.parametrize("func", searches)
 def test_dfs_empty(func):
     uni = Universe()
@@ -178,7 +180,7 @@ def test_dfs_search_out_of_uni(graph, func):
     assert search is None, f"{func} found vertex out of universe!"
 
 @pytest.mark.parametrize("func", searches)
-def test_bfs_search_wrong_attr(graph, func):
+def test_dfs_search_wrong_attr(graph, func):
     uni, verts = graph
     del verts[6].i
     verts[6].j = 10
@@ -186,4 +188,11 @@ def test_bfs_search_wrong_attr(graph, func):
     right = func(uni, verts[0], 'j', 10)
     assert search is None, f"{func} found an answer when shouldn't: i={search.i}"
     assert right is verts[6], f"{func} did not find right answer!"
+
+@pytest.mark.parametrize("func", searches)
+def test_dfs_finds_first_vertex(graph, func):
+    uni, verts = graph
+    for vert in verts:
+        search = func(uni, vert, 'i', vert.i)
+        assert search is vert, f"{func} did not identify the starting vertex!"
 

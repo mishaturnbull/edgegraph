@@ -126,11 +126,6 @@ def dfs_iterative(uni: Universe,
     .. todo::
 
        document this
-
-    .. danger::
-
-       I'm fairly certain this isn't working right just yet.  It searches, but
-       re-visits vertices.
     """
     if len(uni.vertices) == 0:
         # empty!
@@ -144,13 +139,13 @@ def dfs_iterative(uni: Universe,
         v = stack.pop()
         if (uni is not None) and (v not in uni.vertices):
             continue
-        if hasattr(v, attrib):
-            print(f"checking {v[attrib]} for {attrib}={val}...", end='')
-            if v[attrib] == val:
-                print("HIT!")
-                return v
-            print("nope")
         if v not in discovered:
+            if hasattr(v, attrib):
+                print(f"checking {v[attrib]} for {attrib}={val}...", end='')
+                if v[attrib] == val:
+                    print("HIT!")
+                    return v
+                print("nope")
             discovered.append(v)
             for w in helpers.neighbors(v):
                 stack.append(w)
