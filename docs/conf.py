@@ -67,6 +67,7 @@ rst_prolog = """
 intersphinx_mapping = {
         'python': ('https://docs.python.org/3', None),
         }
+intersphinx_timeout = 10  # seconds
 
 # -- Options for autodoc / autosummary ---------------------------------------
 

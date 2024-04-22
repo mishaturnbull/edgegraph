@@ -3,6 +3,15 @@
 
 """
 Breadth-first search and traversal functions.
+
+.. todo::
+
+   document this module better
+
+.. seealso::
+
+   * :py:mod:`edgegraph.traversal.depthfirst`: depth-first search and traverse
+     operations
 """
 
 from __future__ import annotations

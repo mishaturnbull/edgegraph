@@ -28,12 +28,12 @@ Planned features include:
 * [x] Adjacency list / matrix build-a-graph
 * [ ] Build-an-adjlist / build-an-adjmat from graphs
 * [x] Breadth-first search and traversal
-* [ ] Depth-first search and traversal
+* [x] Depth-first search and traversal
 * [ ] Topological sorting
 * [ ] Strongly connected component detection
 * [ ] Universe island detection
 * [ ] Shortest path detection
-* [ ] Graph drawing generation via PlantUML
+* [x] Graph drawing generation via PlantUML
 * [ ] Formal automata modelling (DFA, NFA, etc)
 * [ ] Operation flow graph modelling (nodes as operations instead of states)
 * [ ] "Functional graphs" -- attach executable code to nodes and run a graph as

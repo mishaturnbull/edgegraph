@@ -13,7 +13,8 @@ then
 fi
 
 pytest --cov=edgegraph \
-    --cov-branch
+    --cov-branch \
+    --cov-fail-under=100
 
 coverage html
 mv htmlcov docs/_build/
