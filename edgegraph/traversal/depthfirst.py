@@ -129,11 +129,8 @@ def _dfs_recur(uni: Universe,
         if w not in visited:
             # check for a match first -- then we can exit early
             if hasattr(w, attrib):
-                print(f"checking {w[attrib]} for {attrib}={val}...", end='')
                 if w[attrib] == val:
-                    print("HIT!")
                     return w
-                print("nope")
             ret = _dfs_recur(uni, w, visited, attrib, val)
             if ret:
                 return ret
@@ -260,11 +257,8 @@ def dfs_iterative(uni: Universe,
             continue
         if v not in discovered:
             if hasattr(v, attrib):
-                print(f"checking {v[attrib]} for {attrib}={val}...", end='')
                 if v[attrib] == val:
-                    print("HIT!")
                     return v
-                print("nope")
             discovered.append(v)
             for w in helpers.neighbors(v):
                 stack.append(w)
