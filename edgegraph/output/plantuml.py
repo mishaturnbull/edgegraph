@@ -58,7 +58,6 @@ handled in three possible ways:
 
 from __future__ import annotations
 
-import functools
 import os
 import re
 import subprocess
@@ -67,8 +66,6 @@ import tempfile
 import datetime
 
 from edgegraph.structure import Universe, Vertex, DirectedEdge, UnDirectedEdge
-from edgegraph.traversal import helpers
-from edgegraph import version
 
 PLANTUML_AUTOGEN_NOTE = f"""
 note as n1
@@ -237,7 +234,7 @@ def _one_vert_to_puml(vertex, options):
 
     if 'user_render_func' in opts:
         return opts['user_render_func'](vertex, options)
-    
+
     # identify and match the attributes described in the show_attrs tag
     attr_rgx = opts['show_attrs']
     attributes = [a for a in dir(vertex) if attr_rgx.match(a)]
@@ -315,7 +312,7 @@ def render_to_plantuml_src(uni: Universe,
             components.append(f"skinparam {spkey} {spval}\n")
 
     # these are the per-object skinparams
-    if len(skinparams):
+    if len(skinparams) > 0:
         components.append("skinparam object {\n")
         components.extend('    ' + s for s in skinparams)
         components.append("}\n")
@@ -325,8 +322,6 @@ def render_to_plantuml_src(uni: Universe,
     components.extend(vertex_comps)
     for link in links:
         components.append(_one_link_to_puml(link, options))
-
-    
 
     components.append("@enduml\n")
     return ''.join(components)
@@ -359,11 +354,11 @@ def render_to_image(src: str,
     """
     if not out_file.endswith('.png'):
         raise ValueError("Only PNG's are supported at the moment!")
-    if not len(src):
+    if not len(src) > 0:
         raise ValueError("Cannot render PlantUML image with empty string src!")
 
     tmpdir = tempfile.mkdtemp(prefix="edgegraph_puml_renderer_")
-    
+
     # do all the stuff inside a try/finally, to make sure the tempdir always
     # gets cleaned up whether or not an exception happens
     try:
@@ -373,12 +368,10 @@ def render_to_image(src: str,
             wfp.write(src)
 
         # https://plantuml.com/command-line
-        subprocess.run([plantuml, *PLANTUML_INVOKE_ARGS, srcfile], 
+        subprocess.run([plantuml, *PLANTUML_INVOKE_ARGS, srcfile],
                 env=dict(os.environ, **PLANTUML_INVOKE_ENV),
                 capture_output=True, check=True)
         shutil.move(outfile, out_file)
-    except Exception:
-        raise
     finally:
         shutil.rmtree(tmpdir)
 

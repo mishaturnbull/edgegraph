@@ -54,6 +54,21 @@ from __future__ import annotations
 from edgegraph.structure import Universe, Vertex
 from edgegraph.traversal import helpers
 
+def _df_preflight_checks(uni: Universe, start: Vertex):
+    """
+    Perform a few common pre-traversal sanity checks, raising ValueError if
+    they fail.  For internal use only!
+
+    :param uni: Universe to traverse/search.
+    :param start: Vertex to start trav/search at.
+    :raises ValueError: if the universe is empty, or if the start vertex is not
+       in the given universe.
+    """
+    if len(uni.vertices) == 0:
+        raise ValueError("Universe is empty; cannot perform this operation!")
+    if (uni is not None) and (start not in uni.vertices):
+        raise ValueError("Start vertex not in specified universe!")
+
 def _dft_recur(uni: Universe,
                v: Vertex,
                visited: dict[Vertex, None]) -> list[Vertex]:
@@ -91,15 +106,11 @@ def dft_recursive(uni: Universe,
 
     :param uni: The universe to traverse.
     :param start: The vertex to begin traversal at.
-    :return: The vertices visited during traversal. 
+    :return: The vertices visited during traversal.
     :raises ValueError: if the ``start`` vertex is not a member of the
-       specified universe.
+       specified universe, or if the universe is empty.
     """
-    if len(uni.vertices) == 0:
-        # empty!
-        return None
-    if (uni is not None) and (start not in uni.vertices):
-        raise ValueError("Start vertex not in specified universe!")
+    _df_preflight_checks(uni, start)
 
     visited = {}
     return _dft_recur(uni, start, visited)
@@ -164,13 +175,9 @@ def dfs_recursive(uni: Universe,
     :return: The first vertex with a matching value, or ``None`` if none is
        found.
     :raises ValueError: if the ``start`` vertex is not a member of the
-       specified universe.
+       specified universe, or if the universe is empty.
     """
-    if len(uni.vertices) == 0:
-        # empty!
-        return None
-    if (uni is not None) and (start not in uni.vertices):
-        raise ValueError("Start vertex not in specified universe!")
+    _df_preflight_checks(uni, start)
 
     if hasattr(start, attrib):
         if start[attrib] == val:
@@ -193,15 +200,11 @@ def dft_iterative(uni: Universe,
 
     :param uni: The universe to traverse.
     :param start: Vertex to start searching at.
-    :return: The vertices visited during traversal. 
+    :return: The vertices visited during traversal.
     :raises ValueError: if the ``start`` vertex is not a member of the
-       specified universe.
+       specified universe, or if the universe is empty.
     """
-    if len(uni.vertices) == 0:
-        # empty!
-        return None
-    if (uni is not None) and (start not in uni.vertices):
-        raise ValueError("Start vertex not in specified universe!")
+    _df_preflight_checks(uni, start)
 
     stack = [start]
     discovered = []
@@ -221,7 +224,7 @@ def dfs_iterative(uni: Universe,
                   val: object) -> Vertex:
     """
     Perform a non-recursive depth-first search in the given universe.
-    
+
     The algorithm used is similar to that in [KlTa05]_, algorithm 3.12.  Slight
     modifications have been made for an early-exit if the desired vertex is
     discovered.  This is a *recursive* implementation that returns either the
@@ -233,7 +236,7 @@ def dfs_iterative(uni: Universe,
     and B.) the value of such attribute must be equal to the specified value.
     A ``==`` check is used for comparison (not ``is``).  Traversal stops as
     soon as such an attribute is found.
-    
+
     :param uni: The universe to search in.
     :param start: The vertex to start searching at.
     :param attrib: Name of the attribute to check each vertex for.
@@ -241,13 +244,9 @@ def dfs_iterative(uni: Universe,
     :return: The first vertex with a matching value, or ``None`` if none is
        found.
     :raises ValueError: if the ``start`` vertex is not a member of the
-       specified universe.
+       specified universe, or if the universe is empty.
     """
-    if len(uni.vertices) == 0:
-        # empty!
-        return None
-    if (uni is not None) and (start not in uni.vertices):
-        raise ValueError("Start vertex not in specified universe!")
+    _df_preflight_checks(uni, start)
 
     stack = [start]
     discovered = []

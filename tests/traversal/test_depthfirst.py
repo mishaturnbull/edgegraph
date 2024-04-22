@@ -93,8 +93,8 @@ travs = [
 def test_dft_empty(func):
     uni = Universe()
     start = None
-    res = func(uni, start)
-    assert res is None, f"{func} did not return None on empty universe!"
+    with pytest.raises(ValueError):
+        res = func(uni, start)
 
 @pytest.mark.parametrize("func", travs)
 def test_dft_nonuniverse(graph, func):
@@ -160,8 +160,8 @@ def test_dfs_search_for(graph, func, sdat):
 def test_dfs_empty(func):
     uni = Universe()
     start = None
-    res = func(uni, start, 'i', 15)
-    assert res is None, f"{func} did not return None on empty universe!"
+    with pytest.raises(ValueError):
+        res = func(uni, start, 'i', 15)
 
 @pytest.mark.parametrize("func", searches)
 def test_dfs_nonuniverse(graph, func):

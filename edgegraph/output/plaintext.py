@@ -18,7 +18,7 @@ formats may be added in the future.
 
 from __future__ import annotations
 
-from edgegraph.structure import Universe, Vertex
+from edgegraph.structure import Universe
 from edgegraph.traversal import helpers
 
 def basic_render(uni: Universe,
@@ -73,7 +73,7 @@ def basic_render(uni: Universe,
     if len(uni.vertices) == 0:
         # empty!
         return None
-    
+
     lines = []
     start, node = "", ""
     if sort:
@@ -86,7 +86,7 @@ def basic_render(uni: Universe,
             start = rfunc(vert)
         else:
             start = repr(vert)
-        
+
         line += f"{start} -> "
 
         if sort:
