@@ -12,32 +12,6 @@ from edgegraph.structure import (Vertex, TwoEndedLink, DirectedEdge,
 from edgegraph.traversal import depthfirst
 from edgegraph.builder import adjlist, explicit
 
-@pytest.fixture
-def graph():
-    """
-    The graph generated in this function is taken from [CLRS09]_, figure 22.6.
-    """
-    verts = []
-    for i in range(10):
-        verts.append(Vertex(attributes={'i': i}))
-    #0,1, 2, 3, 4, 5, 6, 7, 8, 9
-    q, r, s, t, u, v, w, x, y, z = verts
-    adj = {
-            q: [s, t, w],
-            r: [u, y],
-            s: [v],
-            t: [x, y],
-            u: [y],
-            v: [w],
-            w: [s],
-            x: [z],
-            y: [q],
-            z: [x],
-        }
-    uni = adjlist.load_adj_dict(adj, DirectedEdge)
-    assert len(uni.vertices) == 10, "DFS graph setup wrong # verts??"
-    return uni, verts
-
 ###############################################################################
 # traversals!
 
@@ -55,8 +29,8 @@ dftr_data = [
         ]
 
 @pytest.mark.parametrize("start,expected", dftr_data)
-def test_dftr_from(graph, start, expected):
-    uni, verts = graph
+def test_dftr_from(graph_clrs09_22_6, start, expected):
+    uni, verts = graph_clrs09_22_6
     trav = depthfirst.dft_recursive(uni, verts[start])
     vals = [v.i for v in trav]
 
@@ -76,8 +50,8 @@ dfti_data = [
         ]
 
 @pytest.mark.parametrize("start,expected", dfti_data)
-def test_dfti_from(graph, start, expected):
-    uni, verts = graph
+def test_dfti_from(graph_clrs09_22_6, start, expected):
+    uni, verts = graph_clrs09_22_6
     trav = depthfirst.dft_iterative(uni, verts[start])
     vals = [v.i for v in trav]
 
@@ -97,16 +71,16 @@ def test_dft_empty(func):
         res = func(uni, start)
 
 @pytest.mark.parametrize("func", travs)
-def test_dft_nonuniverse(graph, func):
-    uni, verts = graph
+def test_dft_nonuniverse(graph_clrs09_22_6, func):
+    uni, verts = graph_clrs09_22_6
     extra = Vertex(attributes={'i': -1})
 
     with pytest.raises(ValueError):
         search = func(uni, extra)
 
 @pytest.mark.parametrize("func", travs)
-def test_dft_trav_out_of_uni(graph, func):
-    uni, verts = graph
+def test_dft_trav_out_of_uni(graph_clrs09_22_6, func):
+    uni, verts = graph_clrs09_22_6
     extra = Vertex(attributes={'i': -1})
     explicit.link_undirected(verts[6], extra)
     trav = func(uni, verts[0])
@@ -120,15 +94,15 @@ def test_dft_trav_out_of_uni(graph, func):
 # runs*, and not match any given order, as there are multiple correct answers
 # for a DFT of any given graph
 @pytest.mark.parametrize("func", travs)
-def test_dft_deterministic(graph, func):
-    uni, verts = graph
+def test_dft_deterministic(graph_clrs09_22_6, func):
+    uni, verts = graph_clrs09_22_6
     prev = None
     ans = None
     for i in range(1000):
         if prev is None:
             continue
 
-        ans = func(graph, verts[0])
+        ans = func(graph_clrs09_22_6, verts[0])
         assert ans == prev, "dft_recursive is not deterministic!"
         prev = ans
 
@@ -144,8 +118,8 @@ dfs_data[1][1] = False
 dfs_data[4][1] = False
 
 @pytest.mark.parametrize("func,sdat", itertools.product(searches, dfs_data))
-def test_dfs_search_for(graph, func, sdat):
-    uni, verts = graph
+def test_dfs_search_for(graph_clrs09_22_6, func, sdat):
+    uni, verts = graph_clrs09_22_6
     target, find = sdat
     search = func(uni, verts[0], 'i', target)
 
@@ -164,24 +138,24 @@ def test_dfs_empty(func):
         res = func(uni, start, 'i', 15)
 
 @pytest.mark.parametrize("func", searches)
-def test_dfs_nonuniverse(graph, func):
-    uni, verts = graph
+def test_dfs_nonuniverse(graph_clrs09_22_6, func):
+    uni, verts = graph_clrs09_22_6
     extra = Vertex(attributes={'i': -1})
 
     with pytest.raises(ValueError):
         search = func(uni, extra, 'i', -1)
 
 @pytest.mark.parametrize("func", searches)
-def test_dfs_search_out_of_uni(graph, func):
-    uni, verts = graph
+def test_dfs_search_out_of_uni(graph_clrs09_22_6, func):
+    uni, verts = graph_clrs09_22_6
     extra = Vertex(attributes={'i': -1})
     explicit.link_undirected(verts[6], extra)
     search = func(uni, verts[0], 'i', -1)
     assert search is None, f"{func} found vertex out of universe!"
 
 @pytest.mark.parametrize("func", searches)
-def test_dfs_search_wrong_attr(graph, func):
-    uni, verts = graph
+def test_dfs_search_wrong_attr(graph_clrs09_22_6, func):
+    uni, verts = graph_clrs09_22_6
     del verts[6].i
     verts[6].j = 10
     search = func(uni, verts[0], 'i', 10)
@@ -190,8 +164,8 @@ def test_dfs_search_wrong_attr(graph, func):
     assert right is verts[6], f"{func} did not find right answer!"
 
 @pytest.mark.parametrize("func", searches)
-def test_dfs_finds_first_vertex(graph, func):
-    uni, verts = graph
+def test_dfs_finds_first_vertex(graph_clrs09_22_6, func):
+    uni, verts = graph_clrs09_22_6
     for vert in verts:
         search = func(uni, vert, 'i', vert.i)
         assert search is vert, f"{func} did not identify the starting vertex!"

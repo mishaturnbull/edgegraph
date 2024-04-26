@@ -11,34 +11,8 @@ from edgegraph.builder import adjlist
 from edgegraph.traversal import helpers
 from edgegraph.output import plaintext
 
-@pytest.fixture
-def graph():
-    """
-    The graph generated in this function is taken from [CLRS09]_, figure 22.6.
-    """
-    verts = []
-    for i in range(10):
-        verts.append(Vertex(attributes={'i': i}))
-    #0,1, 2, 3, 4, 5, 6, 7, 8, 9
-    q, r, s, t, u, v, w, x, y, z = verts
-    adj = {
-            q: [s, t, w],
-            r: [u, y],
-            s: [v],
-            t: [x, y],
-            u: [y],
-            v: [w],
-            w: [s],
-            x: [z],
-            y: [q],
-            z: [x],
-        }
-    uni = adjlist.load_adj_dict(adj, DirectedEdge)
-    assert len(uni.vertices) == 10, "BFS graph setup wrong # verts??"
-    return uni, verts
-
-def test_basic_render_sorted(graph):
-    uni, verts = graph
+def test_basic_render_sorted(graph_clrs09_22_6):
+    uni, verts = graph_clrs09_22_6
     render = plaintext.basic_render(uni, rfunc=lambda v: v.i,
             sort=lambda v: v.i)
     answer = \
@@ -54,8 +28,8 @@ def test_basic_render_sorted(graph):
 9 -> 7"""
     assert render == answer
 
-def test_basic_render_nonsorted(graph):
-    uni, verts = graph
+def test_basic_render_nonsorted(graph_clrs09_22_6):
+    uni, verts = graph_clrs09_22_6
     render = plaintext.basic_render(uni, rfunc=lambda v: v.i)
 
     for line in render.splitlines():
@@ -64,8 +38,8 @@ def test_basic_render_nonsorted(graph):
                   line.split('->')[1].split(' ') if len(n))
         assert set(helpers.neighbors(start)) == out
 
-def test_basic_render_norender(graph):
-    uni, verts = graph
+def test_basic_render_norender(graph_clrs09_22_6):
+    uni, verts = graph_clrs09_22_6
     render = plaintext.basic_render(uni, sort=lambda v: v.i)
     lines = render.splitlines()
 
