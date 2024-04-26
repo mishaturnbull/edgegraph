@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Unit tests for Universe object.
+Ensure the versioning constants are valid.
 """
 
 import pytest
@@ -30,11 +30,11 @@ def test_python_version_compliance():
     """
     Test version attribute is complaint with PyPA standard.
 
-    See 
+    See
     https://packaging.python.org/en/latest/specifications/version-specifiers/#version-specifiers
     """
 
-    PTRN = (r'^([1-9][0-9]*!)?(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*))*((a|b|rc)"'
+    ptrn= (r'^([1-9][0-9]*!)?(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*))*((a|b|rc)"'
            r'(0|[1-9][0-9]*))?(\.post(0|[1-9][0-9]*))?(\.dev(0|[1-9][0-9]*))?$')
-    assert re.match(PTRN, version.__version__)
+    assert re.match(ptrn, version.__version__)
 

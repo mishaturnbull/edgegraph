@@ -14,10 +14,13 @@ from edgegraph.builder import randgraph
 from edgegraph.output import plaintext, plantuml as pu
 
 def main():
+    """
+    Main routine.
+    """
     graph = randgraph.randgraph()
     print(plaintext.basic_render(graph, rfunc=lambda v: v.i, sort=lambda v: v.i))
 
-    with open('out2.puml', 'w') as wfp:
+    with open('out2.puml', 'w', encoding='utf-8') as wfp:
         wfp.write(pu.render_to_plantuml_src(graph, pu.PLANTUML_RENDER_OPTIONS))
 
     code.interact(local={**locals(), **globals()})
