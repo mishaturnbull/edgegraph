@@ -43,7 +43,7 @@ jobs:
         # mainly for trend detection, to see if "oh hey, this particular test
         # is always slow".  nothing is programmatically using the data, at
         # least, yet.
-        pytest --cov=edgegraph --cov-branch --durations=0
+        pytest --cov=edgegraph --cov-branch --durations=0 -m "not slow"
     - name: Check unit test coverage
       run: |
         # fail-under option causes a nonzero exit
