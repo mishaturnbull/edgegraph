@@ -6,6 +6,10 @@ Quickly enter an interactive session with an example graph already
 instantiated.
 
 Designed for interactive testing and development, not unit tests!
+
+Invoke as ``python -m tests.interact``.  A random graph will be generated, its
+structure printed to the console, and the universe is available as the
+``graph`` global (of type :py:class:`~edgegraph.structure.universe.Universe`).
 """
 
 import code

@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 
 """
-Unit tests for output.plantuml module.
+Unit tests for output.plantuml module, specifically focused on interacting with
+PlantUML syscalls.
 """
 
 import os
