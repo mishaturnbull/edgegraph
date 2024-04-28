@@ -3,17 +3,14 @@
 
 """
 Unit tests for DirectedEdge assocations with their vertices.
-
-Yes, dear programmer... this is identical to the undirectededge version of this
-unit test suite.  This is intended, though... DirectedEdge inherits from
-UnDirectedEdge, but doesn't change any of the behavior.  These tests exist to
-make *sure* the behavior isn't changed.
 """
 
-import pytest
 from edgegraph.structure import vertex, directededge
 
 def test_diredge_assoc_on_init():
+    """
+    Test DirectedEdge can associate with vertices in init.
+    """
     v1 = vertex.Vertex()
     v2 = vertex.Vertex()
 
@@ -28,6 +25,9 @@ def test_diredge_assoc_on_init():
             "DirectedEdge did not bind to vertex in __init__!"
 
 def test_diredge_assoc_postinit():
+    """
+    Test DirectedEdge can associate with vertices after init.
+    """
     v1 = vertex.Vertex()
     v2 = vertex.Vertex()
 
@@ -55,6 +55,9 @@ def test_diredge_assoc_postinit():
             "DIrectedEdge v2-set did not bind v2 links!"
 
 def test_diredge_assoc_update_v1():
+    """
+    Test that DirectedEdge can change v1 after assigned in init.
+    """
     v1 = vertex.Vertex()
     v2 = vertex.Vertex()
     v3 = vertex.Vertex()
@@ -75,6 +78,9 @@ def test_diredge_assoc_update_v1():
             "DirEdge v1-set did not bind to new v1!"
 
 def test_diredge_assoc_update_v2():
+    """
+    Test that DirectedEdge can change v2 after assigned in init.
+    """
     v1 = vertex.Vertex()
     v2 = vertex.Vertex()
     v3 = vertex.Vertex()

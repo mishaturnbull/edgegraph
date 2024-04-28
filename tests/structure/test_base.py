@@ -8,12 +8,24 @@ Unit tests for structure.base module.
 import pytest
 from edgegraph.structure import base, universe
 
+# W0212 is protected-access, or, access to a protected member (starting with a
+# _) of a client class.  In this case, the test objectives require we inspect
+# internal state of the objects, so we need to read these attributes.
+# pylint: disable=W0212
+
 def test_base_obj_creation():
+    """
+    Ensure we can create base objects with no attributes.
+    """
     bo = base.BaseObject()
 
     assert len(dir(bo)) == 0, "baseobject init'd with attributes!"
 
 def test_base_obj_attributes():
+    """
+    Ensure we can assign attributes to an instance of BaseObject using the dot
+    access.
+    """
     bo = base.BaseObject()
 
     bo.x = 7
@@ -32,6 +44,10 @@ def test_base_obj_attributes():
                     "BaseObject attributes were not stored correctly!"
 
 def test_base_obj_items():
+    """
+    Ensure we can assign attributes to an instance of BaseObject using the item
+    access method.
+    """
     bo = base.BaseObject()
 
     bo['x'] = 7
@@ -50,6 +66,10 @@ def test_base_obj_items():
                     "BaseObject attributes were not stored correctly!"
 
 def test_base_obj_item_attr_interop():
+    """
+    Ensure attributes can be set and retrieved from both dot and getitem
+    approaches.
+    """
     bo = base.BaseObject()
 
     bo.a = 9
@@ -67,6 +87,9 @@ def test_base_obj_item_attr_interop():
     assert bo.z == "Twelve",      "bo.z did not getattr!"
 
 def test_base_obj_getitem_protected():
+    """
+    Ensure access to the masked attributes is forwarded to getattr.
+    """
     bo = base.BaseObject()
     bo['a'] = 15
 
@@ -75,6 +98,9 @@ def test_base_obj_getitem_protected():
             "bo getitem did not forward to getattr!"
 
 def test_base_obj_setitem_protected():
+    """
+    Ensure sets to masked attributes are forwarded to setattr.
+    """
     bo = base.BaseObject()
     bo['a'] = 15
 
@@ -86,6 +112,9 @@ def test_base_obj_setitem_protected():
             "bo setitem did not forward to setattr!"
 
 def test_base_obj_init_attributes():
+    """
+    Ensure attributes passed to the instantiation are retained.
+    """
     bo = base.BaseObject(
             attributes={"fifteen": 15, "twelve": 12}
             )
@@ -100,6 +129,10 @@ def test_base_obj_init_attributes():
                     "bo attriutes not read from __init__"
 
 def test_base_obj_init_attributes_wrong():
+    """
+    Ensure the correct error is raised when handing invalid objects to the
+    attributes during instantiation.
+    """
     with pytest.raises(TypeError):
         base.BaseObject(
                 attributes="A string should not be valid!"
@@ -116,6 +149,9 @@ def test_base_obj_init_attributes_wrong():
                 )
 
 def test_base_obj_del_attr():
+    """
+    Ensure we can delete attributes of base objects.
+    """
     b = base.BaseObject()
     b.x = 12
     b.y = 15
@@ -131,6 +167,9 @@ def test_base_obj_del_attr():
             "bo delattr didn't (assigned in init)"
 
 def test_base_obj_del_item():
+    """
+    Ensure we can delete items from base objects.
+    """
     b = base.BaseObject()
     b.x = 12
     b.y = 15
@@ -146,6 +185,9 @@ def test_base_obj_del_item():
             "bo delitem didn't (assigned in init)"
 
 def test_base_obj_del_item_protected():
+    """
+    Ensure we *can't* delete protected items of a base object.
+    """
     b = base.BaseObject()
     b.x = 12
 
@@ -153,6 +195,9 @@ def test_base_obj_del_item_protected():
         del b['_uid']
 
 def test_base_obj_uid():
+    """
+    Ensure UID is not exposed nor changeable.
+    """
     bo = base.BaseObject()
 
     assert 'uid' not in bo._attributes,  "BaseObject UID exposed"
@@ -167,6 +212,9 @@ def test_base_obj_uid():
     assert bo._uid != 15, "BaseObject _uid was changed!"
 
 def test_base_obj_universes():
+    """
+    Ensure the universes attribute is not exposed.
+    """
     bo = base.BaseObject()
 
     assert 'universes' not in bo._attributes, "BaseObject universes exposed"
@@ -191,8 +239,11 @@ def test_base_obj_universes():
         bo.remove_from_universe(uni)
 
 def test_base_obj_init_universes_list():
+    """
+    Ensure we can instantiate a BaseObject with universes given as a list.
+    """
     unis = []
-    for i in range(3):
+    for _ in range(3):
         unis.append(universe.Universe())
 
     bo = base.BaseObject(universes=unis)
@@ -206,8 +257,11 @@ def test_base_obj_init_universes_list():
             ".universes gave wrong type"
 
 def test_base_obj_init_universes_set():
+    """
+    Ensure we can instantiate a BaseObject with universes given as a set.
+    """
     unis = set()
-    for i in range(3):
+    for _ in range(3):
         unis.add(universe.Universe())
 
     bo = base.BaseObject(universes=unis)
@@ -221,6 +275,9 @@ def test_base_obj_init_universes_set():
             ".universes gave wrong type"
 
 def test_base_obj_init_universes_tuple():
+    """
+    Ensure we can instantiate a BaseObject with universes given as a tuple.
+    """
     unis = (universe.Universe(), universe.Universe(), universe.Universe())
 
     bo = base.BaseObject(universes=unis)
@@ -234,8 +291,11 @@ def test_base_obj_init_universes_tuple():
             ".universes gave wrong type"
 
 def test_base_obj_init_universes_generator():
+    """
+    Ensure we can instantiate a BaseObject with universes given as a genexpr.
+    """
     unis = []
-    for i in range(3):
+    for _ in range(3):
         unis.append(universe.Universe())
 
     def gen():
@@ -252,6 +312,9 @@ def test_base_obj_init_universes_generator():
             ".universes gave wrong type"
 
 def test_base_obj_init_universes_deduplicate():
+    """
+    Ensure universes passed to the instantiator are deduplicated.
+    """
     uni = universe.Universe()
     unis = [uni] * 50
 

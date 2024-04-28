@@ -5,7 +5,6 @@
 Ensure the versioning constants are valid.
 """
 
-import pytest
 import re
 from edgegraph import version
 

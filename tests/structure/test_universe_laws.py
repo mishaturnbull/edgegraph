@@ -2,17 +2,28 @@
 # -*- coding: utf-8 -*-
 
 """
-Unit tests for Universe object.
+Unit tests for UniverseLaws object.
 """
 
 import pytest
 from edgegraph.structure import base, universe
 
+# W0212 is protected-access, or, access to a protected member (starting with a
+# _) of a client class.  In this case, the test objectives require we inspect
+# internal state of the objects, so we need to read these attributes.
+# pylint: disable=W0212
+
 def test_uni_laws_inheritance():
+    """
+    Ensure UniverseLaws trees up to correct subclass.
+    """
     assert issubclass(universe.UniverseLaws, base.BaseObject), \
             "UniverseLaws has wrong superclass!"
 
 def test_uni_laws_init_defaults():
+    """
+    Ensure UniverseLaws have sane defaults out of the box.
+    """
     l1 = universe.UniverseLaws()
     assert l1._attributes == {
             '_edge_whitelist': None,
@@ -24,6 +35,9 @@ def test_uni_laws_init_defaults():
                     "UniverseLaws has wrong default options!"
 
 def test_uni_laws_init_nondefault():
+    """
+    Ensure UniverseLaws instantiated with non-default options retains them.
+    """
     l2 = universe.UniverseLaws(
             edge_whitelist = {int: {str: float}},
             mixed_links = True,
@@ -41,6 +55,9 @@ def test_uni_laws_init_nondefault():
                     "UniverseLaws did not respect __init__ options!"
 
 def test_uni_laws_attrs():
+    """
+    Ensure UniverseLaws attribute getters are working.
+    """
     l = universe.UniverseLaws(edge_whitelist={int: {str: float}})
 
     assert l.edge_whitelist == l._attributes['_edge_whitelist'], \
@@ -57,6 +74,9 @@ def test_uni_laws_attrs():
             "UniverseLaws cannot get applies_to"
 
 def test_uni_laws_wrong_edge_rules():
+    """
+    Ensure invalid edge rules are detected and raise an error.
+    """
     bad = [
             {"cat": "dog"},
             [1, 2, 3, 4, 5],
@@ -65,10 +85,13 @@ def test_uni_laws_wrong_edge_rules():
 
     for wrong in bad:
         with pytest.raises(ValueError):
-            l = universe.UniverseLaws(edge_whitelist=wrong)
-            l.edge_whitelist
+            universe.UniverseLaws(edge_whitelist=wrong)
 
 def test_uni_laws_attr_readonly():
+    """
+    Ensure all attributes are readonly, and raise appropriate errors when write
+    is attempted.
+    """
     l = universe.UniverseLaws(edge_whitelist={int: {str: float}})
 
     with pytest.raises(AttributeError):
