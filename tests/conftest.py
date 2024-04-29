@@ -8,6 +8,8 @@ See:
 https://docs.pytest.org/en/latest/reference/fixtures.html#conftest-py-sharing-fixtures-across-multiple-files
 """
 
+from __future__ import annotations
+
 import pytest
 
 from edgegraph.structure import Universe, Vertex, DirectedEdge
