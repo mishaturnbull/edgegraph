@@ -299,8 +299,7 @@ def test_base_obj_init_universes_generator():
         unis.append(universe.Universe())
 
     def gen():
-        for u in unis:
-            yield u
+        yield from unis
     bo = base.BaseObject(universes=gen())
 
     # sets are unordered, can't just compare to a list

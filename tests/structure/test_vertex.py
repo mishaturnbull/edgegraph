@@ -92,8 +92,7 @@ def test_vertex_create_with_generator():
         links.append(link.Link(_force_creation=True))
 
     def gen():
-        for l in links:
-            yield l
+        yield from links
     v4 = vertex.Vertex(links=gen())
     assert v4.links == tuple(links), "vertex .links did not equal expected!"
     assert isinstance(v4.links, tuple), "vertex links is not correct type!"
