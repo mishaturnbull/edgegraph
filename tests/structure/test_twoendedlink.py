@@ -6,9 +6,12 @@ Unit tests for structure.twoendedlink.TwoEndedLink class.
 """
 
 import pytest
-from edgegraph.structure import base, vertex, universe, link, twoendedlink
+from edgegraph.structure import vertex, link, twoendedlink
 
 def test_twoendlink_subclass():
+    """
+    Ensure that a TwoEndedLink looks like a Link and quacks like a Link.
+    """
     assert issubclass(twoendedlink.TwoEndedLink, link.Link), \
             "TwoEndedLink has wrong superclass!"
 
@@ -22,6 +25,9 @@ def test_twoendlink_subclass():
     assert e.fifteen == 15, "TwoEndedLink did not pass attributes to super!"
 
 def test_twoendlink_init_vertices():
+    """
+    Ensure TwoEndedLinks can be instantiated with vertices specified.
+    """
     v1 = vertex.Vertex()
     v2 = vertex.Vertex()
 
@@ -36,6 +42,9 @@ def test_twoendlink_init_vertices():
     assert f.v2 is None, "TwoEndedLink did not accept v2=None!"
 
 def test_twoendlink_init_vertices_wrong():
+    """
+    Ensure errors are raised when passing invalid objects into two-ended links.
+    """
     with pytest.raises(TypeError):
         twoendedlink.TwoEndedLink(object(), vertex.Vertex())
 
@@ -46,6 +55,9 @@ def test_twoendlink_init_vertices_wrong():
         twoendedlink.TwoEndedLink(object(), object())
 
 def test_twoendedlink_other():
+    """
+    Ensure the other() method works as expected.
+    """
     v1 = vertex.Vertex()
     v2 = vertex.Vertex()
     v3 = vertex.Vertex()

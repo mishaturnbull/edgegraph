@@ -5,10 +5,18 @@
 Unit tests for structure.vertex.Vertex class.
 """
 
-import pytest
 from edgegraph.structure import base, vertex, universe, link
 
+# W0212 is protected-access, or, access to a protected member (starting with a
+# _) of a client class.  In this case, the test objectives require we inspect
+# internal state of the objects, so we need to read these attributes.
+# pylint: disable=W0212
+
 def test_vertex_subclass():
+    """
+    Ensure Vertex trees up to correct subclass and attributes are operating
+    correctly.
+    """
     assert issubclass(vertex.Vertex, base.BaseObject)
 
     unis = [universe.Universe(), universe.Universe()]
@@ -27,14 +35,20 @@ def test_vertex_subclass():
     assert dir(v) == ['fifteen']
 
 def test_vertex_creation():
+    """
+    Ensure we can create Vertices with default options.
+    """
     v = vertex.Vertex()
 
     assert len(v.links) == 0, "vertex init'd with links!!"
     assert len(dir(v)) == 0, "vertex init'd with attributes!!"
 
 def test_vertex_create_with_links():
+    """
+    Ensure we can create vertices with base Link objects in a list.
+    """
     links = []
-    for i in range(3):
+    for _ in range(3):
         links.append(link.Link(_force_creation=True))
 
     v1 = vertex.Vertex(links=links)
@@ -42,8 +56,11 @@ def test_vertex_create_with_links():
     assert v1.links == tuple(links), "vertex did not return tuple of links!"
 
 def test_vertex_create_with_links_set():
+    """
+    Ensure we can create vertices with base Link objects in a set.
+    """
     links = set()
-    for i in range(3):
+    for _ in range(3):
         links.add(link.Link(_force_creation=True))
 
     v2 = vertex.Vertex(links=links)
@@ -54,8 +71,11 @@ def test_vertex_create_with_links_set():
     assert isinstance(v2.links, tuple), "vertex links is not correct type!"
 
 def test_vertex_create_with_tuple():
+    """
+    Ensure we can create vertices with base Link objects in a tuple.
+    """
     links = []
-    for i in range(3):
+    for _ in range(3):
         links.append(link.Link(_force_creation=True))
     links = tuple(links)
 
@@ -64,22 +84,27 @@ def test_vertex_create_with_tuple():
     assert isinstance(v3.links, tuple), "vertex links is not correct type!"
 
 def test_vertex_create_with_generator():
+    """
+    Ensure we can create vertices with base Link objects in a genexpr.
+    """
     links = []
-    for i in range(3):
+    for _ in range(3):
         links.append(link.Link(_force_creation=True))
 
     def gen():
-        for l in links:
-            yield l
+        yield from links
     v4 = vertex.Vertex(links=gen())
     assert v4.links == tuple(links), "vertex .links did not equal expected!"
     assert isinstance(v4.links, tuple), "vertex links is not correct type!"
 
 def test_vert_add_to_uni():
+    """
+    Ensure we can add a Vertex to multiple universes.
+    """
     v = vertex.Vertex()
 
     unis = []
-    for i in range(50):
+    for _ in range(50):
         unis.append(universe.Universe())
         v.add_to_universe(unis[-1])
 

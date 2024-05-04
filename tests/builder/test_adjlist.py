@@ -5,19 +5,20 @@
 Unit tests for structure.twoendedlink.TwoEndedLink class.
 """
 
-import pytest
-from edgegraph.structure import (Vertex, TwoEndedLink, DirectedEdge,
-        UnDirectedEdge)
+from edgegraph.structure import Vertex, DirectedEdge, UnDirectedEdge
 from edgegraph.builder import adjlist
 
 def test_adjlist_edgetype():
+    """
+    Ensure the adjacency list builder respects edge types.
+    """
     vs = [Vertex(), Vertex(), Vertex()]
     adj = {
             vs[0]: [vs[1]],
             vs[1]: [vs[2]],
         }
-    
-    uni = adjlist.load_adj_dict(adj, DirectedEdge)
+
+    adjlist.load_adj_dict(adj, DirectedEdge)
 
     l0to1 = vs[0].links[0]
     l1to2 = vs[2].links[0]
@@ -27,7 +28,7 @@ def test_adjlist_edgetype():
     assert isinstance(l1to2, DirectedEdge), \
             "load_adj_dict used wrong edge type!"
 
-def test_adjlist_build_case01():
+def test_adjlist_build_clrs09_22_1():
     """
     This graph is taken from [CLRS09]_, figure 22.1.
 
@@ -48,7 +49,7 @@ def test_adjlist_build_case01():
        v3 -- v4
     """
     v = []
-    for i in range(5):
+    for _ in range(5):
         v.append(Vertex())
 
     adj = {

@@ -6,9 +6,12 @@ Unit tests for structure.directededge.DirectedEdge class.
 """
 
 import pytest
-from edgegraph.structure import base, vertex, universe, link, directededge
+from edgegraph.structure import vertex, link, directededge
 
 def test_diedge_subclass():
+    """
+    Ensure the DirectedEdge class trees up to the correct superclass.
+    """
     assert issubclass(directededge.DirectedEdge, link.Link), \
             "DirectedEdge has wrong superclass!"
 
@@ -22,6 +25,9 @@ def test_diedge_subclass():
     assert e.fifteen == 15, "DirectedEdge did not pass attributes to super!"
 
 def test_diedge_init_vertices():
+    """
+    Ensure DirectedEdge can be instantiated with vertices.
+    """
     v1 = vertex.Vertex()
     v2 = vertex.Vertex()
 
@@ -36,6 +42,9 @@ def test_diedge_init_vertices():
     assert f.v2 is None, "DirectedEdge did not accept v2=None!"
 
 def test_diedge_init_vertices_wrong():
+    """
+    Ensure errors are raised if invalid objects are passed to the DirectedEdge.
+    """
     # hand it the vertex type itself -- type(Vertex) should be `type`
     with pytest.raises(TypeError):
         directededge.DirectedEdge(v1=vertex.Vertex)

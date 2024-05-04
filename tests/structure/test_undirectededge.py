@@ -6,9 +6,12 @@ Unit tests for structure.undirectededge.UnDirectedEdge class.
 """
 
 import pytest
-from edgegraph.structure import base, vertex, universe, link, undirectededge
+from edgegraph.structure import vertex, link, undirectededge
 
 def test_undiedge_subclass():
+    """
+    Ensure UnDirectedEdge trees up to the correct superclass.
+    """
     assert issubclass(undirectededge.UnDirectedEdge, link.Link), \
             "UnDirectedEdge has wrong superclass!"
 
@@ -22,6 +25,9 @@ def test_undiedge_subclass():
     assert e.fifteen == 15, "UnDirectedEdge did not pass attributes to super!"
 
 def test_undiedge_init_vertices():
+    """
+    Ensure UnDirectedEdge can be instantiated with vertices given.
+    """
     v1 = vertex.Vertex()
     v2 = vertex.Vertex()
 
@@ -36,6 +42,10 @@ def test_undiedge_init_vertices():
     assert f.v2 is None, "UnDirectedEdge did not accept v2=None!"
 
 def test_undiedge_init_vertices_wrong():
+    """
+    Ensure UnDirectedEdge raises errors when given invalid objects for
+    vertices.
+    """
     with pytest.raises(TypeError):
         undirectededge.UnDirectedEdge(object(), vertex.Vertex())
 

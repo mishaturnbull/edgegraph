@@ -5,12 +5,14 @@
 Unit tests for structure.twoendedlink.TwoEndedLink class.
 """
 
-import pytest
 from edgegraph.structure import (Vertex, TwoEndedLink, DirectedEdge,
         UnDirectedEdge)
 from edgegraph.builder import explicit
 
 def test_link_basecls():
+    """
+    Ensure the base class TwoEndedLink is behaving correctly.
+    """
     v1 = Vertex()
     v2 = Vertex()
 
@@ -36,6 +38,9 @@ def test_link_basecls():
     assert v2.links[0] is lnk, "link_from_to binding to v2 is wrong!"
 
 def test_link_directed():
+    """
+    Ensure the link_directed() shortcut function creates the right link type.
+    """
     v1 = Vertex()
     v2 = Vertex()
 
@@ -48,6 +53,9 @@ def test_link_directed():
     assert isinstance(lnk, DirectedEdge)
 
 def test_link_undirected():
+    """
+    Ensure the unlink_directed() shortcut function creates the right link type.
+    """
     v1 = Vertex()
     v2 = Vertex()
 

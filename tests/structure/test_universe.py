@@ -5,10 +5,12 @@
 Unit tests for Universe object.
 """
 
-import pytest
-from edgegraph.structure import base, vertex, universe
+from edgegraph.structure import vertex, universe
 
 def test_universe_subclass():
+    """
+    Ensure Universe trees up to correct subclass.
+    """
     assert issubclass(universe.Universe, vertex.Vertex), \
             "Universe has wrong superclass!"
 
@@ -23,11 +25,14 @@ def test_universe_subclass():
             "Universe attributes were not taken from __init__"
 
 def test_universe_vertex_add():
+    """
+    Ensure we can add a vertex to a universe.
+    """
     u = universe.Universe()
     vs = []
     for i in range(5):
         vs.append(vertex.Vertex(attributes={i: i}))
-    
+
     u.add_vertex(vs[0])
     u.add_vertex(vs[1])
     u.add_vertex(vs[0])
@@ -48,8 +53,11 @@ def test_universe_vertex_add():
             "universes.add_vertex did not set u in vertex.universes"
 
 def test_universe_vertex_init():
+    """
+    Ensure we can pass vertices into a Universe instantiation.
+    """
     vs = []
-    for i in range(100):
+    for _ in range(100):
         vs.append(vertex.Vertex())
 
     u = universe.Universe(vertices=vs)
@@ -63,6 +71,9 @@ def test_universe_vertex_init():
                 "universe(vertices=...) did not back-ref to vertices.universes"
 
 def test_universe_laws_updating():
+    """
+    Ensure universe laws update bindings to the correct universe.
+    """
     l1 = universe.UniverseLaws(cycles=True)
     l2 = universe.UniverseLaws(cycles=False)
 

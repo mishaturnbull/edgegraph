@@ -31,7 +31,7 @@ jobs:
       run: |
         # pylintrc equivalent (in pyproject.toml) takes care of the options
         # here, no need to cli-flag everything
-        pylint --exit-zero edgegraph
+        pylint --exit-zero edgegraph tests
     - name: Run unit tests
       run: |
         # this does generate the code coverage report.  however, pytest-cov
@@ -42,8 +42,10 @@ jobs:
         # we also collect the longest handful of unit test durations here --
         # mainly for trend detection, to see if "oh hey, this particular test
         # is always slow".  nothing is programmatically using the data, at
-        # least, yet.
-        pytest --cov=edgegraph --cov-branch --durations=0
+        # least, yet.  but, don't run the marked-as-slow stress tests here to
+        # avoid taking up too much time on the runner (of concern due to
+        # GitHub's pricing)
+        pytest --cov=edgegraph --cov-branch --durations=0 -m "not slow"
     - name: Check unit test coverage
       run: |
         # fail-under option causes a nonzero exit

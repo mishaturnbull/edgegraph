@@ -6,10 +6,17 @@ Unit tests for linking vertices to vertices, specifically created in the
 __init__ methods of both classes.
 """
 
-import pytest
 from edgegraph.structure import vertex, link
 
+# W0212 (protected-access) is about accessing protected members (those starting
+# with _) of a client class.  This is performed quite a lot in this test suite,
+# as it is necessary to complete test objectives.
+# pylint: disable=W0212
+
 def test_create_link_with_verts():
+    """
+    Ensure creating a link with vertex arguments works correctly.
+    """
     v1 = vertex.Vertex()
     v2 = vertex.Vertex()
 
@@ -24,6 +31,9 @@ def test_create_link_with_verts():
             "Link did not bind to vertex during __init__!"
 
 def test_create_vert_with_links():
+    """
+    Ensure creating a vertex with link arguments works correctly.
+    """
     l1 = link.Link(_force_creation=True)
     l2 = link.Link(_force_creation=True)
 
@@ -38,6 +48,10 @@ def test_create_vert_with_links():
             "Vertex did not bind to link during __init__!"
 
 def test_create_link_with_vert_then_add():
+    """
+    Ensure that we can still add vertices to a link after instantiation, and it
+    doesn't break anything else.
+    """
     v1 = vertex.Vertex()
     v2 = vertex.Vertex()
     v3 = vertex.Vertex()
@@ -56,6 +70,10 @@ def test_create_link_with_vert_then_add():
             "Link did not bind to vertex after __init__!"
 
 def test_create_vert_with_link_then_add():
+    """
+    Ensure that we can still add links to a vertex after instantiation, and it
+    doesn't break anything else.
+    """
     l1 = link.Link(_force_creation=True)
     l2 = link.Link(_force_creation=True)
     l3 = link.Link(_force_creation=True)
