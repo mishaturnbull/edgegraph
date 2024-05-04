@@ -206,3 +206,24 @@ def test_dfs_finds_first_vertex(graph_clrs09_22_6, func):
         search = func(uni, vert, 'i', vert.i)
         assert search is vert, f"{func} did not identify the starting vertex!"
 
+###############################################################################
+# stress testing
+
+stress_combo = [
+        (depthfirst.dft_recursive, dftr_data[0][1]),
+        (depthfirst.dft_iterative, dfti_data[0][1]),
+        ]
+
+@pytest.mark.slow
+@pytest.mark.parametrize("combo", stress_combo)
+def test_dft_stress(graph_clrs09_22_6, combo):
+    """
+    Depth-first traversal stress testing.
+    """
+    uni, verts = graph_clrs09_22_6
+    func, answer = combo
+    for _ in range(10000):
+        trav = func(uni, verts[0])
+        assert [v.i for v in trav] == answer, \
+                "Depth-first traversal gave wrong answer in stress test!"
+

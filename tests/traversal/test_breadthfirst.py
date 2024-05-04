@@ -137,3 +137,17 @@ def test_bft_trav_out_of_uni(graph_clrs09_22_6):
     vals = [v.i for v in trav]
     assert -1 not in vals, "BFT found an out-of-universe vert!"
 
+###############################################################################
+# stress testing
+
+@pytest.mark.slow
+def test_bft_stress(graph_clrs09_22_6):
+    """
+    Stress-test breadth first traversal.
+    """
+    uni, verts = graph_clrs09_22_6
+    for _ in range(10000):
+        trav = breadthfirst.bft(uni, verts[0])
+        assert [v.i for v in trav] == bft_data[0][1], \
+                "BFT traversal wrong in stress-test!"
+
