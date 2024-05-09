@@ -13,8 +13,9 @@ structure printed to the console, and the universe is available as the
 """
 
 import code
+import random
 
-from edgegraph.builder import randgraph
+from edgegraph.builder import randgraph, explicit
 from edgegraph.output import plaintext, plantuml as pu, pyvis
 
 def main():
@@ -22,10 +23,16 @@ def main():
     Main routine.
     """
     graph = randgraph.randgraph(count=100)
+    n1 = random.choice(list(graph.vertices))
+    n2 = random.choice(list(graph.vertices))
+    explicit.link_undirected(n1, n2)
+
     print(plaintext.basic_render(graph, rfunc=lambda v: v.i, sort=lambda v: v.i))
 
     with open('out2.puml', 'w', encoding='utf-8') as wfp:
         wfp.write(pu.render_to_plantuml_src(graph, pu.PLANTUML_RENDER_OPTIONS))
+
+    pvn = pyvis.pyvis_render_customizable(graph, rfunc=lambda v: str(v.i))
 
     code.interact(local={**locals(), **globals()})
 

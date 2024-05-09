@@ -21,7 +21,7 @@ except ImportError as exc:
             "EdgeGraph's PyVis interactions."
     raise ImportError(msg) from exc
 
-from edgegraph.structure import Universe
+from edgegraph.structure import Universe, DirectedEdge
 from edgegraph.traversal import helpers
 
 def basic_pyvis(uni: Universe,
@@ -41,9 +41,22 @@ def basic_pyvis(uni: Universe,
             net.add_node(i, label=hex(id(vert)))
 
     for i, vert in enumerate(verts):
-        nbs = helpers.neighbors(vert)
-        for nb in nbs:
-            j = verts.index(nb)
+        for edge in vert.links:
+
+            # only draw arrows when we're at the *from* node
+            if vert is not edge.v1:
+                continue
+
+            j = verts.index(edge.other(vert))
+
+            # pyvis doesn't directly offer an argument in the add_edge() method
+            # to specify if the arrow is directed or not.  rather, its edge
+            # class is instantiated internally using the net.directed (as it
+            # would know, self.directed) attribute.  therefore, by toggling
+            # that attribute just before we create the edge, we can control the
+            # directed-ness of the edge
+            net.directed = issubclass(type(edge), DirectedEdge)
+
             net.add_edge(i, j)
 
     return net
