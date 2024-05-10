@@ -29,7 +29,7 @@ def main():
 
     print(plaintext.basic_render(graph, rfunc=lambda v: v.i, sort=lambda v: v.i))
 
-    with open('out2.puml', 'w', encoding='utf-8') as wfp:
+    with open('out.puml', 'w', encoding='utf-8') as wfp:
         wfp.write(pu.render_to_plantuml_src(graph, pu.PLANTUML_RENDER_OPTIONS))
 
     pvn = pyvis.pyvis_render_customizable(graph, rfunc=lambda v: str(v.i))

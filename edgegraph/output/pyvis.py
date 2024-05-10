@@ -17,15 +17,17 @@ try:
 
 except ImportError as exc:
 
+    import sys
     msg = "It appears pyvis is not installed.  Please install it before using" \
-            "EdgeGraph's PyVis interactions."
+            f" EdgeGraph's PyVis interactions.\n\n\t{sys.executable} -m pip " \
+            "install pyvis\n\n"
     raise ImportError(msg) from exc
 
 from edgegraph.structure import Universe, DirectedEdge
-from edgegraph.traversal import helpers
 
-def basic_pyvis(uni: Universe,
-        rfunc: Callable=None):
+def make_pyvis_net(uni: Universe,
+        rvfunc: Callable=None,
+        refunc: Callable=None):
     """
     .. todo::
 
@@ -35,8 +37,8 @@ def basic_pyvis(uni: Universe,
     net = network.Network()
     verts = list(uni.vertices)
     for i, vert in enumerate(verts):
-        if rfunc:
-            net.add_node(i, label=rfunc(vert))
+        if rvfunc:
+            net.add_node(i, label=rvfunc(vert))
         else:
             net.add_node(i, label=hex(id(vert)))
 
@@ -57,12 +59,16 @@ def basic_pyvis(uni: Universe,
             # directed-ness of the edge
             net.directed = issubclass(type(edge), DirectedEdge)
 
-            net.add_edge(i, j)
+            if refunc:
+                net.add_edge(i, j, title=refunc(edge))
+            else:
+                net.add_edge(i, j)
 
     return net
 
 def pyvis_render_customizable(uni: Universe,
-        rfunc: Callable=None,
+        rvfunc: Callable=None,
+        refunc: Callable=None,
         show_buttons_filter_=None,
         ):
     """
@@ -70,7 +76,7 @@ def pyvis_render_customizable(uni: Universe,
 
        Document this
     """
-    net = basic_pyvis(uni, rfunc)
+    net = make_pyvis_net(uni, rvfunc, refunc)
     net.show_buttons(filter_=None or show_buttons_filter_)
     return net
 

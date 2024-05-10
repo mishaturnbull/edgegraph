@@ -21,3 +21,10 @@ TODO.md
 dist/
 edgegraph.egg-info/
 
+# interactive test outputs
+out.puml
+out.png
+
+# pyvis JS library
+lib/
+
