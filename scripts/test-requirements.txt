@@ -2,4 +2,5 @@ pylint
 pytest
 coverage
 pytest-cov
+pyvis
 
