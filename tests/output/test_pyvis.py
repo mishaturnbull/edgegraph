@@ -56,6 +56,9 @@ def test_pyvis_makes_net(graph_clrs09_22_6):
         assert v2 in helpers.neighbors(v1)
 
 def test_pyvis_customizable(graph_clrs09_22_6):
+    """
+    Ensure that UI customizability can be enabled.
+    """
     uni, _ = graph_clrs09_22_6
 
     pvn = pyvis.make_pyvis_net(uni,
