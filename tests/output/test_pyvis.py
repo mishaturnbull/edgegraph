@@ -25,7 +25,7 @@ def test_pyvis_makes_net(graph_clrs09_22_6):
     Ensure the PyVis network creation is working.
     """
     uni, verts = graph_clrs09_22_6
-    nodes_expected = set([str(v.i) for v in verts])
+    nodes_expected = {str(v.i) for v in verts}
 
     pvn = pyvis.make_pyvis_net(uni,
             rvfunc=lambda v: str(v.i),

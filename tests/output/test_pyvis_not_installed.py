@@ -11,6 +11,13 @@ import importlib
 import logging
 import pytest
 
+# this test module does a few unorthodox imports -- but, that's the point of
+# this single test isolated in its own module.  we don't want the "gonna break
+# everything" test to, well, break everything *else*
+# C0415 = Import outside toplevel
+# W0611 = Unused import
+# pylint: disable=C0415, W0611
+
 LOG = logging.getLogger(__name__)
 
 def test_pyvis_not_installed(monkeypatch):
@@ -24,7 +31,7 @@ def test_pyvis_not_installed(monkeypatch):
     LOG.info(f"Adding {badmods} to sys.path (prepend): {sys.path}")
     monkeypatch.syspath_prepend(badmods)
 
-    LOG.debug(f"Flushing package caches...")
+    LOG.debug("Flushing package caches...")
     for mod in list(sys.modules.keys()):
         if mod.startswith('pyvis') or mod.startswith('edgegraph'):
             LOG.debug(f"Deleting {mod} from sys.modules")
