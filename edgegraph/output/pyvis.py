@@ -24,12 +24,7 @@ try:
 
     from pyvis import network
 
-# TODO: figure out how to unittest & code-cover this block
-# googling for "pytest" and "importerror" in the same search is basically
-# useless for this purpose... something with pytest's
-# monkeypatch.syspath_prepend may help?  but couldn't figure out how to unload
-# and reload the module to trigger this from within a unittest
-except ImportError as exc:  # pragma: no cover
+except ImportError as exc:
 
     import sys
     msg = "It appears pyvis is not installed.  Please install it before using" \
