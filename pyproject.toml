@@ -11,7 +11,7 @@ readme = "README.md"
 license = {file = "LICENSE.txt"}
 description = "Object oriented edge-vertex graph library."
 classifiers = [
-	"Development Status :: 2 - Pre-Alpha",
+    "Development Status :: 2 - Pre-Alpha",
 ]
 
 [project.urls]
@@ -55,7 +55,7 @@ markers = [
 ]
 addopts = "-ra --durations=5"
 log_cli = false
-log_cli_level = "INFO"
+log_cli_level = "DEBUG"
 log_cli_format = "%(asctime)s [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)"
 log_cli_date_format = "%Y-%m-%d %H:%M:%S"
 
