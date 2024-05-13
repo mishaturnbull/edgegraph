@@ -15,6 +15,25 @@ and edges can be individually labelled, colors, sizes, and weights can be
 applied, and the physics model can be optionally be changed via the UI's
 customizations.  See `PyVis`_'s documentation for more information, and demos.
 
+Generally, the usage pattern for this module is intended to be as:
+
+.. code-block:: python
+   :linenos:
+
+   from edgegraph.builder import randgraph
+   from edgegraph.output import pyvis
+
+   uni = randgraph.randgraph()
+
+   if you_want_customizable_ui:
+       pvn = pyvis.pyvis_render_customizable(uni, rvfunc=lambda v: str(v.i))
+   else:
+       pvn = pyvis.make_pyvis_net(uni, rvfunc=lambda v: str(v.i))
+
+   # notebook=False for usage outside of a Jupyter notebook.  this call will
+   # block as the web browser opens to show the HTML file
+   pvn.show("example.html", notebook=False)
+
 .. _PyVis: https://pyvis.readthedocs.io/en/latest/index.html
 """
 
@@ -117,12 +136,10 @@ def pyvis_render_customizable(uni: Universe,
        This function is *very* similar to :py:func:`make_pyvis_net`.  In fact,
        3 out of the 4 arguments given here are passed directly through to it.
 
-    This function accepts a :py:class:`~edgegraph.structure.universe.Universe`
-    object to a :py:class:`pyvis.network.Network` object.  The Network object
-    will have all the nodes (edgegraph calls them "vertices", pyvis calls them
-    "nodes", same abstract thing) from the given Universe, and all the edges
-    between them.  Directionality of the edges assigned to the Network reflects
-    their directionality in the Universe.
+    In addition to the network created by :py:func:`make_pyvis_net`, this
+    function sets a flag that displays real-time adjustable options to the
+    viewer of the graph.  This can include sliders to control node physics,
+    colors, label visiblity, selection, and more.
 
     :param uni: The universe to use as input.
     :param rvfunc: A callable object to provide the label for any given vertex
@@ -138,9 +155,23 @@ def pyvis_render_customizable(uni: Universe,
        thereof), and must return a :py:class:`str`.  If not provided, edges
        will not be labelled.
     :param show_buttons_filter_: Sets the widgets that will be available in the
-       customization UI displayed by Pyvis.  See also
-       :py:meth:`pyvis.network.Network.show_buttons`.  May be a list of
-       strings, :py:obj:`True` or :py:obj:`None` to display all.
+       customization UI displayed by Pyvis.  May be a list of strings,
+       :py:obj:`True` or :py:obj:`None` to display all.
+
+       .. seealso::
+
+          :py:meth:`pyvis.network.Network.show_buttons`, which includes a list
+          of options passable to ``show_buttons_filter_``.
+
+       .. warning::
+
+          The name of this argument includes a trailing underscore --
+          ``show_buttons_filter_``.  Sphinx is removing it in this field list.
+          I'm not sure why.
+
+          .. todo::
+
+             Fix this!!
     :return: A :py:class:`pyvis.network.Network` instance containing the data
        found in the given universe.
     """
