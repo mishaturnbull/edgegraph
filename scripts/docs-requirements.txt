@@ -5,4 +5,5 @@ myst-parser
 tomlkit
 pylint
 pytest
+pyvis
 

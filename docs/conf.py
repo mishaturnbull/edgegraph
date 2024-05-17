@@ -66,6 +66,7 @@ rst_prolog = """
 
 intersphinx_mapping = {
         'python': ('https://docs.python.org/3', None),
+        'pyvis': ('https://pyvis.readthedocs.io/en/latest', None),
         }
 intersphinx_timeout = 10  # seconds
 
