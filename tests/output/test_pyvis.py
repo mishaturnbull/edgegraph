@@ -34,7 +34,7 @@ def test_pyvis_makes_net(graph_clrs09_22_6):
     nodes_present = pvn.get_nodes()
     nodes_found = set()
     for nodei in nodes_present:
-        LOG.info(f"TPMN iloop: {nodei=}\t{pvn.get_node(nodei)=}")
+        LOG.info(f"TPMN iloop: nodei={nodei}, pvn={pvn.get_node(nodei)}")
         node = pvn.get_node(nodei)
         nodes_found.add(node['label'])
 
