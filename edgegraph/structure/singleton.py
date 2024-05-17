@@ -64,16 +64,16 @@ def semi_singleton_metaclass(hashfunc=None):
     # by default, use a hash function to serialize all arguments
     if hashfunc is None:
 
-        def hashfunc(t):
-            kwargs = json.dumps(t[1], sort_keys=True)
-            return hash((t[0], kwargs))
+        def hashfunc(args, kwargs):
+            kwargs = json.dumps(kwargs, sort_keys=True)
+            return hash((args, kwargs))
 
     class _SemiSingleton(type):
 
         __semisingleton_instance_map = {}
 
         def __call__(cls, *args, **kwargs):
-            key = hashfunc((args, kwargs))
+            key = hashfunc(args, kwargs)
             if key not in cls.__semisingleton_instance_map:
                 cls.__semisingleton_instance_map[key] = \
                         super(_SemiSingleton, cls).__call__(*args, **kwargs)

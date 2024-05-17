@@ -1,0 +1,244 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+
+"""
+Unit tests for structure.singleton metaclasses.
+
+This'll be fun!!
+"""
+
+import pytest
+
+from edgegraph.structure import singleton
+
+def test_true_singleton_smoketest():
+    """
+    Quick it's-still-in-dev smoketest for true singletons.
+    """
+
+    class Counter(object):
+        a = 0
+        b = 0
+
+    class A(object):
+        def __init__(self, *args):
+            Counter.a += 1
+
+    class B(metaclass=singleton.TrueSingleton):
+        def __init__(self, *args):
+            Counter.b += 1
+
+    a1 = A()
+    a2 = A()
+
+    assert a1 is not a2, "Regular objects are returning the same instance!!"
+    assert Counter.a == 2, "Regular objects not calling __init__!"
+
+    b1 = B()
+    b2 = B()
+
+    assert b1 is b2, "TrueSingleton didn't work!"
+    assert Counter.b == 1, "TrueSingleton re-called __init__!"
+
+def test_semi_singleton_smoketest():
+    """
+    Quick it's-still-in-dev smoketest for semisingletons.
+    """
+    class Counter(object):
+        c = 0
+
+    class C(metaclass=singleton.semi_singleton_metaclass()):
+        def __init__(self, *args, **kwargs):
+            self.args = args
+            self.kwargs = kwargs
+            Counter.c += 1
+
+    c1 = C()
+    c2 = C()
+
+    assert c1 is c2, "SemiSingleton failed with zero args!"
+    assert Counter.c == 1, "SemiSingleton re-called __init__!"
+
+    Counter.c = 0
+    c3 = C(1, 2, 3)
+    c4 = C(1, 2, 3)
+    c5 = C(3, 2, 1)
+
+    assert c3 is c4, "SemiSingleton failed with *args!"
+    assert c4 is not c5, "SemiSingleton failed with re-ordered *args!"
+    assert Counter.c == 2, "SemiSingleton called init wrong # of times!"
+
+    Counter.c = 0
+    c6 = C(i=4, j=5)
+    c7 = C(j=5, i=4)
+    c8 = C(i=5, j=4)
+    
+    assert c6 is c7, "SemiSingleton failed with **kwargs (order)!"
+    assert c7 is not c8, "SemiSingleton failed with different kwargs!"
+    assert Counter.c == 2, "SemiSingleton called init wrong # of times!"
+
+def test_true_singleton_arg_patterns():
+    """
+    Exercise TrueSingleton's response to class argument patterns.
+    """
+
+    class NoArgs(metaclass=singleton.TrueSingleton):
+        def __init__(self):
+            pass
+
+    class PosArgs(metaclass=singleton.TrueSingleton):
+        def __init__(self, *args):
+            self.args = args
+
+    class KwArgs(metaclass=singleton.TrueSingleton):
+        def __init__(self, **kwargs):
+            self.kwargs = kwargs
+
+    class BothArgs(metaclass=singleton.TrueSingleton):
+        def __init__(self, *args, **kwargs):
+            self.args = args
+            self.kwargs = kwargs
+
+    n1 = NoArgs()
+    n2 = NoArgs()
+    assert n1 is n2, "TrueSingleton failed no-args"
+
+    p1 = PosArgs(1, 2, 3, 4, 5)
+    p2 = PosArgs(5, 4, 3, 2, 1, 8, 2, 17)
+    assert p1 is p2, "TrueSingleton reassigned with new args"
+    assert p2.args == (1, 2, 3, 4, 5), "TrueSingleton re-assigned arguments"
+
+    k1 = KwArgs(i=1, j=2)
+    k2 = KwArgs(i=17, j=-1, t=True)
+    assert k1 is k2, "TrueSingleton reassigned with new kwargs"
+    assert k2.kwargs == {'i': 1, 'j': 2}, "TrueSingleton re-assigned arguments"
+
+    b1 = BothArgs(1, 2, i=1)
+    b2 = BothArgs(4, 5, j=3)
+    assert b1 is b2, "TrueSingleton reassigned with new args"
+    assert b2.args == (1, 2), "TrueSingleton re-assigned arguments"
+    assert b2.kwargs == {'i': 1}, "TrueSingleton re-assigned kwargs"
+
+def test_semi_singleton_noarg_default_hashfunc():
+    """
+    Exercise semi-singleton's response to no-argument classes using default
+    hashfunc.
+    """
+
+    class NoArgs(metaclass=singleton.semi_singleton_metaclass()):
+        def __init__(self):
+            pass
+
+    n1 = NoArgs()
+    n2 = NoArgs()
+    assert n1 is n2, "SemiSingleton failed no-args"
+
+def test_semi_singleton_args_pattern_default_hashfunc():
+    """
+    Exercise semi-singleton's response to ``*args`` pattern using default
+    hashfunc.
+    """
+
+    class PosArgs(metaclass=singleton.semi_singleton_metaclass()):
+        def __init__(self, *args):
+            self.args = args
+
+    p1 = PosArgs(1)
+    p2 = PosArgs(1)
+    p3 = PosArgs(2)
+    p4 = PosArgs(1, 2, 3)
+    p5 = PosArgs(1, 2, 3)
+    p6 = PosArgs(3, 2, 1)
+    assert p1 is p2, "SemiSingleton failed same pos-arg"
+    assert p2 is not p3, "SemiSingleton failed different pos-arg"
+    assert p4 is p5, "SemiSingleton failed same multiple pos-arg"
+    assert p5 is not p6, "SemiSingleton failed different multiple pos-arg"
+
+def test_semi_singleton_kwargs_patterns_default_hashfunc():
+    """
+    Exercise semi-singleton's response to ``**kwargs`` pattern using default
+    hashfunc.
+    """
+
+    class KwArgs(metaclass=singleton.semi_singleton_metaclass()):
+        def __init__(self, **kwargs):
+            self.kwargs = kwargs
+
+    k1 = KwArgs(i=1)
+    k2 = KwArgs(i=1)
+    k3 = KwArgs(i=2)
+    k4 = KwArgs(i=3, j=4)
+    k5 = KwArgs(j=4, i=3)
+    k6 = KwArgs(i=4, j=3)
+    assert k1 is k2, "SemiSingleton failed same kw-arg"
+    assert k2 is not k3, "SemiSingleton failed different kw-arg"
+    assert k4 is k5, "SemiSingleton failed same (reordered) kw-arg"
+    assert k5 is not k6, "SemiSingleton failed different kw-arg"
+
+def test_semi_singleton_bothargs_patterns_default_hashfunc():
+    """
+    Exercise semi-singleton's response to ``*args, **kwargs`` pattern using
+    default hashfunc.
+    """
+
+    class BothArgs(metaclass=singleton.semi_singleton_metaclass()):
+        def __init__(self, *args, **kwargs):
+            self.args = args
+            self.kwargs = kwargs
+
+    b1 = BothArgs(1, 2, i=3)
+    b2 = BothArgs(1, 2, i=3)
+    b3 = BothArgs(3, 4, i=3)
+    b4 = BothArgs(1, 2, i=4)
+    b5 = BothArgs(1, 2)
+    b6 = BothArgs(1, 2)
+    b7 = BothArgs(i=3)
+    b8 = BothArgs(i=3)
+    assert b1 is b2, "Failed same both-arg"
+    assert b2 is not b3, "Failed different both-arg"
+    assert b3 is not b4, "Failed different pos-arg"
+    assert b4 is not b5, "Failed missing kw-arg"
+    assert b5 is b6, "Failed same pos-arg"
+    assert b6 is not b7, "Failed pos- vs kw-arg"
+    assert b7 is b8, "Failed same kw-arg"
+
+def test_semi_singleton_custom_hashfunc():
+    """
+    Exercise usage of custom hashfuncs for semi-singleton identification.
+    """
+    def ign_kw(args, kwargs):
+        return hash(args)
+
+    class PosOnlyArgs(metaclass=singleton.semi_singleton_metaclass(ign_kw)):
+        def __init__(self, *args, **kwargs):
+            self.args = args
+            self.kwargs = kwargs
+
+    po1 = PosOnlyArgs(1, 2, 3)
+    po2 = PosOnlyArgs(1, 2, 3)
+    po3 = PosOnlyArgs(1, 2, 3, i=4, j=5)
+    po4 = PosOnlyArgs(1, 2, 3, i=512, j=False)
+    po5 = PosOnlyArgs(4, 5, 6, i=4, j=5)
+    po6 = PosOnlyArgs(4, 5, 6, i=512, j=False)
+    assert po1 is po2, "Failed same pos-arg"
+    assert po2 is po3, "Failed additional kw-arg"
+    assert po3 is po4, "Failed different kw-arg"
+    assert po4 is not po5, "Failed different pos-arg"
+    assert po5 is po6, "Failed different kw-arg"
+
+@pytest.mark.slow
+def test_true_singleton_access_stresstest():
+    """
+    Access a TrueSingleton object *a lot*.
+    """
+
+    class Singleton(metaclass=singleton.TrueSingleton):
+        pass
+
+    prev = None
+    for i in range(1000000):
+        s = Singleton()
+        if prev:
+            assert s is prev, f"Did not get the same object on iter {i}!"
+        prev = s
+
