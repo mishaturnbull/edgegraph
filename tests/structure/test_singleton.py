@@ -231,7 +231,6 @@ def test_true_singleton_access_stresstest():
     """
     Access a TrueSingleton object *a lot*.
     """
-
     class Singleton(metaclass=singleton.TrueSingleton):
         pass
 
@@ -241,4 +240,66 @@ def test_true_singleton_access_stresstest():
         if prev:
             assert s is prev, f"Did not get the same object on iter {i}!"
         prev = s
+
+@pytest.mark.slow
+def test_true_singleton_create_stresstest():
+    """
+    Create and access a TrueSingleton object *a lot*.
+    """
+    prev = None
+    for i in range(10000):
+
+        class Singleton(metaclass=singleton.TrueSingleton):
+            pass
+
+        s1 = Singleton()
+        s2 = Singleton()
+        assert s1 is s2, f"Failed singleton on iter {i}!"
+
+        if prev:
+            # this looks a little weird, that we're not getting the same
+            # singleton object every loop (after all, what else is the point of
+            # a singleton??).  it works, though, because we make *an entirely
+            # new class* every loop, not just an instance of it.
+            assert s1 is not prev, "Object not recreated after loop!"
+        prev = s1
+
+@pytest.mark.slow
+def test_semi_singleton_access_stresstest():
+    """
+    Access a semi-singleton *a lot*.
+    """
+    class SemiSingleton(metaclass=singleton.semi_singleton_metaclass()):
+        def __init__(self, *args):
+            self.args = args
+
+    prev = None
+    for i in range(1000000):
+        s = SemiSingleton(1, 2, 3)
+        if prev:
+            assert s is prev, f"Did not get the same object on iter {i}!"
+        prev = s
+
+@pytest.mark.slow
+def test_semi_singleton_create_stresstest():
+    """
+    Create and access a semi-singleton object *a lot*.
+    """
+    prev = None
+    for i in range(10000):
+
+        class SemiSingleton(metaclass=singleton.semi_singleton_metaclass()):
+            def __init__(self, *args):
+                self.args = args
+
+        s1 = SemiSingleton(1, 2, 3)
+        s2 = SemiSingleton(1, 2, 3)
+        assert s1 is s2, f"Failed semi-singleton on iter {i}!"
+
+        if prev:
+            # again, this looks a little weird -- but the same reason as the
+            # truesingleton version of this test; we make a new *class* every
+            # loop, not just an instance of it.
+            assert s1 is not prev, "Object not recreated after loop!"
+        prev = s1
 
