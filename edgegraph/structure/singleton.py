@@ -125,6 +125,21 @@ class TrueSingleton(type):
                     super(TrueSingleton, cls).__call__(*args, **kwargs)
         return cls.__singleton_instances[cls]
 
+def clear_true_singleton(cls=None):
+    """
+    Clears TrueSingleton cache for either a specified type, or all
+    TrueSingleton types.
+
+    .. todo::
+
+       document this!
+    """
+    if cls:
+        if cls in TrueSingleton._TrueSingleton__singleton_instances:
+            del TrueSingleton._TrueSingleton__singleton_instances[cls]
+
+    else:
+        TrueSingleton._TrueSingleton__singleton_instances = {}
 
 # what this function actually does isn't complex, in *theory*.  however,
 # metaclass hacking is some of the deeper black magic of Python -- so document
@@ -209,9 +224,9 @@ def semi_singleton_metaclass(hashfunc: Callable=None) -> type:
 
     .. note::
 
-       Python :py:class:`dict`\ s are not hashable data types; therefore,
-       special care must often be taken when hashing ``kwargs``.  The default
-       hashfunc uses :py:func:`json.dumps` to accomplish this, transforming
+       Python :py:class:`dict` is not a hashable data type; therefore, special
+       care must often be taken when hashing ``kwargs``.  The default hashfunc
+       uses :py:func:`json.dumps` to accomplish this, transforming
        (recursively) the dictionary into a string, which *is* hashable.  This
        has some side effects, though:
 
@@ -245,4 +260,16 @@ def semi_singleton_metaclass(hashfunc: Callable=None) -> type:
             return cls.__semisingleton_instance_map[key]
 
     return _SemiSingleton
+
+def get_all_semi_singleton_instances(cls):
+    """
+    Get all instances belonging to a given semi-singleton type.
+    """
+    yield from type(cls)._SemiSingleton__semisingleton_instance_map.values()
+
+def clear_semi_singleton(cls):
+    """
+    Clears a specified semi-singleton.
+    """
+    type(cls)._SemiSingleton__semisingleton_instance_map = {}
 

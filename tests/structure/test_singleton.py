@@ -303,3 +303,87 @@ def test_semi_singleton_create_stresstest():
             assert s1 is not prev, "Object not recreated after loop!"
         prev = s1
 
+def test_true_singleton_clear():
+    """
+    Ensure TrueSingletons can all be cleared.
+    """
+    class A(metaclass=singleton.TrueSingleton): pass
+    class B(metaclass=singleton.TrueSingleton): pass
+    class C(metaclass=singleton.TrueSingleton): pass
+
+    a1 = A()
+    b1 = B()
+    c1 = C()
+
+    singleton.clear_true_singleton()
+
+    a2 = A()
+    b2 = B()
+    c2 = C()
+
+    assert a1 is not a2, "Did not clear-all TrueSingletons"
+    assert b1 is not b2, "Did not clear-all TrueSingletons"
+    assert c1 is not c2, "Did not clear-all TrueSingletons"
+
+def test_true_singleton_clear_specific():
+    """
+    Ensure TrueSingletons can be cleared individually.
+    """
+    class A(metaclass=singleton.TrueSingleton): pass
+    class B(metaclass=singleton.TrueSingleton): pass
+    class C(metaclass=singleton.TrueSingleton): pass
+
+    a1 = A()
+    b1 = B()
+    c1 = C()
+
+    singleton.clear_true_singleton(B)
+
+    a2 = A()
+    b2 = B()
+    c2 = C()
+
+    assert a1 is a2, "Cleared all TrueSingletons instead of only B"
+    assert b1 is not b2, "Did not clear right TrueSingleton"
+    assert c1 is c2, "Cleared all TrueSingletons instead of only B"
+
+def test_semi_singleton_clear():
+    """
+    Ensure semi-singletons can be cleared.
+    """
+
+    class A(metaclass=singleton.semi_singleton_metaclass()): pass
+    class B(metaclass=singleton.semi_singleton_metaclass()): pass
+    class C(metaclass=singleton.semi_singleton_metaclass()): pass
+
+    a1 = A()
+    b1 = B()
+    c1 = C()
+
+    singleton.clear_semi_singleton(B)
+
+    a2 = A()
+    b2 = B()
+    c2 = C()
+
+    assert a1 is a2, "Cleared wrong semi-singleton type!"
+    assert b1 is not b2, "Did not clear semi-singleton!"
+    assert c1 is c2, "Cleared wrong semi-singleton type!"
+
+def test_semi_singleton_get():
+    """
+    Ensure we can get all the values of semi-singletons.
+    """
+    class SemiSingle(metaclass=singleton.semi_singleton_metaclass()):
+        def __init__(self, *args, **kwargs):
+            self.args = args
+            self.kwargs = kwargs
+
+    insts = [SemiSingle(i) for i in range(10)]
+
+    check = singleton.get_all_semi_singleton_instances(SemiSingle)
+
+    assert set(insts) == set(check), \
+            "Did not get expected semi-singleton insts!"
+
+
