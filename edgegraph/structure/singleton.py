@@ -248,7 +248,7 @@ def semi_singleton_metaclass(hashfunc: Callable=None) -> type:
     >>> s2 is s3
     False
 
-    Cuztomization of how arguments are understood to be "different" may be done
+    Customization of how arguments are understood to be "different" may be done
     via the ``hashfunc`` argument.  If provided, it must be a callable object:
 
     .. py:function:: hashfunc(args: tuple, kwargs: dict) -> Hashable:
