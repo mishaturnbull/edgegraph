@@ -11,6 +11,18 @@ import pytest
 
 from edgegraph.structure import singleton
 
+# this module is all about testing with classes.  the classes we define in this
+# file are never exposed to users of edgegraph, nor any of the edgegraph
+# module, therefore don't need:
+# * any use-case besides their sole existence,
+#   * sufficient public methods (R0903, too-few-public-methods)
+# * docstrings (C0115, missing-class-docstring),
+# * amazing formatting
+#   * class Something: pass  will be allowed (C0321, multiple-statements)
+#
+# therefore:
+# pylint: disable=R0903, C0115, C0321
+
 def test_true_singleton_smoketest():
     """
     Quick it's-still-in-dev smoketest for true singletons.
@@ -72,7 +84,7 @@ def test_semi_singleton_smoketest():
     c6 = C(i=4, j=5)
     c7 = C(j=5, i=4)
     c8 = C(i=5, j=4)
-    
+
     assert c6 is c7, "SemiSingleton failed with **kwargs (order)!"
     assert c7 is not c8, "SemiSingleton failed with different kwargs!"
     assert Counter.c == 2, "SemiSingleton called init wrong # of times!"
@@ -206,6 +218,10 @@ def test_semi_singleton_custom_hashfunc():
     """
     Exercise usage of custom hashfuncs for semi-singleton identification.
     """
+    # W0612 --> unused variable.  pylint complains that ign_kw is unused; it
+    #           most certainly is used.  not sure why this is flagged.
+    # W0613 --> unused argument.  necessary here for signature matching.
+    # pylint: disable-next=W0612, W0613
     def ign_kw(args, kwargs):
         return hash(args)
 
@@ -354,7 +370,7 @@ def test_true_singleton_clear_specific_not_present():
     class A(metaclass=singleton.TrueSingleton): pass
 
     singleton.clear_true_singleton(A)
-    
+
     a1 = A()
     a2 = A()
     assert a1 is a2, "Clearing empty singleton broke singletons!"

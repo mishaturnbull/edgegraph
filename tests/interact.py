@@ -18,22 +18,6 @@ import random
 from edgegraph.builder import randgraph, explicit
 from edgegraph.output import plaintext, plantuml as pu, pyvis
 
-from edgegraph.structure import singleton
-
-class A(object):
-    def __init__(self, *args):
-        print("in A.__init__")
-
-class B(metaclass=singleton.TrueSingleton):
-    def __init__(self, *args):
-        print("in B.__init__")
-
-class C(metaclass=singleton.semi_singleton_metaclass()):
-    def __init__(self, *args, **kwargs):
-        self.args = args
-        self.kwargs = kwargs
-        print("in C.__init__")
-
 def main():
     """
     Main routine.
