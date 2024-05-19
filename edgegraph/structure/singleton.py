@@ -5,9 +5,9 @@
 Provides metaclasses to assist creating singletons.
 
 This module contains helper metaclasses to ease creating custom subclasses of
-:py:class:`~edgegraph.structure.vertex.Vertex`.  It provides two helpers, one
-for creating a so-called "true singleton", and one for creating so-called
-"semi-singletons":
+:py:class:`~edgegraph.structure.vertex.Vertex`, or anything else you might want
+to singleton-ize.  It provides two helpers, one for creating a so-called "true
+singleton", and one for creating so-called "semi-singletons":
 
 * Global singleton: there can be *only one* instance of global singletons.  See
   :py:class:`TrueSingleton`.
@@ -125,14 +125,57 @@ class TrueSingleton(type):
                     super(TrueSingleton, cls).__call__(*args, **kwargs)
         return cls.__singleton_instances[cls]
 
-def clear_true_singleton(cls=None):
+def clear_true_singleton(cls: type=None) -> None:
     """
     Clears TrueSingleton cache for either a specified type, or all
     TrueSingleton types.
 
-    .. todo::
+    This operation is also sometimes referred to as "resetting" a singleton
+    data type.  It removes the reference to the single object that would
+    otherwise be returned.
 
-       document this!
+    After calling this function, the next instantiation attempt on the given
+    singleton type will result in an actual re-creation and instantiation of a
+    new object.  For example:
+
+    >>> from edgegraph.structure import singleton
+    >>> class S(metaclass=singleton.TrueSingleton): pass
+    >>> s1 = S()
+    >>> s2 = S()
+    >>> s1 is s2
+    True
+    >>> singleton.clear_true_singleton(S)
+    >>> s3 = S()
+    >>> s4 = S()
+    >>> s2 is s3
+    False
+    >>> s3 is s4
+    True
+
+    Note that this can also be used to clear *all* TrueSingleton objects by
+    leaving the ``cls`` parameter empty:
+
+    >>> from edgegraph.structure import singleton
+    >>> class S(metaclass=singleton.TrueSingleton): pass
+    >>> class S(metaclass=singleton.TrueSingleton): pass
+    >>> s1 = S()
+    >>> s2 = S()
+    >>> s1 is s2
+    True
+    >>> r1 = R()
+    >>> r2 = R()
+    >>> r1 is r2
+    True
+    >>> singleton.clear_true_singleton()  # no argument used here
+    >>> s3 = S()
+    >>> s2 is s3
+    False
+    >>> r3 = R()
+    >>> r2 is r3
+    False
+
+    :param cls: The data type to clear singleton references from.  If not
+       specified, clears all TrueSingleton types.
     """
     if cls:
         if cls in TrueSingleton._TrueSingleton__singleton_instances:
@@ -239,16 +282,40 @@ def semi_singleton_metaclass(hashfunc: Callable=None) -> type:
          and unpickle these objects may have undefined behavior.
        * Passing non-JSON-ify-able data types may cause issues (things other
          than strings, ints, bools, and lists/dictionaries of them)
+
+    .. seealso::
+
+       * :py:func:`get_all_semi_singleton_instances`, to retrieve instances of
+         a semi-singleton type
+       * :py:func:`clear_semi_singleton`, to reset a given semi-singleton
+
+    :param hashfunc: Callable object to identify unique calls to this class by
+       arguments provided.
+    :return: A class suitable for use as a metaclass of another class.
     """
 
     # by default, use a hash function to serialize all arguments
     if hashfunc is None:
 
-        def hashfunc(args, kwargs):
+        def hashfunc(args: tuple, kwargs: dict) -> int:
+            """
+            Default argument hash function for semi-singleton objects.  Causes
+            semi-singletons to return new objects if any argument (positional
+            or keyword) is different.
+
+            :param args: Tuple of positional arguments passed to the class
+              call.
+            :param kwargs: Dictionary of keyword arguments passed to the class
+              call.
+            :return: A hash of the arguments.
+            """
             kwargs = json.dumps(kwargs, sort_keys=True)
             return hash((args, kwargs))
 
     class _SemiSingleton(type):
+        """
+        Metaclass for semi-singleton types.
+        """
 
         __semisingleton_instance_map = {}
 
@@ -261,15 +328,69 @@ def semi_singleton_metaclass(hashfunc: Callable=None) -> type:
 
     return _SemiSingleton
 
-def get_all_semi_singleton_instances(cls):
+def get_all_semi_singleton_instances(cls: type) -> Generator[object]:
     """
     Get all instances belonging to a given semi-singleton type.
+
+    This is a simple operation, in concept:  it retrieves all the unique
+    instances of the specified semi-singleton type.  It may best be explained
+    by example:
+
+    >>> from edgegraph.structure import singleton
+    >>> class SemiSingle(metaclass=singleton.semi_singleton_metaclass()): pass
+    >>> instances = [SemiSingle(i) for i in range(10)]  # all unique instances
+    >>> checked = singleton.get_all_semi_singleton_instances(SemiSingle)
+    >>> set(checked) == set(instances)  # use sets -- order may not be same
+    True
+
+    .. note::
+
+       Internally, references to these instances are kept as the *value* side
+       of a dictionary, which maintains insertion order.  Therefore, some
+       semblence of order may be present, but it shouldn't be relied upon.
+
+    .. seealso::
+
+       * :py:func:`semi_singleton_metaclass`, for more info about
+         semi-singletons
+       * :py:func:`clear_semi_singleton`, to reset a given semi-singleton
+
+    :param cls: Data type to check singleton instances for.
+    :return: Generator expression yielding semi-singleton instances.
     """
     yield from type(cls)._SemiSingleton__semisingleton_instance_map.values()
 
-def clear_semi_singleton(cls):
+def clear_semi_singleton(cls: type) -> None:
     """
     Clears a specified semi-singleton.
+
+    This operation is also sometimes referred to as "resetting" a
+    (semi-)singleton data type.  It clears the internal hashmap (dictionary)
+    relating hashed arguments to their instance.  It may be best explained by
+    example:
+
+    >>> from edgegraph.structure import singleton
+    >>> class SemiSingle(metaclass=singleton.semi_singleton_metaclass()): pass
+    >>> instances = [SemiSingle(i) for i in range(10)]  # all unique instances
+    >>> s = SemiSingle(7)
+    >>> s is instances[7]
+    True
+    >>> singleton.clear_semi_singleton(SemiSingle)
+    >>> s2 = SemiSingle(7)  # will now give us a new object
+    >>> s is s2  # see, different from the old one!
+    False
+
+    Note that this operation does not outright delete all the old objects.
+    Normal garbage collection rules apply.
+
+    .. seealso::
+
+       * :py:func:`semi_singleton_metaclass`, for more info about
+         semi-singletons
+       * :py:func:`get_all_semi_singleton_instances`, to retrieve instead of
+         clear the semi-singleton instances
+
+    :param cls: Class to clear semisingleton states from.
     """
     type(cls)._SemiSingleton__semisingleton_instance_map = {}
 

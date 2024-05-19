@@ -347,6 +347,18 @@ def test_true_singleton_clear_specific():
     assert b1 is not b2, "Did not clear right TrueSingleton"
     assert c1 is c2, "Cleared all TrueSingletons instead of only B"
 
+def test_true_singleton_clear_specific_not_present():
+    """
+    Ensure calling clear on an un-set singleton is safe.
+    """
+    class A(metaclass=singleton.TrueSingleton): pass
+
+    singleton.clear_true_singleton(A)
+    
+    a1 = A()
+    a2 = A()
+    assert a1 is a2, "Clearing empty singleton broke singletons!"
+
 def test_semi_singleton_clear():
     """
     Ensure semi-singletons can be cleared.
