@@ -18,7 +18,7 @@ from __future__ import annotations
 
 from edgegraph.structure import Vertex, DirectedEdge, UnDirectedEdge
 
-def link_from_to(v1: Vertex, lnktype: type, v2: Vertex):
+def link_from_to(v1: Vertex, lnktype: type, v2: Vertex, dontdup: bool=False):
     """
     Create a link of type ``lnktype`` from ``v1`` to ``v2``.
 
@@ -36,12 +36,22 @@ def link_from_to(v1: Vertex, lnktype: type, v2: Vertex):
     :param v1: One end of the link.
     :param lnktype: The class of the link.
     :param v2: The other end of the link.
+    :param dontdup: If set to True, performs a check for any already-existing
+      links between v1 and v2.  If any are found (of any type, directed or
+      undirected), no new link is created, but the already-existing one is
+      returned silently.
     :return: The link instance.
     :rtype: An instance of the param ``lnktype``.
     """
+
+    if dontdup:
+        for lnk in v1.links:
+            if lnk.other(v1) is v2:
+                return lnk
+
     return lnktype(v1, v2)
 
-def link_directed(v1: Vertex, v2: Vertex) -> DirectedEdge:
+def link_directed(v1: Vertex, v2: Vertex, dontdup: bool=False) -> DirectedEdge:
     """
     Create a :py:class:`~edgegraph.structure.directededge.DirectedEdge` between
     the two vertices.
@@ -71,9 +81,9 @@ def link_directed(v1: Vertex, v2: Vertex) -> DirectedEdge:
     :param v2: The destination end of the link.
     :return: The link that was created.
     """
-    return link_from_to(v1, DirectedEdge, v2)
+    return link_from_to(v1, DirectedEdge, v2, dontdup=dontdup)
 
-def link_undirected(v1: Vertex, v2: Vertex) -> UnDirectedEdge:
+def link_undirected(v1: Vertex, v2: Vertex, dontdup: bool=False) -> UnDirectedEdge:
     """
     Create a :py:class:`~edgegraph.structure.undirectededge.UnDirectedEdge`
     between the two vertices.
@@ -98,5 +108,5 @@ def link_undirected(v1: Vertex, v2: Vertex) -> UnDirectedEdge:
     :param v2: The other end of the link.
     :return: The link that was created.
     """
-    return link_from_to(v1, UnDirectedEdge, v2)
+    return link_from_to(v1, UnDirectedEdge, v2, dontdup=dontdup)
 
