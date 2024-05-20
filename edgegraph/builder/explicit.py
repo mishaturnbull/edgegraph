@@ -79,6 +79,10 @@ def link_directed(v1: Vertex, v2: Vertex, dontdup: bool=False) -> DirectedEdge:
 
     :param v1: The origin end of the link.
     :param v2: The destination end of the link.
+    :param dontdup: If set to True, performs a check for any already-existing
+      links between v1 and v2.  If any are found (of any type, directed or
+      undirected), no new link is created, but the already-existing one is
+      returned silently.
     :return: The link that was created.
     """
     return link_from_to(v1, DirectedEdge, v2, dontdup=dontdup)
@@ -106,6 +110,10 @@ def link_undirected(v1: Vertex, v2: Vertex, dontdup: bool=False) -> UnDirectedEd
 
     :param v1: One end of the link.
     :param v2: The other end of the link.
+    :param dontdup: If set to True, performs a check for any already-existing
+      links between v1 and v2.  If any are found (of any type, directed or
+      undirected), no new link is created, but the already-existing one is
+      returned silently.
     :return: The link that was created.
     """
     return link_from_to(v1, UnDirectedEdge, v2, dontdup=dontdup)
