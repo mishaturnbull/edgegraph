@@ -5,17 +5,21 @@ build-backend = "setuptools.build_meta"
 [project]
 dynamic = ["version"]
 name = "edgegraph"
-requires-python = ">= 3.8"
+requires-python = ">= 3.7"
 dependencies = []
 readme = "README.md"
 license = {file = "LICENSE.txt"}
 description = "Object oriented edge-vertex graph library."
 classifiers = [
-	"Development Status :: 2 - Pre-Alpha",
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 
 [project.urls]
-Homepage = "https://github.com/mishaturnbull/edgegraph"
+Homepage = "https://edgegraph.readthedocs.io/en/latest/"
 Repository = "https://github.com/mishaturnbull/edgegraph"
 
 [tool.setuptools.dynamic]
@@ -43,5 +47,19 @@ disable = [
             # silenced.  instead, i'll assume (hopefully) that such errors are
             # caught by unit testing.
             "undefined-variable",
+
+            # performance gain from lazy logging formatting is negligible by
+            # timing tests
+            "logging-fstring-interpolation",
            ]
+
+[tool.pytest.ini_options]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+]
+addopts = "-ra --durations=5"
+log_cli = false
+log_cli_level = "DEBUG"
+log_cli_format = "%(asctime)s [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)"
+log_cli_date_format = "%Y-%m-%d %H:%M:%S"
 

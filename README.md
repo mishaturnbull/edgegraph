@@ -34,11 +34,13 @@ Planned features include:
 * [ ] Universe island detection
 * [ ] Shortest path detection
 * [x] Graph drawing generation via PlantUML
+* [x] Graph export to PyVis, ready for interactive display
 * [ ] Formal automata modelling (DFA, NFA, etc)
 * [ ] Operation flow graph modelling (nodes as operations instead of states)
 * [ ] "Functional graphs" -- attach executable code to nodes and run a graph as
       a program
 * [ ] Object serialization, save-to- and load-from-file
+* [x] Singleton and semi-singleton utilities
 
 These features, as with the API, may be changed or dropped at any time without
 warning.  I do have a day job, after all :)

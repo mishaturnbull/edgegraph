@@ -5,10 +5,12 @@
 Unit tests for UnDirectedEdge assocations with their vertices.
 """
 
-import pytest
 from edgegraph.structure import vertex, undirectededge
 
 def test_undiredge_assoc_on_init():
+    """
+    Test UnDirectedEdge accepts vertices through init.
+    """
     v1 = vertex.Vertex()
     v2 = vertex.Vertex()
 
@@ -23,6 +25,9 @@ def test_undiredge_assoc_on_init():
             "UnDirectedEdge did not bind to vertex in __init__!"
 
 def test_undiredge_assoc_postinit():
+    """
+    Test UnDirectedEdge can still associate with links post-init.
+    """
     v1 = vertex.Vertex()
     v2 = vertex.Vertex()
 
@@ -50,6 +55,9 @@ def test_undiredge_assoc_postinit():
             "UnDIrectedEdge v2-set did not bind v2 links!"
 
 def test_undiredge_assoc_update_v1():
+    """
+    Test UnDirectedEdge can change v1 after association in init.
+    """
     v1 = vertex.Vertex()
     v2 = vertex.Vertex()
     v3 = vertex.Vertex()
@@ -70,6 +78,9 @@ def test_undiredge_assoc_update_v1():
             "UnDirEdge v1-set did not bind to new v1!"
 
 def test_undiredge_assoc_update_v2():
+    """
+    Test UnDirectedEdge can change v2 after association in init.
+    """
     v1 = vertex.Vertex()
     v2 = vertex.Vertex()
     v3 = vertex.Vertex()

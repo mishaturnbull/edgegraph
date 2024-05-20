@@ -6,11 +6,13 @@ Unit tests for structure.twoendedlink.TwoEndedLink class.
 """
 
 import pytest
-from edgegraph.structure import (Vertex, TwoEndedLink, DirectedEdge,
-        UnDirectedEdge)
+from edgegraph.structure import Vertex, UnDirectedEdge
 from edgegraph.builder import adjmatrix
 
 def test_adjmatrix_edgetype():
+    """
+    Ensure adjmatrix respects user's edge type.
+    """
     v = [Vertex(), Vertex(), Vertex()]
     mat = [
             [0, 1, 0],
@@ -33,6 +35,9 @@ def test_adjmatrix_edgetype():
             "v1 -- v1 (self) link is wrong!"
 
 def test_adjmatrix_nonsquare():
+    """
+    Ensure adjmatrix throws an error when the given matrix is not square.
+    """
     v = [Vertex(), Vertex(), Vertex()]
     mat = [
             [0, 1, 0],
@@ -41,9 +46,13 @@ def test_adjmatrix_nonsquare():
         ]
 
     with pytest.raises(ValueError):
-        uni = adjmatrix.load_adj_matrix(mat, v)
+        adjmatrix.load_adj_matrix(mat, v)
 
 def test_adjmatrix_sidelen():
+    """
+    Ensure adjmatrix throws an error if the vertex array does not match the
+    matrix size.
+    """
     v = [Vertex(), Vertex(), Vertex(), Vertex()]
     mat = [
             [0, 1, 0],
@@ -52,9 +61,9 @@ def test_adjmatrix_sidelen():
         ]
 
     with pytest.raises(ValueError):
-        uni = adjmatrix.load_adj_matrix(mat, v)
+        adjmatrix.load_adj_matrix(mat, v)
 
-def test_adjmatrix_case01():
+def test_adjmatrix_clrs09_22_2():
     """
     This graph is taken from [CLRS09]_, figure 22.2.
 
@@ -77,7 +86,7 @@ def test_adjmatrix_case01():
        v5 --> v5
     """
     v = []
-    for i in range(6):
+    for _ in range(6):
         v.append(Vertex())
 
     mat = [

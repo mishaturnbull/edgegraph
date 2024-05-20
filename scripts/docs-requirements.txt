@@ -4,4 +4,6 @@ sphinx-book-theme
 myst-parser
 tomlkit
 pylint
+pytest
+pyvis
 
