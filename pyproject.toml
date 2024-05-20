@@ -15,7 +15,7 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/mishaturnbull/edgegraph"
+Homepage = "https://edgegraph.readthedocs.io/en/latest/"
 Repository = "https://github.com/mishaturnbull/edgegraph"
 
 [tool.setuptools.dynamic]

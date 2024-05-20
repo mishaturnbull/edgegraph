@@ -40,6 +40,7 @@ Planned features include:
 * [ ] "Functional graphs" -- attach executable code to nodes and run a graph as
       a program
 * [ ] Object serialization, save-to- and load-from-file
+* [x] Singleton and semi-singleton utilities
 
 These features, as with the API, may be changed or dropped at any time without
 warning.  I do have a day job, after all :)
