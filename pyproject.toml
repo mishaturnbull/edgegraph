@@ -5,13 +5,17 @@ build-backend = "setuptools.build_meta"
 [project]
 dynamic = ["version"]
 name = "edgegraph"
-requires-python = ">= 3.8"
+requires-python = ">= 3.7"
 dependencies = []
 readme = "README.md"
 license = {file = "LICENSE.txt"}
 description = "Object oriented edge-vertex graph library."
 classifiers = [
-    "Development Status :: 2 - Pre-Alpha",
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 
 [project.urls]
