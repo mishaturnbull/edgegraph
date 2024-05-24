@@ -62,14 +62,45 @@ def neighbors(vert: Vertex,
 
     the function would operate as:
 
-       >>> neighbors(v1)
-       [v2, v3]
-       >>> neighbors(v1, direction_sensitive=False)
-       [v2, v3, v4]
-       >>> neighbors(v4)
-       [v1]
-       >>> neighbors(v4, direction_sensitive=False)
-       [v1, v3]
+    >>> neighbors(v1)
+    [v2, v3]
+    >>> neighbors(v1, direction_sensitive=False)
+    [v2, v3, v4]
+    >>> neighbors(v4)
+    [v1]
+    >>> neighbors(v4, direction_sensitive=False)
+    [v1, v3]
+
+    If supplied, the ``filterfunc`` argument should be to a callable object
+    (function or otherwise) that will return either :py:obj:`True` or
+    :py:obj:`False`.  This function is used to determine if a given vertex
+    should be included in the returned neighbors.  It must have the following
+    signature:
+
+    .. py:function:: filterfunc(e, v2)
+       :noindex:
+
+       Determines if a given vertex (``v2``) should be included in the
+       neighbors of ``v``.  Because ``v2`` may be reachable from ``v1`` via
+       multiple edges, the edge currently being considered is given as well.
+
+       :param e: The edge connecting ``v1`` to ``v2``.
+       :param v2: The vertex under consideration.
+       :return: Whether or not ``v2`` should be considered a neighbor of ``v``,
+          when reached via ``e``.
+
+    For example, one may wish to only consider vertices if a given attribute
+    meets some criteria:
+
+    >>> neighbors(v1)
+    [v2, v3]
+    >>> neighbors(v1, filterfunc=lambda e, v2: v2.i >= 3)
+    [v3]
+
+    .. note::
+
+       The ``filterfunc`` parameter operates **in addition to** the
+       ``direction_sensitive`` parameter!
 
     :param vert: The vertex to identify neighbors of.
     :param direction_sensitive: Enables handling of directional links.  If set
