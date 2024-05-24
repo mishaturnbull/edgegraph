@@ -90,3 +90,109 @@ def test_neighbors_unknown_link_type():
     assert v0nb1 == [v[1]], "LNK_UNKNOWN_NEIGHBOR behavior wrong!"
     assert v0nb2 == [], "LNK_UNKNOWN_NONNEIGHBOR behavior wrong!"
 
+def test_neighbors_filter_func_subclass_directededge():
+    """
+    Ensure the neighbors function filterfunc works in a vertex application.
+    """
+    class VT1(Vertex):
+        pass
+    class VT2(VT1):
+        pass
+
+    #       0         1        2      3      4     5
+    v = [Vertex(), Vertex(), VT1(), VT1(), VT2(), VT2()]
+    adj = {
+            v[0]: [v[1], v[2], v[4]],
+            v[2]: [v[0], v[3], v[4]],
+            v[4]: [v[0], v[2], v[5]],
+        }
+    adjlist.load_adj_dict(adj, DirectedEdge)
+
+    def filterfunc(e, v2):
+        return isinstance(v2, VT1)
+
+    nb1 = set(helpers.neighbors(v[0], filterfunc=filterfunc))
+    assert nb1 == {v[2], v[4]}, "Neighbors filterfunc gave wrong answer"
+
+    nb2 = set(helpers.neighbors(v[2], filterfunc=filterfunc))
+    assert nb2 == {v[3], v[4]}, "Neighbors filterfunc gave wrong answer"
+
+    nb3 = set(helpers.neighbors(v[4], filterfunc=filterfunc))
+    assert nb3 == {v[2], v[5]}, "Neighbors filterfunc gave wrong answer"
+
+def test_neighbors_filter_func_subclass_nondirected():
+    """
+    Ensure the neighbors function filterfunc works in a vertex and direction
+    non-sensitive application.
+    """
+    class VT1(Vertex):
+        pass
+    class VT2(VT1):
+        pass
+
+    #       0         1        2      3      4     5
+    v = [Vertex(), Vertex(), VT1(), VT1(), VT2(), VT2()]
+    adj = {
+            v[0]: [v[1], v[2], v[4]],
+            v[1]: [v[0], v[2], v[4]],
+            v[2]: [v[0], v[3], v[4]],
+            v[3]: [v[0], v[2], v[4]],
+            v[4]: [v[0], v[2], v[5]],
+            v[5]: [v[0], v[2], v[4]],
+        }
+    adjlist.load_adj_dict(adj, DirectedEdge)
+
+    def filterfunc(e, v2):
+        return isinstance(v2, VT1)
+
+    nb1 = set(helpers.neighbors(v[0], direction_sensitive=False,
+        filterfunc=filterfunc))
+    assert nb1 == {v[2], v[3], v[4], v[5]}, \
+            "Neighbors filterfunc gave wrong answer"
+
+    nb2 = set(helpers.neighbors(v[2], direction_sensitive=False,
+        filterfunc=filterfunc))
+    assert nb2 == {v[3], v[4], v[5]}, "Neighbors filterfunc gave wrong answer"
+
+    nb3 = set(helpers.neighbors(v[4], direction_sensitive=False,
+        filterfunc=filterfunc))
+    assert nb3 == {v[2], v[3], v[5]}, "Neighbors filterfunc gave wrong answer"
+
+def test_neighbors_filter_func_subclass_undirected():
+    """
+    Ensure the neighbors function filterfunc works in a vertex and
+    undirectededge application.
+    """
+    class VT1(Vertex):
+        pass
+    class VT2(VT1):
+        pass
+
+    #       0         1        2      3      4     5
+    v = [Vertex(), Vertex(), VT1(), VT1(), VT2(), VT2()]
+    adj = {
+            v[0]: [v[1], v[2], v[4]],
+            v[1]: [v[0], v[2], v[4]],
+            v[2]: [v[0], v[3], v[4]],
+            v[3]: [v[0], v[2], v[4]],
+            v[4]: [v[0], v[2], v[5]],
+            v[5]: [v[0], v[2], v[4]],
+        }
+    adjlist.load_adj_dict(adj, UnDirectedEdge)
+
+    def filterfunc(e, v2):
+        return isinstance(v2, VT1)
+
+    nb1 = set(helpers.neighbors(v[0], direction_sensitive=True,
+        filterfunc=filterfunc))
+    assert nb1 == {v[2], v[3], v[4], v[5]}, \
+            "Neighbors filterfunc gave wrong answer"
+
+    nb2 = set(helpers.neighbors(v[2], direction_sensitive=True,
+        filterfunc=filterfunc))
+    assert nb2 == {v[3], v[4], v[5]}, "Neighbors filterfunc gave wrong answer"
+
+    nb3 = set(helpers.neighbors(v[4], direction_sensitive=True,
+        filterfunc=filterfunc))
+    assert nb3 == {v[2], v[3], v[5]}, "Neighbors filterfunc gave wrong answer"
+
