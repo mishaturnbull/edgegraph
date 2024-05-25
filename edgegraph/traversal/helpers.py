@@ -191,3 +191,55 @@ def neighbors(vert: Vertex,
 
     return nbs
 
+def find_links(v1, v2,
+        direction_sensitive: bool=True,
+        unknown_handling: int=LNK_UNKNOWN_ERROR,
+        filterfunc: Callable=None):
+    """
+    Find links that connect v1 to v2.
+    """
+
+    links = set()
+    for link in v1.links:
+
+        # no matter what the other options are, don't care!
+        if link.other(v1) is not v2:
+            continue
+
+        if direction_sensitive:
+
+            if issubclass(type(link), UnDirectedEdge):
+
+                if filterfunc is None or filterfunc(link):
+                    links.add(link)
+                else:
+                    continue  # pragma: no cover
+
+            elif issubclass(type(link), DirectedEdge):
+
+                if link.v1 is not v1:
+                    # this is a link from v2 to v1, not the way we want
+                    continue
+
+                if filterfunc is None or filterfunc(link):
+                    links.add(link)
+                else:
+                    continue  # pragma: no cover
+
+            else:
+                if unknown_handling == LNK_UNKNOWN_NONNEIGHBOR:
+                    continue
+
+                if unknown_handling == LNK_UNKNOWN_NEIGHBOR:
+                    links.add(link)
+                else:
+                    raise NotImplementedError(f"Unknown link class {type(link)}")
+
+        else:
+            # see above notes on short-circuiting filterfunc() if it's not
+            # provided
+            if filterfunc is None or filterfunc(link):
+                links.add(link)
+
+    return links
+
