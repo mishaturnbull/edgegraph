@@ -12,6 +12,8 @@ and the functions to perform it.
 The base classes are also usable directly, should you wish to test-drive this
 idea or study abstract graphs.
 
+See [the docs][1] for more.
+
 ## Prealpha
 
 At this time, this project is extremely young.  Per [semantic versioning][0],
@@ -49,4 +51,5 @@ Sphinx documentation and full Pytest-driven unit testing coverage is expected
 to match the progress of the code.
 
 [0]: semver.org
+[1]: https://edgegraph.readthedocs.io/en/latest/index.html
 
