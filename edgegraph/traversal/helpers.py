@@ -191,12 +191,78 @@ def neighbors(vert: Vertex,
 
     return nbs
 
-def find_links(v1, v2,
+def find_links(v1: Vertex, v2: Vertex,
         direction_sensitive: bool=True,
         unknown_handling: int=LNK_UNKNOWN_ERROR,
-        filterfunc: Callable=None):
+        filterfunc: Callable=None) -> set[TwoEndedLink]:
     """
-    Find links that connect v1 to v2.
+    Find the link(s) that connect v1 to v2.
+
+    This function returns links that connect v1 and v2.  If multiple
+    links/edges connect the given vertices, they are all returned in a list.
+    It respects edge directionality if/when necessary, and can handle arbitrary
+    edge types given they are subclasses of either
+    :py:class:`~edgegraph.structure.directededge.DirectedEdge` or
+    :py:class:~edgegraph.structure.undirectededge.UnDirectedEdge`.
+
+    For example, with the given graph:
+
+    .. uml::
+
+       object v1
+       object v2
+       object v3
+       object v4
+
+       v1 --> v2 : e1
+       v1 --> v3 : e2
+       v2 --> v3 : e3
+       v3 --> v4 : e4
+       v4 --> v1 : e5
+       v1 --> v4 : e6
+
+    the function would operate as:
+
+    >>> find_links(v1, v2)
+    {e1}
+    >>> find_links(v1, v4)
+    {e6}
+    >>> find_links(v1, v4, direction_sensitive=False)
+    {e6, e5}
+
+    If supplied, the ``filterfunc`` argument should be a callable object
+    (function or otherwise) that will return either :py:obj:`True` or
+    :py:obj:`False`.  This function is used to determine if a given edge should
+    be included in the returned set.  It must have the following signature:
+
+    .. py:function:: filterfunc(e)
+       :noindex:
+
+       Determines if a given edge (``e``) should be included in the returned
+       set of edges between ``v1`` and ``v2``.
+
+       :param e: The edge under consideration.
+       :return: Whether or not ``e`` should be returned as part of the set of
+          edges connecting ``v1`` and ``v2``.
+
+    :param v1: First vertex to find links from.  In a directed edge, this is
+       consiered the "from" vertex.
+    :param v2: Second vertex to find links from.  In a directed edge, this is
+       consiered the "to" vertex.
+    :param direction_sensitive: Whether or not to respect edge directionality.
+       If True (default), edges direcetd from v2 to v1 are ignored.  If False,
+       such edges are collected and returned.
+    :param unknown_handling: How to deal with classes that are subclasses of
+       neither :py:class:`~edgegraph.structure.directededge.DirectedEdge` nor
+       :py:class:`~edgegraph.structure.undirectededge.UnDirectedEdge`.
+
+       * :py:const:`LNK_UNKNOWN_ERROR` (default): Raise a
+         :py:exc:`NotImplementedError` when such an edge is encountered.
+       * :py:const:`LNK_UNKNOWN_NEIGHBOR`: Skip unknown edges.
+       * :py:const:`LNK_UNKNOWN_NONNEIGHBOR`: Collect and return unknown edges.
+
+    :param filterfunc: Callable object that returns whether or not a given link
+       should be included in the output.
     """
 
     links = set()
@@ -210,9 +276,12 @@ def find_links(v1, v2,
 
             if issubclass(type(link), UnDirectedEdge):
 
+                # short-circuit operation, just like in neighbors()
                 if filterfunc is None or filterfunc(link):
                     links.add(link)
                 else:
+                    # see comment on the else: continue block in neighbors()
+                    # for explanation of this no-cover statement.
                     continue  # pragma: no cover
 
             elif issubclass(type(link), DirectedEdge):
@@ -224,12 +293,13 @@ def find_links(v1, v2,
                 if filterfunc is None or filterfunc(link):
                     links.add(link)
                 else:
+                    # see comment on the else: continue block in neighbors()
+                    # for explanation of this no-cover statement.
                     continue  # pragma: no cover
 
             else:
                 if unknown_handling == LNK_UNKNOWN_NONNEIGHBOR:
                     continue
-
                 if unknown_handling == LNK_UNKNOWN_NEIGHBOR:
                     links.add(link)
                 else:

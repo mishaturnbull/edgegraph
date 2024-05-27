@@ -5,6 +5,8 @@
 Unit tests for structure.twoendedlink.TwoEndedLink class.
 """
 
+import logging
+import time
 import pytest
 from edgegraph.structure import (Vertex, TwoEndedLink, DirectedEdge,
         UnDirectedEdge)
@@ -16,6 +18,8 @@ from edgegraph.builder import adjlist, explicit
 # which, in the context of the text, expresses intent much more clearly than
 # ``assert not nb``.  so, shut up!
 # pylint: disable=C1803
+
+LOG = logging.getLogger(__name__)
 
 def test_neighbors_undirected():
     """
@@ -311,4 +315,32 @@ def test_findlinks_filterfunc():
     assert l3 == {e1, e2}, "find_links did not find right links!"
     l4 = helpers.find_links(v2, v1, filterfunc=lambda e: e.i > 5)
     assert l4 == {e2,}, "find_links did not find the right link!"
+
+@pytest.mark.slow
+@pytest.mark.parametrize('n_links', [1, 10, 100, 500])
+def test_findlinks_stress(n_links):
+    """
+    Timing of the find_links function.
+    """
+
+    v1, v2 = Vertex(), Vertex()
+    edges = []
+    for _ in range(n_links):
+        edges.append(explicit.link_directed(v1, v2))
+
+    N = 2500
+
+    t_start = time.monotonic_ns()
+    for _ in range(N):
+        helpers.find_links(v1, v2)
+    t_end = time.monotonic_ns()
+
+    # analysis
+    t_diff = t_end - t_start
+    t_per = t_diff / N
+
+    # convert to seconds
+    t_diff /= 1_000_000_000
+    t_per /= 1_000_000_000
+    LOG.info(f"Total {t_diff} s, avg cycle {t_per} s")
 
