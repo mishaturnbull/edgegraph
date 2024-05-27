@@ -17,7 +17,13 @@ from edgegraph.builder import adjlist, explicit
 # however, the caes it wants to correct in here are like ``assert nb == []``,
 # which, in the context of the text, expresses intent much more clearly than
 # ``assert not nb``.  so, shut up!
-# pylint: disable=C1803
+# C0115 is missing-class-docstring
+# happens where we want to subclass Vertex or TwoEndedLink or something.  for
+# test applications, full class docstrings aren't necessary
+# W0613 is unused-argument
+# test parameters for filterfunc()'s.  for testing purposes, some parameters
+# are ignored.
+# pylint: disable=C1803, C0115, W0613
 
 LOG = logging.getLogger(__name__)
 
