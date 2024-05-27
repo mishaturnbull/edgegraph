@@ -42,6 +42,7 @@ extensions = [
         'sphinx.ext.autosummary',
         'sphinx.ext.intersphinx',
         'sphinx.ext.todo',
+        'sphinx.ext.coverage',
         'sphinxcontrib.plantuml',
         'sphinx_copybutton',
         'myst_parser',
