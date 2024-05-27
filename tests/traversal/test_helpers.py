@@ -232,9 +232,9 @@ def test_findlinks_no_links():
     assert t1 == set(), "find_links returned when there are no links!"
 
     t2 = helpers.find_links(v1, v2, direction_sensitive=False)
-    assert t1 == set(), "find_links returned when there are no links!"
+    assert t2 == set(), "find_links returned when there are no links!"
 
-    e1 = explicit.link_directed(v2, v1)
+    explicit.link_directed(v2, v1)
     t3 = helpers.find_links(v1, v2)
     assert t3 == set(), "find_links returned when no outbound links!"
 
@@ -334,16 +334,16 @@ def test_findlinks_stress(n_links):
     for _ in range(n_links):
         edges.append(explicit.link_directed(v1, v2))
 
-    N = 2500
+    iters = 2500
 
     t_start = time.monotonic_ns()
-    for _ in range(N):
+    for _ in range(iters):
         helpers.find_links(v1, v2)
     t_end = time.monotonic_ns()
 
     # analysis
     t_diff = t_end - t_start
-    t_per = t_diff / N
+    t_per = t_diff / iters
 
     # convert to seconds
     t_diff /= 1_000_000_000
