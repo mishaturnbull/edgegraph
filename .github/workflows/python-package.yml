@@ -31,7 +31,7 @@ jobs:
     - name: Documentation coverage
       run: |
         cd docs && make coverage
-        if [[ ( $(wc -l docs/_build/coverage/python.txt | awk '{print $1}') == 2) ]]; then true; else false; fi
+        if [[ ( $(tail -n3 _build/coverage/python.txt | head -n1 | awk '{print $4}') == "100.00%") ]]; then true; else false; fi
 
     - name: Pylint check
       run: |

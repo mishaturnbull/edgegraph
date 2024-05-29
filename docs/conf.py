@@ -25,7 +25,7 @@ pyrev_helper.main()
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'edgegraph'
-copyright = '2023, Michael Turnbull'
+copyright = '2024, Michael Turnbull'
 author = 'Misha Turnbull'
 version = f'v{eg_version.VERSION_MAJOR}.{eg_version.VERSION_MINOR}'
 release = eg_version.__version__
@@ -114,4 +114,12 @@ if eg_version.VERSION_MAJOR == 0:
     html_theme_options["announcement"] = \
             f"<b style=\"color:red;\">edgegraph is in unstable version " \
             f"{version}, and may change at any time!</b>"
+
+# -- Options for coverage analysis -------------------------------------------
+# https://www.sphinx-doc.org/en/master/usage/extensions/coverage.html
+
+coverage_statistics_to_report = True
+coverage_statistics_to_stdout = False
+coverage_show_missing_items = False
+coverage_write_headline = False
 
