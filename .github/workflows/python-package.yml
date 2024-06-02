@@ -29,6 +29,7 @@ jobs:
         pip install -r scripts/docs-requirements.txt
 
     - name: Documentation coverage
+      if: ${{ matrix.python-version == "3.12" }}
       run: |
         cd docs
         make coverage
