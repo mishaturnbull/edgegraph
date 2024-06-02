@@ -50,6 +50,6 @@ warning.  I do have a day job, after all :)
 Sphinx documentation and full Pytest-driven unit testing coverage is expected
 to match the progress of the code.
 
-[0]: semver.org
+[0]: https://semver.org
 [1]: https://edgegraph.readthedocs.io/en/latest/index.html
 

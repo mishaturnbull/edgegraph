@@ -118,8 +118,13 @@ if eg_version.VERSION_MAJOR == 0:
 # -- Options for coverage analysis -------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/extensions/coverage.html
 
+# ensure that reports are written to the report file
+# (_build/coverage/python.txt), and not printed to stdout
 coverage_statistics_to_report = True
 coverage_statistics_to_stdout = False
+
+# these reports are also parsed (though, rather dumb-ly) during github actions,
+# so ensure they're formatted like we expect
 coverage_show_missing_items = False
 coverage_write_headline = False
 
