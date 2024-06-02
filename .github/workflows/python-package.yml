@@ -30,9 +30,10 @@ jobs:
 
     - name: Documentation coverage
       run: |
-        cd docs && make coverage
-        cd docs && cat _build/coverage/python.txt
-        cd docs && if [[ ( $(grep TOTAL _build/coverage/python.txt | awk '{print $4}') == "100.00%") ]]; then true; else false; fi
+        cd docs
+        make coverage
+        cat _build/coverage/python.txt
+        if [[ ( $(grep TOTAL _build/coverage/python.txt | awk '{print $4}') == "100.00%") ]]; then true; else false; fi
 
     - name: Pylint check
       run: |
