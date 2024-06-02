@@ -31,13 +31,15 @@ jobs:
     - name: Documentation coverage
       run: |
         cd docs && make coverage
-        if [[ ( $(tail -n3 _build/coverage/python.txt | head -n1 | awk '{print $4}') == "100.00%") ]]; then true; else false; fi
+        cat _build/coverage/python.txt
+        if [[ ( $(grep TOTAL _build/coverage/python.txt | awk '{print $4}') == "100.00%") ]]; then true; else false; fi
 
     - name: Pylint check
       run: |
         # pylintrc equivalent (in pyproject.toml) takes care of the options
         # here, no need to cli-flag everything
         pylint --exit-zero edgegraph tests
+
     - name: Run unit tests
       run: |
         # this does generate the code coverage report.  however, pytest-cov
@@ -52,6 +54,7 @@ jobs:
         # avoid taking up too much time on the runner (of concern due to
         # GitHub's pricing)
         pytest --cov=edgegraph --cov-branch --durations=0 -m "not slow"
+
     - name: Check unit test coverage
       run: |
         # fail-under option causes a nonzero exit
