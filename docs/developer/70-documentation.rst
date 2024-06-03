@@ -18,8 +18,23 @@ Building documentation
 ----------------------
 
 Documentation can be built locally using the Sphinx makefile in the
-:file:`docs/` folder.  Simply run :samp:`make clean html` to view docs locally.
-Output will be placed in :file:`docs/_build/`.
+:file:`docs/` folder.  Ensure you have the following prerequisites:
+
+#. PlantUML installed (see https://plantuml.com/ )
+#. Pip prerequisites: :samp:`pip install -r scripts/docs-requirements.txt`)
+
+Then, simply run :samp:`make clean html` to build docs locally.  Output will be
+placed in :file:`docs/_build/`.  You may also inspect the output of :samp:`make
+help` to show additional formats that can be built.
+
+Coverage assessment
+^^^^^^^^^^^^^^^^^^^
+
+Documentation-of-code coverage is also assessed by Sphinx, using the coverage
+extension.  Though this is run by GitHub Actions against all pull requests, you
+may also assess coverage locally by using :samp:`make coverage`.  A file
+:file:`_build/coverage/python.txt` will be created; this contains the coverage
+table.  Ensure that the bottom row (``TOTAL``) is marked as ``100.00%``.
 
 .. _Sphinx: https://www.sphinx-doc.org/en/master/
 .. _ReadTheDocs: https://about.readthedocs.com/
