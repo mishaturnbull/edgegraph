@@ -10,6 +10,8 @@ Installation of EdgeGraph is rather simple via Pip:
 Details of the Pip package can be found on Pip at
 https://pypi.org/project/edgegraph/ .
 
+.. _versioning:
+
 Versioning
 ----------
 
@@ -37,11 +39,16 @@ Development versions
 --------------------
 
 EdgeGraph can also be "installed" by cloning the repository and adding it to
-your Python module path.  You may check out any of the branches you wish,
-though note that only the ``master`` branch is *guaranteed* to be stable at any
-given moment.
+your Python module path (though, be sure to add the ``edgegraph`` folder within
+the repo, and not the repo itself).  You may check out any of the branches you
+wish, though note that only the ``master`` branch is *guaranteed* to be stable
+at any given moment.
 
 You can also use Pip's repository installation:
 
 :samp:`$ pip install git+https://github.com/mishaturnbull/edgegraph@{branch}`
+
+The repository is tagged for each versioned release; the tag names are the
+version prefixed with a ``v``.  For example, ``v0.2.0`` is the tag name for
+version ``0.2.0``.
 
