@@ -10,6 +10,7 @@ import tomlkit
 topdir = os.path.split(os.path.split(__file__)[0])[0]
 sys.path.insert(0, topdir)
 from edgegraph import version as eg_version
+from docs._auto import git
 
 with open(os.path.join(topdir, "pyproject.toml"), 'r') as ppyfile:
     pyproject = tomlkit.parse(ppyfile.read())
@@ -110,10 +111,39 @@ html_theme_options = {
         "use_issues_button": True,
         }
 
+warns = []
+
 if eg_version.VERSION_MAJOR == 0:
-    html_theme_options["announcement"] = \
-            f"<b style=\"color:red;\">edgegraph is in unstable version " \
-            f"{version}, and may change at any time!</b>"
+    warns.append(
+            "<b style=\"color:red;\">edgegraph is in unstable version " \
+            f"{version}, and may change at any time!</b>")
+if git.branchname() != "master" and not git.is_clean():
+    warns.append(
+            "<b style=\"color:yellow;\">this documentation was built on" \
+            f" branch {git.branchname()}, and in an unclean git state!</b>")
+elif git.branchname() != "master":
+    warns.append(
+            "<b style=\"color:yellow;\">this documentation was built on" \
+            f" branch {git.branchname()}!</b>")
+elif not git.is_clean():
+    warns.append(
+            "<b style=\"color:yellow;\">this documentation was built from " \
+            "an unclean git repository!</b>")
+
+html_theme_options["announcement"] = "<br>".join(warns)
+
+# -- Options for LaTeX PDF output --------------------------------------------
+# https://www.sphinx-doc.org/en/master/latex.html
+
+latex_elements = {
+        # make the index one column wide instead of two
+        'printindex': r"\def\twocolumn[#1]{#1}\printindex",
+        }
+
+# show all urls / hyperlinks in footnotes (useful for printed copies)
+latex_show_urls = 'footnote'
+# same for page references
+latex_show_pagerefs = True
 
 # -- Options for coverage analysis -------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/extensions/coverage.html
