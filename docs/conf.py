@@ -10,7 +10,6 @@ import tomlkit
 topdir = os.path.split(os.path.split(__file__)[0])[0]
 sys.path.insert(0, topdir)
 from edgegraph import version as eg_version
-from docs._auto import git
 
 with open(os.path.join(topdir, "pyproject.toml"), 'r') as ppyfile:
     pyproject = tomlkit.parse(ppyfile.read())
@@ -19,7 +18,7 @@ with open(os.path.join(topdir, "pyproject.toml"), 'r') as ppyfile:
 # import and run the helper script that generates the plantuml diagrams, which
 # are then rendered by sphinx-plantuml.
 
-from docs._scripts import pyrev_helper
+from docs._scripts import pyrev_helper, git
 pyrev_helper.main()
 
 # -- Project information -----------------------------------------------------
