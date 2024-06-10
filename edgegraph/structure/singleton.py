@@ -64,7 +64,7 @@ class TrueSingleton(type):
        https://stackoverflow.com/a/6798042
 
     .. danger::
-    
+
        If you find yourself using this with
        :py:class:`~edgegraph.structure.vertex.Vertex`, something will probably
        go wrong.  Though it will, technically speaking, *work*, the effects of
@@ -251,7 +251,7 @@ def semi_singleton_metaclass(hashfunc: Callable=None) -> type:
     Customization of how arguments are understood to be "different" may be done
     via the ``hashfunc`` argument.  If provided, it must be a callable object:
 
-    .. py:function:: hashfunc(args: tuple, kwargs: dict) -> Hashable:
+    .. py:function:: hashfunc(args: tuple, kwargs: dict) -> Hashable
        :noindex:
 
        This function is given the args and kwargs of a class instantiator (a

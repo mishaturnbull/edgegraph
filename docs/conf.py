@@ -18,7 +18,7 @@ with open(os.path.join(topdir, "pyproject.toml"), 'r') as ppyfile:
 # import and run the helper script that generates the plantuml diagrams, which
 # are then rendered by sphinx-plantuml.
 
-from docs._scripts import pyrev_helper, git
+from docs._scripts import pyrev_helper, git, nitpick_warn_list
 pyrev_helper.main()
 
 # -- Project information -----------------------------------------------------
@@ -36,6 +36,8 @@ release = eg_version.__version__
 primary_domain = "py"
 keep_warnings = True
 nitpicky = True
+nitpick_ignore = nitpick_warn_list.nitpick_ignore
+nitpick_ignore_regex = nitpick_warn_list.nitpick_ignore_regex
 
 extensions = [
         'sphinx.ext.autodoc',
