@@ -112,22 +112,33 @@ html_theme_options = {
 
 warns = []
 
+if 'READTHEDOCS' in os.environ:
+    READTHEDOCS = True
+    try:
+        branch = os.environ['READTHEDOCS_VERSION_NAME']
+    except KeyError:
+        branch = "!!!unknown!!!"
+else:
+    READTHEDOCS = False
+    branch = git.branchname()
+
 if eg_version.VERSION_MAJOR == 0:
     warns.append(
             "<b style=\"color:red;\">edgegraph is in unstable version " \
             f"{version}, and may change at any time!</b>")
-if git.branchname() != "master" and not git.is_clean():
+
+if branch != "master" and not git.is_clean() and not READTHEDOCS:
     warns.append(
             "<b style=\"color:yellow;\">this documentation was built on" \
-            f" branch {git.branchname()}, and in an unclean git state!</b>")
-elif git.branchname() != "master":
+            f" branch {branch}, and in an unclean git state!</b>")
+elif branch != "master":
     warns.append(
             "<b style=\"color:yellow;\">this documentation was built on" \
-            f" branch {git.branchname()}!</b>")
-elif not git.is_clean():
+            f" branch {branch}!</b>")
+elif not git.is_clean() and not READTHEDOCS:
     warns.append(
-            "<b style=\"color:yellow;\">this documentation was built from " \
-            "an unclean git repository!</b>")
+            "<b style=\"color:yellow;\">this documentation was built " \
+            "from an unclean git repository!</b>")
 
 html_theme_options["announcement"] = "<br>".join(warns)
 
