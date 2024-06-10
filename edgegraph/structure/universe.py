@@ -97,12 +97,6 @@ class UniverseLaws (base.BaseObject):
         """
         Returns an immutable copy of the edge whitelist rules.
 
-        .. todo::
-
-           fix the warning with ``type`` type in this docstring's ``rtype``.
-           See https://stackoverflow.com/a/30624034 and link to a Python bug
-           in that answer.
-
         :rtype: types.MappingProxyType[type, types.MappingProxyType[type, type]] or None
         """
         if self._edge_whitelist is None:
