@@ -15,6 +15,12 @@ class UnDirectedEdge (twoendedlink.TwoEndedLink):
 
     This object is intended to join two vertices in an undirected fashion; i.e.,
     neither vertex specifically points at the other.
+
+    .. seealso::
+
+       * To create UnDirectedEdges, see
+         :py:func:`~edgegraph.builder.explicit.link_undirected` rather than
+         creating these classes directly.
     """
 
     def __init__(self,

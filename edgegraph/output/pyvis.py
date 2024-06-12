@@ -124,7 +124,7 @@ def make_pyvis_net(uni: Universe,
 def pyvis_render_customizable(uni: Universe,
         rvfunc: Callable=None,
         refunc: Callable=None,
-        show_buttons_filter_=None,
+        show_buttons_filter=None,
         ) -> pyvis.network.Network:
     """
     Convert a given Universe to a PyVis network, suitable for further use
@@ -154,28 +154,19 @@ def pyvis_render_customizable(uni: Universe,
        :py:class:`~edgegraph.structure.twoendedlink.TwoEndedLink`, or subclass
        thereof), and must return a :py:class:`str`.  If not provided, edges
        will not be labelled.
-    :param show_buttons_filter_: Sets the widgets that will be available in the
+    :param show_buttons_filter: Sets the widgets that will be available in the
        customization UI displayed by Pyvis.  May be a list of strings,
        :py:obj:`True` or :py:obj:`None` to display all.
 
        .. seealso::
 
           :py:meth:`pyvis.network.Network.show_buttons`, which includes a list
-          of options passable to ``show_buttons_filter_``.
+          of options passable to ``show_buttons_filter``.
 
-       .. warning::
-
-          The name of this argument includes a trailing underscore --
-          ``show_buttons_filter_``.  Sphinx is removing it in this field list.
-          I'm not sure why.
-
-          .. todo::
-
-             Fix this!!
     :return: A :py:class:`pyvis.network.Network` instance containing the data
        found in the given universe.
     """
     net = make_pyvis_net(uni, rvfunc, refunc)
-    net.show_buttons(filter_=None or show_buttons_filter_)
+    net.show_buttons(filter_=None or show_buttons_filter)
     return net
 

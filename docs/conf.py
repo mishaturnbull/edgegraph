@@ -18,14 +18,14 @@ with open(os.path.join(topdir, "pyproject.toml"), 'r') as ppyfile:
 # import and run the helper script that generates the plantuml diagrams, which
 # are then rendered by sphinx-plantuml.
 
-from docs._scripts import pyrev_helper
+from docs._scripts import pyrev_helper, git, nitpick_warn_list
 pyrev_helper.main()
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'edgegraph'
-copyright = '2023, Michael Turnbull'
+copyright = '2024, Michael Turnbull'
 author = 'Misha Turnbull'
 version = f'v{eg_version.VERSION_MAJOR}.{eg_version.VERSION_MINOR}'
 release = eg_version.__version__
@@ -36,12 +36,15 @@ release = eg_version.__version__
 primary_domain = "py"
 keep_warnings = True
 nitpicky = True
+nitpick_ignore = nitpick_warn_list.nitpick_ignore
+nitpick_ignore_regex = nitpick_warn_list.nitpick_ignore_regex
 
 extensions = [
         'sphinx.ext.autodoc',
         'sphinx.ext.autosummary',
         'sphinx.ext.intersphinx',
         'sphinx.ext.todo',
+        'sphinx.ext.coverage',
         'sphinxcontrib.plantuml',
         'sphinx_copybutton',
         'myst_parser',
@@ -109,8 +112,61 @@ html_theme_options = {
         "use_issues_button": True,
         }
 
+warns = []
+
+if 'READTHEDOCS' in os.environ:
+    READTHEDOCS = True
+    try:
+        branch = os.environ['READTHEDOCS_VERSION_NAME']
+    except KeyError:
+        branch = "!!!unknown!!!"
+else:
+    READTHEDOCS = False
+    branch = git.branchname()
+
 if eg_version.VERSION_MAJOR == 0:
-    html_theme_options["announcement"] = \
-            f"<b style=\"color:red;\">edgegraph is in unstable version " \
-            f"{version}, and may change at any time!</b>"
+    warns.append(
+            "<b style=\"color:red;\">edgegraph is in unstable version " \
+            f"{version}, and may change at any time!</b>")
+
+if branch != "master" and not git.is_clean() and not READTHEDOCS:
+    warns.append(
+            "<b style=\"color:yellow;\">this documentation was built on" \
+            f" branch {branch}, and in an unclean git state!</b>")
+elif branch != "master":
+    warns.append(
+            "<b style=\"color:yellow;\">this documentation was built on" \
+            f" branch {branch}!</b>")
+elif not git.is_clean() and not READTHEDOCS:
+    warns.append(
+            "<b style=\"color:yellow;\">this documentation was built " \
+            "from an unclean git repository!</b>")
+
+html_theme_options["announcement"] = "<br>".join(warns)
+
+# -- Options for LaTeX PDF output --------------------------------------------
+# https://www.sphinx-doc.org/en/master/latex.html
+
+latex_elements = {
+        # make the index one column wide instead of two
+        'printindex': r"\def\twocolumn[#1]{#1}\printindex",
+        }
+
+# show all urls / hyperlinks in footnotes (useful for printed copies)
+latex_show_urls = 'footnote'
+# same for page references
+latex_show_pagerefs = True
+
+# -- Options for coverage analysis -------------------------------------------
+# https://www.sphinx-doc.org/en/master/usage/extensions/coverage.html
+
+# ensure that reports are written to the report file
+# (_build/coverage/python.txt), and not printed to stdout
+coverage_statistics_to_report = True
+coverage_statistics_to_stdout = False
+
+# these reports are also parsed (though, rather dumb-ly) during github actions,
+# so ensure they're formatted like we expect
+coverage_show_missing_items = False
+coverage_write_headline = False
 

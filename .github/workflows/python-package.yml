@@ -16,22 +16,33 @@ jobs:
 
     steps:
     # get everything set up
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@main
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@main
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
+        sudo apt update
         sudo apt install plantuml
         python -m pip install --upgrade pip
         pip install -r scripts/test-requirements.txt
+        pip install -r scripts/docs-requirements.txt
+
+    - name: Documentation coverage
+      if: ${{ matrix.python-version == '3.12' }}
+      run: |
+        cd docs
+        make coverage
+        cat _build/coverage/python.txt
+        if [[ ( $(grep TOTAL _build/coverage/python.txt | awk '{print $4}') == "100.00%") ]]; then true; else false; fi
 
     - name: Pylint check
       run: |
         # pylintrc equivalent (in pyproject.toml) takes care of the options
         # here, no need to cli-flag everything
         pylint --exit-zero edgegraph tests
+
     - name: Run unit tests
       run: |
         # this does generate the code coverage report.  however, pytest-cov
@@ -46,6 +57,7 @@ jobs:
         # avoid taking up too much time on the runner (of concern due to
         # GitHub's pricing)
         pytest --cov=edgegraph --cov-branch --durations=0 -m "not slow"
+
     - name: Check unit test coverage
       run: |
         # fail-under option causes a nonzero exit
