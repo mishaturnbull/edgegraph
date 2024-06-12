@@ -12,9 +12,10 @@ differs* between them.  This is the nature of the differing approaches.
 
 .. seealso::
 
+   * https://en.wikipedia.org/wiki/Depth-first_search
+   * [CLRS09]_, chapter 22.3; [GoTa60]_, chapter 13.2
    * :py:mod:`edgegraph.traversal.breadthfirst`: breadth-first search and
      traverse operations
-   * [CLRS09]_, chapter 22.3; [GoTa60]_, chapter 13.2
 
 
 The algorithm used by all the functions herein visits vertices in the following

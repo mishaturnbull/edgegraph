@@ -4,14 +4,46 @@
 """
 Breadth-first search and traversal functions.
 
-.. todo::
-
-   document this module better
+The functions here perform searches and traversals of graphs in a breadth-first manner.  The implementations are iterative.
 
 .. seealso::
 
+   * [CLRS09]_, chapter 22.2; [GoTa60]_, chapter 13.3
+   * https://en.wikipedia.org/wiki/Breadth-first_search
    * :py:mod:`edgegraph.traversal.depthfirst`: depth-first search and traverse
      operations
+
+The algorithm used by all the functions herein visits vertices in the following
+order.  Note that the choice of which branch to take at any given node (e.g.,
+visiting v9 before v10) is determined by the structure of the universe.
+
+.. uml::
+
+   object v1
+   object v2
+   object v3
+   object v4
+   object v5
+   object v6
+   object v7
+   object v8
+   object v9
+   object v10
+   object v11
+   object v12
+
+   v1 -- v2
+   v1 -- v3
+   v1 -- v4
+   v2 -- v5
+   v2 -- v6
+   v4 -- v7
+   v4 -- v8
+   v5 -- v9
+   v5 -- v10
+   v7 -- v11
+   v7 -- v12
+
 """
 
 from __future__ import annotations

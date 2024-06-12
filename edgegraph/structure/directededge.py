@@ -16,16 +16,11 @@ class DirectedEdge (twoendedlink.TwoEndedLink):
     This object is intended to join two vertices in a directed fashion; i.e.,
     one vertex directs to the other.
 
-    DirectedEdge is a subclass of UnDirectedEdge.  The DirectedEdge class
-    itself does ... absolutely NOTHING differently behaviorally to its
-    symmetrical brother.  It is its own class in order to document it
-    differently, and to allow ``isinstance()`` checks on link types to spot the
-    differing types of edges.
+    .. seealso::
 
-    .. attention::
-
-       This means that ``issubclass(DirectedEdge, UnDirectedEdge)`` returns
-       ``True``!
+       * To create DirectedEdges, see
+         :py:func:`~edgegraph.builder.explicit.link_directed` rather than
+         creating these classes directly.
     """
 
     def __init__(self,
