@@ -11,18 +11,20 @@ DOCS_PATH = os.path.split(os.path.split(__file__)[0])[0]
 PROJ_PATH = os.path.split(DOCS_PATH)[0]
 
 DEFAULT_OPTS = [
-        '--output plantuml',
-        f'--output-directory {DOCS_PATH}/_auto/uml/',
-        ]
+    "--output plantuml",
+    f"--output-directory {DOCS_PATH}/_auto/uml/",
+]
 
 CALLS = [
-        "pyreverse {options} -A -s0 -my --colorized edgegraph",
-        ]
+    "pyreverse {options} -A -s0 -my --colorized edgegraph",
+]
+
 
 def call_one(call):
-    call = call.format(options=' '.join(DEFAULT_OPTS))
+    call = call.format(options=" ".join(DEFAULT_OPTS))
     print(call)
     os.system(call)
+
 
 def main():
     orig_path = os.getcwd()
@@ -31,6 +33,6 @@ def main():
         call_one(call)
     os.chdir(orig_path)
 
-if __name__ == '__main__':
-    main()
 
+if __name__ == "__main__":
+    main()

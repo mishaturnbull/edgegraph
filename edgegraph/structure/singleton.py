@@ -50,6 +50,7 @@ import json
 # class"
 # pylint: disable=W0212
 
+
 class TrueSingleton(type):
     """
     Metaclass for true singletons.
@@ -94,7 +95,7 @@ class TrueSingleton(type):
     ...     def __init__(self, foo, bar=False):
     ...         self.foo = foo
     ...         self.bar = bar
-    ... 
+    ...
     >>> s1 = MySingleton(8, True)
     >>> s1
     <__main__.MySingleton object at 0xdeadbeef>
@@ -129,11 +130,13 @@ class TrueSingleton(type):
 
     def __call__(cls, *args, **kwargs):
         if cls not in cls.__singleton_instances:
-            cls.__singleton_instances[cls] = \
-                    super(TrueSingleton, cls).__call__(*args, **kwargs)
+            cls.__singleton_instances[cls] = super(TrueSingleton, cls).__call__(
+                *args, **kwargs
+            )
         return cls.__singleton_instances[cls]
 
-def clear_true_singleton(cls: type=None) -> None:
+
+def clear_true_singleton(cls: type = None) -> None:
     """
     Clears TrueSingleton cache for either a specified type, or all
     TrueSingleton types.
@@ -192,10 +195,11 @@ def clear_true_singleton(cls: type=None) -> None:
     else:
         TrueSingleton._TrueSingleton__singleton_instances = {}
 
+
 # what this function actually does isn't complex, in *theory*.  however,
 # metaclass hacking is some of the deeper black magic of Python -- so document
 # the crap out of it.
-def semi_singleton_metaclass(hashfunc: Callable=None) -> type:
+def semi_singleton_metaclass(hashfunc: Callable = None) -> type:
     """
     Generate and return a metaclass for semi-singletons.
 
@@ -233,7 +237,7 @@ def semi_singleton_metaclass(hashfunc: Callable=None) -> type:
     ...     def __init__(self, foo, bar=False):
     ...         self.foo = foo
     ...         self.bar = bar
-    ... 
+    ...
     >>> s1 = SemiSingleton(1, False)
     >>> s1
     <__main__.SemiSingleton object at 0xdeadbeef>
@@ -330,11 +334,13 @@ def semi_singleton_metaclass(hashfunc: Callable=None) -> type:
         def __call__(cls, *args, **kwargs):
             key = hashfunc(args, kwargs)
             if key not in cls.__semisingleton_instance_map:
-                cls.__semisingleton_instance_map[key] = \
-                        super(_SemiSingleton, cls).__call__(*args, **kwargs)
+                cls.__semisingleton_instance_map[key] = super(
+                    _SemiSingleton, cls
+                ).__call__(*args, **kwargs)
             return cls.__semisingleton_instance_map[key]
 
     return _SemiSingleton
+
 
 def get_all_semi_singleton_instances(cls: type) -> Generator[object]:
     """
@@ -367,6 +373,7 @@ def get_all_semi_singleton_instances(cls: type) -> Generator[object]:
     :return: Generator expression yielding semi-singleton instances.
     """
     yield from type(cls)._SemiSingleton__semisingleton_instance_map.values()
+
 
 def clear_semi_singleton(cls: type) -> None:
     """
@@ -401,4 +408,3 @@ def clear_semi_singleton(cls: type) -> None:
     :param cls: Class to clear semisingleton states from.
     """
     type(cls)._SemiSingleton__semisingleton_instance_map = {}
-

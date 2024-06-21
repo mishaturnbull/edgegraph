@@ -11,6 +11,7 @@ Unit tests to ensure module structure is operable.
 # scope.
 # pylint: disable=W0611, C0415
 
+
 def test_full_qual_imports():
     """
     Ensure we can import structure container modules as fully-qualified
@@ -20,9 +21,9 @@ def test_full_qual_imports():
     import edgegraph.structure.vertex
     import edgegraph.structure.universe
 
+
 def test_structure_imports():
     """
     Ensure we can import structure objects directly from the structure module.
     """
     from edgegraph.structure import BaseObject, Vertex, Universe
-

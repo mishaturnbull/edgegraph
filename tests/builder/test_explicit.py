@@ -5,9 +5,9 @@
 Unit tests for structure.twoendedlink.TwoEndedLink class.
 """
 
-from edgegraph.structure import (Vertex, TwoEndedLink, DirectedEdge,
-        UnDirectedEdge)
+from edgegraph.structure import Vertex, TwoEndedLink, DirectedEdge, UnDirectedEdge
 from edgegraph.builder import explicit
+
 
 def test_link_basecls():
     """
@@ -37,6 +37,7 @@ def test_link_basecls():
     assert len(v2.links) == 1, "link_from_to assigned more than 1 link to v2!"
     assert v2.links[0] is lnk, "link_from_to binding to v2 is wrong!"
 
+
 def test_link_directed():
     """
     Ensure the link_directed() shortcut function creates the right link type.
@@ -52,6 +53,7 @@ def test_link_directed():
 
     assert isinstance(lnk, DirectedEdge)
 
+
 def test_link_undirected():
     """
     Ensure the unlink_directed() shortcut function creates the right link type.
@@ -66,6 +68,7 @@ def test_link_undirected():
     lnk = explicit.link_undirected(v1, v2)
 
     assert isinstance(lnk, UnDirectedEdge)
+
 
 def test_link_basecls_chain():
     """
@@ -101,6 +104,7 @@ def test_link_basecls_chain():
     assert l2.vertices == (verts[1], verts[2]), "l2 has wrong vertices"
     assert l3.vertices == (verts[2], verts[3]), "l3 has wrong vertices"
 
+
 def test_dontdup():
     """
     Ensure the dontdup argument works as intended.
@@ -135,4 +139,3 @@ def test_dontdup():
     # and finally, check it still makes a new link if there is no duplicate
     l8 = explicit.link_from_to(verts[0], TwoEndedLink, verts[3], dontdup=True)
     assert verts[0].links == (l1, l7, l8), "did not add post-dontdup link!"
-

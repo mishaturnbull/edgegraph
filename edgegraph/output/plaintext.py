@@ -21,9 +21,8 @@ from __future__ import annotations
 from edgegraph.structure import Universe
 from edgegraph.traversal import helpers
 
-def basic_render(uni: Universe,
-                 rfunc: Callable=None,
-                 sort: Callable=None) -> str:
+
+def basic_render(uni: Universe, rfunc: Callable = None, sort: Callable = None) -> str:
     """
     Perform a very basic rendering of a graph into a string.
 
@@ -43,26 +42,26 @@ def basic_render(uni: Universe,
     >>> graph = randgraph.randgraph()
     >>> asci = plaintext.basic_render(graph)
     >>> print(asci, rfunc=lambda v: v.i)
-	7 -> 5
-	4 -> 6
-	14 -> 14, 7, 13
-	11 -> 1, 11, 4
-	8 -> 14, 8
-	0 -> 12
-	3 -> 5
-	5 -> 0
-	12 -> 3, 1
-	1 -> 8
-	9 -> 4
-	6 -> 7
-	2 -> 13
-	10 -> 7, 10, 8
-	13 -> 7
+        7 -> 5
+        4 -> 6
+        14 -> 14, 7, 13
+        11 -> 1, 11, 4
+        8 -> 14, 8
+        0 -> 12
+        3 -> 5
+        5 -> 0
+        12 -> 3, 1
+        1 -> 8
+        9 -> 4
+        6 -> 7
+        2 -> 13
+        10 -> 7, 10, 8
+        13 -> 7
 
     .. todo::
 
-	   figure out what to do to make this pass doctest... if graph is
-	   randomized, graph is different every time --> test fails
+           figure out what to do to make this pass doctest... if graph is
+           randomized, graph is different every time --> test fails
 
     :param uni: The universe to render.
     :param rfunc: Callable render function, if any.
@@ -104,5 +103,4 @@ def basic_render(uni: Universe,
         line = line[:-2]
         lines.append(line)
 
-    return '\n'.join(lines)
-
+    return "\n".join(lines)

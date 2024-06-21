@@ -124,28 +124,28 @@ end note
 #:     :py:attr:`~edgegraph.structure.undirectededge.UnDirectedEdge.v2` end of
 #:     the link.  default ``""``.
 PLANTUML_RENDER_OPTIONS = {
-        "skinparams": {
-            "dpi": "300",
+    "skinparams": {
+        "dpi": "300",
+    },
+    Vertex: {
+        "type": "object",
+        "stereotype_skinparams": {
+            "BackgroundColor": "White",
+            "FontColor": "Black",
+            "StereotypeFontColor": "Black",
         },
-        Vertex: {
-            "type": "object",
-            "stereotype_skinparams": {
-                "BackgroundColor": "White",
-                "FontColor": "Black",
-                "StereotypeFontColor": "Black",
-            },
-            "show_attrs": [".+"],
-            "title_format": "$id",
-        },
-        DirectedEdge: {
-            "v1side": "",
-            "v2side": ">",
-        },
-        UnDirectedEdge: {
-            "v1side": "",
-            "v2side": "",
-        },
-    }
+        "show_attrs": [".+"],
+        "title_format": "$id",
+    },
+    DirectedEdge: {
+        "v1side": "",
+        "v2side": ">",
+    },
+    UnDirectedEdge: {
+        "v1side": "",
+        "v2side": "",
+    },
+}
 
 #: List of arguments to always invoke plantuml with.
 #:
@@ -159,8 +159,7 @@ PLANTUML_RENDER_OPTIONS = {
 #: executor itself by this method.
 #:
 #: :type: list[str]
-PLANTUML_INVOKE_ARGS = [
-    ]
+PLANTUML_INVOKE_ARGS = []
 
 #: Environment variable overrides to invoke plantuml with.
 #:
@@ -172,11 +171,10 @@ PLANTUML_INVOKE_ARGS = [
 #: non-graphical environments, even when called in command-line mode.
 #:
 #: :type: dict[str, str]
-PLANTUML_INVOKE_ENV = {
-        'DISPLAY': ''
-    }
+PLANTUML_INVOKE_ENV = {"DISPLAY": ""}
 
-def is_plantuml_installed(plantuml: str="plantuml") -> bool:
+
+def is_plantuml_installed(plantuml: str = "plantuml") -> bool:
     """
     Checks if PlantUML is installed and usable on this system.
 
@@ -193,12 +191,15 @@ def is_plantuml_installed(plantuml: str="plantuml") -> bool:
     :return: Whether or not PlantUML is usable.
     """
     try:
-        subprocess.run([plantuml, *PLANTUML_INVOKE_ARGS, '-version'],
-                env=dict(os.environ, **PLANTUML_INVOKE_ENV),
-                check=True)
+        subprocess.run(
+            [plantuml, *PLANTUML_INVOKE_ARGS, "-version"],
+            env=dict(os.environ, **PLANTUML_INVOKE_ENV),
+            check=True,
+        )
         return True
     except (FileNotFoundError, subprocess.CalledProcessError):
         return False
+
 
 def _resolve_options(clas, options):
     search = clas
@@ -214,29 +215,31 @@ def _resolve_options(clas, options):
     opts = options[search]
 
     # combine into a super-regex to use only one
-    if "show_attrs" in opts and not isinstance(opts['show_attrs'], re.Pattern):
-        superrgx = '(' + ')|('.join(opts['show_attrs']) + ')'
-        opts['show_attrs'] = re.compile(superrgx)
+    if "show_attrs" in opts and not isinstance(opts["show_attrs"], re.Pattern):
+        superrgx = "(" + ")|(".join(opts["show_attrs"]) + ")"
+        opts["show_attrs"] = re.compile(superrgx)
 
     return opts
 
+
 def _vertex_title(vertex, opts):
-    attr_rgx = opts['show_attrs']
+    attr_rgx = opts["show_attrs"]
     attributes = [a for a in dir(vertex) if attr_rgx.match(a)]
-    if opts['title_format'] == '$id':
+    if opts["title_format"] == "$id":
         title = hex(id(vertex))
     else:
-        title = opts['title_format'].format(**{a: vertex[a] for a in attributes})
+        title = opts["title_format"].format(**{a: vertex[a] for a in attributes})
     return title
+
 
 def _one_vert_to_puml(vertex, options):
     opts = _resolve_options(type(vertex), options)
 
-    if 'user_render_func' in opts:
-        return opts['user_render_func'](vertex, options)
+    if "user_render_func" in opts:
+        return opts["user_render_func"](vertex, options)
 
     # identify and match the attributes described in the show_attrs tag
-    attr_rgx = opts['show_attrs']
+    attr_rgx = opts["show_attrs"]
     attributes = [a for a in dir(vertex) if attr_rgx.match(a)]
 
     title = _vertex_title(vertex, opts)
@@ -248,7 +251,8 @@ def _one_vert_to_puml(vertex, options):
 
     ftrline = "}\n"
 
-    return hdrline + ''.join(attrlines) + ftrline
+    return hdrline + "".join(attrlines) + ftrline
+
 
 def _one_link_to_puml(lnk, options):
     opts = _resolve_options(type(lnk), options)
@@ -263,20 +267,21 @@ def _one_link_to_puml(lnk, options):
     out = f"{v1puml} {v1e}--{v2e} {v2puml}\n"
     return out
 
+
 def _one_vert_to_skinparam(vert, options):
     opts = _resolve_options(type(vert), options)
-    if 'stereotype_skinparams' not in opts:
+    if "stereotype_skinparams" not in opts:
         return []
 
-    stereo = opts['stereotype_skinparams']
+    stereo = opts["stereotype_skinparams"]
     typename = type(vert).__name__
     output = []
     for key, val in stereo.items():
         output.append(f"{key}<<{typename}>> {val}\n")
     return output
 
-def render_to_plantuml_src(uni: Universe,
-                           options: dict) -> str:
+
+def render_to_plantuml_src(uni: Universe, options: dict) -> str:
     """
     Render a universe to PlantUML source.
 
@@ -307,14 +312,14 @@ def render_to_plantuml_src(uni: Universe,
         skinparams |= set(_one_vert_to_skinparam(vert, options))
 
     # these are the overall, diagram-wide skinparams
-    if 'skinparams' in options and len(options['skinparams']):
-        for spkey, spval in options['skinparams'].items():
+    if "skinparams" in options and len(options["skinparams"]):
+        for spkey, spval in options["skinparams"].items():
             components.append(f"skinparam {spkey} {spval}\n")
 
     # these are the per-object skinparams
     if len(skinparams) > 0:
         components.append("skinparam object {\n")
-        components.extend('    ' + s for s in skinparams)
+        components.extend("    " + s for s in skinparams)
         components.append("}\n")
 
     components.append(PLANTUML_AUTOGEN_NOTE)
@@ -324,11 +329,10 @@ def render_to_plantuml_src(uni: Universe,
         components.append(_one_link_to_puml(link, options))
 
     components.append("@enduml\n")
-    return ''.join(components)
+    return "".join(components)
 
-def render_to_image(src: str,
-                    out_file: str,
-                    plantuml: str="plantuml"):
+
+def render_to_image(src: str, out_file: str, plantuml: str = "plantuml"):
     """
     Accept string PlantUML source, and create an image.
 
@@ -352,7 +356,7 @@ def render_to_image(src: str,
     :param plantuml: The command to invoke PlantUML with.
     :raises ValueError: If the specified filename is invalid.
     """
-    if not out_file.endswith('.png'):
+    if not out_file.endswith(".png"):
         raise ValueError("Only PNG's are supported at the moment!")
     if not len(src) > 0:
         raise ValueError("Cannot render PlantUML image with empty string src!")
@@ -364,14 +368,16 @@ def render_to_image(src: str,
     try:
         srcfile = os.path.join(tmpdir, "in.puml")
         outfile = os.path.join(tmpdir, "in.png")
-        with open(srcfile, 'w') as wfp:
+        with open(srcfile, "w") as wfp:
             wfp.write(src)
 
         # https://plantuml.com/command-line
-        subprocess.run([plantuml, *PLANTUML_INVOKE_ARGS, srcfile],
-                env=dict(os.environ, **PLANTUML_INVOKE_ENV),
-                capture_output=True, check=True)
+        subprocess.run(
+            [plantuml, *PLANTUML_INVOKE_ARGS, srcfile],
+            env=dict(os.environ, **PLANTUML_INVOKE_ENV),
+            capture_output=True,
+            check=True,
+        )
         shutil.move(outfile, out_file)
     finally:
         shutil.rmtree(tmpdir)
-

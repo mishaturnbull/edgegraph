@@ -13,10 +13,12 @@ from edgegraph.structure import Vertex, DirectedEdge, Universe
 from edgegraph.builder import adjlist
 
 
-def randgraph(count: int=15,
-              edge: type=DirectedEdge,
-              connectivity: float=None,
-              ensurelink: bool=True) -> Universe:
+def randgraph(
+    count: int = 15,
+    edge: type = DirectedEdge,
+    connectivity: float = None,
+    ensurelink: bool = True,
+) -> Universe:
     """
     Create a random graph.
 
@@ -34,7 +36,7 @@ def randgraph(count: int=15,
     :return: a :py:class:`~edgegraph.structure.universe.Universe` object
        containing the graph.
     """
-    verts = [Vertex(attributes={'i': i}) for i in range(count)]
+    verts = [Vertex(attributes={"i": i}) for i in range(count)]
 
     if connectivity is None:
         # this seems to give a good ratio of vertex-edge, as long as count is
@@ -51,4 +53,3 @@ def randgraph(count: int=15,
         adj[verts[i]] = random.sample(verts, k)
 
     return adjlist.load_adj_dict(adj, linktype=edge)
-

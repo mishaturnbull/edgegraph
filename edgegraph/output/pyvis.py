@@ -46,16 +46,20 @@ try:
 except ImportError as exc:
 
     import sys
-    msg = "It appears pyvis is not installed.  Please install it before using" \
-            f" EdgeGraph's PyVis interactions.\n\n\t{sys.executable} -m pip " \
-            "install pyvis\n\n"
+
+    msg = (
+        "It appears pyvis is not installed.  Please install it before using"
+        f" EdgeGraph's PyVis interactions.\n\n\t{sys.executable} -m pip "
+        "install pyvis\n\n"
+    )
     raise ImportError(msg) from exc
 
 from edgegraph.structure import Universe, DirectedEdge
 
-def make_pyvis_net(uni: Universe,
-        rvfunc: Callable=None,
-        refunc: Callable=None) -> pyvis.network.Network:
+
+def make_pyvis_net(
+    uni: Universe, rvfunc: Callable = None, refunc: Callable = None
+) -> pyvis.network.Network:
     """
     Convert a given Universe to a PyVis network, suitable for further use
     within PyVis.
@@ -121,11 +125,13 @@ def make_pyvis_net(uni: Universe,
 
     return net
 
-def pyvis_render_customizable(uni: Universe,
-        rvfunc: Callable=None,
-        refunc: Callable=None,
-        show_buttons_filter=None,
-        ) -> pyvis.network.Network:
+
+def pyvis_render_customizable(
+    uni: Universe,
+    rvfunc: Callable = None,
+    refunc: Callable = None,
+    show_buttons_filter=None,
+) -> pyvis.network.Network:
     """
     Convert a given Universe to a PyVis network, suitable for further use
     within PyVis.  Then, apply a flag to it to cause the display of a
@@ -169,4 +175,3 @@ def pyvis_render_customizable(uni: Universe,
     net = make_pyvis_net(uni, rvfunc, refunc)
     net.show_buttons(filter_=None or show_buttons_filter)
     return net
-

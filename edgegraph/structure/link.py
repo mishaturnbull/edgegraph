@@ -9,7 +9,8 @@ from __future__ import annotations
 import warnings
 from edgegraph.structure import base
 
-class Link (base.BaseObject):
+
+class Link(base.BaseObject):
     """
     Represents an edge in the edge-vertex graph.
 
@@ -29,16 +30,18 @@ class Link (base.BaseObject):
     """
 
     fixed_attrs: set[str] = base.BaseObject.fixed_attrs | {
-            '_vertices',
-            'vertices',
-            }
+        "_vertices",
+        "vertices",
+    }
 
-    def __init__(self, *,
-            vertices: list[Vertex]=None,
-            uid: int=None,
-            attributes: dict=None,
-            _force_creation: bool=False,
-            ):
+    def __init__(
+        self,
+        *,
+        vertices: list[Vertex] = None,
+        uid: int = None,
+        attributes: dict = None,
+        _force_creation: bool = False,
+    ):
         """
         Instantiate a new link ("edge").
 
@@ -61,8 +64,7 @@ class Link (base.BaseObject):
 
         # prevent direct usage of this class -- its meaning is undefined
         if (type(self) == Link) and not _force_creation:
-            raise TypeError("Base class <Link> may not be instantiated "
-                    "directly!")
+            raise TypeError("Base class <Link> may not be instantiated " "directly!")
 
         #: Vertices that this link links
         #:
@@ -133,4 +135,3 @@ class Link (base.BaseObject):
 
             if kill is not None:
                 kill.remove_from_link(self)
-

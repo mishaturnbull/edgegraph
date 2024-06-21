@@ -4,4 +4,3 @@
 """
 Functions for navigating graphs.
 """
-

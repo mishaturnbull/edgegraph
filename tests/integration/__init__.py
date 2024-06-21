@@ -4,4 +4,3 @@
 """
 Tests that combine functionality of multiple source submodules.
 """
-
