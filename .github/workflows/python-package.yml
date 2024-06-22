@@ -37,11 +37,19 @@ jobs:
         cat _build/coverage/python.txt
         if [[ ( $(grep TOTAL _build/coverage/python.txt | awk '{print $4}') == "100.00%") ]]; then true; else false; fi
 
-    - name: Formatting check
+    - name: Pylint check
       run: |
         # pylintrc equivalent (in pyproject.toml) takes care of the options
         # here, no need to cli-flag everything
         pylint --exit-zero edgegraph tests
+
+    - name: Black format check
+      # there's only sense in running black against the latest version.  it's
+      # the same code no matter what, and black performs the same analysis
+      # (except on py3.7, which predates black reading from pyproject.toml and
+      # missing some configs)
+      if: ${{ matrix.python-version == '3.12' }}
+      run: |
         black --check edgegraph tests docs
 
     - name: Run unit tests
