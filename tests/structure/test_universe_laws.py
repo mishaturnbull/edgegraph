@@ -72,7 +72,9 @@ def test_uni_laws_attrs():
     assert (
         l.mixed_links is l._attributes["_mixed_links"]
     ), "UniverseLaws cannot get mixed_links"
-    assert l.cycles is l._attributes["_cycles"], "UniverseLaws cannot get cycles"
+    assert (
+        l.cycles is l._attributes["_cycles"]
+    ), "UniverseLaws cannot get cycles"
     assert (
         l.multipath is l._attributes["_multipath"]
     ), "UniverseLaws cannot get multipath"

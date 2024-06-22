@@ -22,7 +22,10 @@ def test_twoendlink_subclass():
 
     e = twoendedlink.TwoEndedLink(v1, v2, uid=-100, attributes={"fifteen": 15})
 
-    assert e.vertices == (v1, v2), "TwoEndedLink did not pass vertices to super!"
+    assert e.vertices == (
+        v1,
+        v2,
+    ), "TwoEndedLink did not pass vertices to super!"
     assert e.uid == -100, "TwoEndedLink did not pass UID to super!"
     assert e.fifteen == 15, "TwoEndedLink did not pass attributes to super!"
 
@@ -70,4 +73,6 @@ def test_twoendedlink_other():
 
     assert e.other(v1) is v2, "TwoEndedLink.other took v1 and did not give v2"
     assert e.other(v2) is v1, "TwoEndedLink.other took v2 and did not give v1"
-    assert e.other(v3) is None, "TwoEndedLink took <not in edge> and did not give None"
+    assert (
+        e.other(v3) is None
+    ), "TwoEndedLink took <not in edge> and did not give None"

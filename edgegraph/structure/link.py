@@ -64,7 +64,9 @@ class Link(base.BaseObject):
 
         # prevent direct usage of this class -- its meaning is undefined
         if (type(self) == Link) and not _force_creation:
-            raise TypeError("Base class <Link> may not be instantiated " "directly!")
+            raise TypeError(
+                "Base class <Link> may not be instantiated " "directly!"
+            )
 
         #: Vertices that this link links
         #:

@@ -15,7 +15,9 @@ def test_basic_render_sorted(graph_clrs09_22_6):
     Test the basic render approach with a sort and render function.
     """
     uni, _ = graph_clrs09_22_6
-    render = plaintext.basic_render(uni, rfunc=lambda v: v.i, sort=lambda v: v.i)
+    render = plaintext.basic_render(
+        uni, rfunc=lambda v: v.i, sort=lambda v: v.i
+    )
     answer = """0 -> 2, 3, 6
 1 -> 4, 8
 2 -> 5

@@ -20,9 +20,14 @@ def test_undiedge_subclass():
     v1 = vertex.Vertex()
     v2 = vertex.Vertex()
 
-    e = undirectededge.UnDirectedEdge(v1, v2, uid=-100, attributes={"fifteen": 15})
+    e = undirectededge.UnDirectedEdge(
+        v1, v2, uid=-100, attributes={"fifteen": 15}
+    )
 
-    assert e.vertices == (v1, v2), "UnDirectedEdge did not pass vertices to super!"
+    assert e.vertices == (
+        v1,
+        v2,
+    ), "UnDirectedEdge did not pass vertices to super!"
     assert e.uid == -100, "UnDirectedEdge did not pass UID to super!"
     assert e.fifteen == 15, "UnDirectedEdge did not pass attributes to super!"
 

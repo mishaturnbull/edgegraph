@@ -22,7 +22,10 @@ def test_diedge_subclass():
 
     e = directededge.DirectedEdge(v1, v2, uid=-100, attributes={"fifteen": 15})
 
-    assert e.vertices == (v1, v2), "DirectedEdge did not pass vertices to super!"
+    assert e.vertices == (
+        v1,
+        v2,
+    ), "DirectedEdge did not pass vertices to super!"
     assert e.uid == -100, "DirectedEdge did not pass UID to super!"
     assert e.fifteen == 15, "DirectedEdge did not pass attributes to super!"
 

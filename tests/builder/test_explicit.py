@@ -5,7 +5,12 @@
 Unit tests for structure.twoendedlink.TwoEndedLink class.
 """
 
-from edgegraph.structure import Vertex, TwoEndedLink, DirectedEdge, UnDirectedEdge
+from edgegraph.structure import (
+    Vertex,
+    TwoEndedLink,
+    DirectedEdge,
+    UnDirectedEdge,
+)
 from edgegraph.builder import explicit
 
 

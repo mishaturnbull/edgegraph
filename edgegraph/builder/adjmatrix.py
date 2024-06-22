@@ -126,7 +126,9 @@ def load_adj_matrix(
     # make sure the side array is the same size as the matrix
     matrixlen = len(matrix)
     if len(vertices) != matrixlen:
-        raise ValueError("load_adj_matrix needs len(vertices) to be matrix " "len!")
+        raise ValueError(
+            "load_adj_matrix needs len(vertices) to be matrix " "len!"
+        )
     # and make sure that the matrix is a square
     for i, row in enumerate(matrix):
         if len(row) != matrixlen:

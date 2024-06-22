@@ -17,7 +17,11 @@ def test_version():
     actually reachable.
     """
 
-    for attr in [version.VERSION_MAJOR, version.VERSION_MINOR, version.VERSION_PATCH]:
+    for attr in [
+        version.VERSION_MAJOR,
+        version.VERSION_MINOR,
+        version.VERSION_PATCH,
+    ]:
         assert isinstance(attr, int)
         assert attr >= 0
 

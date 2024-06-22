@@ -71,10 +71,18 @@ def test_plantuml_class_option_resolution():
     assert (
         "Vertex-STSKP-1<<Vertex>> Foo" in src
     ), "puml src gen Vertex->Vertex lookup did not work right!"
-    assert "A-STSKP-1<<A>> Bar" in src, "puml src gen A->A lookup did not work right!"
-    assert "B-STSKP-1<<B>> Baz" in src, "puml src gen B->B lookup did not work right!"
-    assert "B-STSKP-1<<C>> Baz" in src, "puml src gen C->B lookup did not work right!"
-    assert "B-STSKP-1<<D>> Baz" in src, "puml src gen D->B lookup did not work right!"
+    assert (
+        "A-STSKP-1<<A>> Bar" in src
+    ), "puml src gen A->A lookup did not work right!"
+    assert (
+        "B-STSKP-1<<B>> Baz" in src
+    ), "puml src gen B->B lookup did not work right!"
+    assert (
+        "B-STSKP-1<<C>> Baz" in src
+    ), "puml src gen C->B lookup did not work right!"
+    assert (
+        "B-STSKP-1<<D>> Baz" in src
+    ), "puml src gen D->B lookup did not work right!"
 
 
 def test_plantuml_class_option_resolution_fail(graph_clrs09_22_6):
@@ -140,7 +148,9 @@ def test_plantuml_no_stereotype_skinparams(graph_clrs09_22_6):
     hits = [re.search(skp, src) for skp in skps]
     hit = any(hits)
 
-    assert hit is False, "puml src gen gave stereotype skinparams when shouldn't!"
+    assert (
+        hit is False
+    ), "puml src gen gave stereotype skinparams when shouldn't!"
 
 
 def test_plantuml_title_format(graph_clrs09_22_6):
@@ -155,4 +165,6 @@ def test_plantuml_title_format(graph_clrs09_22_6):
     assert len(hits) == len(
         graph_clrs09_22_6[1]
     ), "puml src gen output wrong number of objects!"
-    assert len(set(hits)) == len(hits), "puml src gen output duplicate object titles!"
+    assert len(set(hits)) == len(
+        hits
+    ), "puml src gen output duplicate object titles!"

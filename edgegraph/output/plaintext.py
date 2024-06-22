@@ -22,7 +22,9 @@ from edgegraph.structure import Universe
 from edgegraph.traversal import helpers
 
 
-def basic_render(uni: Universe, rfunc: Callable = None, sort: Callable = None) -> str:
+def basic_render(
+    uni: Universe, rfunc: Callable = None, sort: Callable = None
+) -> str:
     """
     Perform a very basic rendering of a graph into a string.
 

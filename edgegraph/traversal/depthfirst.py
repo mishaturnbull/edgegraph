@@ -72,7 +72,9 @@ def _df_preflight_checks(uni: Universe, start: Vertex):
         raise ValueError("Start vertex not in specified universe!")
 
 
-def _dft_recur(uni: Universe, v: Vertex, visited: dict[Vertex, None]) -> list[Vertex]:
+def _dft_recur(
+    uni: Universe, v: Vertex, visited: dict[Vertex, None]
+) -> list[Vertex]:
     """
     Recursion helper for :py:func:`dft_recursive`.  For internal use only!
 
@@ -118,7 +120,11 @@ def dft_recursive(uni: Universe, start: Vertex) -> list[Vertex]:
 
 
 def _dfs_recur(
-    uni: Universe, v: Vertex, visited: dict[Vertex, None], attrib: str, val: object
+    uni: Universe,
+    v: Vertex,
+    visited: dict[Vertex, None],
+    attrib: str,
+    val: object,
 ) -> Vertex:
     """
     Recursion helper for :py:func:`dfs_recursive`.  For internal use only!
@@ -148,7 +154,9 @@ def _dfs_recur(
     return None
 
 
-def dfs_recursive(uni: Universe, start: Vertex, attrib: str, val: object) -> Vertex:
+def dfs_recursive(
+    uni: Universe, start: Vertex, attrib: str, val: object
+) -> Vertex:
     """
     Perform a recursive depth-first search in the given graph for a given
     attribute.
@@ -217,7 +225,9 @@ def dft_iterative(uni: Universe, start: Vertex) -> list[Vertex]:
     return discovered
 
 
-def dfs_iterative(uni: Universe, start: Vertex, attrib: str, val: object) -> Vertex:
+def dfs_iterative(
+    uni: Universe, start: Vertex, attrib: str, val: object
+) -> Vertex:
     """
     Perform a non-recursive depth-first search in the given universe.
 

@@ -97,7 +97,9 @@ def test_base_obj_getitem_protected():
     bo["a"] = 15
 
     assert bo["a"] == 15, "bo['a'] did not getitem!"
-    assert bo["_attributes"] == {"a": 15}, "bo getitem did not forward to getattr!"
+    assert bo["_attributes"] == {
+        "a": 15
+    }, "bo getitem did not forward to getattr!"
 
 
 def test_base_obj_setitem_protected():

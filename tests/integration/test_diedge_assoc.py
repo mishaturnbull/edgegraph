@@ -17,7 +17,10 @@ def test_diredge_assoc_on_init():
 
     e = directededge.DirectedEdge(v1, v2)
 
-    assert e.vertices == (v1, v2), "DirectedEdge did not associate links from __init__!"
+    assert e.vertices == (
+        v1,
+        v2,
+    ), "DirectedEdge did not associate links from __init__!"
 
     assert v1.links == (e,), "DirectedEdge did not bind to vertex in __init__!"
     assert v2.links == (e,), "DirectedEdge did not bind to vertex in __init__!"
@@ -39,7 +42,10 @@ def test_diredge_assoc_postinit():
 
     e.v1 = v1
 
-    assert e.vertices == (v1, None), "DirectedEdge did not associate v1 postinit!"
+    assert e.vertices == (
+        v1,
+        None,
+    ), "DirectedEdge did not associate v1 postinit!"
     assert v1.links == (e,), "DIrectedEdge did not bind vertex link!"
     assert v2.links == tuple(), "What the actual hell happened here"
 
@@ -67,7 +73,9 @@ def test_diredge_assoc_update_v1():
     e.v1 = v3
 
     assert e.vertices == (v3, v2), "DirEdge did not set v1 correctly!"
-    assert v1.links == tuple(), "DirEdge v1-set did not remove links from old v1!"
+    assert (
+        v1.links == tuple()
+    ), "DirEdge v1-set did not remove links from old v1!"
     assert v2.links == (e,), "DirEdge v1-set altered v2 links!"
     assert v3.links == (e,), "DirEdge v1-set did not bind to new v1!"
 
@@ -90,5 +98,7 @@ def test_diredge_assoc_update_v2():
 
     assert e.vertices == (v1, v3), "DirEdge did not set v2 correctly!"
     assert v1.links == (e,), "DirEdge v2-set altered v1 links!"
-    assert v2.links == tuple(), "DirEdge v2-set did not remove links from old v2!"
+    assert (
+        v2.links == tuple()
+    ), "DirEdge v2-set did not remove links from old v2!"
     assert v3.links == (e,), "DirEdge v2-set did not bind to new v2!"

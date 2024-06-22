@@ -53,7 +53,9 @@ def link_from_to(v1: Vertex, lnktype: type, v2: Vertex, dontdup: bool = False):
     return lnktype(v1, v2)
 
 
-def link_directed(v1: Vertex, v2: Vertex, dontdup: bool = False) -> DirectedEdge:
+def link_directed(
+    v1: Vertex, v2: Vertex, dontdup: bool = False
+) -> DirectedEdge:
     """
     Create a :py:class:`~edgegraph.structure.directededge.DirectedEdge` between
     the two vertices.
@@ -90,7 +92,9 @@ def link_directed(v1: Vertex, v2: Vertex, dontdup: bool = False) -> DirectedEdge
     return link_from_to(v1, DirectedEdge, v2, dontdup=dontdup)
 
 
-def link_undirected(v1: Vertex, v2: Vertex, dontdup: bool = False) -> UnDirectedEdge:
+def link_undirected(
+    v1: Vertex, v2: Vertex, dontdup: bool = False
+) -> UnDirectedEdge:
     """
     Create a :py:class:`~edgegraph.structure.undirectededge.UnDirectedEdge`
     between the two vertices.

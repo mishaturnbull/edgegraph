@@ -183,7 +183,9 @@ def neighbors(
                 if unknown_handling == LNK_UNKNOWN_NEIGHBOR:
                     nbs.append(link.other(vert))
                 else:
-                    raise NotImplementedError(f"Unknown link class {type(link)}")
+                    raise NotImplementedError(
+                        f"Unknown link class {type(link)}"
+                    )
 
         else:
             # see above notes on short-circuiting filterfunc() if it's not
@@ -309,7 +311,9 @@ def find_links(
                 if unknown_handling == LNK_UNKNOWN_NEIGHBOR:
                     links.add(link)
                 else:
-                    raise NotImplementedError(f"Unknown link class {type(link)}")
+                    raise NotImplementedError(
+                        f"Unknown link class {type(link)}"
+                    )
 
         else:
             # see above notes on short-circuiting filterfunc() if it's not

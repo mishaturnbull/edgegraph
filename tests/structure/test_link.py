@@ -88,6 +88,8 @@ def test_link_creation_vertices_set():
 
     for vert in verts:
         assert vert in l.vertices, "Link init'd with missing vertex!"
-    assert len(l.vertices) == len(verts), "Link init'd with wrong num of vertices!"
+    assert len(l.vertices) == len(
+        verts
+    ), "Link init'd with wrong num of vertices!"
     assert isinstance(l._vertices, list), "Link init did not conv vertices!"
     assert isinstance(l.vertices, tuple), "Link .vertices returned wrong type!"

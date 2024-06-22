@@ -31,7 +31,9 @@ def test_pyvis_makes_net(graph_clrs09_22_6):
     nodes_expected = {str(v.i) for v in verts}
 
     pvn = pyvis.make_pyvis_net(
-        uni, rvfunc=lambda v: str(v.i), refunc=lambda e: f"{e.v1.i} --> {e.v2.i}"
+        uni,
+        rvfunc=lambda v: str(v.i),
+        refunc=lambda e: f"{e.v1.i} --> {e.v2.i}",
     )
 
     nodes_present = pvn.get_nodes()
@@ -67,13 +69,17 @@ def test_pyvis_customizable(graph_clrs09_22_6):
     uni, _ = graph_clrs09_22_6
 
     pvn = pyvis.make_pyvis_net(
-        uni, rvfunc=lambda v: str(v.i), refunc=lambda e: f"{e.v1.i} --> {e.v2.i}"
+        uni,
+        rvfunc=lambda v: str(v.i),
+        refunc=lambda e: f"{e.v1.i} --> {e.v2.i}",
     )
 
     assert not pvn.conf, "Customizability was enabled by default!"
 
     pvn = pyvis.pyvis_render_customizable(
-        uni, rvfunc=lambda v: str(v.i), refunc=lambda e: f"{e.v1.i} --> {e.v2.i}"
+        uni,
+        rvfunc=lambda v: str(v.i),
+        refunc=lambda e: f"{e.v1.i} --> {e.v2.i}",
     )
 
     assert pvn.conf, "Customizability was not enabled!"

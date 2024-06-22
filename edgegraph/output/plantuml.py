@@ -228,7 +228,9 @@ def _vertex_title(vertex, opts):
     if opts["title_format"] == "$id":
         title = hex(id(vertex))
     else:
-        title = opts["title_format"].format(**{a: vertex[a] for a in attributes})
+        title = opts["title_format"].format(
+            **{a: vertex[a] for a in attributes}
+        )
     return title
 
 
