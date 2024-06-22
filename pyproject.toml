@@ -30,6 +30,9 @@ version = {attr = "edgegraph.version.__version__"}
 # 0 = automatically detect # of cores for multiprocessing
 jobs = 0
 
+[tool.pylint.format]
+max-line-length = 80
+
 [tool.pylint."messages control"]
 # messages that we don't care about.  justify each entry!
 disable = [
@@ -62,4 +65,7 @@ log_cli = false
 log_cli_level = "DEBUG"
 log_cli_format = "%(asctime)s [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)"
 log_cli_date_format = "%Y-%m-%d %H:%M:%S"
+
+[tool.black]
+line-length = 80
 
