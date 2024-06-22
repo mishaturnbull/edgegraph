@@ -52,3 +52,7 @@ The repository is tagged for each versioned release; the tag names are the
 version prefixed with a ``v``.  For example, ``v0.2.0`` is the tag name for
 version ``0.2.0``.
 
+.. seealso::
+
+   More information about branches can be found here: :ref:`dev/vcs`.
+

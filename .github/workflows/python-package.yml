@@ -37,11 +37,12 @@ jobs:
         cat _build/coverage/python.txt
         if [[ ( $(grep TOTAL _build/coverage/python.txt | awk '{print $4}') == "100.00%") ]]; then true; else false; fi
 
-    - name: Pylint check
+    - name: Formatting check
       run: |
         # pylintrc equivalent (in pyproject.toml) takes care of the options
         # here, no need to cli-flag everything
         pylint --exit-zero edgegraph tests
+        black --check edgegraph tests docs
 
     - name: Run unit tests
       run: |
