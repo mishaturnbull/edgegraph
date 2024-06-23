@@ -6,7 +6,6 @@ Holds the Link class.
 """
 
 from __future__ import annotations
-import warnings
 from edgegraph.structure import base
 
 
@@ -65,7 +64,7 @@ class Link(base.BaseObject):
         # prevent direct usage of this class -- its meaning is undefined
         if (type(self) == Link) and not _force_creation:
             raise TypeError(
-                "Base class <Link> may not be instantiated " "directly!"
+                "Base class <Link> may not be instantiated directly!"
             )
 
         #: Vertices that this link links

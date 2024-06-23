@@ -75,7 +75,7 @@ class UniverseLaws(base.BaseObject):
         except (ValueError, AttributeError) as exc:
             # re-raise, but with a more clear message of what's happening
             raise ValueError(
-                "Given edge_whitelist is of " "incorrect structure!"
+                "Given edge_whitelist is of incorrect structure!"
             ) from exc
 
         #: whether or not mixed link types are allowed

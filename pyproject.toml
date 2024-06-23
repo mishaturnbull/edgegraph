@@ -39,6 +39,13 @@ disable = [
             # improves readability in some IDEs
             "trailing-newlines",
 
+            # black handles line length, and is configured for 80 chars
+            "line-too-long",
+
+            # the vast majority of variable names that pylint cares about are
+            # just simply not relevant
+            "invalid-name",
+
             # "explicit is better than implicit"  - the zen of Python
             # why is this even a warning??
             "useless-object-inheritance",
