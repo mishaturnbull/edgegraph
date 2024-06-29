@@ -87,6 +87,15 @@ def test_bfs_search_wrong_attr(graph_clrs09_22_6):
     assert right is verts[6], "BFS did not find right answer!"
 
 
+def test_bfs_none_universe(graph_clrs09_22_6):
+    """
+    Ensure BFS works with universe = None.
+    """
+    uni, verts = graph_clrs09_22_6
+    search = breadthfirst.bfs(None, verts[0], "i", 7)
+    assert search is verts[7], "BFS did not find answer when uni=None!"
+
+
 ###############################################################################
 # traversal!
 
@@ -149,6 +158,25 @@ def test_bft_trav_out_of_uni(graph_clrs09_22_6):
     trav = breadthfirst.bft(uni, verts[0])
     vals = [v.i for v in trav]
     assert -1 not in vals, "BFT found an out-of-universe vert!"
+
+
+def test_bft_none_universe(graph_clrs09_22_6):
+    """
+    Ensure BFT works when universe = None.
+    """
+    uni, verts = graph_clrs09_22_6
+    trav = breadthfirst.bft(None, verts[0])
+    trav = [v.i for v in trav]
+    assert trav == [
+        0,
+        2,
+        3,
+        6,
+        5,
+        7,
+        8,
+        9,
+    ], "BFT did not traverse when uni = None!"
 
 
 ###############################################################################

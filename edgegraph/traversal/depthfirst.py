@@ -66,7 +66,7 @@ def _df_preflight_checks(uni: Universe, start: Vertex):
     :raises ValueError: if the universe is empty, or if the start vertex is not
        in the given universe.
     """
-    if len(uni.vertices) == 0:
+    if (uni is not None) and (len(uni.vertices) == 0):
         raise ValueError("Universe is empty; cannot perform this operation!")
     if (uni is not None) and (start not in uni.vertices):
         raise ValueError("Start vertex not in specified universe!")
