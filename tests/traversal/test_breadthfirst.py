@@ -91,7 +91,7 @@ def test_bfs_none_universe(graph_clrs09_22_6):
     """
     Ensure BFS works with universe = None.
     """
-    uni, verts = graph_clrs09_22_6
+    _, verts = graph_clrs09_22_6
     search = breadthfirst.bfs(None, verts[0], "i", 7)
     assert search is verts[7], "BFS did not find answer when uni=None!"
 
@@ -164,7 +164,7 @@ def test_bft_none_universe(graph_clrs09_22_6):
     """
     Ensure BFT works when universe = None.
     """
-    uni, verts = graph_clrs09_22_6
+    _, verts = graph_clrs09_22_6
     trav = breadthfirst.bft(None, verts[0])
     trav = [v.i for v in trav]
     assert trav == [

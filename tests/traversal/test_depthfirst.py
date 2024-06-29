@@ -135,7 +135,7 @@ def test_dfti_none_universe(graph_clrs09_22_6):
     """
     Ensure DFTI work when universe = None.
     """
-    uni, verts = graph_clrs09_22_6
+    _, verts = graph_clrs09_22_6
     trav = depthfirst.dft_iterative(None, verts[0])
     trav = [v.i for v in trav]
     assert trav == dfti_data[0][1], "DFTI did not traverse with uni = None"
@@ -145,7 +145,7 @@ def test_dftr_none_universe(graph_clrs09_22_6):
     """
     Ensure DFTR work when universe = None.
     """
-    uni, verts = graph_clrs09_22_6
+    _, verts = graph_clrs09_22_6
     trav = depthfirst.dft_recursive(None, verts[0])
     trav = [v.i for v in trav]
     assert trav == dftr_data[0][1], "DFTR did not traverse with uni = None"
@@ -250,7 +250,7 @@ def test_dfs_none_universe(graph_clrs09_22_6, func):
     """
     Ensure DFS works when universe = None.
     """
-    uni, verts = graph_clrs09_22_6
+    _, verts = graph_clrs09_22_6
     vert = func(None, verts[0], "i", 8)
     assert vert is verts[8], f"{func} did not find answer with uni = None!"
 
