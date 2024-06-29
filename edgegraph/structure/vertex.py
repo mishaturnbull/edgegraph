@@ -34,6 +34,9 @@ class Vertex(base.BaseObject):
         """
         Creates a new vertex.
 
+        Unlike BaseObject, the Vertex class will add itself to Universes
+        provided to this method.
+
         :param links: iterable of link objects to associate this vertex with
 
         .. seealso::
@@ -53,6 +56,10 @@ class Vertex(base.BaseObject):
         if links is not None:
             for link in links:
                 self.add_to_link(link)
+
+        # ensure that we add ourselves to the universes given
+        for uni in self.universes:
+            uni.add_vertex(self)
 
     def add_to_universe(self, universe: Universe) -> None:
         """
