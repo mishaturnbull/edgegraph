@@ -9,7 +9,8 @@ from __future__ import annotations
 import types
 from edgegraph.structure import base, vertex
 
-class UniverseLaws (base.BaseObject):
+
+class UniverseLaws(base.BaseObject):
     """
     Defines the rules that apply to a universe.
 
@@ -31,22 +32,23 @@ class UniverseLaws (base.BaseObject):
     """
 
     fixed_attrs: set[str] = base.BaseObject.fixed_attrs | {
-            "edge_whitelist",
-            "mixed_links",
-            "cycles",
-            "multipath",
-            "multiverse",
-            "applies_to",
-            }
+        "edge_whitelist",
+        "mixed_links",
+        "cycles",
+        "multipath",
+        "multiverse",
+        "applies_to",
+    }
 
-    def __init__(self,
-            edge_whitelist: dict=None,
-            mixed_links: bool=False,
-            cycles: bool=True,
-            multipath: bool=True,
-            multiverse: bool=False,
-            applies_to: Universe=None
-            ):
+    def __init__(
+        self,
+        edge_whitelist: dict = None,
+        mixed_links: bool = False,
+        cycles: bool = True,
+        multipath: bool = True,
+        multiverse: bool = False,
+        applies_to: Universe = None,
+    ):
         """
         Instantiate a set of universal laws.
 
@@ -72,8 +74,9 @@ class UniverseLaws (base.BaseObject):
             self.edge_whitelist
         except (ValueError, AttributeError) as exc:
             # re-raise, but with a more clear message of what's happening
-            raise ValueError("Given edge_whitelist is of " \
-                             "incorrect structure!") from exc
+            raise ValueError(
+                "Given edge_whitelist is of incorrect structure!"
+            ) from exc
 
         #: whether or not mixed link types are allowed
         #:
@@ -102,10 +105,12 @@ class UniverseLaws (base.BaseObject):
         if self._edge_whitelist is None:
             return None
 
-        out = types.MappingProxyType({
-            t: types.MappingProxyType(dict(linkset.items())) \
-                    for t, linkset in self._edge_whitelist.items()
-            })
+        out = types.MappingProxyType(
+            {
+                t: types.MappingProxyType(dict(linkset.items()))
+                for t, linkset in self._edge_whitelist.items()
+            }
+        )
         return out
 
     @property
@@ -158,7 +163,8 @@ class UniverseLaws (base.BaseObject):
         if self._applies_to is not None:
             self._applies_to.laws = self
 
-class Universe (vertex.Vertex):
+
+class Universe(vertex.Vertex):
     """
     Represents a universe that can contain vertices and links.
 
@@ -181,18 +187,20 @@ class Universe (vertex.Vertex):
     """
 
     fixed_attrs: set[str] = vertex.Vertex.fixed_attrs | {
-            "_vertices",
-            "vertices",
-            "_laws",
-            "laws",
-            }
+        "_vertices",
+        "vertices",
+        "_laws",
+        "laws",
+    }
 
-    def __init__(self, *,
-            vertices: set[vertex.Vertex]=None,
-            laws: UniverseLaws=None,
-            uid: int=None,
-            attributes: dict=None,
-            ):
+    def __init__(
+        self,
+        *,
+        vertices: set[vertex.Vertex] = None,
+        laws: UniverseLaws = None,
+        uid: int = None,
+        attributes: dict = None,
+    ):
         """
         Instantiate a Universe.
 
@@ -221,7 +229,6 @@ class Universe (vertex.Vertex):
         if vertices is not None:
             for v in vertices:
                 self.add_vertex(v)
-
 
     @property
     def vertices(self):
@@ -264,4 +271,3 @@ class Universe (vertex.Vertex):
 
         self._laws = new
         self._laws.applies_to = self
-

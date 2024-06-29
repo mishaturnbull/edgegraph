@@ -4,4 +4,3 @@
 """
 Tests for the structure of edgegraph objects themselves.
 """
-

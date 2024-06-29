@@ -55,10 +55,8 @@ from edgegraph.traversal import helpers
 
 # TODO: add (to both these fn's) passthru kwargs to neighbors() options
 
-def bfs(uni: Universe,
-        start: Vertex,
-        attrib: str,
-        val: object) -> Vertex:
+
+def bfs(uni: Universe, start: Vertex, attrib: str, val: object) -> Vertex:
     """
     Perform a breadth-first search.
 
@@ -104,8 +102,8 @@ def bfs(uni: Universe,
 
     return None
 
-def bft(uni: Universe,
-        start: Vertex) -> list[Vertex]:
+
+def bft(uni: Universe, start: Vertex) -> list[Vertex]:
     """
     Perform a breadth-first traversal.
 
@@ -142,4 +140,3 @@ def bft(uni: Universe,
                 queue.append(v)
 
     return visited
-

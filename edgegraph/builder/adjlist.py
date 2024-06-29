@@ -17,9 +17,11 @@ from __future__ import annotations
 from edgegraph.structure import Universe, UnDirectedEdge
 from edgegraph.builder import explicit
 
-def load_adj_dict(adjdict: dict,
-        linktype: type=UnDirectedEdge,
-        ) -> Universe:
+
+def load_adj_dict(
+    adjdict: dict,
+    linktype: type = UnDirectedEdge,
+) -> Universe:
     """
     Load an "adjacency dictionary" to create a
     :py:class:`~edgegraph.structure.universe.Universe` object.
@@ -27,7 +29,7 @@ def load_adj_dict(adjdict: dict,
     The input structure is expected to be of the following structure:
 
     .. code-block:: python
-       
+
        adjdict = {
            v0: [v1, v2, v3],  # these don't have to be *lists* --
            v1: [v2, v3, v4],  # only iterable objects
@@ -83,4 +85,3 @@ def load_adj_dict(adjdict: dict,
             explicit.link_from_to(v1, linktype, v2)
             v2.add_to_universe(uni)
     return uni
-

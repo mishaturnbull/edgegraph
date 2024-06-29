@@ -8,7 +8,8 @@ Contains the BaseObject class.
 from __future__ import annotations
 import uuid
 
-class BaseObject (object):
+
+class BaseObject(object):
     """
     Top of the object inheritance tree for everything.
 
@@ -46,21 +47,22 @@ class BaseObject (object):
 
     #: names of attributes that are *not* dynamic attributes
     fixed_attrs: set[str] = {
-            "_uid",
-            "_attributes",
-            "_universes",
-            "uid",
-            "universes",
-            }
+        "_uid",
+        "_attributes",
+        "_universes",
+        "uid",
+        "universes",
+    }
 
-
-    def __init__(self, *,
-            uid: int=None,
-            attributes: dict=None,
-            # WHY does this work??  __future__ annotations??  Universe isn't
-            # imported!!
-            universes: set[Universe]=None,
-                ):
+    def __init__(
+        self,
+        *,
+        uid: int = None,
+        attributes: dict = None,
+        # WHY does this work??  __future__ annotations??  Universe isn't
+        # imported!!
+        universes: set[Universe] = None,
+    ):
         """
         Instantiate a BaseObject.
 
@@ -91,8 +93,9 @@ class BaseObject (object):
         #: :meta private:
         self._attributes = attributes or {}
         if not isinstance(self._attributes, dict):
-            raise TypeError(f"attributes argument must be dict, got " \
-                    f"{type(attributes)}!")
+            raise TypeError(
+                f"attributes argument must be dict, got " f"{type(attributes)}!"
+            )
 
         #: Internal reference to the universes this object is a part of
         #:
@@ -138,7 +141,7 @@ class BaseObject (object):
     def remove_from_universe(self, universe: Universe) -> None:
         """
         Remove this object from the specified universe.
-        
+
         :param universe: the universe that this object will be removed from
         :raises KeyError: if this object is not present in the given universe
         """
@@ -156,8 +159,7 @@ class BaseObject (object):
         """
         Called by :py:`bobj.x` to access the ``x`` attribute.
         """
-        if ((name in type(self).fixed_attrs) or
-                (name.startswith('__'))):
+        if (name in type(self).fixed_attrs) or (name.startswith("__")):
             return super().__getattribute__(name)
 
         try:
@@ -186,7 +188,7 @@ class BaseObject (object):
         """
         Called by :py:`del bobj.x` to delete the ``x`` attribute.
         """
-        if (name in type(self).fixed_attrs):
+        if name in type(self).fixed_attrs:
             raise ValueError(f"Cannot delete attribute {name}; it is fixed!")
         del self._attributes[name]
 
@@ -196,8 +198,7 @@ class BaseObject (object):
         """
         Called by :py:`bobj['x']` to get the ``x`` item.
         """
-        if ((name in type(self).fixed_attrs) or
-                (name.startswith('__'))):
+        if (name in type(self).fixed_attrs) or (name.startswith("__")):
             return self.__getattr__(name)
 
         return self._attributes[name]
@@ -206,8 +207,7 @@ class BaseObject (object):
         """
         Called by :py:`bobj['x'] = y` to set the ``x`` item.
         """
-        if ((name in type(self).fixed_attrs) or
-                (name.startswith('__'))):
+        if (name in type(self).fixed_attrs) or (name.startswith("__")):
             self.__setattr__(name, val)
             return
 
@@ -217,9 +217,7 @@ class BaseObject (object):
         """
         Called by :py:`del bobj['x']` to delete the ``x`` item.
         """
-        if ((name in type(self).fixed_attrs) or
-                (name.startswith('__'))):
+        if (name in type(self).fixed_attrs) or (name.startswith("__")):
             self.__delattr__(name)
         else:
             del self._attributes[name]
-

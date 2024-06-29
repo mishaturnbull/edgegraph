@@ -4,4 +4,3 @@
 """
 Unit tests for :py:mod:`edgegraph.builder`.
 """
-

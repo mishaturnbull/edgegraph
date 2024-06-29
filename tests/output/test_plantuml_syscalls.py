@@ -11,20 +11,24 @@ import subprocess
 import pytest
 from edgegraph.output import plantuml
 
-puml_skip = pytest.mark.skipif(not plantuml.is_plantuml_installed(),
-            reason="PlantUML not installed")
+puml_skip = pytest.mark.skipif(
+    not plantuml.is_plantuml_installed(), reason="PlantUML not installed"
+)
+
 
 @puml_skip
 def test_plantuml_e2e(graph_clrs09_22_6, tmpdir):
     """
     Run an end-to-end shot of generating a graph and a PlantUML render of it.
     """
-    src = plantuml.render_to_plantuml_src(graph_clrs09_22_6[0],
-            plantuml.PLANTUML_RENDER_OPTIONS)
+    src = plantuml.render_to_plantuml_src(
+        graph_clrs09_22_6[0], plantuml.PLANTUML_RENDER_OPTIONS
+    )
     plantuml.render_to_image(src, os.path.join(tmpdir, "out2.png"))
 
     files = os.listdir(tmpdir)
     assert "out2.png" in files, "final image is missing!"
+
 
 @puml_skip
 def test_plantuml_out_file_format():
@@ -37,6 +41,7 @@ def test_plantuml_out_file_format():
     with pytest.raises(ValueError):
         plantuml.render_to_image("", "out.jpeg")
 
+
 # really, this confirms that subprocess.run errors are happening
 @puml_skip
 def test_plantuml_syscall_badsrc(tmpdir):
@@ -47,6 +52,7 @@ def test_plantuml_syscall_badsrc(tmpdir):
     with pytest.raises(subprocess.CalledProcessError):
         plantuml.render_to_image(bad, os.path.join(tmpdir, "out.png"))
 
+
 @puml_skip
 def test_plantuml_syscall_empty(tmpdir):
     """
@@ -54,6 +60,7 @@ def test_plantuml_syscall_empty(tmpdir):
     """
     with pytest.raises(ValueError):
         plantuml.render_to_image("", os.path.join(tmpdir, "out.png"))
+
 
 def test_plantuml_detect_not_there(tmpdir):
     """
@@ -66,4 +73,3 @@ def test_plantuml_detect_not_there(tmpdir):
     not_there = os.path.join(tmpdir, "nothing")
     exists = plantuml.is_plantuml_installed(plantuml=not_there)
     assert exists is False, "plantuml detection false positive!"
-

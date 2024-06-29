@@ -4,4 +4,3 @@
 """
 Functions and classes for assembling graphs.
 """
-

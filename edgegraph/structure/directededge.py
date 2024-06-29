@@ -9,7 +9,7 @@ from __future__ import annotations
 from edgegraph.structure import twoendedlink
 
 
-class DirectedEdge (twoendedlink.TwoEndedLink):
+class DirectedEdge(twoendedlink.TwoEndedLink):
     """
     Represents a directed edge (v1 --> v2) in the vertex-edge graph.
 
@@ -23,13 +23,14 @@ class DirectedEdge (twoendedlink.TwoEndedLink):
          creating these classes directly.
     """
 
-    def __init__(self,
-            v1: Vertex=None,
-            v2: Vertex=None,
-            *,
-            uid: int=None,
-            attributes: dict=None,
-            ):
+    def __init__(
+        self,
+        v1: Vertex = None,
+        v2: Vertex = None,
+        *,
+        uid: int = None,
+        attributes: dict = None,
+    ):
         """
         Instantiate a directed edge.
 
@@ -80,8 +81,7 @@ class DirectedEdge (twoendedlink.TwoEndedLink):
         Set the destination vertex of this edge.
 
         This edge goes *TO* this object: v1 --> v2.
-        
+
         :param new: the new vertex to associate as the destination of this edge.
         """
         super()._set_v2(new)
-

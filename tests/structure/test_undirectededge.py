@@ -8,21 +8,29 @@ Unit tests for structure.undirectededge.UnDirectedEdge class.
 import pytest
 from edgegraph.structure import vertex, link, undirectededge
 
+
 def test_undiedge_subclass():
     """
     Ensure UnDirectedEdge trees up to the correct superclass.
     """
-    assert issubclass(undirectededge.UnDirectedEdge, link.Link), \
-            "UnDirectedEdge has wrong superclass!"
+    assert issubclass(
+        undirectededge.UnDirectedEdge, link.Link
+    ), "UnDirectedEdge has wrong superclass!"
 
     v1 = vertex.Vertex()
     v2 = vertex.Vertex()
 
-    e = undirectededge.UnDirectedEdge(v1, v2, uid=-100, attributes={'fifteen': 15})
+    e = undirectededge.UnDirectedEdge(
+        v1, v2, uid=-100, attributes={"fifteen": 15}
+    )
 
-    assert e.vertices == (v1, v2), "UnDirectedEdge did not pass vertices to super!"
+    assert e.vertices == (
+        v1,
+        v2,
+    ), "UnDirectedEdge did not pass vertices to super!"
     assert e.uid == -100, "UnDirectedEdge did not pass UID to super!"
     assert e.fifteen == 15, "UnDirectedEdge did not pass attributes to super!"
+
 
 def test_undiedge_init_vertices():
     """
@@ -41,6 +49,7 @@ def test_undiedge_init_vertices():
     assert f.v1 is None, "UnDirectedEdge did not accept v1=None!"
     assert f.v2 is None, "UnDirectedEdge did not accept v2=None!"
 
+
 def test_undiedge_init_vertices_wrong():
     """
     Ensure UnDirectedEdge raises errors when given invalid objects for
@@ -54,4 +63,3 @@ def test_undiedge_init_vertices_wrong():
 
     with pytest.raises(TypeError):
         undirectededge.UnDirectedEdge(object(), object())
-

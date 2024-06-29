@@ -8,8 +8,12 @@ Unit tests for structure.twoendedlink.TwoEndedLink class.
 import logging
 import time
 import pytest
-from edgegraph.structure import (Vertex, TwoEndedLink, DirectedEdge,
-        UnDirectedEdge)
+from edgegraph.structure import (
+    Vertex,
+    TwoEndedLink,
+    DirectedEdge,
+    UnDirectedEdge,
+)
 from edgegraph.traversal import helpers
 from edgegraph.builder import adjlist, explicit
 
@@ -27,14 +31,15 @@ from edgegraph.builder import adjlist, explicit
 
 LOG = logging.getLogger(__name__)
 
+
 def test_neighbors_undirected():
     """
     Ensure the neighbors function works with undirected edges.
     """
     v = [Vertex(), Vertex(), Vertex(), Vertex()]
     adj = {
-            v[0]: [v[1], v[2], v[3]],
-        }
+        v[0]: [v[1], v[2], v[3]],
+    }
     nb = helpers.neighbors(v[0])
     assert nb == [], "neighbors before linking!"
 
@@ -43,15 +48,16 @@ def test_neighbors_undirected():
     nb = helpers.neighbors(v[0])
     assert nb == [v[1], v[2], v[3]], "neighbors returned wrong!"
 
+
 def test_neighbors_directed():
     """
     Ensure neighbors function is sensitive to direction of edges.
     """
     v = [Vertex(), Vertex(), Vertex(), Vertex()]
     adj = {
-            v[0]: [v[1]],
-            v[1]: [v[2]],
-        }
+        v[0]: [v[1]],
+        v[1]: [v[2]],
+    }
     adjlist.load_adj_dict(adj, DirectedEdge)
 
     v0nb = helpers.neighbors(v[0], direction_sensitive=True)
@@ -60,15 +66,16 @@ def test_neighbors_directed():
     assert v0nb == [v[1]], "v0 neighbors incorrect!"
     assert v1nb == [v[2]], "v1 neighbors incorrect!"
 
+
 def test_neighbors_directed_nonsensitive():
     """
     Ensure neighbors function direction sensitivity can be turned off.
     """
     v = [Vertex(), Vertex(), Vertex(), Vertex()]
     adj = {
-            v[0]: [v[1]],
-            v[1]: [v[2]],
-        }
+        v[0]: [v[1]],
+        v[1]: [v[2]],
+    }
     adjlist.load_adj_dict(adj, DirectedEdge)
 
     v0nb = helpers.neighbors(v[0], direction_sensitive=False)
@@ -77,45 +84,58 @@ def test_neighbors_directed_nonsensitive():
     assert v0nb == [v[1]], "v0 neighbors incorrect!"
     assert v1nb == [v[0], v[2]], "v1 neighbors incorrect!"
 
+
 def test_neighbors_unknown_link_type():
     """
     Ensure neighbors function handles unknown edge types as the caller desires.
     """
     v = [Vertex(), Vertex(), Vertex(), Vertex()]
     adj = {
-            v[0]: [v[1]],
-            v[1]: [v[2]],
-        }
+        v[0]: [v[1]],
+        v[1]: [v[2]],
+    }
     adjlist.load_adj_dict(adj, TwoEndedLink)
 
     with pytest.raises(NotImplementedError):
-        helpers.neighbors(v[0], direction_sensitive=True,
-                unknown_handling=helpers.LNK_UNKNOWN_ERROR)
+        helpers.neighbors(
+            v[0],
+            direction_sensitive=True,
+            unknown_handling=helpers.LNK_UNKNOWN_ERROR,
+        )
 
-    v0nb1 = helpers.neighbors(v[0], direction_sensitive=True,
-            unknown_handling=helpers.LNK_UNKNOWN_NEIGHBOR)
-    v0nb2 = helpers.neighbors(v[0], direction_sensitive=True,
-            unknown_handling=helpers.LNK_UNKNOWN_NONNEIGHBOR)
+    v0nb1 = helpers.neighbors(
+        v[0],
+        direction_sensitive=True,
+        unknown_handling=helpers.LNK_UNKNOWN_NEIGHBOR,
+    )
+    v0nb2 = helpers.neighbors(
+        v[0],
+        direction_sensitive=True,
+        unknown_handling=helpers.LNK_UNKNOWN_NONNEIGHBOR,
+    )
 
     assert v0nb1 == [v[1]], "LNK_UNKNOWN_NEIGHBOR behavior wrong!"
     assert v0nb2 == [], "LNK_UNKNOWN_NONNEIGHBOR behavior wrong!"
+
 
 def test_neighbors_filter_func_subclass_directededge():
     """
     Ensure the neighbors function filterfunc works in a vertex application.
     """
+
     class VT1(Vertex):
         pass
+
     class VT2(VT1):
         pass
 
     #       0         1        2      3      4     5
     v = [Vertex(), Vertex(), VT1(), VT1(), VT2(), VT2()]
     adj = {
-            v[0]: [v[1], v[2], v[4]],
-            v[2]: [v[0], v[3], v[4]],
-            v[4]: [v[0], v[2], v[5]],
-        }
+        v[0]: [v[1], v[2], v[4]],
+        v[2]: [v[0], v[3], v[4]],
+        v[4]: [v[0], v[2], v[5]],
+    }
     adjlist.load_adj_dict(adj, DirectedEdge)
 
     def filterfunc(e, v2):
@@ -130,81 +150,108 @@ def test_neighbors_filter_func_subclass_directededge():
     nb3 = set(helpers.neighbors(v[4], filterfunc=filterfunc))
     assert nb3 == {v[2], v[5]}, "Neighbors filterfunc gave wrong answer"
 
+
 def test_neighbors_filter_func_subclass_nondirected():
     """
     Ensure the neighbors function filterfunc works in a vertex and direction
     non-sensitive application.
     """
+
     class VT1(Vertex):
         pass
+
     class VT2(VT1):
         pass
 
     #       0         1        2      3      4     5
     v = [Vertex(), Vertex(), VT1(), VT1(), VT2(), VT2()]
     adj = {
-            v[0]: [v[1], v[2], v[4]],
-            v[1]: [v[0], v[2], v[4]],
-            v[2]: [v[0], v[3], v[4]],
-            v[3]: [v[0], v[2], v[4]],
-            v[4]: [v[0], v[2], v[5]],
-            v[5]: [v[0], v[2], v[4]],
-        }
+        v[0]: [v[1], v[2], v[4]],
+        v[1]: [v[0], v[2], v[4]],
+        v[2]: [v[0], v[3], v[4]],
+        v[3]: [v[0], v[2], v[4]],
+        v[4]: [v[0], v[2], v[5]],
+        v[5]: [v[0], v[2], v[4]],
+    }
     adjlist.load_adj_dict(adj, DirectedEdge)
 
     def filterfunc(e, v2):
         return isinstance(v2, VT1)
 
-    nb1 = set(helpers.neighbors(v[0], direction_sensitive=False,
-        filterfunc=filterfunc))
-    assert nb1 == {v[2], v[3], v[4], v[5]}, \
-            "Neighbors filterfunc gave wrong answer"
+    nb1 = set(
+        helpers.neighbors(
+            v[0], direction_sensitive=False, filterfunc=filterfunc
+        )
+    )
+    assert nb1 == {
+        v[2],
+        v[3],
+        v[4],
+        v[5],
+    }, "Neighbors filterfunc gave wrong answer"
 
-    nb2 = set(helpers.neighbors(v[2], direction_sensitive=False,
-        filterfunc=filterfunc))
+    nb2 = set(
+        helpers.neighbors(
+            v[2], direction_sensitive=False, filterfunc=filterfunc
+        )
+    )
     assert nb2 == {v[3], v[4], v[5]}, "Neighbors filterfunc gave wrong answer"
 
-    nb3 = set(helpers.neighbors(v[4], direction_sensitive=False,
-        filterfunc=filterfunc))
+    nb3 = set(
+        helpers.neighbors(
+            v[4], direction_sensitive=False, filterfunc=filterfunc
+        )
+    )
     assert nb3 == {v[2], v[3], v[5]}, "Neighbors filterfunc gave wrong answer"
+
 
 def test_neighbors_filter_func_subclass_undirected():
     """
     Ensure the neighbors function filterfunc works in a vertex and
     undirectededge application.
     """
+
     class VT1(Vertex):
         pass
+
     class VT2(VT1):
         pass
 
     #       0         1        2      3      4     5
     v = [Vertex(), Vertex(), VT1(), VT1(), VT2(), VT2()]
     adj = {
-            v[0]: [v[1], v[2], v[4]],
-            v[1]: [v[0], v[2], v[4]],
-            v[2]: [v[0], v[3], v[4]],
-            v[3]: [v[0], v[2], v[4]],
-            v[4]: [v[0], v[2], v[5]],
-            v[5]: [v[0], v[2], v[4]],
-        }
+        v[0]: [v[1], v[2], v[4]],
+        v[1]: [v[0], v[2], v[4]],
+        v[2]: [v[0], v[3], v[4]],
+        v[3]: [v[0], v[2], v[4]],
+        v[4]: [v[0], v[2], v[5]],
+        v[5]: [v[0], v[2], v[4]],
+    }
     adjlist.load_adj_dict(adj, UnDirectedEdge)
 
     def filterfunc(e, v2):
         return isinstance(v2, VT1)
 
-    nb1 = set(helpers.neighbors(v[0], direction_sensitive=True,
-        filterfunc=filterfunc))
-    assert nb1 == {v[2], v[3], v[4], v[5]}, \
-            "Neighbors filterfunc gave wrong answer"
+    nb1 = set(
+        helpers.neighbors(v[0], direction_sensitive=True, filterfunc=filterfunc)
+    )
+    assert nb1 == {
+        v[2],
+        v[3],
+        v[4],
+        v[5],
+    }, "Neighbors filterfunc gave wrong answer"
 
-    nb2 = set(helpers.neighbors(v[2], direction_sensitive=True,
-        filterfunc=filterfunc))
+    nb2 = set(
+        helpers.neighbors(v[2], direction_sensitive=True, filterfunc=filterfunc)
+    )
     assert nb2 == {v[3], v[4], v[5]}, "Neighbors filterfunc gave wrong answer"
 
-    nb3 = set(helpers.neighbors(v[4], direction_sensitive=True,
-        filterfunc=filterfunc))
+    nb3 = set(
+        helpers.neighbors(v[4], direction_sensitive=True, filterfunc=filterfunc)
+    )
     assert nb3 == {v[2], v[3], v[5]}, "Neighbors filterfunc gave wrong answer"
+
 
 def test_findlinks_smoketest():
     """
@@ -219,7 +266,10 @@ def test_findlinks_smoketest():
     t1 = helpers.find_links(v1, v2)
     assert t1 == {e1, e2}, "find_links found the wrong links w/ default args!"
     t2 = helpers.find_links(v2, v1)
-    assert t2 == {e3,}, "find_links found the wrong links w/ default args!"
+    assert t2 == {
+        e3,
+    }, "find_links found the wrong links w/ default args!"
+
 
 def test_findlinks_no_links():
     """
@@ -238,9 +288,11 @@ def test_findlinks_no_links():
     t3 = helpers.find_links(v1, v2)
     assert t3 == set(), "find_links returned when no outbound links!"
 
-    t4 = helpers.find_links(v1, v2, direction_sensitive=False,
-            filterfunc=lambda e: False)
+    t4 = helpers.find_links(
+        v1, v2, direction_sensitive=False, filterfunc=lambda e: False
+    )
     assert t4 == set(), "find_links returned with filterfunc-always-false!"
+
 
 def test_findlinks_tlyf(graph_clrs09_22_6):
     """
@@ -262,6 +314,7 @@ def test_findlinks_tlyf(graph_clrs09_22_6):
     assert e2a is e2, "I am a bad programmer!"
     # no more testing needed -- we already know e2.v1 and e2.v2
 
+
 def test_findlinks_non_dir_sensitive(graph_clrs09_22_6):
     """
     Test findlinks without direction sensitivity.
@@ -280,28 +333,32 @@ def test_findlinks_non_dir_sensitive(graph_clrs09_22_6):
     assert e2.v1 is verts[9], "find_links found the wrong link!"
     assert e2.v2 is verts[7], "find_links found the wrong link!"
 
+
 def test_findlinks_unknown_edge_type():
     """
     Test that findlinks handles unknown edge types according to input.
     """
+
     class MyLink(TwoEndedLink):
         pass
 
     v1, v2 = Vertex(), Vertex()
     e = explicit.link_from_to(v1, MyLink, v2)
 
-    links = helpers.find_links(v1, v2, \
-            unknown_handling=helpers.LNK_UNKNOWN_NONNEIGHBOR)
+    links = helpers.find_links(
+        v1, v2, unknown_handling=helpers.LNK_UNKNOWN_NONNEIGHBOR
+    )
     assert len(links) == 0, "find_links did not treat unknown link as nonnb!"
 
-    links = helpers.find_links(v1, v2, \
-            unknown_handling=helpers.LNK_UNKNOWN_NEIGHBOR)
+    links = helpers.find_links(
+        v1, v2, unknown_handling=helpers.LNK_UNKNOWN_NEIGHBOR
+    )
     assert len(links) == 1, "find_links did not treat unknown link as neighbor!"
     assert links.pop() is e, "find_links found the wrong link!"
 
     with pytest.raises(NotImplementedError):
-        helpers.find_links(v1, v2, \
-                unknown_handling=helpers.LNK_UNKNOWN_ERROR)
+        helpers.find_links(v1, v2, unknown_handling=helpers.LNK_UNKNOWN_ERROR)
+
 
 def test_findlinks_filterfunc():
     """
@@ -309,21 +366,26 @@ def test_findlinks_filterfunc():
     """
     v1, v2 = Vertex(), Vertex()
 
-    e1 = DirectedEdge(v1, v2, attributes={'i': 1})
-    e2 = UnDirectedEdge(v1, v2, attributes={'i': 10})
+    e1 = DirectedEdge(v1, v2, attributes={"i": 1})
+    e2 = UnDirectedEdge(v1, v2, attributes={"i": 10})
 
     l1 = helpers.find_links(v2, v1, filterfunc=lambda e: e.i > 5)
-    assert l1 == {e2,}, "find_links did not find the right link!"
+    assert l1 == {
+        e2,
+    }, "find_links did not find the right link!"
     l2 = helpers.find_links(v2, v1, filterfunc=lambda e: e.i < 5)
     assert l2 == set(), "find_links filterfunc didn't filter!"
 
     l3 = helpers.find_links(v1, v2, filterfunc=lambda e: e.i != 5)
     assert l3 == {e1, e2}, "find_links did not find right links!"
     l4 = helpers.find_links(v2, v1, filterfunc=lambda e: e.i > 5)
-    assert l4 == {e2,}, "find_links did not find the right link!"
+    assert l4 == {
+        e2,
+    }, "find_links did not find the right link!"
+
 
 @pytest.mark.slow
-@pytest.mark.parametrize('n_links', [1, 10, 100, 500])
+@pytest.mark.parametrize("n_links", [1, 10, 100, 500])
 def test_findlinks_stress(n_links):
     """
     Timing of the find_links function.
@@ -349,4 +411,3 @@ def test_findlinks_stress(n_links):
     t_diff /= 1_000_000_000
     t_per /= 1_000_000_000
     LOG.info(f"Total {t_diff} s, avg cycle {t_per} s")
-
