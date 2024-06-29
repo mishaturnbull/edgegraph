@@ -73,11 +73,15 @@ def bfs(uni: Universe, start: Vertex, attrib: str, val: object) -> Vertex:
     :param val: The value to check for in the aforementioned attribute.
     :return: The vertex which first matched the specified attribute value.
     """
-    if len(uni.vertices) == 0:
+    if (uni is not None) and (len(uni.vertices) == 0):
         # empty!
         return None
     if (uni is not None) and (start not in uni.vertices):
         raise ValueError("Start vertex not in specified universe!")
+
+    if hasattr(start, attrib):
+        if start[attrib] == val:
+            return start
 
     visited = set()
     queue = collections.deque([start])
@@ -117,7 +121,7 @@ def bft(uni: Universe, start: Vertex) -> list[Vertex]:
     :param start: The vertex to start searching at.
     :return: The vertices visited during traversal.
     """
-    if len(uni.vertices) == 0:
+    if (uni is not None) and (len(uni.vertices) == 0):
         # empty!
         return None
     if (uni is not None) and (start not in uni.vertices):

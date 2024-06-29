@@ -131,6 +131,26 @@ def test_dft_deterministic(graph_clrs09_22_6, func):
         assert ans == prev, "dft_recursive is not deterministic!"
 
 
+def test_dfti_none_universe(graph_clrs09_22_6):
+    """
+    Ensure DFTI work when universe = None.
+    """
+    _, verts = graph_clrs09_22_6
+    trav = depthfirst.dft_iterative(None, verts[0])
+    trav = [v.i for v in trav]
+    assert trav == dfti_data[0][1], "DFTI did not traverse with uni = None"
+
+
+def test_dftr_none_universe(graph_clrs09_22_6):
+    """
+    Ensure DFTR work when universe = None.
+    """
+    _, verts = graph_clrs09_22_6
+    trav = depthfirst.dft_recursive(None, verts[0])
+    trav = [v.i for v in trav]
+    assert trav == dftr_data[0][1], "DFTR did not traverse with uni = None"
+
+
 ###############################################################################
 # searches!
 
@@ -223,6 +243,16 @@ def test_dfs_finds_first_vertex(graph_clrs09_22_6, func):
     for vert in verts:
         search = func(uni, vert, "i", vert.i)
         assert search is vert, f"{func} did not identify the starting vertex!"
+
+
+@pytest.mark.parametrize("func", searches)
+def test_dfs_none_universe(graph_clrs09_22_6, func):
+    """
+    Ensure DFS works when universe = None.
+    """
+    _, verts = graph_clrs09_22_6
+    vert = func(None, verts[0], "i", 8)
+    assert vert is verts[8], f"{func} did not find answer with uni = None!"
 
 
 ###############################################################################
