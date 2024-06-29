@@ -79,6 +79,10 @@ def bfs(uni: Universe, start: Vertex, attrib: str, val: object) -> Vertex:
     if (uni is not None) and (start not in uni.vertices):
         raise ValueError("Start vertex not in specified universe!")
 
+    if hasattr(start, attrib):
+        if start[attrib] == val:
+            return start
+
     visited = set()
     queue = collections.deque([start])
     visited.add(start)

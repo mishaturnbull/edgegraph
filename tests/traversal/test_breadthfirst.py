@@ -96,6 +96,16 @@ def test_bfs_none_universe(graph_clrs09_22_6):
     assert search is verts[7], "BFS did not find answer when uni=None!"
 
 
+def test_bfs_finds_first_vertex(graph_clrs09_22_6):
+    """
+    Ensure BFS finds the starting vertex, if that's what it's given.
+    """
+    uni, verts = graph_clrs09_22_6
+    for vert in verts:
+        search = breadthfirst.bfs(uni, vert, "i", vert.i)
+        assert search is vert, f"BFS did not identify the starting vertex!"
+
+
 ###############################################################################
 # traversal!
 
