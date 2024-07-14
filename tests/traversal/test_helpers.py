@@ -60,8 +60,9 @@ def test_neighbors_directed():
     }
     adjlist.load_adj_dict(adj, DirectedEdge)
 
-    v0nb = helpers.neighbors(v[0], direction_sensitive=True)
-    v1nb = helpers.neighbors(v[1], direction_sensitive=True)
+    v0nb = helpers.neighbors(v[0], direction_sensitive=helpers.DIR_SENS_FORWARD
+            )
+    v1nb = helpers.neighbors(v[1], direction_sensitive=helpers.DIR_SENS_FORWARD)
 
     assert v0nb == [v[1]], "v0 neighbors incorrect!"
     assert v1nb == [v[2]], "v1 neighbors incorrect!"
@@ -78,8 +79,8 @@ def test_neighbors_directed_nonsensitive():
     }
     adjlist.load_adj_dict(adj, DirectedEdge)
 
-    v0nb = helpers.neighbors(v[0], direction_sensitive=False)
-    v1nb = helpers.neighbors(v[1], direction_sensitive=False)
+    v0nb = helpers.neighbors(v[0], direction_sensitive=helpers.DIR_SENS_ANY)
+    v1nb = helpers.neighbors(v[1], direction_sensitive=helpers.DIR_SENS_ANY)
 
     assert v0nb == [v[1]], "v0 neighbors incorrect!"
     assert v1nb == [v[0], v[2]], "v1 neighbors incorrect!"
@@ -99,18 +100,18 @@ def test_neighbors_unknown_link_type():
     with pytest.raises(NotImplementedError):
         helpers.neighbors(
             v[0],
-            direction_sensitive=True,
+            direction_sensitive=helpers.DIR_SENS_FORWARD,
             unknown_handling=helpers.LNK_UNKNOWN_ERROR,
         )
 
     v0nb1 = helpers.neighbors(
         v[0],
-        direction_sensitive=True,
+        direction_sensitive=helpers.DIR_SENS_FORWARD,
         unknown_handling=helpers.LNK_UNKNOWN_NEIGHBOR,
     )
     v0nb2 = helpers.neighbors(
         v[0],
-        direction_sensitive=True,
+        direction_sensitive=helpers.DIR_SENS_FORWARD,
         unknown_handling=helpers.LNK_UNKNOWN_NONNEIGHBOR,
     )
 
@@ -180,7 +181,7 @@ def test_neighbors_filter_func_subclass_nondirected():
 
     nb1 = set(
         helpers.neighbors(
-            v[0], direction_sensitive=False, filterfunc=filterfunc
+            v[0], direction_sensitive=helpers.DIR_SENS_ANY, filterfunc=filterfunc
         )
     )
     assert nb1 == {
@@ -192,14 +193,14 @@ def test_neighbors_filter_func_subclass_nondirected():
 
     nb2 = set(
         helpers.neighbors(
-            v[2], direction_sensitive=False, filterfunc=filterfunc
+            v[2], direction_sensitive=helpers.DIR_SENS_ANY, filterfunc=filterfunc
         )
     )
     assert nb2 == {v[3], v[4], v[5]}, "Neighbors filterfunc gave wrong answer"
 
     nb3 = set(
         helpers.neighbors(
-            v[4], direction_sensitive=False, filterfunc=filterfunc
+            v[4], direction_sensitive=helpers.DIR_SENS_ANY, filterfunc=filterfunc
         )
     )
     assert nb3 == {v[2], v[3], v[5]}, "Neighbors filterfunc gave wrong answer"
