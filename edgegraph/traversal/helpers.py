@@ -257,7 +257,6 @@ def neighbors(
                     raise NotImplementedError(
                         f"Unknown link class {type(link)}"
                     )
-            
 
         elif direction_sensitive == DIR_SENS_ANY:
             # see above notes on short-circuiting filterfunc() if it's not

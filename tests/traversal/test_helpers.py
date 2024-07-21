@@ -177,6 +177,7 @@ def test_neighbors_unknown_link_type_backwards():
     assert v0nb1 == [v[1]], "LNK_UNKNOWN_NEIGHBOR behavior wrong!"
     assert v0nb2 == [], "LNK_UNKNOWN_NONNEIGHBOR behavior wrong!"
 
+
 def test_neighbors_filter_func_subclass_directededge():
     """
     Ensure the neighbors function filterfunc works in a vertex application.
@@ -317,11 +318,14 @@ def test_neighbors_filter_func_subclass_undirected():
     )
     assert nb3 == {v[2], v[3], v[5]}, "Neighbors filterfunc gave wrong answer"
 
+
 def test_neighbors_filter_func_subclass_directed_backwards():
     class VT1(Vertex):
         pass
+
     class VT2(VT1):
         pass
+
     #       0         1        2      3      4     5
     v = [Vertex(), Vertex(), VT1(), VT1(), VT2(), VT2()]
     adj = {
@@ -333,25 +337,44 @@ def test_neighbors_filter_func_subclass_directed_backwards():
         v[5]: [v[0], v[2], v[4]],
     }
     adjlist.load_adj_dict(adj, DirectedEdge)
+
     def filterfunc(e, v2):
         return isinstance(v2, VT1)
 
-    nb1 = set(helpers.neighbors(v[0], direction_sensitive=helpers.DIR_SENS_BACKWARD, filterfunc=filterfunc))
+    nb1 = set(
+        helpers.neighbors(
+            v[0],
+            direction_sensitive=helpers.DIR_SENS_BACKWARD,
+            filterfunc=filterfunc,
+        )
+    )
     nb2 = set(
-        helpers.neighbors(v[2], direction_sensitive=helpers.DIR_SENS_BACKWARD, filterfunc=filterfunc))
+        helpers.neighbors(
+            v[2],
+            direction_sensitive=helpers.DIR_SENS_BACKWARD,
+            filterfunc=filterfunc,
+        )
+    )
     nb3 = set(
-        helpers.neighbors(v[4], direction_sensitive=helpers.DIR_SENS_BACKWARD, filterfunc=filterfunc)
+        helpers.neighbors(
+            v[4],
+            direction_sensitive=helpers.DIR_SENS_BACKWARD,
+            filterfunc=filterfunc,
+        )
     )
 
     assert nb1 == {v[2], v[3], v[4], v[5]}
     assert nb2 == {v[3], v[4], v[5]}
     assert nb3 == {v[2], v[3], v[5]}
 
+
 def test_neighbors_filter_func_subclass_undirected_backwards():
     class VT1(Vertex):
         pass
+
     class VT2(VT1):
         pass
+
     #       0         1        2      3      4     5
     v = [Vertex(), Vertex(), VT1(), VT1(), VT2(), VT2()]
     adj = {
@@ -363,14 +386,30 @@ def test_neighbors_filter_func_subclass_undirected_backwards():
         v[5]: [v[0], v[2], v[4]],
     }
     adjlist.load_adj_dict(adj, UnDirectedEdge)
+
     def filterfunc(e, v2):
         return isinstance(v2, VT1)
 
-    nb1 = set(helpers.neighbors(v[0], direction_sensitive=helpers.DIR_SENS_BACKWARD, filterfunc=filterfunc))
+    nb1 = set(
+        helpers.neighbors(
+            v[0],
+            direction_sensitive=helpers.DIR_SENS_BACKWARD,
+            filterfunc=filterfunc,
+        )
+    )
     nb2 = set(
-        helpers.neighbors(v[2], direction_sensitive=helpers.DIR_SENS_BACKWARD, filterfunc=filterfunc))
+        helpers.neighbors(
+            v[2],
+            direction_sensitive=helpers.DIR_SENS_BACKWARD,
+            filterfunc=filterfunc,
+        )
+    )
     nb3 = set(
-        helpers.neighbors(v[4], direction_sensitive=helpers.DIR_SENS_BACKWARD, filterfunc=filterfunc)
+        helpers.neighbors(
+            v[4],
+            direction_sensitive=helpers.DIR_SENS_BACKWARD,
+            filterfunc=filterfunc,
+        )
     )
 
     assert nb1 == {v[2], v[3], v[4], v[5]}
