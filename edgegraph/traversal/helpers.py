@@ -218,6 +218,47 @@ def neighbors(
                         f"Unknown link class {type(link)}"
                     )
 
+        elif direction_sensitive == DIR_SENS_BACKWARD:
+
+            if issubclass(type(link), UnDirectedEdge):
+
+                if filterfunc is None or filterfunc(link, v2):
+                    nbs.append(v2)
+                else:
+                    # see comment on the above else: continue block for
+                    # explanation of this no-cover statement.
+                    continue  # pragma: no cover
+
+            # for directed edges, only add the neighbor if vert is the origin
+            elif issubclass(type(link), DirectedEdge) and (link.v2 is vert):
+
+                # see above notes on short-circuiting filterfunc() if it's not
+                # provided
+                if filterfunc is None or filterfunc(link, v2):
+                    nbs.append(v2)
+                else:
+                    # see comment on the above else: continue block for
+                    # explanation of this no-cover statement.
+                    continue  # pragma: no cover
+
+            # we're looking at v2 -- the destination
+            # TODO: is it more time efficient to move the v1/v2 comparison into
+            # an if nested under the directededge check?
+            elif issubclass(type(link), DirectedEdge) and (link.v1 is vert):
+                pass
+
+            else:
+                if unknown_handling == LNK_UNKNOWN_NONNEIGHBOR:
+                    continue
+
+                if unknown_handling == LNK_UNKNOWN_NEIGHBOR:
+                    nbs.append(link.other(vert))
+                else:
+                    raise NotImplementedError(
+                        f"Unknown link class {type(link)}"
+                    )
+            
+
         elif direction_sensitive == DIR_SENS_ANY:
             # see above notes on short-circuiting filterfunc() if it's not
             # provided
