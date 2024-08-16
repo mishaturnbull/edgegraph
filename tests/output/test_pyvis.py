@@ -6,6 +6,8 @@ Unit tests for output.pyvis module.
 """
 
 import logging
+from edgegraph.structure import Vertex
+from edgegraph.builder import explicit
 from edgegraph.output import pyvis
 from edgegraph.traversal import helpers
 
@@ -83,3 +85,33 @@ def test_pyvis_customizable(graph_clrs09_22_6):
     )
 
     assert pvn.conf, "Customizability was not enabled!"
+
+
+def test_pyvis_vert_outside_uni(graph_clrs09_22_6):
+    """
+    Ensure that make_pyvis_net can handle vertices outside the given universe.
+    """
+    uni, verts = graph_clrs09_22_6
+    extra = Vertex()
+    explicit.link_directed(verts[0], extra)
+
+    pvn = pyvis.make_pyvis_net(uni)
+
+    nodes_present = pvn.get_nodes()
+    assert len(nodes_present) == len(verts), "Extra vertex detected in PyVIS network"
+
+def test_pyvis_vert_outside_uni_hard(graph_clrs09_22_6):
+    """
+    See what happens in a worst-case scenario with the __make_pyvis_net_i
+    attribute already defined.
+    """
+    uni, verts = graph_clrs09_22_6
+    extra = Vertex()
+    extra.__make_pyvis_net_i = len(verts)
+    explicit.link_directed(verts[0], extra)
+
+    pvn = pyvis.make_pyvis_net(uni)
+
+    nodes_present = pvn.get_nodes()
+    assert len(nodes_present) == len(verts), "Extra vertex detected in PyVIS network"
+
