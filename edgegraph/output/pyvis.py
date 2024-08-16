@@ -103,6 +103,7 @@ def make_pyvis_net(
 
         # store a temporary attribute on the object that we will use for fast
         # lookup of this vertex's index later on
+        # pylint: disable-next=protected-access
         vert.__make_pyvis_net_i = i
 
     for i, vert in enumerate(verts):
@@ -114,10 +115,10 @@ def make_pyvis_net(
 
             other = edge.other(vert)
             try:
-                # this is *much* faster than something like
-                # verts.index(other)
+                # this is *much* faster than something like verts.index(other)
+                # pylint: disable-next=protected-access
                 j = other.__make_pyvis_net_i
-            except AttributeError as e:
+            except AttributeError:
                 # not a member
                 continue
 
