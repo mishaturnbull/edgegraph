@@ -190,6 +190,10 @@ class BaseObject(object):
         """
         if name in type(self).fixed_attrs:
             raise ValueError(f"Cannot delete attribute {name}; it is fixed!")
+        if name.startswith('__'):
+            super().__delattr__(name)
+            return
+
         del self._attributes[name]
 
     # These three control attrib access via KEYS; bobj['x'], bobj['y'] = y; del
