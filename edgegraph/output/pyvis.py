@@ -105,10 +105,15 @@ def make_pyvis_net(
         for edge in vert.links:
 
             # only draw arrows when we're at the *from* node
-            if vert is not edge.v1:
+            if vert is edge.v2:
                 continue
 
-            j = verts.index(edge.other(vert))
+            try:
+                j = verts.index(edge.other(vert))
+            except ValueError:
+                # other end is not in the vertices
+                # ignore it
+                continue
 
             # pyvis doesn't directly offer an argument in the add_edge() method
             # to specify if the arrow is directed or not.  rather, its edge
