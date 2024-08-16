@@ -103,7 +103,7 @@ def make_pyvis_net(
 
         # store a temporary attribute on the object that we will use for fast
         # lookup of this vertex's index later on
-        vert._make_pyvis_net_i = i
+        vert.__make_pyvis_net_i = i
 
     for i, vert in enumerate(verts):
         for edge in vert.links:
@@ -117,7 +117,7 @@ def make_pyvis_net(
                 try:
                     # this is *much* faster than something like
                     # verts.index(other)
-                    j = other._make_pyvis_net_i
+                    j = other.__make_pyvis_net_i
                 except AttributeError as e:
                     # not a member
                     continue
@@ -137,7 +137,7 @@ def make_pyvis_net(
 
     # make sure we remove our temporary attribute
     for vert in verts:
-        del vert._make_pyvis_net_i
+        del vert.__make_pyvis_net_i
 
     return net
 
