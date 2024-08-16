@@ -101,6 +101,10 @@ def make_pyvis_net(
         else:
             net.add_node(i, label=hex(id(vert)))
 
+        # store a temporary attribute on the object that we will use for fast
+        # lookup of this vertex's index later on
+        vert._make_pyvis_net_i = i
+
     for i, vert in enumerate(verts):
         for edge in vert.links:
 
@@ -108,12 +112,15 @@ def make_pyvis_net(
             if vert is edge.v2:
                 continue
 
-            try:
-                j = verts.index(edge.other(vert))
-            except ValueError:
-                # other end is not in the vertices
-                # ignore it
-                continue
+            other = edge.other(vert)
+            if other in verts:
+                try:
+                    # this is *much* faster than something like
+                    # verts.index(other)
+                    j = other._make_pyvis_net_i
+                except AttributeError as e:
+                    # not a member
+                    continue
 
             # pyvis doesn't directly offer an argument in the add_edge() method
             # to specify if the arrow is directed or not.  rather, its edge
@@ -127,6 +134,10 @@ def make_pyvis_net(
                 net.add_edge(i, j, title=refunc(edge))
             else:
                 net.add_edge(i, j)
+
+    # make sure we remove our temporary attribute
+    for vert in verts:
+        del vert._make_pyvis_net_i
 
     return net
 
