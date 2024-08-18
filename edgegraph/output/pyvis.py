@@ -101,14 +101,26 @@ def make_pyvis_net(
         else:
             net.add_node(i, label=hex(id(vert)))
 
+        # store a temporary attribute on the object that we will use for fast
+        # lookup of this vertex's index later on
+        # pylint: disable-next=protected-access
+        vert.__make_pyvis_net_i = i
+
     for i, vert in enumerate(verts):
         for edge in vert.links:
 
             # only draw arrows when we're at the *from* node
-            if vert is not edge.v1:
+            if vert is edge.v2:
                 continue
 
-            j = verts.index(edge.other(vert))
+            other = edge.other(vert)
+            try:
+                # this is *much* faster than something like verts.index(other)
+                # pylint: disable-next=protected-access
+                j = other.__make_pyvis_net_i
+            except AttributeError:
+                # not a member
+                continue
 
             # pyvis doesn't directly offer an argument in the add_edge() method
             # to specify if the arrow is directed or not.  rather, its edge
@@ -118,10 +130,25 @@ def make_pyvis_net(
             # directed-ness of the edge
             net.directed = issubclass(type(edge), DirectedEdge)
 
-            if refunc:
-                net.add_edge(i, j, title=refunc(edge))
-            else:
-                net.add_edge(i, j)
+            try:
+                if refunc:
+                    net.add_edge(i, j, title=refunc(edge))
+                else:
+                    net.add_edge(i, j)
+            except AssertionError:
+                # AssertionError is raised by pyvis module if trying to link to
+                # a non-existent vertex (node).  this should be exceedingly
+                # rare in the wild, but can be triggered if a vertex already
+                # has the ``__make_pyvis_net_i`` attribute that we didn't add
+                # in this function (i.e. it carried it in).
+                #
+                # the effect of this is that the node we're trying to link to
+                # doesn't exist, so skip it.
+                continue
+
+    # make sure we remove our temporary attribute
+    for vert in verts:
+        del vert.__make_pyvis_net_i
 
     return net
 
