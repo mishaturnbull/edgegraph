@@ -52,7 +52,7 @@ def test_bulk_bft(complete_graph_1k_undirected, howmany):
     """
     Test breadth-first traversing a large graph (1k nodes).
     """
-    uni, verts = complete_graph_1k_directed
+    uni, verts = complete_graph_1k_undirected
     times = [None] * howmany
 
     LOG.info("Begin test routine")
