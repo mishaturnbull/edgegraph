@@ -17,10 +17,12 @@ from __future__ import annotations
 from edgegraph.structure import Universe, Vertex, DirectedEdge
 from edgegraph.builder import explicit
 
-def load_adj_matrix(matrix: list[list[bool]],
-        vertices: list[Vertex],
-        linktype: type=DirectedEdge,
-        ) -> Universe:
+
+def load_adj_matrix(
+    matrix: list[list[bool]],
+    vertices: list[Vertex],
+    linktype: type = DirectedEdge,
+) -> Universe:
     """
     Loads an adjacency matrix to create a graph structure.
 
@@ -110,7 +112,7 @@ def load_adj_matrix(matrix: list[list[bool]],
 
     :param matrix: The adjacency matrix.  Each individual "cell" is tested for
        truthy-ness -- if :py:`bool(x)` would return ``True``, a link is
-       created.  
+       created.
     :param vertices: The "side array" defining the vertices that run along the
        sides of the matrix.  Must be an iterable object containing
        :py:class:`~edgegraph.structure.vertex.Vertex` objects (or subclasses
@@ -124,13 +126,16 @@ def load_adj_matrix(matrix: list[list[bool]],
     # make sure the side array is the same size as the matrix
     matrixlen = len(matrix)
     if len(vertices) != matrixlen:
-        raise ValueError("load_adj_matrix needs len(vertices) to be matrix " \
-                "len!")
+        raise ValueError(
+            "load_adj_matrix needs len(vertices) to be matrix len!"
+        )
     # and make sure that the matrix is a square
     for i, row in enumerate(matrix):
         if len(row) != matrixlen:
-            raise ValueError(f"given matrix was not a square!  row {i} had " \
-                    f"len {len(row)}, should have {matrixlen}")
+            raise ValueError(
+                f"given matrix was not a square!  row {i} had "
+                f"len {len(row)}, should have {matrixlen}"
+            )
     # okay, good enough!
 
     uni = Universe()
@@ -144,4 +149,3 @@ def load_adj_matrix(matrix: list[list[bool]],
                 explicit.link_from_to(vertices[i], linktype, vertices[j])
 
     return uni
-

@@ -9,7 +9,7 @@ from __future__ import annotations
 from edgegraph.structure import twoendedlink
 
 
-class UnDirectedEdge (twoendedlink.TwoEndedLink):
+class UnDirectedEdge(twoendedlink.TwoEndedLink):
     """
     Represents an undirected edge (v1 -- v2) in the vertex-edge graph.
 
@@ -23,13 +23,14 @@ class UnDirectedEdge (twoendedlink.TwoEndedLink):
          creating these classes directly.
     """
 
-    def __init__(self,
-            v1: Vertex=None,
-            v2: Vertex=None,
-            *,
-            uid: int=None,
-            attributes: dict=None,
-            ):
+    def __init__(
+        self,
+        v1: Vertex = None,
+        v2: Vertex = None,
+        *,
+        uid: int = None,
+        attributes: dict = None,
+    ):
         """
         Instantiate an undirected edge.
 
@@ -42,4 +43,3 @@ class UnDirectedEdge (twoendedlink.TwoEndedLink):
              superclass constructor
         """
         super().__init__(v1, v2, uid=uid, attributes=attributes)
-

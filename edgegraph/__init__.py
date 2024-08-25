@@ -4,4 +4,3 @@
 """
 Main module for edgegraph.
 """
-

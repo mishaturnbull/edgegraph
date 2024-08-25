@@ -20,6 +20,7 @@ import pytest
 
 LOG = logging.getLogger(__name__)
 
+
 def test_pyvis_not_installed(monkeypatch):
     """
     Ensure that when PyVis is not installed, the appropriate error message is
@@ -33,7 +34,7 @@ def test_pyvis_not_installed(monkeypatch):
 
     LOG.debug("Flushing package caches...")
     for mod in list(sys.modules.keys()):
-        if mod.startswith('pyvis') or mod.startswith('edgegraph'):
+        if mod.startswith("pyvis") or mod.startswith("edgegraph"):
             LOG.debug(f"Deleting {mod} from sys.modules")
             del sys.modules[mod]
     importlib.invalidate_caches()
@@ -45,6 +46,6 @@ def test_pyvis_not_installed(monkeypatch):
     # and now do a quick smoketest to make sure this hasn't broken the other
     # parts of the module
     from edgegraph.builder import randgraph
+
     uni = randgraph.randgraph()
     assert len(uni.vertices) > 0
-

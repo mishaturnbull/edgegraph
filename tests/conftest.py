@@ -15,6 +15,7 @@ import pytest
 from edgegraph.structure import Universe, Vertex, DirectedEdge
 from edgegraph.builder import adjlist
 
+
 @pytest.fixture
 def graph_clrs09_22_6() -> tuple[Universe, list[Vertex]]:
     """
@@ -74,22 +75,23 @@ def graph_clrs09_22_6() -> tuple[Universe, list[Vertex]]:
        objects.  The order of this list is shown by the numbers in the above
        diagram; the number of a vertex is its index in the list.
     """
-    verts = [Vertex(attributes={'i': i}) for i in range(10)]
+    verts = [Vertex(attributes={"i": i}) for i in range(10)]
     q, r, s, t, u, v, w, x, y, z = verts
     adj = {
-            q: [s, t, w],
-            r: [u, y],
-            s: [v],
-            t: [x, y],
-            u: [y],
-            v: [w],
-            w: [s],
-            x: [z],
-            y: [q],
-            z: [x],
-        }
+        q: [s, t, w],
+        r: [u, y],
+        s: [v],
+        t: [x, y],
+        u: [y],
+        v: [w],
+        w: [s],
+        x: [z],
+        y: [q],
+        z: [x],
+    }
     uni = adjlist.load_adj_dict(adj, DirectedEdge)
     return uni, verts
+
 
 @pytest.mark.fixture
 def graph_clrs09_22_8() -> tuple[Universe, list[Vertex]]:
@@ -169,22 +171,20 @@ def graph_clrs09_22_8() -> tuple[Universe, list[Vertex]]:
        objects.  The order of this list is shown by the numbers in the above
        diagram; the number of a vertex is its index in the list.
     """
-    verts = [Vertex(attributes={'i': i}) for i in range(14)]
+    verts = [Vertex(attributes={"i": i}) for i in range(14)]
     m, n, o, p, q, r, s, t, u, v, w, x, y, z = verts
     adj = {
-            m: [q, r, x],
-            n: [q, u, o],
-            o: [r, v, s],
-            p: [o, s, z],
-            q: [t],
-            r: [u, y],
-            s: [r],
-            u: [t],
-            v: [x, w],
-            w: [z],
-            y: [v],
-        }
+        m: [q, r, x],
+        n: [q, u, o],
+        o: [r, v, s],
+        p: [o, s, z],
+        q: [t],
+        r: [u, y],
+        s: [r],
+        u: [t],
+        v: [x, w],
+        w: [z],
+        y: [v],
+    }
     uni = adjlist.load_adj_dict(adj, DirectedEdge)
     return uni, verts
-
-

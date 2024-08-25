@@ -20,7 +20,6 @@ VERSION_MINOR = 4
 #: patch version number (the Z in vX.Y.Z)
 #:
 #: :type: int
-VERSION_PATCH = 0
+VERSION_PATCH = 1
 
 __version__ = f"{VERSION_MAJOR}.{VERSION_MINOR}.{VERSION_PATCH}"
-

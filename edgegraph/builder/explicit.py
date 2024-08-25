@@ -18,13 +18,14 @@ from __future__ import annotations
 
 from edgegraph.structure import Vertex, DirectedEdge, UnDirectedEdge
 
-def link_from_to(v1: Vertex, lnktype: type, v2: Vertex, dontdup: bool=False):
+
+def link_from_to(v1: Vertex, lnktype: type, v2: Vertex, dontdup: bool = False):
     """
     Create a link of type ``lnktype`` from ``v1`` to ``v2``.
 
     This function instantiates a new link type (a subclass of
     :py:class:`~edgegraph.structure.twoendedlink.TwoEndedLink`.  It then
-    associates both given vertices to the link instance. 
+    associates both given vertices to the link instance.
 
     .. seealso::
 
@@ -51,7 +52,10 @@ def link_from_to(v1: Vertex, lnktype: type, v2: Vertex, dontdup: bool=False):
 
     return lnktype(v1, v2)
 
-def link_directed(v1: Vertex, v2: Vertex, dontdup: bool=False) -> DirectedEdge:
+
+def link_directed(
+    v1: Vertex, v2: Vertex, dontdup: bool = False
+) -> DirectedEdge:
     """
     Create a :py:class:`~edgegraph.structure.directededge.DirectedEdge` between
     the two vertices.
@@ -64,7 +68,7 @@ def link_directed(v1: Vertex, v2: Vertex, dontdup: bool=False) -> DirectedEdge:
     Before:
 
        .. uml::
-          
+
           object v1
           object v2
           v1 -r[hidden]-> v2
@@ -72,7 +76,7 @@ def link_directed(v1: Vertex, v2: Vertex, dontdup: bool=False) -> DirectedEdge:
     After:
 
        .. uml::
-    
+
           object v1
           object v2
           v1 -r-> v2 : DirectedEdge
@@ -87,7 +91,10 @@ def link_directed(v1: Vertex, v2: Vertex, dontdup: bool=False) -> DirectedEdge:
     """
     return link_from_to(v1, DirectedEdge, v2, dontdup=dontdup)
 
-def link_undirected(v1: Vertex, v2: Vertex, dontdup: bool=False) -> UnDirectedEdge:
+
+def link_undirected(
+    v1: Vertex, v2: Vertex, dontdup: bool = False
+) -> UnDirectedEdge:
     """
     Create a :py:class:`~edgegraph.structure.undirectededge.UnDirectedEdge`
     between the two vertices.
@@ -95,7 +102,7 @@ def link_undirected(v1: Vertex, v2: Vertex, dontdup: bool=False) -> UnDirectedEd
     Before:
 
        .. uml::
-          
+
           object v1
           object v2
           v1 -r[hidden]- v2
@@ -103,7 +110,7 @@ def link_undirected(v1: Vertex, v2: Vertex, dontdup: bool=False) -> UnDirectedEd
     After:
 
        .. uml::
-    
+
           object v1
           object v2
           v1 -r- v2 : UnDirectedEdge
@@ -117,4 +124,3 @@ def link_undirected(v1: Vertex, v2: Vertex, dontdup: bool=False) -> UnDirectedEd
     :return: The link that was created.
     """
     return link_from_to(v1, UnDirectedEdge, v2, dontdup=dontdup)
-

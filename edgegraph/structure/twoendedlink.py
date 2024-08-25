@@ -9,7 +9,7 @@ from __future__ import annotations
 from edgegraph.structure import link, vertex
 
 
-class TwoEndedLink (link.Link):
+class TwoEndedLink(link.Link):
     """
     Represents an two-ended edge (v1 and v2) in the vertex-edge graph.  It is
     neither undirected nor directed, and not intended for explicit use.
@@ -24,17 +24,20 @@ class TwoEndedLink (link.Link):
     """
 
     fixed_attrs: set[str] = link.Link.fixed_attrs | {
-            '_v1', 'v1',
-            '_v2', 'v2',
-            }
+        "_v1",
+        "v1",
+        "_v2",
+        "v2",
+    }
 
-    def __init__(self,
-            v1: Vertex=None,
-            v2: Vertex=None,
-            *,
-            uid: int=None,
-            attributes: dict=None,
-            ):
+    def __init__(
+        self,
+        v1: Vertex = None,
+        v2: Vertex = None,
+        *,
+        uid: int = None,
+        attributes: dict = None,
+    ):
         """
         Instantiate an two-ended edge.
 
@@ -46,10 +49,10 @@ class TwoEndedLink (link.Link):
            * :py:meth:`edgegraph.structure.link.Link.__init__`, the
              superclass constructor
         """
-        if ((v1 is not None) and (not issubclass(type(v1), vertex.Vertex))):
+        if (v1 is not None) and (not issubclass(type(v1), vertex.Vertex)):
             raise TypeError(f"v1 is not a Vertex object!  got {v1}")
 
-        if ((v2 is not None) and (not issubclass(type(v2), vertex.Vertex))):
+        if (v2 is not None) and (not issubclass(type(v2), vertex.Vertex)):
             raise TypeError(f"v2 is not a Vertex object!  got {v2}")
 
         super().__init__(vertices=[v1, v2], uid=uid, attributes=attributes)
@@ -139,4 +142,3 @@ class TwoEndedLink (link.Link):
         if end is self.v2:
             return self.v1
         return None
-

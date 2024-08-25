@@ -8,7 +8,8 @@ Holds the Vertex class.
 from __future__ import annotations
 from edgegraph.structure import base
 
-class Vertex (base.BaseObject):
+
+class Vertex(base.BaseObject):
     """
     Represents a vertex in an edge-vertex graph.
 
@@ -18,18 +19,23 @@ class Vertex (base.BaseObject):
     """
 
     fixed_attrs: set[str] = base.BaseObject.fixed_attrs | {
-            "_links",
-            "links",
-            }
+        "_links",
+        "links",
+    }
 
-    def __init__(self, *,
-            links: list[Link]=None,
-            uid: int=None,
-            attributes: dict=None,
-            universes: set[Universe]=None,
-            ):
+    def __init__(
+        self,
+        *,
+        links: list[Link] = None,
+        uid: int = None,
+        attributes: dict = None,
+        universes: set[Universe] = None,
+    ):
         """
         Creates a new vertex.
+
+        Unlike BaseObject, the Vertex class will add itself to Universes
+        provided to this method.
 
         :param links: iterable of link objects to associate this vertex with
 
@@ -50,6 +56,10 @@ class Vertex (base.BaseObject):
         if links is not None:
             for link in links:
                 self.add_to_link(link)
+
+        # ensure that we add ourselves to the universes given
+        for uni in self.universes:
+            uni.add_vertex(self)
 
     def add_to_universe(self, universe: Universe) -> None:
         """
@@ -85,7 +95,7 @@ class Vertex (base.BaseObject):
         Takes no arguments and has no return.
         """
         for link in self._links:
-            if (self not in link.vertices):
+            if self not in link.vertices:
                 link._add_linkage(self)
 
     @property
@@ -114,7 +124,7 @@ class Vertex (base.BaseObject):
            Duplicate links ARE allowed!  However, the **same** link twice is
            not.  The difference is that of a ``==`` vs ``is`` comparison.  ``==``
            duplicate links are allowed, ``is`` duplicate links are ignored.
-        
+
         :param link: the link to add this vertex to
         """
         self._add_linkage(link)
@@ -129,5 +139,3 @@ class Vertex (base.BaseObject):
         if link in self._links:
             self._links.remove(link)
             link.unlink_from(self)
-
-

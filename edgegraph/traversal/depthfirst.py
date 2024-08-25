@@ -55,6 +55,7 @@ from __future__ import annotations
 from edgegraph.structure import Universe, Vertex
 from edgegraph.traversal import helpers
 
+
 def _df_preflight_checks(uni: Universe, start: Vertex):
     """
     Perform a few common pre-traversal sanity checks, raising ValueError if
@@ -65,14 +66,15 @@ def _df_preflight_checks(uni: Universe, start: Vertex):
     :raises ValueError: if the universe is empty, or if the start vertex is not
        in the given universe.
     """
-    if len(uni.vertices) == 0:
+    if (uni is not None) and (len(uni.vertices) == 0):
         raise ValueError("Universe is empty; cannot perform this operation!")
     if (uni is not None) and (start not in uni.vertices):
         raise ValueError("Start vertex not in specified universe!")
 
-def _dft_recur(uni: Universe,
-               v: Vertex,
-               visited: dict[Vertex, None]) -> list[Vertex]:
+
+def _dft_recur(
+    uni: Universe, v: Vertex, visited: dict[Vertex, None]
+) -> list[Vertex]:
     """
     Recursion helper for :py:func:`dft_recursive`.  For internal use only!
 
@@ -93,8 +95,8 @@ def _dft_recur(uni: Universe,
             out.extend(_dft_recur(uni, w, visited))
     return out
 
-def dft_recursive(uni: Universe,
-                  start: Vertex) -> list[Vertex]:
+
+def dft_recursive(uni: Universe, start: Vertex) -> list[Vertex]:
     """
     Perform a recursive depth-first traversal of the given universe, starting
     at the given vertex.
@@ -116,11 +118,14 @@ def dft_recursive(uni: Universe,
     visited = {}
     return _dft_recur(uni, start, visited)
 
-def _dfs_recur(uni: Universe,
-               v: Vertex,
-               visited: dict[Vertex, None],
-               attrib: str,
-               val: object) -> Vertex:
+
+def _dfs_recur(
+    uni: Universe,
+    v: Vertex,
+    visited: dict[Vertex, None],
+    attrib: str,
+    val: object,
+) -> Vertex:
     """
     Recursion helper for :py:func:`dfs_recursive`.  For internal use only!
 
@@ -148,10 +153,10 @@ def _dfs_recur(uni: Universe,
                 return ret
     return None
 
-def dfs_recursive(uni: Universe,
-                  start: Vertex,
-                  attrib: str,
-                  val: object) -> Vertex:
+
+def dfs_recursive(
+    uni: Universe, start: Vertex, attrib: str, val: object
+) -> Vertex:
     """
     Perform a recursive depth-first search in the given graph for a given
     attribute.
@@ -187,8 +192,8 @@ def dfs_recursive(uni: Universe,
     visited = {}
     return _dfs_recur(uni, start, visited, attrib, val)
 
-def dft_iterative(uni: Universe,
-                  start: Vertex) -> list[Vertex]:
+
+def dft_iterative(uni: Universe, start: Vertex) -> list[Vertex]:
     """
     Perform an iterative depth-first traversal of the given universe, starting
     at the given vertex.
@@ -219,10 +224,10 @@ def dft_iterative(uni: Universe,
                 stack.append(w)
     return discovered
 
-def dfs_iterative(uni: Universe,
-                  start: Vertex,
-                  attrib: str,
-                  val: object) -> Vertex:
+
+def dfs_iterative(
+    uni: Universe, start: Vertex, attrib: str, val: object
+) -> Vertex:
     """
     Perform a non-recursive depth-first search in the given universe.
 
@@ -263,4 +268,3 @@ def dfs_iterative(uni: Universe,
             for w in helpers.neighbors(v):
                 stack.append(w)
     return None
-

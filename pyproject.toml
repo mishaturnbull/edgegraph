@@ -30,11 +30,21 @@ version = {attr = "edgegraph.version.__version__"}
 # 0 = automatically detect # of cores for multiprocessing
 jobs = 0
 
+[tool.pylint.format]
+max-line-length = 80
+
 [tool.pylint."messages control"]
 # messages that we don't care about.  justify each entry!
 disable = [
             # improves readability in some IDEs
             "trailing-newlines",
+
+            # black handles line length, and is configured for 80 chars
+            "line-too-long",
+
+            # the vast majority of variable names that pylint cares about are
+            # just simply not relevant
+            "invalid-name",
 
             # "explicit is better than implicit"  - the zen of Python
             # why is this even a warning??
@@ -62,4 +72,7 @@ log_cli = false
 log_cli_level = "DEBUG"
 log_cli_format = "%(asctime)s [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)"
 log_cli_date_format = "%Y-%m-%d %H:%M:%S"
+
+[tool.black]
+line-length = 80
 

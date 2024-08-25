@@ -30,11 +30,13 @@ LNK_UNKNOWN_NEIGHBOR = 1
 #:    :py:func:`neighbors`
 LNK_UNKNOWN_ERROR = 2
 
-def neighbors(vert: Vertex,
-        direction_sensitive: bool=True,
-        unknown_handling: int=LNK_UNKNOWN_ERROR,
-        filterfunc: Callable=None,
-        ) -> list[Vertex]:
+
+def neighbors(
+    vert: Vertex,
+    direction_sensitive: bool = True,
+    unknown_handling: int = LNK_UNKNOWN_ERROR,
+    filterfunc: Callable = None,
+) -> list[Vertex]:
     """
     Identify the neighbors of a given vertex.
 
@@ -181,7 +183,9 @@ def neighbors(vert: Vertex,
                 if unknown_handling == LNK_UNKNOWN_NEIGHBOR:
                     nbs.append(link.other(vert))
                 else:
-                    raise NotImplementedError(f"Unknown link class {type(link)}")
+                    raise NotImplementedError(
+                        f"Unknown link class {type(link)}"
+                    )
 
         else:
             # see above notes on short-circuiting filterfunc() if it's not
@@ -191,10 +195,14 @@ def neighbors(vert: Vertex,
 
     return nbs
 
-def find_links(v1: Vertex, v2: Vertex,
-        direction_sensitive: bool=True,
-        unknown_handling: int=LNK_UNKNOWN_ERROR,
-        filterfunc: Callable=None) -> set[TwoEndedLink]:
+
+def find_links(
+    v1: Vertex,
+    v2: Vertex,
+    direction_sensitive: bool = True,
+    unknown_handling: int = LNK_UNKNOWN_ERROR,
+    filterfunc: Callable = None,
+) -> set[TwoEndedLink]:
     """
     Find the link(s) that connect v1 to v2.
 
@@ -303,7 +311,9 @@ def find_links(v1: Vertex, v2: Vertex,
                 if unknown_handling == LNK_UNKNOWN_NEIGHBOR:
                     links.add(link)
                 else:
-                    raise NotImplementedError(f"Unknown link class {type(link)}")
+                    raise NotImplementedError(
+                        f"Unknown link class {type(link)}"
+                    )
 
         else:
             # see above notes on short-circuiting filterfunc() if it's not
@@ -312,4 +322,3 @@ def find_links(v1: Vertex, v2: Vertex,
                 links.add(link)
 
     return links
-

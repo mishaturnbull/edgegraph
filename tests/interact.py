@@ -18,6 +18,7 @@ import random
 from edgegraph.builder import randgraph, explicit
 from edgegraph.output import plaintext, plantuml as pu, pyvis
 
+
 def main():
     """
     Main routine.
@@ -27,14 +28,17 @@ def main():
     n2 = random.choice(list(graph.vertices))
     explicit.link_undirected(n1, n2)
 
-    print(plaintext.basic_render(graph, rfunc=lambda v: v.i, sort=lambda v: v.i))
+    print(
+        plaintext.basic_render(graph, rfunc=lambda v: v.i, sort=lambda v: v.i)
+    )
 
-    with open('out.puml', 'w', encoding='utf-8') as wfp:
+    with open("out.puml", "w", encoding="utf-8") as wfp:
         wfp.write(pu.render_to_plantuml_src(graph, pu.PLANTUML_RENDER_OPTIONS))
+
+    pvn = pyvis.make_pyvis_net(graph)
 
     code.interact(local={**locals(), **globals()})
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
-

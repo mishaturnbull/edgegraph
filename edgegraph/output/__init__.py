@@ -4,4 +4,3 @@
 """
 Procedures for displaying / outputting graphs to various formats.
 """
-

@@ -21,7 +21,10 @@ from edgegraph.structure import singleton
 #   * class Something: pass  will be allowed (C0321, multiple-statements)
 #
 # therefore:
-# pylint: disable=R0903, C0115, C0321
+# pylint: disable=too-few-public-methods
+# pylint: disable=missing-class-docstring
+# pylint: disable=multiple-statements
+
 
 def test_true_singleton_smoketest():
     """
@@ -52,10 +55,12 @@ def test_true_singleton_smoketest():
     assert b1 is b2, "TrueSingleton didn't work!"
     assert Counter.b == 1, "TrueSingleton re-called __init__!"
 
+
 def test_semi_singleton_smoketest():
     """
     Quick it's-still-in-dev smoketest for semisingletons.
     """
+
     class Counter(object):
         c = 0
 
@@ -88,6 +93,7 @@ def test_semi_singleton_smoketest():
     assert c6 is c7, "SemiSingleton failed with **kwargs (order)!"
     assert c7 is not c8, "SemiSingleton failed with different kwargs!"
     assert Counter.c == 2, "SemiSingleton called init wrong # of times!"
+
 
 def test_true_singleton_arg_patterns():
     """
@@ -123,13 +129,14 @@ def test_true_singleton_arg_patterns():
     k1 = KwArgs(i=1, j=2)
     k2 = KwArgs(i=17, j=-1, t=True)
     assert k1 is k2, "TrueSingleton reassigned with new kwargs"
-    assert k2.kwargs == {'i': 1, 'j': 2}, "TrueSingleton re-assigned arguments"
+    assert k2.kwargs == {"i": 1, "j": 2}, "TrueSingleton re-assigned arguments"
 
     b1 = BothArgs(1, 2, i=1)
     b2 = BothArgs(4, 5, j=3)
     assert b1 is b2, "TrueSingleton reassigned with new args"
     assert b2.args == (1, 2), "TrueSingleton re-assigned arguments"
-    assert b2.kwargs == {'i': 1}, "TrueSingleton re-assigned kwargs"
+    assert b2.kwargs == {"i": 1}, "TrueSingleton re-assigned kwargs"
+
 
 def test_semi_singleton_noarg_default_hashfunc():
     """
@@ -144,6 +151,7 @@ def test_semi_singleton_noarg_default_hashfunc():
     n1 = NoArgs()
     n2 = NoArgs()
     assert n1 is n2, "SemiSingleton failed no-args"
+
 
 def test_semi_singleton_args_pattern_default_hashfunc():
     """
@@ -166,6 +174,7 @@ def test_semi_singleton_args_pattern_default_hashfunc():
     assert p4 is p5, "SemiSingleton failed same multiple pos-arg"
     assert p5 is not p6, "SemiSingleton failed different multiple pos-arg"
 
+
 def test_semi_singleton_kwargs_patterns_default_hashfunc():
     """
     Exercise semi-singleton's response to ``**kwargs`` pattern using default
@@ -186,6 +195,7 @@ def test_semi_singleton_kwargs_patterns_default_hashfunc():
     assert k2 is not k3, "SemiSingleton failed different kw-arg"
     assert k4 is k5, "SemiSingleton failed same (reordered) kw-arg"
     assert k5 is not k6, "SemiSingleton failed different kw-arg"
+
 
 def test_semi_singleton_bothargs_patterns_default_hashfunc():
     """
@@ -214,10 +224,12 @@ def test_semi_singleton_bothargs_patterns_default_hashfunc():
     assert b6 is not b7, "Failed pos- vs kw-arg"
     assert b7 is b8, "Failed same kw-arg"
 
+
 def test_semi_singleton_custom_hashfunc():
     """
     Exercise usage of custom hashfuncs for semi-singleton identification.
     """
+
     # W0612 --> unused variable.  pylint complains that ign_kw is unused; it
     #           most certainly is used.  not sure why this is flagged.
     # W0613 --> unused argument.  necessary here for signature matching.
@@ -242,11 +254,13 @@ def test_semi_singleton_custom_hashfunc():
     assert po4 is not po5, "Failed different pos-arg"
     assert po5 is po6, "Failed different kw-arg"
 
+
 @pytest.mark.slow
 def test_true_singleton_access_stresstest():
     """
     Access a TrueSingleton object *a lot*.
     """
+
     class Singleton(metaclass=singleton.TrueSingleton):
         pass
 
@@ -256,6 +270,7 @@ def test_true_singleton_access_stresstest():
         if prev:
             assert s is prev, f"Did not get the same object on iter {i}!"
         prev = s
+
 
 @pytest.mark.slow
 def test_true_singleton_create_stresstest():
@@ -280,11 +295,13 @@ def test_true_singleton_create_stresstest():
             assert s1 is not prev, "Object not recreated after loop!"
         prev = s1
 
+
 @pytest.mark.slow
 def test_semi_singleton_access_stresstest():
     """
     Access a semi-singleton *a lot*.
     """
+
     class SemiSingleton(metaclass=singleton.semi_singleton_metaclass()):
         def __init__(self, *args):
             self.args = args
@@ -295,6 +312,7 @@ def test_semi_singleton_access_stresstest():
         if prev:
             assert s is prev, f"Did not get the same object on iter {i}!"
         prev = s
+
 
 @pytest.mark.slow
 def test_semi_singleton_create_stresstest():
@@ -319,13 +337,20 @@ def test_semi_singleton_create_stresstest():
             assert s1 is not prev, "Object not recreated after loop!"
         prev = s1
 
+
 def test_true_singleton_clear():
     """
     Ensure TrueSingletons can all be cleared.
     """
-    class A(metaclass=singleton.TrueSingleton): pass
-    class B(metaclass=singleton.TrueSingleton): pass
-    class C(metaclass=singleton.TrueSingleton): pass
+
+    class A(metaclass=singleton.TrueSingleton):
+        pass
+
+    class B(metaclass=singleton.TrueSingleton):
+        pass
+
+    class C(metaclass=singleton.TrueSingleton):
+        pass
 
     a1 = A()
     b1 = B()
@@ -341,13 +366,20 @@ def test_true_singleton_clear():
     assert b1 is not b2, "Did not clear-all TrueSingletons"
     assert c1 is not c2, "Did not clear-all TrueSingletons"
 
+
 def test_true_singleton_clear_specific():
     """
     Ensure TrueSingletons can be cleared individually.
     """
-    class A(metaclass=singleton.TrueSingleton): pass
-    class B(metaclass=singleton.TrueSingleton): pass
-    class C(metaclass=singleton.TrueSingleton): pass
+
+    class A(metaclass=singleton.TrueSingleton):
+        pass
+
+    class B(metaclass=singleton.TrueSingleton):
+        pass
+
+    class C(metaclass=singleton.TrueSingleton):
+        pass
 
     a1 = A()
     b1 = B()
@@ -363,11 +395,14 @@ def test_true_singleton_clear_specific():
     assert b1 is not b2, "Did not clear right TrueSingleton"
     assert c1 is c2, "Cleared all TrueSingletons instead of only B"
 
+
 def test_true_singleton_clear_specific_not_present():
     """
     Ensure calling clear on an un-set singleton is safe.
     """
-    class A(metaclass=singleton.TrueSingleton): pass
+
+    class A(metaclass=singleton.TrueSingleton):
+        pass
 
     singleton.clear_true_singleton(A)
 
@@ -375,14 +410,20 @@ def test_true_singleton_clear_specific_not_present():
     a2 = A()
     assert a1 is a2, "Clearing empty singleton broke singletons!"
 
+
 def test_semi_singleton_clear():
     """
     Ensure semi-singletons can be cleared.
     """
 
-    class A(metaclass=singleton.semi_singleton_metaclass()): pass
-    class B(metaclass=singleton.semi_singleton_metaclass()): pass
-    class C(metaclass=singleton.semi_singleton_metaclass()): pass
+    class A(metaclass=singleton.semi_singleton_metaclass()):
+        pass
+
+    class B(metaclass=singleton.semi_singleton_metaclass()):
+        pass
+
+    class C(metaclass=singleton.semi_singleton_metaclass()):
+        pass
 
     a1 = A()
     b1 = B()
@@ -398,10 +439,12 @@ def test_semi_singleton_clear():
     assert b1 is not b2, "Did not clear semi-singleton!"
     assert c1 is c2, "Cleared wrong semi-singleton type!"
 
+
 def test_semi_singleton_get():
     """
     Ensure we can get all the values of semi-singletons.
     """
+
     class SemiSingle(metaclass=singleton.semi_singleton_metaclass()):
         def __init__(self, *args, **kwargs):
             self.args = args
@@ -411,7 +454,6 @@ def test_semi_singleton_get():
 
     check = singleton.get_all_semi_singleton_instances(SemiSingle)
 
-    assert set(insts) == set(check), \
-            "Did not get expected semi-singleton insts!"
-
-
+    assert set(insts) == set(
+        check
+    ), "Did not get expected semi-singleton insts!"
