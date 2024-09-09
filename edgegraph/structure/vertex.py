@@ -18,11 +18,6 @@ class Vertex(base.BaseObject):
     both subclass this one, at some level).
     """
 
-    fixed_attrs: set[str] = base.BaseObject.fixed_attrs | {
-        "_links",
-        "links",
-    }
-
     def __init__(
         self,
         *,

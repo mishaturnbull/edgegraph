@@ -45,15 +45,6 @@ class BaseObject(object):
        15
     """
 
-    #: names of attributes that are *not* dynamic attributes
-    fixed_attrs: set[str] = {
-        "_uid",
-        "_attributes",
-        "_universes",
-        "uid",
-        "universes",
-    }
-
     def __init__(
         self,
         *,
@@ -84,18 +75,11 @@ class BaseObject(object):
         #: :meta private:
         self._uid = uid or uuid.uuid4().int
 
-        #: Dynamic attributes that may be manipulated by operations
-        #:
-        #: This dictionary is the backend for attributes that are created / set
-        #: after instantiation.
-        #:
-        #: :type: dict
-        #: :meta private:
-        self._attributes = attributes or {}
-        if not isinstance(self._attributes, dict):
-            raise TypeError(
-                f"attributes argument must be dict, got " f"{type(attributes)}!"
-            )
+        if attributes is not None:
+            if not isinstance(attributes, dict):
+                raise TypeError(f"`attributes` must be a dictionary; got {type(attributes)}")
+            for key, val in attributes.items():
+                setattr(self, key, val)
 
         #: Internal reference to the universes this object is a part of
         #:
@@ -147,77 +131,22 @@ class BaseObject(object):
         """
         self._universes.remove(universe)
 
-    def __dir__(self):
-        """
-        Called by :py:func:`dir`.
-        """
-        return self._attributes.keys()
-
-    # These three control attrib access via DOTs; bobj.x; bobj.y = 7; del
-    # bobj.y etc
-    def __getattr__(self, name):
-        """
-        Called by :py:`bobj.x` to access the ``x`` attribute.
-        """
-        if (name in type(self).fixed_attrs) or (name.startswith("__")):
-            return super().__getattribute__(name)
-
-        try:
-            return self._attributes[name]
-        except KeyError as exc:
-            raise AttributeError from exc
-
-    def __setattr__(self, name, val):
-        """
-        Called by :py:`bobj.x = y` to set the ``x`` attribute.
-        """
-        if name in type(self).fixed_attrs:
-            # TODO: figure out this return statement VVV
-            #
-            # pylint complains about it, with good reason (inconsistent returns
-            # from this method).  logically, this method sets attributes -- it
-            # should not need to return anything.  yet, remove the return, and
-            # try the unit test suite...  kaboom!
-            #
-            # pylint: disable=inconsistent-return-statements
-            return super().__setattr__(name, val)
-
-        self._attributes[name] = val
-
-    def __delattr__(self, name):
-        """
-        Called by :py:`del bobj.x` to delete the ``x`` attribute.
-        """
-        if name in type(self).fixed_attrs:
-            raise ValueError(f"Cannot delete attribute {name}; it is fixed!")
-        del self._attributes[name]
-
     # These three control attrib access via KEYS; bobj['x'], bobj['y'] = y; del
     # bobj['y']
     def __getitem__(self, name):
         """
         Called by :py:`bobj['x']` to get the ``x`` item.
         """
-        if (name in type(self).fixed_attrs) or (name.startswith("__")):
-            return self.__getattr__(name)
-
-        return self._attributes[name]
+        return getattr(self, name)
 
     def __setitem__(self, name, val):
         """
         Called by :py:`bobj['x'] = y` to set the ``x`` item.
         """
-        if (name in type(self).fixed_attrs) or (name.startswith("__")):
-            self.__setattr__(name, val)
-            return
-
-        self._attributes[name] = val
+        setattr(self, name, val)
 
     def __delitem__(self, name):
         """
         Called by :py:`del bobj['x']` to delete the ``x`` item.
         """
-        if (name in type(self).fixed_attrs) or (name.startswith("__")):
-            self.__delattr__(name)
-        else:
-            del self._attributes[name]
+        delattr(self, name)

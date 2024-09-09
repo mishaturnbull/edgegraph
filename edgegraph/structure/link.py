@@ -28,11 +28,6 @@ class Link(base.BaseObject):
 
     """
 
-    fixed_attrs: set[str] = base.BaseObject.fixed_attrs | {
-        "_vertices",
-        "vertices",
-    }
-
     def __init__(
         self,
         *,
