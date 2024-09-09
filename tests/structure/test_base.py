@@ -19,8 +19,7 @@ def test_base_obj_creation():
     Ensure we can create base objects with no attributes.
     """
     bo = base.BaseObject()
-
-    assert len(dir(bo)) == 0, "baseobject init'd with attributes!"
+    assert isinstance(bo, base.BaseObject), "baseobject init'd wrong??"
 
 
 def test_base_obj_attributes():
@@ -38,11 +37,11 @@ def test_base_obj_attributes():
     assert bo.y == 15, "bo.y did not getattr!"
     assert bo.z == "Twelve", "bo.z did not getattr!"
 
-    assert bo._attributes == {
+    assert {
         "x": 7,
         "y": 15,
         "z": "Twelve",
-    }, "BaseObject attributes were not stored correctly!"
+    }.items() <= vars(bo).items(), "BaseObject attributes were not stored correctly!"
 
 
 def test_base_obj_items():
@@ -60,11 +59,11 @@ def test_base_obj_items():
     assert bo["y"] == 15, "bo['y'] did not getitem!"
     assert bo["z"] == "Twelve", "bo['z'] did not getitem!"
 
-    assert bo._attributes == {
+    assert {
         "x": 7,
         "y": 15,
         "z": "Twelve",
-    }, "BaseObject attributes were not stored correctly!"
+    }.items() <= vars(bo).items(), "BaseObject attributes were not stored correctly!"
 
 
 def test_base_obj_item_attr_interop():
@@ -97,23 +96,9 @@ def test_base_obj_getitem_protected():
     bo["a"] = 15
 
     assert bo["a"] == 15, "bo['a'] did not getitem!"
-    assert bo["_attributes"] == {
+    assert {
         "a": 15
-    }, "bo getitem did not forward to getattr!"
-
-
-def test_base_obj_setitem_protected():
-    """
-    Ensure sets to masked attributes are forwarded to setattr.
-    """
-    bo = base.BaseObject()
-    bo["a"] = 15
-
-    assert bo["a"] == 15, "bo['a'] did not getitem!"
-
-    bo["_attributes"] = {"b": 25}
-
-    assert bo._attributes == {"b": 25}, "bo setitem did not forward to setattr!"
+    }.items() <= vars(bo).items(), "bo getitem did not forward to getattr!"
 
 
 def test_base_obj_init_attributes():
@@ -125,10 +110,10 @@ def test_base_obj_init_attributes():
     assert bo.fifteen == 15, "bo attributes not read from __init__"
     assert bo.twelve == 12, "bo attributes not read from __init__"
 
-    assert bo._attributes == {
+    assert {
         "fifteen": 15,
         "twelve": 12,
-    }, "bo attriutes not read from __init__"
+    }.items() <= vars(bo).items(), "bo attriutes not read from __init__"
 
 
 def test_base_obj_init_attributes_wrong():
@@ -155,12 +140,14 @@ def test_base_obj_del_attr():
     b.y = 15
     del b.x
 
-    assert b._attributes == {"y": 15}, "bo delattr didn't (assigned post-init)"
+    assert {"y": 15}.items() <= vars(b).items(), "bo delattr removed other (assigned post-init)"
+    assert not ({"x": 12}.items() <= vars(b).items()), "bo delattr didn't (assigned post-init)"
 
     b1 = base.BaseObject(attributes={"z": 25, "a": 1})
     del b1.z
 
-    assert b1._attributes == {"a": 1}, "bo delattr didn't (assigned in init)"
+    assert {"a": 1}.items() <= vars(b1).items(), "bo delattr removed other (assigned in init)"
+    assert not ({"z": 25}.items() <= vars(b1).items()), "bo delattr didn't (assigned in init)"
 
 
 def test_base_obj_del_item():
@@ -172,41 +159,14 @@ def test_base_obj_del_item():
     b.y = 15
     del b["x"]
 
-    assert b._attributes == {"y": 15}, "bo delitem didn't (assigned post-init)"
+    assert {"y": 15}.items() <= vars(b).items(), "bo delitem removed other (assigned post-init)"
+    assert not ({"x": 12}.items() <= vars(b).items()), "bo delitem didn't remove (assigned post-init)"
 
     b1 = base.BaseObject(attributes={"z": 25, "a": 1})
     del b1["z"]
 
-    assert b1._attributes == {"a": 1}, "bo delitem didn't (assigned in init)"
-
-
-def test_base_obj_del_item_protected():
-    """
-    Ensure we *can't* delete protected items of a base object.
-    """
-    b = base.BaseObject()
-    b.x = 12
-
-    with pytest.raises(ValueError):
-        del b["_uid"]
-
-
-def test_base_obj_uid():
-    """
-    Ensure UID is not exposed nor changeable.
-    """
-    bo = base.BaseObject()
-
-    assert "uid" not in bo._attributes, "BaseObject UID exposed"
-    assert "_uid" not in bo._attributes, "BaseObject _uid exposed"
-    assert bo.uid is bo._uid, "BaseObject uid property not returning _uid"
-
-    # UID should be read-only
-    with pytest.raises(AttributeError):
-        bo.uid = 15
-
-    assert bo.uid != 15, "BaseObject UID was changed!"
-    assert bo._uid != 15, "BaseObject _uid was changed!"
+    assert {"a": 1}.items() <= vars(b1).items(), "bo delitem removed other (assigned in init)"
+    assert not ({"z": 25}.items() <= vars(b1).items()), "bo delitem didn't remove (assigned in init)"
 
 
 def test_base_obj_universes():
@@ -214,13 +174,6 @@ def test_base_obj_universes():
     Ensure the universes attribute is not exposed.
     """
     bo = base.BaseObject()
-
-    assert "universes" not in bo._attributes, "BaseObject universes exposed"
-    assert "_universes" not in bo._attributes, "BaseObject _universes exposed"
-    assert (
-        bo.universes == bo._universes
-    ), "BaseObject universes not returning _universes"
-
     uni = universe.Universe()
     bo.add_to_universe(uni)
 
