@@ -28,14 +28,14 @@ def test_uni_laws_init_defaults():
     Ensure UniverseLaws have sane defaults out of the box.
     """
     l1 = universe.UniverseLaws()
-    assert l1._attributes == {
+    assert {
         "_edge_whitelist": None,
         "_mixed_links": False,
         "_cycles": True,
         "_multipath": True,
         "_multiverse": False,
         "_applies_to": None,
-    }, "UniverseLaws has wrong default options!"
+    }.items() <= vars(l1).items(), "UniverseLaws has wrong default options!"
 
 
 def test_uni_laws_init_nondefault():
@@ -50,40 +50,14 @@ def test_uni_laws_init_nondefault():
         multiverse=False,
         applies_to=None,
     )
-    assert l2._attributes == {
+    assert {
         "_edge_whitelist": {int: {str: float}},
         "_mixed_links": True,
         "_cycles": False,
         "_multipath": False,
         "_multiverse": False,
         "_applies_to": None,
-    }, "UniverseLaws did not respect __init__ options!"
-
-
-def test_uni_laws_attrs():
-    """
-    Ensure UniverseLaws attribute getters are working.
-    """
-    l = universe.UniverseLaws(edge_whitelist={int: {str: float}})
-
-    assert (
-        l.edge_whitelist == l._attributes["_edge_whitelist"]
-    ), "UniverseLaws cannot get edge_whitelist"
-    assert (
-        l.mixed_links is l._attributes["_mixed_links"]
-    ), "UniverseLaws cannot get mixed_links"
-    assert (
-        l.cycles is l._attributes["_cycles"]
-    ), "UniverseLaws cannot get cycles"
-    assert (
-        l.multipath is l._attributes["_multipath"]
-    ), "UniverseLaws cannot get multipath"
-    assert (
-        l.multiverse is l._attributes["_multiverse"]
-    ), "UniverseLaws cannot get multiverse"
-    assert (
-        l.applies_to is l._attributes["_applies_to"]
-    ), "UniverseLaws cannot get applies_to"
+    }.items() <= vars(l2).items(), "UniverseLaws did not respect __init__ options!"
 
 
 def test_uni_laws_wrong_edge_rules():

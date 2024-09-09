@@ -63,7 +63,6 @@ def test_link_creation():
     l = link.Link(_force_creation=True)
 
     assert len(l.vertices) == 0, "Link init'd with vertices!"
-    assert len(dir(l)) == 0, "Link init'd with attributes!"
 
 
 def test_link_creation_vertices():

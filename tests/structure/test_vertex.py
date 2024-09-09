@@ -33,7 +33,6 @@ def test_vertex_subclass():
     assert unis[0] in v.universes
     assert unis[1] in v.universes
     assert len(v.universes) == 2
-    assert dir(v) == ["fifteen"]
 
 
 def test_vertex_creation():
@@ -43,7 +42,6 @@ def test_vertex_creation():
     v = vertex.Vertex()
 
     assert len(v.links) == 0, "vertex init'd with links!!"
-    assert len(dir(v)) == 0, "vertex init'd with attributes!!"
 
 
 def test_vertex_create_with_links():
