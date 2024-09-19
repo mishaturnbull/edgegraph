@@ -35,6 +35,8 @@ def main():
     with open("out.puml", "w", encoding="utf-8") as wfp:
         wfp.write(pu.render_to_plantuml_src(graph, pu.PLANTUML_RENDER_OPTIONS))
 
+    pvn = pyvis.make_pyvis_net(graph)
+
     code.interact(local={**locals(), **globals()})
 
 
