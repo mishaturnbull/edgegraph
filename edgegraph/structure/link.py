@@ -73,20 +73,6 @@ class Link(base.BaseObject):
             for vert in vertices:
                 self.add_vertex(vert)
 
-    def _update_vertex_linkages(self):
-        """
-        Ensure that all of our vertices know about this link.
-
-        While this is mainly intended for internal use only, calling it
-        directly shouldn't really do any harm.
-
-        Takes no arguments and has no return.
-        """
-        raise NotImplementedError("Method to be deleted!")
-        for vert in self._vertices:
-            if (vert is not None) and (self not in vert.links):
-                vert.add_to_link(self)
-
     @property
     def vertices(self):
         """

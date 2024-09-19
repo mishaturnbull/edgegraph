@@ -72,17 +72,6 @@ class Vertex(base.BaseObject):
         if self not in universe.vertices:
             universe.add_vertex(self)
 
-    def _update_link_linkages(self):
-        """
-        Ensure that all of our links know about that this vertex is an
-        endpoint.
-
-        Takes no arguments and has no return.
-        """
-        for link in self._links:
-            if self not in link.vertices:
-                link.add_vertex(self)
-
     @property
     def links(self) -> tuple[Link]:
         """
