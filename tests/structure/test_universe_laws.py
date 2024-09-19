@@ -57,7 +57,9 @@ def test_uni_laws_init_nondefault():
         "_multipath": False,
         "_multiverse": False,
         "_applies_to": None,
-    }.items() <= vars(l2).items(), "UniverseLaws did not respect __init__ options!"
+    }.items() <= vars(
+        l2
+    ).items(), "UniverseLaws did not respect __init__ options!"
 
 
 def test_uni_laws_wrong_edge_rules():

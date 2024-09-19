@@ -16,8 +16,11 @@ pytestmark = pytest.mark.perf
 
 LOG = logging.getLogger(__name__)
 
+
 @pytest.mark.perf
-@pytest.mark.parametrize("howmany,nverts", itertools.product([3, 10, 30, 50], [10, 100, 500]))
+@pytest.mark.parametrize(
+    "howmany,nverts", itertools.product([3, 10, 30, 50], [10, 100, 500])
+)
 def test_bulk_randgraph(howmany, nverts):
     """
     Generate lots of large random graphs.
@@ -43,8 +46,11 @@ def test_bulk_randgraph(howmany, nverts):
     missing = overall - sum(times)
     dur = overall / 1_000_000_000
 
-    LOG.info(f"Randgraph performance: total {dur} s, avg {avg} s, vert time "
-             f"{vtime} ns ({howmany} x {nverts} verts); {missing} ns miss")
+    LOG.info(
+        f"Randgraph performance: total {dur} s, avg {avg} s, vert time "
+        f"{vtime} ns ({howmany} x {nverts} verts); {missing} ns miss"
+    )
+
 
 @pytest.mark.perf
 @pytest.mark.parametrize("howmany", [1, 10, 100])
@@ -76,4 +82,3 @@ def test_bulk_bft(complete_graph_1k_undirected, howmany):
     dur = overall / 1_000_000_000
 
     LOG.info(f"BFT performance: total {dur} s, avg {avg} s, {missing} ns miss")
-

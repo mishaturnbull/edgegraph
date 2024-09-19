@@ -77,7 +77,9 @@ class BaseObject(object):
 
         if attributes is not None:
             if not isinstance(attributes, dict):
-                raise TypeError(f"`attributes` must be a dictionary; got {type(attributes)}")
+                raise TypeError(
+                    f"`attributes` must be a dictionary; got {type(attributes)}"
+                )
             for key, val in attributes.items():
                 setattr(self, key, val)
 

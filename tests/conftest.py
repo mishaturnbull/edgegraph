@@ -189,6 +189,7 @@ def graph_clrs09_22_8() -> tuple[Universe, list[Vertex]]:
     uni = adjlist.load_adj_dict(adj, DirectedEdge)
     return uni, verts
 
+
 @pytest.fixture
 def complete_graph_1k_directed():
     """
@@ -206,6 +207,7 @@ def complete_graph_1k_directed():
 
     return uni, verts
 
+
 @pytest.fixture
 def complete_graph_1k_undirected():
     """
@@ -215,8 +217,7 @@ def complete_graph_1k_undirected():
     uni = Universe()
     verts = [Vertex(attributes={"i": i}, universes=[uni]) for i in range(1000)]
     for i, v in enumerate(verts[::-1]):
-        for u in verts[i+1:]:
+        for u in verts[i + 1 :]:
             explicit.link_undirected(v, u)
 
     return uni, verts
-

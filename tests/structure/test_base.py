@@ -41,7 +41,9 @@ def test_base_obj_attributes():
         "x": 7,
         "y": 15,
         "z": "Twelve",
-    }.items() <= vars(bo).items(), "BaseObject attributes were not stored correctly!"
+    }.items() <= vars(
+        bo
+    ).items(), "BaseObject attributes were not stored correctly!"
 
 
 def test_base_obj_items():
@@ -63,7 +65,9 @@ def test_base_obj_items():
         "x": 7,
         "y": 15,
         "z": "Twelve",
-    }.items() <= vars(bo).items(), "BaseObject attributes were not stored correctly!"
+    }.items() <= vars(
+        bo
+    ).items(), "BaseObject attributes were not stored correctly!"
 
 
 def test_base_obj_item_attr_interop():
@@ -96,9 +100,9 @@ def test_base_obj_getitem_protected():
     bo["a"] = 15
 
     assert bo["a"] == 15, "bo['a'] did not getitem!"
-    assert {
-        "a": 15
-    }.items() <= vars(bo).items(), "bo getitem did not forward to getattr!"
+    assert {"a": 15}.items() <= vars(
+        bo
+    ).items(), "bo getitem did not forward to getattr!"
 
 
 def test_base_obj_init_attributes():
@@ -140,14 +144,22 @@ def test_base_obj_del_attr():
     b.y = 15
     del b.x
 
-    assert {"y": 15}.items() <= vars(b).items(), "bo delattr removed other (assigned post-init)"
-    assert not ({"x": 12}.items() <= vars(b).items()), "bo delattr didn't (assigned post-init)"
+    assert {"y": 15}.items() <= vars(
+        b
+    ).items(), "bo delattr removed other (assigned post-init)"
+    assert not (
+        {"x": 12}.items() <= vars(b).items()
+    ), "bo delattr didn't (assigned post-init)"
 
     b1 = base.BaseObject(attributes={"z": 25, "a": 1})
     del b1.z
 
-    assert {"a": 1}.items() <= vars(b1).items(), "bo delattr removed other (assigned in init)"
-    assert not ({"z": 25}.items() <= vars(b1).items()), "bo delattr didn't (assigned in init)"
+    assert {"a": 1}.items() <= vars(
+        b1
+    ).items(), "bo delattr removed other (assigned in init)"
+    assert not (
+        {"z": 25}.items() <= vars(b1).items()
+    ), "bo delattr didn't (assigned in init)"
 
 
 def test_base_obj_del_item():
@@ -159,14 +171,22 @@ def test_base_obj_del_item():
     b.y = 15
     del b["x"]
 
-    assert {"y": 15}.items() <= vars(b).items(), "bo delitem removed other (assigned post-init)"
-    assert not ({"x": 12}.items() <= vars(b).items()), "bo delitem didn't remove (assigned post-init)"
+    assert {"y": 15}.items() <= vars(
+        b
+    ).items(), "bo delitem removed other (assigned post-init)"
+    assert not (
+        {"x": 12}.items() <= vars(b).items()
+    ), "bo delitem didn't remove (assigned post-init)"
 
     b1 = base.BaseObject(attributes={"z": 25, "a": 1})
     del b1["z"]
 
-    assert {"a": 1}.items() <= vars(b1).items(), "bo delitem removed other (assigned in init)"
-    assert not ({"z": 25}.items() <= vars(b1).items()), "bo delitem didn't remove (assigned in init)"
+    assert {"a": 1}.items() <= vars(
+        b1
+    ).items(), "bo delitem removed other (assigned in init)"
+    assert not (
+        {"z": 25}.items() <= vars(b1).items()
+    ), "bo delitem didn't remove (assigned in init)"
 
 
 def test_base_obj_universes():
