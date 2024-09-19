@@ -73,15 +73,6 @@ class Link(base.BaseObject):
             for vert in vertices:
                 self.add_vertex(vert)
 
-    def _add_linkage(self, new: Vertex):
-        """
-        Adds a vertex to the internal list of vertices.
-
-        :param new: the vertex to add to our list of vertices
-        """
-        self._vertices.append(new)
-        self._update_vertex_linkages()
-
     def _update_vertex_linkages(self):
         """
         Ensure that all of our vertices know about this link.
@@ -91,9 +82,10 @@ class Link(base.BaseObject):
 
         Takes no arguments and has no return.
         """
+        raise NotImplementedError("Method to be deleted!")
         for vert in self._vertices:
             if (vert is not None) and (self not in vert.links):
-                vert._add_linkage(self)
+                vert.add_to_link(self)
 
     @property
     def vertices(self):
@@ -114,7 +106,9 @@ class Link(base.BaseObject):
 
         :param new: the vertex to add to the link
         """
-        self._add_linkage(new)
+        self._vertices.append(new)
+        if (new is not None) and (self not in new.links):
+            new.add_to_link(self)
 
     def unlink_from(self, kill: Vertex):
         """
