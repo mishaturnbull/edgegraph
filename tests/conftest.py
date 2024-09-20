@@ -13,7 +13,7 @@ from __future__ import annotations
 import pytest
 
 from edgegraph.structure import Universe, Vertex, DirectedEdge
-from edgegraph.builder import adjlist
+from edgegraph.builder import adjlist, explicit
 
 
 @pytest.fixture
@@ -187,4 +187,37 @@ def graph_clrs09_22_8() -> tuple[Universe, list[Vertex]]:
         y: [v],
     }
     uni = adjlist.load_adj_dict(adj, DirectedEdge)
+    return uni, verts
+
+
+@pytest.fixture
+def complete_graph_1k_directed():
+    """
+    Return a complete graph with directed edges of 1,000 nodes.
+
+    In this graph, every vertex is linked to every other (including itself)
+    with a directed edge.
+    """
+
+    uni = Universe()
+    verts = [Vertex(attributes={"i": i}, universes=[uni]) for i in range(1000)]
+    for v in verts:
+        for u in verts:
+            explicit.link_directed(v, u)
+
+    return uni, verts
+
+
+@pytest.fixture
+def complete_graph_1k_undirected():
+    """
+    Return a complete graph with undirected edges of 1,000 nodes.
+    """
+
+    uni = Universe()
+    verts = [Vertex(attributes={"i": i}, universes=[uni]) for i in range(1000)]
+    for i, v in enumerate(verts[::-1]):
+        for u in verts[i + 1 :]:
+            explicit.link_undirected(v, u)
+
     return uni, verts

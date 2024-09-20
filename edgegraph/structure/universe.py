@@ -31,15 +31,6 @@ class UniverseLaws(base.BaseObject):
     :py:meth:`edgegraph.structure.base.BaseObject.remove_from_universe`.
     """
 
-    fixed_attrs: set[str] = base.BaseObject.fixed_attrs | {
-        "edge_whitelist",
-        "mixed_links",
-        "cycles",
-        "multipath",
-        "multiverse",
-        "applies_to",
-    }
-
     def __init__(
         self,
         edge_whitelist: dict = None,
@@ -185,13 +176,6 @@ class Universe(vertex.Vertex):
     implementation allows it (this is a *feature*, not an implementation
     detail).
     """
-
-    fixed_attrs: set[str] = vertex.Vertex.fixed_attrs | {
-        "_vertices",
-        "vertices",
-        "_laws",
-        "laws",
-    }
 
     def __init__(
         self,
