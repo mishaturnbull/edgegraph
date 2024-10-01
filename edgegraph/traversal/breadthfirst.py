@@ -107,7 +107,7 @@ def bfs(uni: Universe, start: Vertex, attrib: str, val: object) -> Vertex:
     return None
 
 
-def bft(uni: Universe, start: Vertex) -> list[Vertex]:
+def ibft(uni: Universe, start: Vertex) -> list[Vertex]:
     """
     Perform a breadth-first traversal.
 
@@ -123,13 +123,14 @@ def bft(uni: Universe, start: Vertex) -> list[Vertex]:
     """
     if (uni is not None) and (len(uni.vertices) == 0):
         # empty!
-        return None
+        return
     if (uni is not None) and (start not in uni.vertices):
         raise ValueError("Start vertex not in specified universe!")
 
-    visited = []
+    visited = set()
     queue = collections.deque([start])
-    visited.append(start)
+    visited.add(start)
+    yield start
 
     while queue:
         u = queue.popleft()
@@ -140,7 +141,14 @@ def bft(uni: Universe, start: Vertex) -> list[Vertex]:
 
             # make sure we don't re-visit as a duplicate
             if v not in visited:
-                visited.append(v)
+                visited.add(v)
                 queue.append(v)
+                yield v
 
-    return visited
+
+def bft(uni: Universe, start: Vertex) -> list[Vertex]:
+    out = list(ibft(uni, start))
+    if out == []:
+        return None
+    return out
+
