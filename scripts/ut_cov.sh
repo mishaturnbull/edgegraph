@@ -15,7 +15,7 @@ fi
 pytest --cov=edgegraph \
     --cov-branch \
     --cov-fail-under=100 \
-    -m "not slow"
+    -m "not (slow or perf)"
 
 coverage html
 mv htmlcov docs/_build/

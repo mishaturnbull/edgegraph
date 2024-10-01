@@ -32,7 +32,7 @@ def test_universe_vertex_add():
     u = universe.Universe()
     vs = []
     for i in range(5):
-        vs.append(vertex.Vertex(attributes={i: i}))
+        vs.append(vertex.Vertex(attributes={str(i): i}))
 
     u.add_vertex(vs[0])
     u.add_vertex(vs[1])
