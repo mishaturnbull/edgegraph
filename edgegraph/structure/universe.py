@@ -236,6 +236,19 @@ class Universe(vertex.Vertex):
         if self not in vert.universes:
             vert.add_to_universe(self)
 
+    def remove_vertex(self, vert: vertex.Vertex):
+        """
+        Remove a vertex from this universe.
+
+        The vertex in question will be removed from this universe's record of
+        vertices.
+
+        :param vert: the vertex to be removed
+        """
+        self._vertices.remove(vert)
+        if self in vert.universes:
+            vert.remove_from_universe(self)
+
     @property
     def laws(self) -> UniverseLaws:
         """
