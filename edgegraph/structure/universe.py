@@ -241,7 +241,8 @@ class Universe(vertex.Vertex):
         Remove a vertex from this universe.
 
         The vertex in question will be removed from this universe's record of
-        vertices.
+        vertices.  If necessary. this universe will then be removed from the
+        vertices' record of universes as well.
 
         :param vert: the vertex to be removed
         """
