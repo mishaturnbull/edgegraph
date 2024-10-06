@@ -118,6 +118,7 @@ def test_vert_add_to_uni():
     for uni in unis:
         assert v in uni.vertices, "vertex add_to_universe did not back-ref!"
 
+
 def test_vert_rem_from_uni():
     """
     Ensure we can remove a Vertex from universes.
@@ -129,18 +130,27 @@ def test_vert_rem_from_uni():
         unis.append(universe.Universe())
         v.add_to_universe(unis[-1])
 
-    remove = unis[0:len(unis):2]
-    stay = unis[1:len(unis):2]
+    remove = unis[0 : len(unis) : 2]
+    stay = unis[1 : len(unis) : 2]
 
     for uni in remove:
         v.remove_from_universe(uni)
 
-        assert uni not in v.universes, "remove_from_universe did not remove vert-side!"
-        assert v not in uni.vertices, "remove_from_universes did not remove uni-side!"
+        assert (
+            uni not in v.universes
+        ), "remove_from_universe did not remove vert-side!"
+        assert (
+            v not in uni.vertices
+        ), "remove_from_universes did not remove uni-side!"
 
     for uni in stay:
-        assert uni in v.universes, "remove_from_universe altered unrequested uni, vert-side!"
-        assert v in uni.vertices, "remove_from_universe altered unrequested uni, uni-side!"
+        assert (
+            uni in v.universes
+        ), "remove_from_universe altered unrequested uni, vert-side!"
+        assert (
+            v in uni.vertices
+        ), "remove_from_universe altered unrequested uni, uni-side!"
+
 
 def test_vert_init_with_uni():
     """

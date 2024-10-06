@@ -90,6 +90,7 @@ def test_unlink_basic():
     assert len(v1.links) == 0, "unlink did not clean v1.links!"
     assert len(v2.links) == 0, "unlink did not clean v2.links!"
 
+
 def test_unlink_multiple():
     """
     Ensure the unlink() function works on multiple-linked cases.
@@ -144,7 +145,7 @@ def test_unlink_returns_links(graph_clrs09_22_6):
     links = helpers.find_links(x, z, direction_sensitive=False)
 
     undone = explicit.unlink(x, z, destroy=False)
-    
+
     assert undone == links, "unlink() did not return expected links??"
 
 

@@ -66,8 +66,8 @@ def test_universe_vertex_remove():
         vs.append(vertex.Vertex())
         u.add_vertex(vs[-1])
 
-    remove = vs[0:len(vs):2]
-    stay = vs[1:len(vs):2]
+    remove = vs[0 : len(vs) : 2]
+    stay = vs[1 : len(vs) : 2]
 
     for v in remove:
         u.remove_vertex(v)

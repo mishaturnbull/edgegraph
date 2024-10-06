@@ -131,4 +131,3 @@ class Vertex(base.BaseObject):
         super().remove_from_universe(universe)
         if self in universe.vertices:
             universe.remove_vertex(self)
-
