@@ -82,3 +82,40 @@ def test_bulk_bft(complete_graph_1k_undirected, howmany):
     dur = overall / 1_000_000_000
 
     LOG.info(f"BFT performance: total {dur} s, avg {avg} s, {missing} ns miss")
+
+
+
+@pytest.mark.perf
+@pytest.mark.parametrize("trav",
+        [depthfirst.dft_iterative, depthfirst.dft_recursive, breadthfirst.bft])
+def test_trav_versus(graph_clrs09_22_6, trav):
+    """
+    Test traversal methods on the same graph and time results.
+    """
+    howmany = 100000
+    uni, verts = graph_clrs09_22_6
+    fname = trav.__name__
+    times = [None] * howmany
+
+    LOG.info(f"Begin trav-versus routine for {fname}")
+
+    t_start = time.monotonic_ns()
+
+    for i in range(howmany):
+        t_substart = time.monotonic_ns()
+
+        trav(None, verts[0])
+
+        t_subend = time.monotonic_ns()
+        times[i] = t_subend - t_substart
+
+    t_end = time.monotonic_ns() 
+
+    overall = t_end - t_start
+    avg = sum(times) / len(times)
+    avg /= 1_000_000_000
+    missing = overall - sum(times)
+    dur = overall / 1_000_000_000
+
+    LOG.info(f"{fname} performance: total {dur} s, avg {avg} s, {missing} ns miss")
+
