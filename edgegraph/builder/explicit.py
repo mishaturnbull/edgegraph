@@ -62,7 +62,6 @@ def unlink(v1: Vertex, v2: Vertex, destroy=True) -> None:
     vertices ``v1`` and ``v2``.  If the ``destroy`` parameter is set (default),
     then the link objects are also deleted; if not, they are returned in a set.
 
-
     :param v1: One vertex to unlink.
     :param v2: Other vertex to unlink.
     :param destroy: Whether to automatically delete the link objects.

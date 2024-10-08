@@ -117,6 +117,12 @@ def test_unlink_multiple():
 
 
 def test_unlink_in_situ(graph_clrs09_22_6):
+    """
+    Tests the unlinking logic in a real graph scenario.
+
+    This test ensure that unlinking two nodes in a graph doesn't alter any of
+    the other links around them.
+    """
     _, verts = graph_clrs09_22_6
     q, r, s, t, u, v, w, x, y, z = verts
 
@@ -138,10 +144,36 @@ def test_unlink_in_situ(graph_clrs09_22_6):
     assert len(x.links) == 1, "unlink() did not clean x.links()!"
     assert len(z.links) == 0, "unlink() did not clean z.links()!"
 
+    assert set(helpers.neighbors(q)) == {s, t, w}, "unlink() broke 22.6/q!"
+    assert set(helpers.neighbors(r)) == {
+        y,
+    }, "unlink() broke 22.6/r!"
+    assert set(helpers.neighbors(s)) == {
+        v,
+    }, "unlink() broke 22.6/s!"
+    assert set(helpers.neighbors(t)) == {x, y}, "unlink() broke 22.6/t!"
+    assert set(helpers.neighbors(u)) == {
+        y,
+    }, "unlink() broke 22.6/u!"
+    assert set(helpers.neighbors(v)) == {
+        w,
+    }, "unlink() broke 22.6/v!"
+    assert set(helpers.neighbors(w)) == {
+        s,
+    }, "unlink() broke 22.6/w!"
+    assert set(helpers.neighbors(x)) == set(), "unlink() broke 22.6/x!"
+    assert set(helpers.neighbors(y)) == {
+        q,
+    }, "unlink() broke 22.6/y!"
+    assert set(helpers.neighbors(z)) == set(), "unlink() broke 22.6/z!"
+
 
 def test_unlink_returns_links(graph_clrs09_22_6):
+    """
+    Ensure the unlink() function returns link objects when requested.
+    """
     _, verts = graph_clrs09_22_6
-    q, r, s, t, u, v, w, x, y, z = verts
+    x, z = verts[-3], verts[-1]
     links = helpers.find_links(x, z, direction_sensitive=False)
 
     undone = explicit.unlink(x, z, destroy=False)
