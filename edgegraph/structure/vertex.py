@@ -116,3 +116,18 @@ class Vertex(base.BaseObject):
         if link in self._links:
             self._links.remove(link)
             link.unlink_from(self)
+
+    def remove_from_universe(self, universe: Universe) -> None:
+        """
+        Remove this vertex from the specified universe.
+
+        In addition to the superclass method, also removes the vertex from the
+        universe's record of vertices as well as simply removing the universe
+        from this vertices' record of universes if necessary.
+
+        :param universe: the universe that this vertex will be removed from
+        :raises KeyError: if this object is not present in the given universe
+        """
+        super().remove_from_universe(universe)
+        if self in universe.vertices:
+            universe.remove_vertex(self)
