@@ -23,13 +23,6 @@ class TwoEndedLink(link.Link):
        * :py:class:`~edgegraph.structure.directededge.DirectedEdge`
     """
 
-    fixed_attrs: set[str] = link.Link.fixed_attrs | {
-        "_v1",
-        "v1",
-        "_v2",
-        "v2",
-    }
-
     def __init__(
         self,
         v1: Vertex = None,

@@ -28,11 +28,6 @@ class Link(base.BaseObject):
 
     """
 
-    fixed_attrs: set[str] = base.BaseObject.fixed_attrs | {
-        "_vertices",
-        "vertices",
-    }
-
     def __init__(
         self,
         *,
@@ -62,6 +57,13 @@ class Link(base.BaseObject):
         super().__init__(uid=uid, attributes=attributes)
 
         # prevent direct usage of this class -- its meaning is undefined
+        # pylint complains about this being unidiomatic, and suggests
+        # isinstance() instead.  however, isinstance() also returns True when
+        # the given object is a *subclass* of the type -- which we don't want
+        # here.  no flag or option is available to disable this; and no
+        # alternative instance-but-not-subclass function is available, so here
+        # we are.
+        # pylint: disable-next=unidiomatic-typecheck
         if (type(self) == Link) and not _force_creation:
             raise TypeError(
                 "Base class <Link> may not be instantiated directly!"
@@ -77,28 +79,6 @@ class Link(base.BaseObject):
         if vertices is not None:
             for vert in vertices:
                 self.add_vertex(vert)
-
-    def _add_linkage(self, new: Vertex):
-        """
-        Adds a vertex to the internal list of vertices.
-
-        :param new: the vertex to add to our list of vertices
-        """
-        self._vertices.append(new)
-        self._update_vertex_linkages()
-
-    def _update_vertex_linkages(self):
-        """
-        Ensure that all of our vertices know about this link.
-
-        While this is mainly intended for internal use only, calling it
-        directly shouldn't really do any harm.
-
-        Takes no arguments and has no return.
-        """
-        for vert in self._vertices:
-            if (vert is not None) and (self not in vert.links):
-                vert._add_linkage(self)
 
     @property
     def vertices(self):
@@ -119,7 +99,9 @@ class Link(base.BaseObject):
 
         :param new: the vertex to add to the link
         """
-        self._add_linkage(new)
+        self._vertices.append(new)
+        if (new is not None) and (self not in new.links):
+            new.add_to_link(self)
 
     def unlink_from(self, kill: Vertex):
         """

@@ -21,7 +21,9 @@ from edgegraph.structure import singleton
 #   * class Something: pass  will be allowed (C0321, multiple-statements)
 #
 # therefore:
-# pylint: disable=R0903, C0115, C0321
+# pylint: disable=too-few-public-methods
+# pylint: disable=missing-class-docstring
+# pylint: disable=multiple-statements
 
 
 def test_true_singleton_smoketest():

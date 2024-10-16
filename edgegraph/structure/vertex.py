@@ -18,11 +18,6 @@ class Vertex(base.BaseObject):
     both subclass this one, at some level).
     """
 
-    fixed_attrs: set[str] = base.BaseObject.fixed_attrs | {
-        "_links",
-        "links",
-    }
-
     def __init__(
         self,
         *,
@@ -77,27 +72,6 @@ class Vertex(base.BaseObject):
         if self not in universe.vertices:
             universe.add_vertex(self)
 
-    def _add_linkage(self, new: Link):
-        """
-        Adds a linkage to the internal list of links.
-
-        :param new: the link to add to our list of links
-        """
-        if new not in self._links:
-            self._links.append(new)
-            self._update_link_linkages()
-
-    def _update_link_linkages(self):
-        """
-        Ensure that all of our links know about that this vertex is an
-        endpoint.
-
-        Takes no arguments and has no return.
-        """
-        for link in self._links:
-            if self not in link.vertices:
-                link._add_linkage(self)
-
     @property
     def links(self) -> tuple[Link]:
         """
@@ -127,7 +101,10 @@ class Vertex(base.BaseObject):
 
         :param link: the link to add this vertex to
         """
-        self._add_linkage(link)
+        if link not in self._links:
+            self._links.append(link)
+            if self not in link.vertices:
+                link.add_vertex(self)
 
     def remove_from_link(self, link: Link):
         """
@@ -139,3 +116,18 @@ class Vertex(base.BaseObject):
         if link in self._links:
             self._links.remove(link)
             link.unlink_from(self)
+
+    def remove_from_universe(self, universe: Universe) -> None:
+        """
+        Remove this vertex from the specified universe.
+
+        In addition to the superclass method, also removes the vertex from the
+        universe's record of vertices as well as simply removing the universe
+        from this vertices' record of universes if necessary.
+
+        :param universe: the universe that this vertex will be removed from
+        :raises KeyError: if this object is not present in the given universe
+        """
+        super().remove_from_universe(universe)
+        if self in universe.vertices:
+            universe.remove_vertex(self)

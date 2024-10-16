@@ -66,8 +66,9 @@ disable = [
 [tool.pytest.ini_options]
 markers = [
     "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "perf: really slow performance tests",
 ]
-addopts = "-ra --durations=5"
+addopts = "-ra --durations=5 -m 'not (slow or perf)'"
 log_cli = false
 log_cli_level = "DEBUG"
 log_cli_format = "%(asctime)s [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)"

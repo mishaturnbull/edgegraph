@@ -103,7 +103,7 @@ def test_bfs_finds_first_vertex(graph_clrs09_22_6):
     uni, verts = graph_clrs09_22_6
     for vert in verts:
         search = breadthfirst.bfs(uni, vert, "i", vert.i)
-        assert search is vert, f"BFS did not identify the starting vertex!"
+        assert search is vert, "BFS did not identify the starting vertex!"
 
 
 ###############################################################################

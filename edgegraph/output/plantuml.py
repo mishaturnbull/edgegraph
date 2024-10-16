@@ -370,7 +370,7 @@ def render_to_image(src: str, out_file: str, plantuml: str = "plantuml"):
     try:
         srcfile = os.path.join(tmpdir, "in.puml")
         outfile = os.path.join(tmpdir, "in.png")
-        with open(srcfile, "w") as wfp:
+        with open(srcfile, "w", encoding="utf-8") as wfp:
             wfp.write(src)
 
         # https://plantuml.com/command-line

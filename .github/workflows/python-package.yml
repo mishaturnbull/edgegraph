@@ -65,7 +65,7 @@ jobs:
         # least, yet.  but, don't run the marked-as-slow stress tests here to
         # avoid taking up too much time on the runner (of concern due to
         # GitHub's pricing)
-        pytest --cov=edgegraph --cov-branch --durations=0 -m "not slow"
+        pytest --cov=edgegraph --cov-branch --durations=0 -m "not (slow or perf)"
 
     - name: Check unit test coverage
       run: |

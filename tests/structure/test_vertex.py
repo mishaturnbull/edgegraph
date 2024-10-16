@@ -33,7 +33,6 @@ def test_vertex_subclass():
     assert unis[0] in v.universes
     assert unis[1] in v.universes
     assert len(v.universes) == 2
-    assert dir(v) == ["fifteen"]
 
 
 def test_vertex_creation():
@@ -43,7 +42,6 @@ def test_vertex_creation():
     v = vertex.Vertex()
 
     assert len(v.links) == 0, "vertex init'd with links!!"
-    assert len(dir(v)) == 0, "vertex init'd with attributes!!"
 
 
 def test_vertex_create_with_links():
@@ -119,6 +117,39 @@ def test_vert_add_to_uni():
     assert len(v.universes) == 50, "vertex .universes has wrong # elements!"
     for uni in unis:
         assert v in uni.vertices, "vertex add_to_universe did not back-ref!"
+
+
+def test_vert_rem_from_uni():
+    """
+    Ensure we can remove a Vertex from universes.
+    """
+    v = vertex.Vertex()
+
+    unis = []
+    for _ in range(50):
+        unis.append(universe.Universe())
+        v.add_to_universe(unis[-1])
+
+    remove = unis[0 : len(unis) : 2]
+    stay = unis[1 : len(unis) : 2]
+
+    for uni in remove:
+        v.remove_from_universe(uni)
+
+        assert (
+            uni not in v.universes
+        ), "remove_from_universe did not remove vert-side!"
+        assert (
+            v not in uni.vertices
+        ), "remove_from_universes did not remove uni-side!"
+
+    for uni in stay:
+        assert (
+            uni in v.universes
+        ), "remove_from_universe altered unrequested uni, vert-side!"
+        assert (
+            v in uni.vertices
+        ), "remove_from_universe altered unrequested uni, uni-side!"
 
 
 def test_vert_init_with_uni():

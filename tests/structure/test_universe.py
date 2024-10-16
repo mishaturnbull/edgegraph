@@ -32,7 +32,7 @@ def test_universe_vertex_add():
     u = universe.Universe()
     vs = []
     for i in range(5):
-        vs.append(vertex.Vertex(attributes={i: i}))
+        vs.append(vertex.Vertex(attributes={str(i): i}))
 
     u.add_vertex(vs[0])
     u.add_vertex(vs[1])
@@ -54,6 +54,30 @@ def test_universe_vertex_add():
     assert (
         u in vs[1].universes
     ), "universes.add_vertex did not set u in vertex.universes"
+
+
+def test_universe_vertex_remove():
+    """
+    Ensure we can remove a vertex from a universe.
+    """
+    u = universe.Universe()
+    vs = []
+    for i in range(20):
+        vs.append(vertex.Vertex())
+        u.add_vertex(vs[-1])
+
+    remove = vs[0 : len(vs) : 2]
+    stay = vs[1 : len(vs) : 2]
+
+    for v in remove:
+        u.remove_vertex(v)
+
+        assert v not in u.vertices, "remove_vertex did not (uni-side)!"
+        assert u not in v.universes, "remove_vertex did not (vert-side)!"
+
+    for v in stay:
+        assert v in u.vertices, "remove_vertex altered unreq vert (uni-side)!"
+        assert u in v.universes, "remove_vertex altered unreq vert (vert-siee)!"
 
 
 def test_universe_vertex_init():

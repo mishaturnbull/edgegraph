@@ -31,15 +31,6 @@ class UniverseLaws(base.BaseObject):
     :py:meth:`edgegraph.structure.base.BaseObject.remove_from_universe`.
     """
 
-    fixed_attrs: set[str] = base.BaseObject.fixed_attrs | {
-        "edge_whitelist",
-        "mixed_links",
-        "cycles",
-        "multipath",
-        "multiverse",
-        "applies_to",
-    }
-
     def __init__(
         self,
         edge_whitelist: dict = None,
@@ -186,13 +177,6 @@ class Universe(vertex.Vertex):
     detail).
     """
 
-    fixed_attrs: set[str] = vertex.Vertex.fixed_attrs | {
-        "_vertices",
-        "vertices",
-        "_laws",
-        "laws",
-    }
-
     def __init__(
         self,
         *,
@@ -251,6 +235,20 @@ class Universe(vertex.Vertex):
         self._vertices.add(vert)
         if self not in vert.universes:
             vert.add_to_universe(self)
+
+    def remove_vertex(self, vert: vertex.Vertex):
+        """
+        Remove a vertex from this universe.
+
+        The vertex in question will be removed from this universe's record of
+        vertices.  If necessary. this universe will then be removed from the
+        vertices' record of universes as well.
+
+        :param vert: the vertex to be removed
+        """
+        self._vertices.remove(vert)
+        if self in vert.universes:
+            vert.remove_from_universe(self)
 
     @property
     def laws(self) -> UniverseLaws:
