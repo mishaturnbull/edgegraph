@@ -205,6 +205,6 @@ def bft(
                 queue.append(v)
 
     if ff_result:
-        return filter(ff_result, visited)
+        return list(filter(ff_result, visited))
     else:
         return visited

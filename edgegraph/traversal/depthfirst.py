@@ -116,7 +116,7 @@ def _dft_recur(
             )
 
     if ff_result:
-        return filter(ff_result, out)
+        return list(filter(ff_result, out))
     return out
 
 
@@ -274,7 +274,7 @@ def dft_iterative(
             ):
                 stack.append(w)
     if ff_result:
-        return filter(ff_result, discovered)
+        return list(filter(ff_result, discovered))
     return discovered
 
 
