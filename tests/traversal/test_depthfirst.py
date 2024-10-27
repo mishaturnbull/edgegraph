@@ -150,26 +150,42 @@ def test_dftr_none_universe(graph_clrs09_22_6):
     trav = [v.i for v in trav]
     assert trav == dftr_data[0][1], "DFTR did not traverse with uni = None"
 
+
 @pytest.mark.parametrize("func", travs)
 def test_dft_ff_result(graph_clrs09_22_6, func):
+    """
+    Ensure the ff_result parameter works on depth-first traversals.
+    """
     _, verts = graph_clrs09_22_6
     trav = func(None, verts[1], ff_result=lambda v: v.i > 5)
     trav = set(v.i for v in trav)
     assert trav == {6, 7, 8, 9}
 
+
 @pytest.mark.parametrize("func", travs)
 def test_dft_ff_via(graph_clrs09_22_6, func):
+    """
+    Ensure the ff_via parameter works on depth-first traversals.
+    """
     _, verts = graph_clrs09_22_6
     trav = func(None, verts[1], ff_via=lambda e, v2: v2.i % 2 == 0)
     trav = set(v.i for v in trav)
     assert trav == {0, 1, 2, 4, 6, 8}
 
+
 @pytest.mark.parametrize("func", travs)
 def test_dft_ff_via_and_result(graph_clrs09_22_6, func):
+    """
+    Ensure the ff_result *and* ff_via parameter work together on depth-first
+    traversals.
+    """
     _, verts = graph_clrs09_22_6
-    trav = func(None, verts[1],
-            ff_via=lambda e, v2: v2.i % 2 == 0,
-            ff_result=lambda v: v.i > 5)
+    trav = func(
+        None,
+        verts[1],
+        ff_via=lambda e, v2: v2.i % 2 == 0,
+        ff_result=lambda v: v.i > 5,
+    )
     trav = set(v.i for v in trav)
     assert trav == {6, 8}
 
