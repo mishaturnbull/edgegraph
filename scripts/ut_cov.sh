@@ -18,6 +18,6 @@ pytest --cov=edgegraph \
     -m "not (slow or perf)"
 
 coverage html
-mv htmlcov docs/_build/
+mv htmlcov/ docs/_build/
 
 echo Done!

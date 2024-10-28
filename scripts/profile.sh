@@ -12,7 +12,7 @@ then
     rm docs/_build/combined.svg
 fi
 
-python -m pytest \
+python3 -m pytest \
     --profile-svg \
     -m perf \
     -o log_cli=true \
