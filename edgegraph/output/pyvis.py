@@ -58,7 +58,9 @@ from edgegraph.structure import Universe, DirectedEdge
 
 
 def make_pyvis_net(
-    uni: Universe, rvfunc: Callable = None, refunc: Callable = None,
+    uni: Universe,
+    rvfunc: Callable = None,
+    refunc: Callable = None,
     network_kwargs: dict = None,
 ) -> pyvis.network.Network:
     """
@@ -98,7 +100,7 @@ def make_pyvis_net(
     """
 
     if network_kwargs is None:
-        network_kwargs = {'cdn_resources': 'local'}
+        network_kwargs = {"cdn_resources": "local"}
     net = network.Network(**network_kwargs)
     verts = list(uni.vertices)
     for i, vert in enumerate(verts):
