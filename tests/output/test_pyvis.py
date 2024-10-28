@@ -121,3 +121,15 @@ def test_pyvis_vert_outside_uni_hard(graph_clrs09_22_6):
     assert len(nodes_present) == len(
         verts
     ), "Extra vertex detected in PyVIS network"
+
+def test_pyvis_create_with_options(graph_clrs09_22_6):
+    """
+    Ensure Pyvis network kwargs passthru works.
+    """
+    uni, _ = graph_clrs09_22_6
+
+    default = pyvis.make_pyvis_net(uni)
+    assert default.cdn_resources == 'local', "Wrong default CDN resources!"
+
+    modded = pyvis.make_pyvis_net(uni, network_kwargs={'cdn_resources': 'remote'})
+    assert modded.cdn_resources == "remote", "Wrong modified CDN resources!"
