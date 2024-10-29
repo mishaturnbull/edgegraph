@@ -330,6 +330,7 @@ def semi_singleton_metaclass(hashfunc: Callable = None) -> type:
         """
 
         __semisingleton_instance_map = {}
+        __semisingleton_hashfunc = hashfunc
 
         def __call__(cls, *args, **kwargs):
             key = hashfunc(args, kwargs)
@@ -340,6 +341,13 @@ def semi_singleton_metaclass(hashfunc: Callable = None) -> type:
             return cls.__semisingleton_instance_map[key]
 
     return _SemiSingleton
+
+
+def add_mapping(identifier: Hashable, obj: object):
+    cls = type(type(obj))
+    hashfunc = cls._SemiSingleton__semisingleton_hashfunc
+    hashid = hashfunc(*identifier)
+    cls._SemiSingleton__semisingleton_instance_map[hashid] = obj
 
 
 def get_all_semi_singleton_instances(cls: type) -> Generator[object]:

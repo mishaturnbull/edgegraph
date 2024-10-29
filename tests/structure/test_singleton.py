@@ -457,3 +457,20 @@ def test_semi_singleton_get():
     assert set(insts) == set(
         check
     ), "Did not get expected semi-singleton insts!"
+
+
+def test_semi_singleton_multiname_smoketest():
+    class A(metaclass=singleton.semi_singleton_metaclass()):
+        def __init__(self, *args):
+            self.args = args
+
+    a1 = A(1)
+    a2 = A(2)
+
+    singleton.add_mapping(((3,), {}), a2)
+
+    a3 = A(3)
+
+    assert a3 is a2
+
+
