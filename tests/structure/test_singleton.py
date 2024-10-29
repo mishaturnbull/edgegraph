@@ -463,6 +463,7 @@ def test_semi_singleton_multiname_smoketest():
     """
     Smoketest for semi-singleton add_mapping() function; ensures functionality.
     """
+
     class A(metaclass=singleton.semi_singleton_metaclass()):
         def __init__(self, *args):
             self.args = args
@@ -481,9 +482,11 @@ def test_semi_singleton_multiname_no_crosscontamination():
     """
     Ensure add_mapping() has no side effects on other classes.
     """
+
     class A(metaclass=singleton.semi_singleton_metaclass()):
         def __init__(self, *args):
             self.args = args
+
     class B(metaclass=singleton.semi_singleton_metaclass()):
         def __init__(self, *args):
             self.args = args
@@ -512,6 +515,7 @@ def test_semi_singleton_multiname_multiple():
     """
     Ensure many mappings can point to a single instance, not just two.
     """
+
     class A(metaclass=singleton.semi_singleton_metaclass()):
         def __init__(self, *args):
             self.args = args
@@ -525,5 +529,3 @@ def test_semi_singleton_multiname_multiple():
 
         assert ai is a2, f"add_mapping() failed mult-test at {i}!"
         assert ai is not a1, f"add_mapping() side effect at {i}!"
-
-
