@@ -474,3 +474,31 @@ def test_semi_singleton_multiname_smoketest():
     assert a3 is a2
 
 
+def test_semi_singleton_multiname_no_crosscontamination():
+    class A(metaclass=singleton.semi_singleton_metaclass()):
+        def __init__(self, *args):
+            self.args = args
+    class B(metaclass=singleton.semi_singleton_metaclass()):
+        def __init__(self, *args):
+            self.args = args
+
+    a1 = A(1)
+    a2 = A(2)
+    b1 = B(1)
+    b2 = B(2)
+
+    assert a1 is not a2
+    assert a1 is not b1
+    assert b1 is not b2
+    assert a2 is not b2
+
+    singleton.add_mapping(((3,), {}), a2)
+
+    a3 = A(3)
+    b3 = B(3)
+
+    assert a3 is a2
+    assert b3 is not b2
+    assert b3 is not a3
+
+
