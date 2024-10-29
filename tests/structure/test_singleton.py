@@ -475,6 +475,7 @@ def test_semi_singleton_multiname_smoketest():
 
     a3 = A(3)
 
+    assert a1 is not a2, "add_mapping() added unwanted relationship!"
     assert a3 is a2, "add_mapping() did not double-point instance!"
 
 

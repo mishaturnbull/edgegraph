@@ -320,6 +320,10 @@ def test_neighbors_filter_func_subclass_undirected():
 
 
 def test_neighbors_filter_func_subclass_directed_backwards():
+    """
+    Ensure the neighbors() filterfunction works with subclass detection when
+    using a backwards link direction.
+    """
     class VT1(Vertex):
         pass
 
@@ -363,12 +367,16 @@ def test_neighbors_filter_func_subclass_directed_backwards():
         )
     )
 
-    assert nb1 == {v[2], v[3], v[4], v[5]}
-    assert nb2 == {v[3], v[4], v[5]}
-    assert nb3 == {v[2], v[3], v[5]}
+    assert nb1 == {v[2], v[3], v[4], v[5]}, "nb1 yielded wrong traversal!"
+    assert nb2 == {v[3], v[4], v[5]}, "nb2 yielded wrong traversal!"
+    assert nb3 == {v[2], v[3], v[5]}, "nb3 yielded wrong traversal!"
 
 
 def test_neighbors_filter_func_subclass_undirected_backwards():
+    """
+    Ensure the neighbors() filterfunction works with subclass detection when
+    using a backwards link direction and an undirected graph.
+    """
     class VT1(Vertex):
         pass
 
@@ -412,9 +420,9 @@ def test_neighbors_filter_func_subclass_undirected_backwards():
         )
     )
 
-    assert nb1 == {v[2], v[3], v[4], v[5]}
-    assert nb2 == {v[3], v[4], v[5]}
-    assert nb3 == {v[2], v[3], v[5]}
+    assert nb1 == {v[2], v[3], v[4], v[5]}, "nb1 yielded wrong traversal!"
+    assert nb2 == {v[3], v[4], v[5]}, "nb2 yielded wrong traversal!"
+    assert nb3 == {v[2], v[3], v[5]}, "nb3 yielded wrong traversal!"
 
 
 def test_neighbors_bad_directionality(graph_clrs09_22_6):
