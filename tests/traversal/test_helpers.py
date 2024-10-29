@@ -324,6 +324,7 @@ def test_neighbors_filter_func_subclass_directed_backwards():
     Ensure the neighbors() filterfunction works with subclass detection when
     using a backwards link direction.
     """
+
     class VT1(Vertex):
         pass
 
@@ -377,6 +378,7 @@ def test_neighbors_filter_func_subclass_undirected_backwards():
     Ensure the neighbors() filterfunction works with subclass detection when
     using a backwards link direction and an undirected graph.
     """
+
     class VT1(Vertex):
         pass
 

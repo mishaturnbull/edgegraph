@@ -83,12 +83,11 @@ def unlink(v1: Vertex, v2: Vertex, destroy=True) -> None:
             # pylint: disable-next=possibly-used-before-assignment
             out.add(link)
 
-
     if destroy:
         # TODO: is this actually useful?  need to investigate.  May not do
         # quite what it says on the tin.
         links = list(links)
-        for i in range(len(links)-1, -1, -1):
+        for i in range(len(links) - 1, -1, -1):
             del links[i]
 
     if not destroy:
