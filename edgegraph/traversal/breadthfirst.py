@@ -53,7 +53,7 @@ import collections
 from edgegraph.structure import Universe, Vertex
 from edgegraph.traversal import helpers
 
-# TODO: add (to both these fn's) passthru kwargs to neighbors() options
+# TODO: add (search fn) passthru kwargs to neighbors() options
 
 
 def bfs(uni: Universe, start: Vertex, attrib: str, val: object) -> Vertex:
@@ -206,5 +206,4 @@ def bft(
 
     if ff_result:
         return list(filter(ff_result, visited))
-    else:
-        return visited
+    return visited
