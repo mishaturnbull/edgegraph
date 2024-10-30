@@ -10,7 +10,7 @@ import logging
 import time
 import pytest
 from edgegraph.builder import randgraph
-from edgegraph.traversal import breadthfirst, depthfirst
+from edgegraph.traversal import breadthfirst
 
 pytestmark = pytest.mark.perf
 

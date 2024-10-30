@@ -330,6 +330,7 @@ def semi_singleton_metaclass(hashfunc: Callable = None) -> type:
         """
 
         __semisingleton_instance_map = {}
+        __semisingleton_hashfunc = hashfunc
 
         def __call__(cls, *args, **kwargs):
             key = hashfunc(args, kwargs)
@@ -340,6 +341,56 @@ def semi_singleton_metaclass(hashfunc: Callable = None) -> type:
             return cls.__semisingleton_instance_map[key]
 
     return _SemiSingleton
+
+
+def add_mapping(identifier: Hashable, obj: object):
+    """
+    Adds another mapping to a semi-singleton instance.
+
+    This function can be used to add another mapping to an instance of a
+    semi-singleton object.  It can be useful for situations where the same
+    object can have multiple "names" (or, sets of arguments), but it is
+    inefficient to implement this in the metaclass hash function.  Using this
+    function instead allows a memory-time tradeoff, tipping the balance towards
+    more memory usage in favor of a faster hash function (and therefore, object
+    instantiation).
+
+    >>> from edgegraph.singleton import semi_singleton_metaclass, add_mapping
+    >>> class SemiSingleton(metaclass=semi_singleton_metaclass()):
+    ...     def __init__(self, foo, bar=False):
+    ...         self.foo = foo
+    ...         self.bar = bar
+    ...
+    >>> s3 = SemiSingleton(37, True)  # different arguments -- different object
+    >>> s3
+    <__main__.SemiSingleton object at 0x01234567>
+    >>> s2 is s3
+    False
+    >>> add_mapping(((39,), {'bar': True}), s3)
+    >>> s4 = SemiSingleton(39, True)  # we get s3 again, despite different args
+    >>> s4
+    <__main__.SemiSingleton object at 0x01234567>
+    >>> s3 is s4
+    True
+
+    :param identifier: Two-tuple of arguments and keyword arguments that will
+      be passed to the class's ``__init__`` method.  Typically, the first
+      element is another tuple representing positional arguments, and the
+      second elemtn is a dictionary representing keyword arguments.
+    :param obj: The object to map the extra identifier to.  Henceforth after
+      this function, this object will be reachable by the identifier given as
+      well as any others it may have already had.
+    """
+    # get the metaclass type
+    cls = type(type(obj))
+
+    # use the metaclass's hash function to line up with existing / future
+    # mappings
+    hashfunc = cls._SemiSingleton__semisingleton_hashfunc
+    hashid = hashfunc(*identifier)
+
+    # store the hashed identifier in the metaclass map of hashes to instances
+    cls._SemiSingleton__semisingleton_instance_map[hashid] = obj
 
 
 def get_all_semi_singleton_instances(cls: type) -> Generator[object]:

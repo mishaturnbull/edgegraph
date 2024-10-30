@@ -17,6 +17,7 @@ functions will get the necessary updates to match, and the API stays unchanged.
 from __future__ import annotations
 
 from edgegraph.structure import Vertex, DirectedEdge, UnDirectedEdge
+from edgegraph.traversal import helpers
 
 
 def link_from_to(v1: Vertex, lnktype: type, v2: Vertex, dontdup: bool = False):
@@ -51,6 +52,47 @@ def link_from_to(v1: Vertex, lnktype: type, v2: Vertex, dontdup: bool = False):
                 return lnk
 
     return lnktype(v1, v2)
+
+
+def unlink(v1: Vertex, v2: Vertex, destroy=True) -> None:
+    """
+    Remive all links between ``v1`` and ``v2``.
+
+    This function identifies and removes all links that exist between given
+    vertices ``v1`` and ``v2``.  If the ``destroy`` parameter is set (default),
+    then the link objects are also deleted; if not, they are returned in a set.
+
+    :param v1: One vertex to unlink.
+    :param v2: Other vertex to unlink.
+    :param destroy: Whether to automatically delete the link objects.
+    :return: None if ``destroy`` is True, otherwise, a set of links that were
+       removed.
+    """
+    links = helpers.find_links(v1, v2, direction_sensitive=False)
+
+    if not destroy:
+        out = set()
+
+    for link in links:
+        link.unlink_from(v1)
+        link.unlink_from(v2)
+
+        if not destroy:
+            # `out` is conditionally defined if destroy=False; we use it here
+            # under the same conditions, ergo, no issue.
+            # pylint: disable-next=possibly-used-before-assignment
+            out.add(link)
+
+    if destroy:
+        # TODO: is this actually useful?  need to investigate.  May not do
+        # quite what it says on the tin.
+        links = list(links)
+        for i in range(len(links) - 1, -1, -1):
+            del links[i]
+
+    if not destroy:
+        return out
+    return None
 
 
 def link_directed(
