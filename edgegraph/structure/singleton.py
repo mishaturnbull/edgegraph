@@ -393,6 +393,40 @@ def add_mapping(identifier: Hashable, obj: object):
     cls._SemiSingleton__semisingleton_instance_map[hashid] = obj
 
 
+def drop_semi_singleton_mapping(identifier: Hashable, obj: object):
+    """
+    .. todo::
+
+       document this
+    """
+    # get the metaclass type
+    cls = type(type(obj))
+
+    # use the metaclass's hash function to identify the primary key
+    hashfunc = cls._SemiSingleton__semisingleton_hashfunc
+    hashid = hashfunc(*identifier)
+
+    del cls._SemiSingleton__semisingleton_instance_map[hashid]
+
+
+def check_semi_singleton_entry_exists(cls: type, identifier: Hashable):
+    """
+    .. todo::
+
+       document this
+    """
+    # get the real semisingleton metaclass, not just the user type
+    sstype = type(cls)
+
+    # use the metaclass's hash function to identify the primary key
+    hashfunc = cls._SemiSingleton__semisingleton_hashfunc
+    hashid = hashfunc(*identifier)
+
+    if hashid in sstype._SemiSingleton__semisingleton_instance_map:
+        return sstype._SemiSingleton__semisingleton_instance_map[hashid]
+
+    return None
+
 def get_all_semi_singleton_instances(cls: type) -> Generator[object]:
     """
     Get all instances belonging to a given semi-singleton type.
@@ -459,3 +493,5 @@ def clear_semi_singleton(cls: type) -> None:
     :param cls: Class to clear semisingleton states from.
     """
     type(cls)._SemiSingleton__semisingleton_instance_map = {}
+
+

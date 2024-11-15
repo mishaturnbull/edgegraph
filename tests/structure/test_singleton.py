@@ -530,3 +530,55 @@ def test_semi_singleton_multiname_multiple():
 
         assert ai is a2, f"add_mapping() failed mult-test at {i}!"
         assert ai is not a1, f"add_mapping() side effect at {i}!"
+
+
+def test_semi_singleton_drop_single_mapping():
+    """
+    Ensure we can drop a single semisingleton mapping without nuking everything
+    else.
+    """
+    class A(metaclass=singleton.semi_singleton_metaclass()):
+        def __init__(self, *args):
+            self.args = args
+
+    class B(metaclass=singleton.semi_singleton_metaclass()):
+        def __init__(self, *args):
+            self.args = args
+
+    a1 = A(1)
+    a2 = A(2)
+    b1 = B(1)
+    b2 = B(2)
+
+    singleton.drop_semi_singleton_mapping(((1,), {}), a1)
+
+    assert singleton.check_semi_singleton_entry_exists(A, ((1,), {})) is None
+
+
+def test_semi_singleton_check_mapping():
+    """
+    Ensure we can *check* for a semisingleton instance without creating one.
+    """
+    class A(metaclass=singleton.semi_singleton_metaclass()):
+        def __init__(self, *args):
+            self.args = args
+
+    class B(metaclass=singleton.semi_singleton_metaclass()):
+        def __init__(self, *args):
+            self.args = args
+
+    a1 = A(1)
+    a2 = A(2)
+    b1 = B(1)
+    b2 = B(2)
+
+    assert singleton.check_semi_singleton_entry_exists(A, ((1,), {})) is a1
+    assert singleton.check_semi_singleton_entry_exists(A, ((2,), {})) is a2
+    assert singleton.check_semi_singleton_entry_exists(B, ((1,), {})) is b1
+    assert singleton.check_semi_singleton_entry_exists(B, ((2,), {})) is b2
+    assert singleton.check_semi_singleton_entry_exists(A, ((3,), {})) is None
+    assert singleton.check_semi_singleton_entry_exists(B, ((4,), {})) is None
+
+
+
+
