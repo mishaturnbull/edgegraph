@@ -416,14 +416,14 @@ def check_semi_singleton_entry_exists(cls: type, identifier: Hashable):
        document this
     """
     # get the real semisingleton metaclass, not just the user type
-    sstype = type(cls)
+    mcls = type(cls)
 
     # use the metaclass's hash function to identify the primary key
-    hashfunc = cls._SemiSingleton__semisingleton_hashfunc
+    hashfunc = mcls._SemiSingleton__semisingleton_hashfunc
     hashid = hashfunc(*identifier)
 
-    if hashid in sstype._SemiSingleton__semisingleton_instance_map:
-        return sstype._SemiSingleton__semisingleton_instance_map[hashid]
+    if hashid in mcls._SemiSingleton__semisingleton_instance_map:
+        return mcls._SemiSingleton__semisingleton_instance_map[hashid]
 
     return None
 
