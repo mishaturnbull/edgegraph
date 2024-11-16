@@ -471,7 +471,7 @@ def test_semi_singleton_multiname_smoketest():
     a1 = A(1)
     a2 = A(2)
 
-    singleton.add_mapping(((3,), {}), a2)
+    singleton.add_mapping(a2, 3)
 
     a3 = A(3)
 
@@ -502,7 +502,7 @@ def test_semi_singleton_multiname_no_crosscontamination():
     assert b1 is not b2, "pre add_mapping() bad setup!"
     assert a2 is not b2, "pre add_mapping() bad setup!"
 
-    singleton.add_mapping(((3,), {}), a2)
+    singleton.add_mapping(a2, 3)
 
     a3 = A(3)
     b3 = B(3)
@@ -525,7 +525,7 @@ def test_semi_singleton_multiname_multiple():
     a2 = A(2)
 
     for i in range(100):
-        singleton.add_mapping(((i,), {}), a2)
+        singleton.add_mapping(a2, i)
         ai = A(i)
 
         assert ai is a2, f"add_mapping() failed mult-test at {i}!"
@@ -550,9 +550,9 @@ def test_semi_singleton_drop_single_mapping():
     b1 = B(1)
     b2 = B(2)
 
-    singleton.drop_semi_singleton_mapping(A, ((1,), {}))
+    singleton.drop_semi_singleton_mapping(A, 1)
 
-    assert singleton.check_semi_singleton_entry_exists(A, ((1,), {})) is None
+    assert singleton.check_semi_singleton_entry_exists(A, 1) is None
 
 
 def test_semi_singleton_check_mapping():
@@ -572,12 +572,12 @@ def test_semi_singleton_check_mapping():
     b1 = B(1)
     b2 = B(2)
 
-    assert singleton.check_semi_singleton_entry_exists(A, ((1,), {})) is a1
-    assert singleton.check_semi_singleton_entry_exists(A, ((2,), {})) is a2
-    assert singleton.check_semi_singleton_entry_exists(B, ((1,), {})) is b1
-    assert singleton.check_semi_singleton_entry_exists(B, ((2,), {})) is b2
-    assert singleton.check_semi_singleton_entry_exists(A, ((3,), {})) is None
-    assert singleton.check_semi_singleton_entry_exists(B, ((4,), {})) is None
+    assert singleton.check_semi_singleton_entry_exists(A, 1) is a1
+    assert singleton.check_semi_singleton_entry_exists(A, 2) is a2
+    assert singleton.check_semi_singleton_entry_exists(B, 1) is b1
+    assert singleton.check_semi_singleton_entry_exists(B, 2) is b2
+    assert singleton.check_semi_singleton_entry_exists(A, 3) is None
+    assert singleton.check_semi_singleton_entry_exists(B, 4) is None
 
 
 
