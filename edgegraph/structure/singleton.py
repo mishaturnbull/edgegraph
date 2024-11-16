@@ -393,27 +393,53 @@ def add_mapping(identifier: Hashable, obj: object):
     cls._SemiSingleton__semisingleton_instance_map[hashid] = obj
 
 
-def drop_semi_singleton_mapping(identifier: Hashable, obj: object):
+def drop_semi_singleton_mapping(cls: type, identifier: Hashable):
     """
-    .. todo::
+    Remove an mapping from the specified semi-singleton instance.
 
-       document this
+    This removes a *single* mapping of a key to instance.  It may be considered
+    removing a semisingleton instance, though if multiple mappings exist to
+    single instance, it will still be accessible by other remaining
+    identifiers.
+
+    .. seealso::
+
+       * :py:func:`clear_semi_singleton`, a clear-all operation instead of this
+         clear-one
+
+    :param cls: Class to remove the mapping from.  This is typically thought of
+      as ``type(some_object)``.
+    :param identifier: Two-tuple of arguments and keyword arguments that will
+      be passed to the class's ``__init__`` method.  Typically, the first
+      element is another tuple representing positional arguments, and the
+      second element is a dictionary representing keyword arguments.
     """
     # get the metaclass type
-    cls = type(type(obj))
+    mcls = type(cls)
 
     # use the metaclass's hash function to identify the primary key
-    hashfunc = cls._SemiSingleton__semisingleton_hashfunc
+    hashfunc = mcls._SemiSingleton__semisingleton_hashfunc
     hashid = hashfunc(*identifier)
 
-    del cls._SemiSingleton__semisingleton_instance_map[hashid]
+    del mcls._SemiSingleton__semisingleton_instance_map[hashid]
 
 
-def check_semi_singleton_entry_exists(cls: type, identifier: Hashable):
+def check_semi_singleton_entry_exists(cls: type, identifier: Hashable) -> object:
     """
-    .. todo::
+    Test whether a semisingleton exists for the given mapping without creating
+    it.
 
-       document this
+    This function allows checking whether a semisingleton instance exists for
+    the provided identifier, without creating it if it does not exist.
+
+    :param cls: Class to test.  This is typically thought of as
+      ``type(some_object)``.
+    :param identifier: Two-tuple of arguments and keyword arguments that will
+      be passed to the class's ``__init__`` method.  Typically, the first
+      element is another tuple representing positional arguments, and the
+      second element is a dictionary representing keyword arguments.
+    :return: The instance accessible via the given mapping if such exists; else
+      ``None``.
     """
     # get the real semisingleton metaclass, not just the user type
     mcls = type(cls)

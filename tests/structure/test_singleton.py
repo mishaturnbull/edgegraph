@@ -550,7 +550,7 @@ def test_semi_singleton_drop_single_mapping():
     b1 = B(1)
     b2 = B(2)
 
-    singleton.drop_semi_singleton_mapping(((1,), {}), a1)
+    singleton.drop_semi_singleton_mapping(A, ((1,), {}))
 
     assert singleton.check_semi_singleton_entry_exists(A, ((1,), {})) is None
 
