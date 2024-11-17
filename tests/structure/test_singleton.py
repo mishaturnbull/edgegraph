@@ -537,6 +537,7 @@ def test_semi_singleton_drop_single_mapping():
     Ensure we can drop a single semisingleton mapping without nuking everything
     else.
     """
+
     class A(metaclass=singleton.semi_singleton_metaclass()):
         def __init__(self, *args):
             self.args = args
@@ -559,6 +560,7 @@ def test_semi_singleton_check_mapping():
     """
     Ensure we can *check* for a semisingleton instance without creating one.
     """
+
     class A(metaclass=singleton.semi_singleton_metaclass()):
         def __init__(self, *args):
             self.args = args
@@ -578,7 +580,3 @@ def test_semi_singleton_check_mapping():
     assert singleton.check_semi_singleton_entry_exists(B, 2) is b2
     assert singleton.check_semi_singleton_entry_exists(A, 3) is None
     assert singleton.check_semi_singleton_entry_exists(B, 4) is None
-
-
-
-

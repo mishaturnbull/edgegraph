@@ -489,6 +489,7 @@ def check_semi_singleton_entry_exists(cls: type, *args, **kwargs) -> object:
 
     return None
 
+
 def get_all_semi_singleton_instances(cls: type) -> Generator[object]:
     """
     Get all instances belonging to a given semi-singleton type.
@@ -555,5 +556,3 @@ def clear_semi_singleton(cls: type) -> None:
     :param cls: Class to clear semisingleton states from.
     """
     type(cls)._SemiSingleton__semisingleton_instance_map = {}
-
-
