@@ -52,6 +52,12 @@ jobs:
       run: |
         black --check edgegraph tests docs
 
+    - name: MyPy type-hinting check
+      # similarly to black, we only need to run this on latest version
+      if: ${{ matrix.python-version == '3.12' }}
+      run: |
+        mypy edgegraph
+
     - name: Run unit tests
       run: |
         # this does generate the code coverage report.  however, pytest-cov
