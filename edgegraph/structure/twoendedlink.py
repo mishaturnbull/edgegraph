@@ -12,6 +12,7 @@ from edgegraph.structure import link, vertex
 if TYPE_CHECKING:
     from edgegraph.structure.vertex import Vertex
 
+
 class TwoEndedLink(link.Link):
     """
     Represents an two-ended edge (v1 and v2) in the vertex-edge graph.  It is

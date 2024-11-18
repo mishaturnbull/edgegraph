@@ -12,6 +12,7 @@ from edgegraph.structure import base
 if TYPE_CHECKING:
     from edgegraph.structure.vertex import Vertex
 
+
 class Link(base.BaseObject):
     """
     Represents an edge in the edge-vertex graph.

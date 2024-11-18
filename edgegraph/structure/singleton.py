@@ -140,8 +140,9 @@ class TrueSingleton(type):
 
     def __call__(cls, *args, **kwargs):
         if cls not in cls._TrueSingleton__singleton_instances:
-            cls._TrueSingleton__singleton_instances[cls] = \
-                    super(TrueSingleton, cls).__call__(*args, **kwargs)
+            cls._TrueSingleton__singleton_instances[cls] = super(
+                TrueSingleton, cls
+            ).__call__(*args, **kwargs)
         return cls._TrueSingleton__singleton_instances[cls]
 
 

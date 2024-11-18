@@ -12,6 +12,7 @@ from edgegraph.structure import twoendedlink
 if TYPE_CHECKING:
     from edgegraph.structure.vertex import Vertex
 
+
 class UnDirectedEdge(twoendedlink.TwoEndedLink):
     """
     Represents an undirected edge (v1 -- v2) in the vertex-edge graph.

@@ -12,6 +12,7 @@ from edgegraph.structure import twoendedlink
 if TYPE_CHECKING:
     from edgegraph.structure.vertex import Vertex
 
+
 class DirectedEdge(twoendedlink.TwoEndedLink):
     """
     Represents a directed edge (v1 --> v2) in the vertex-edge graph.

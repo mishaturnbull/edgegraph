@@ -13,6 +13,7 @@ from edgegraph.structure import base, vertex
 if TYPE_CHECKING:
     Vertex = vertex.Vertex
 
+
 class UniverseLaws(base.BaseObject):
     """
     Defines the rules that apply to a universe.
