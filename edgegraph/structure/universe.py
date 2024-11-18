@@ -6,9 +6,12 @@ Holds the Universe class.
 """
 
 from __future__ import annotations
+from typing import Optional, TYPE_CHECKING
 import types
 from edgegraph.structure import base, vertex
 
+if TYPE_CHECKING:
+    Vertex = vertex.Vertex
 
 class UniverseLaws(base.BaseObject):
     """
@@ -33,12 +36,12 @@ class UniverseLaws(base.BaseObject):
 
     def __init__(
         self,
-        edge_whitelist: dict = None,
+        edge_whitelist: Optional[dict] = None,
         mixed_links: bool = False,
         cycles: bool = True,
         multipath: bool = True,
         multiverse: bool = False,
-        applies_to: Universe = None,
+        applies_to: Optional[Universe] = None,
     ):
         """
         Instantiate a set of universal laws.
@@ -135,7 +138,7 @@ class UniverseLaws(base.BaseObject):
         return self._multiverse
 
     @property
-    def applies_to(self) -> Universe:
+    def applies_to(self) -> Optional[Universe]:
         """
         Returns the universe that these laws apply to.
         """
@@ -180,10 +183,10 @@ class Universe(vertex.Vertex):
     def __init__(
         self,
         *,
-        vertices: set[vertex.Vertex] = None,
-        laws: UniverseLaws = None,
-        uid: int = None,
-        attributes: dict = None,
+        vertices: Optional[set[vertex.Vertex]] = None,
+        laws: Optional[UniverseLaws] = None,
+        uid: Optional[int] = None,
+        attributes: Optional[dict] = None,
     ):
         """
         Instantiate a Universe.
@@ -199,17 +202,13 @@ class Universe(vertex.Vertex):
         super().__init__(uid=uid, attributes=attributes)
 
         #: Laws of the universe
-        #:
-        #: :type: UniverseLaws
-        self._laws = laws
+        self._laws: Optional[UniverseLaws] = laws
         if self._laws is None:
             self._laws = UniverseLaws(applies_to=self)
         self._laws.applies_to = self
 
         #: Internal set of vertices
-        #:
-        #: :type: set[vertex.Vertex]
-        self._vertices = set()
+        self._vertices: set[Vertex] = set()
         if vertices is not None:
             for v in vertices:
                 self.add_vertex(v)
@@ -251,7 +250,7 @@ class Universe(vertex.Vertex):
             vert.remove_from_universe(self)
 
     @property
-    def laws(self) -> UniverseLaws:
+    def laws(self) -> Optional[UniverseLaws]:
         """
         Get the laws of this universe.
         """
@@ -265,7 +264,12 @@ class Universe(vertex.Vertex):
         if new is self._laws:
             return
 
-        self._laws.applies_to = None
+        if self.laws is not None and new is None:
+            self._laws._applies_to = None
+            self._laws = None
 
-        self._laws = new
-        self._laws.applies_to = self
+        else:
+            self._laws.applies_to = None
+
+            self._laws = new
+            self._laws.applies_to = self

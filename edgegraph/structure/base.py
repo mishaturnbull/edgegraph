@@ -6,7 +6,11 @@ Contains the BaseObject class.
 """
 
 from __future__ import annotations
+from typing import TYPE_CHECKING, Optional
 import uuid
+
+if TYPE_CHECKING:
+    from edgegraph.structure.universe import Universe
 
 
 class BaseObject(object):
@@ -48,11 +52,11 @@ class BaseObject(object):
     def __init__(
         self,
         *,
-        uid: int = None,
-        attributes: dict = None,
+        uid: Optional[int] = None,
+        attributes: Optional[dict] = None,
         # WHY does this work??  __future__ annotations??  Universe isn't
         # imported!!
-        universes: set[Universe] = None,
+        universes: Optional[set[Universe]] = None,
     ):
         """
         Instantiate a BaseObject.

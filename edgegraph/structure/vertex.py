@@ -6,7 +6,12 @@ Holds the Vertex class.
 """
 
 from __future__ import annotations
+from typing import Optional, TYPE_CHECKING
 from edgegraph.structure import base
+
+if TYPE_CHECKING:
+    from edgegraph.structure.link import Link
+    from edgegraph.structure.universe import Universe
 
 
 class Vertex(base.BaseObject):
@@ -21,10 +26,10 @@ class Vertex(base.BaseObject):
     def __init__(
         self,
         *,
-        links: list[Link] = None,
-        uid: int = None,
-        attributes: dict = None,
-        universes: set[Universe] = None,
+        links: Optional[list[Link]] = None,
+        uid: Optional[int] = None,
+        attributes: Optional[dict] = None,
+        universes: Optional[set[Universe]] = None,
     ):
         """
         Creates a new vertex.
@@ -45,9 +50,7 @@ class Vertex(base.BaseObject):
         #:
         #: This is a list of links that include this vertex as one of the
         #: linked vertices.
-        #:
-        #: :type: list[Link]
-        self._links = []
+        self._links: list[Link] = []
         if links is not None:
             for link in links:
                 self.add_to_link(link)

@@ -6,8 +6,11 @@ Holds the Link class.
 """
 
 from __future__ import annotations
+from typing import TYPE_CHECKING, Optional
 from edgegraph.structure import base
 
+if TYPE_CHECKING:
+    from edgegraph.structure.vertex import Vertex
 
 class Link(base.BaseObject):
     """
@@ -31,10 +34,10 @@ class Link(base.BaseObject):
     def __init__(
         self,
         *,
-        vertices: list[Vertex] = None,
-        uid: int = None,
-        attributes: dict = None,
-        _force_creation: bool = False,
+        vertices: Optional[list[Vertex]] = None,
+        uid: Optional[int] = None,
+        attributes: Optional[dict] = None,
+        _force_creation: Optional[bool] = False,
     ):
         """
         Instantiate a new link ("edge").
@@ -73,9 +76,7 @@ class Link(base.BaseObject):
         #:
         #: This is a list of vertex objects that are linked together by this
         #: class.
-        #:
-        #: :type: list[Vertex]
-        self._vertices = []
+        self._vertices: list[Vertex] = []
         if vertices is not None:
             for vert in vertices:
                 self.add_vertex(vert)
