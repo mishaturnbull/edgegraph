@@ -83,3 +83,8 @@ show_contexts = true
 [tool.black]
 line-length = 80
 
+[tool.mypy]
+pretty = true
+hide_error_codes = false
+show_error_code_links = true
+
