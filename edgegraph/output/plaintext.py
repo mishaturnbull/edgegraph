@@ -17,14 +17,17 @@ formats may be added in the future.
 """
 
 from __future__ import annotations
-
+from typing import Optional
+from collections.abc import Callable
 from edgegraph.structure import Universe
 from edgegraph.traversal import helpers
 
 
 def basic_render(
-    uni: Universe, rfunc: Callable = None, sort: Callable = None
-) -> str:
+    uni: Universe,
+    rfunc: Optional[Callable] = None,
+    sort: Optional[Callable] = None,
+) -> Optional[str]:
     """
     Perform a very basic rendering of a graph into a string.
 

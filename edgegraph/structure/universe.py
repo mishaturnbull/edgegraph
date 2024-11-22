@@ -10,7 +10,7 @@ from typing import Optional, TYPE_CHECKING
 import types
 from edgegraph.structure import base, vertex
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     Vertex = vertex.Vertex
 
 
@@ -262,15 +262,20 @@ class Universe(vertex.Vertex):
         """
         Set the laws of this universe.
         """
+        # covers the None-and-None case as well as already-assigned
         if new is self._laws:
             return
 
-        if self.laws is not None and new is None:
+        # deassignment
+        if self._laws is not None and new is None:
             self._laws._applies_to = None
             self._laws = None
 
+        # new- and re-assignment
         else:
-            self._laws.applies_to = None
+            # mypy can't seem to figure out the type-narrowing here.  in this
+            # else clause, self._laws won't be none
+            self._laws.applies_to = None  # type: ignore
 
             self._laws = new
             self._laws.applies_to = self

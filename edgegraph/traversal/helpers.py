@@ -7,7 +7,14 @@ Helper functions for graph traversals.
 
 from __future__ import annotations
 
-from edgegraph.structure import Vertex, DirectedEdge, UnDirectedEdge
+from typing import TYPE_CHECKING, Optional
+from collections.abc import Callable
+from edgegraph.structure import (
+    Vertex,
+    DirectedEdge,
+    UnDirectedEdge,
+    TwoEndedLink,
+)
 
 #: Unknown edge classes treated as non-neighbors.
 #:
@@ -65,7 +72,7 @@ def neighbors(
     vert: Vertex,
     direction_sensitive: int = DIR_SENS_FORWARD,
     unknown_handling: int = LNK_UNKNOWN_ERROR,
-    filterfunc: Callable = None,
+    filterfunc: Optional[Callable] = None,
 ) -> list[Vertex]:
     """
     Identify the neighbors of a given vertex.
@@ -277,8 +284,8 @@ def find_links(
     v2: Vertex,
     direction_sensitive: bool = True,
     unknown_handling: int = LNK_UNKNOWN_ERROR,
-    filterfunc: Callable = None,
-) -> set[TwoEndedLink]:
+    filterfunc: Optional[Callable] = None,
+) -> set[Link]:
     """
     Find the link(s) that connect v1 to v2.
 

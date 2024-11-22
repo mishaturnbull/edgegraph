@@ -64,6 +64,7 @@ import subprocess
 import shutil
 import tempfile
 import datetime
+from typing import Optional
 
 from edgegraph.structure import Universe, Vertex, DirectedEdge, UnDirectedEdge
 
@@ -157,9 +158,7 @@ PLANTUML_RENDER_OPTIONS = {
 #: -jar plantuml.jar -Djava.awt.headless=true {...}`.  This may cause
 #: unintended effects, as it is not possible to pass arguments to the java
 #: executor itself by this method.
-#:
-#: :type: list[str]
-PLANTUML_INVOKE_ARGS = []
+PLANTUML_INVOKE_ARGS: list[str] = []
 
 #: Environment variable overrides to invoke plantuml with.
 #:
@@ -283,7 +282,7 @@ def _one_vert_to_skinparam(vert, options):
     return output
 
 
-def render_to_plantuml_src(uni: Universe, options: dict) -> str:
+def render_to_plantuml_src(uni: Universe, options: dict) -> Optional[str]:
     """
     Render a universe to PlantUML source.
 

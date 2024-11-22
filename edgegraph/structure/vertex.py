@@ -9,7 +9,7 @@ from __future__ import annotations
 from typing import Optional, TYPE_CHECKING
 from edgegraph.structure import base
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from edgegraph.structure.link import Link
     from edgegraph.structure.universe import Universe
 
@@ -83,6 +83,10 @@ class Vertex(base.BaseObject):
         A tuple is given specifically to prevent the addition or removal of
         link objects using this attribute; it is intended to be immutable.
         """
+        if TYPE_CHECKING:
+            # TODO: what is going on here???
+            reveal_type(self._links)
+            reveal_type(tuple(self._links))
         return tuple(self._links)
 
     def add_to_link(self, link: Link):

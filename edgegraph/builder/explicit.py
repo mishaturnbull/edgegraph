@@ -17,7 +17,12 @@ functions will get the necessary updates to match, and the API stays unchanged.
 from __future__ import annotations
 
 from typing import Optional
-from edgegraph.structure import Vertex, DirectedEdge, UnDirectedEdge, TwoEndedLink
+from edgegraph.structure import (
+    Vertex,
+    DirectedEdge,
+    UnDirectedEdge,
+    TwoEndedLink,
+)
 from edgegraph.traversal import helpers
 
 
