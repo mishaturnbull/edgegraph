@@ -26,7 +26,9 @@ from edgegraph.structure import (
 from edgegraph.traversal import helpers
 
 
-def link_from_to(v1: Vertex, lnktype: type, v2: Vertex, dontdup: bool = False) -> Link:
+def link_from_to(
+    v1: Vertex, lnktype: type, v2: Vertex, dontdup: bool = False
+) -> Link:
     """
     Create a link of type ``lnktype`` from ``v1`` to ``v2``.
 
