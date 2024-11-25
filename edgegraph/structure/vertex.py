@@ -76,17 +76,13 @@ class Vertex(base.BaseObject):
             universe.add_vertex(self)
 
     @property
-    def links(self) -> tuple[Link]:
+    def links(self) -> tuple[Link, ...]:
         """
         Return a tuple of links that are attached to this object.
 
         A tuple is given specifically to prevent the addition or removal of
         link objects using this attribute; it is intended to be immutable.
         """
-        if TYPE_CHECKING:
-            # TODO: what is going on here???
-            reveal_type(self._links)
-            reveal_type(tuple(self._links))
         return tuple(self._links)
 
     def add_to_link(self, link: Link):

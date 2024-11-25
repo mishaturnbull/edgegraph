@@ -26,7 +26,7 @@ from edgegraph.structure import (
 from edgegraph.traversal import helpers
 
 
-def link_from_to(v1: Vertex, lnktype: type, v2: Vertex, dontdup: bool = False):
+def link_from_to(v1: Vertex, lnktype: type, v2: Vertex, dontdup: bool = False) -> Link:
     """
     Create a link of type ``lnktype`` from ``v1`` to ``v2``.
 
@@ -49,7 +49,6 @@ def link_from_to(v1: Vertex, lnktype: type, v2: Vertex, dontdup: bool = False):
       undirected), no new link is created, but the already-existing one is
       returned silently.
     :return: The link instance.
-    :rtype: An instance of the param ``lnktype``.
     """
 
     if dontdup:

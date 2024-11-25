@@ -114,8 +114,6 @@ class BaseObject(object):
            :py:meth:`~edgegraph.structure.base.BaseObject.add_to_universe`,
            :py:meth:`~edgegraph.structure.base.BaseObject.remove_from_universe`
            to add or remove this object from a given universe
-
-        :rtype: frozenset[Universe]
         """
         return frozenset(self._universes)
 

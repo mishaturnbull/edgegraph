@@ -83,15 +83,13 @@ class Link(base.BaseObject):
                 self.add_vertex(vert)
 
     @property
-    def vertices(self):
+    def vertices(self) -> tuple[Vertex, ...]:
         """
         Return a tuple of vertices this edge connects.
 
         A tuple object is given because the addition or removal of vertex
         objects using this attribute is not intended; it is meant to be
         immutable.
-
-        :rtype: tuple[Vertex]
         """
         return tuple(self._vertices)
 
