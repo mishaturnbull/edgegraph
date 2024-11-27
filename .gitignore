@@ -20,6 +20,7 @@ prof
 # developer mental sanity tracker
 TODO.md
 .tmux-startup.sh
+.python-version
 
 # distributon files
 dist/
