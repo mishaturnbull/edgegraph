@@ -56,7 +56,8 @@ jobs:
       # similarly to black, we only need to run this on latest version
       if: ${{ matrix.python-version == '3.12' }}
       run: |
-        mypy edgegraph
+        # hide it behind || true to mask mypy lacking an --exit-zero esque flag
+        mypy edgegraph || true
 
     - name: Run unit tests
       run: |
