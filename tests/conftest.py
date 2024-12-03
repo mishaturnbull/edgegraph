@@ -16,6 +16,18 @@ from edgegraph.structure import Universe, Vertex, DirectedEdge
 from edgegraph.builder import adjlist, explicit
 
 
+# https://docs.pytest.org/en/stable/how-to/fixtures.html#fixture-parametrize
+# use strings for the params ("cache" and "nocache") instead of raw booleans
+# to improve readability in the test output ("what's this random [True]??")
+@pytest.fixture(scope="module", params=["cache", "nocache"], autouse=True)
+def enforce_cache_testing(request):
+    enable = request.param == "cache"
+    Vertex.NEIGHBOR_CACHING = enable
+    if not enable:
+        # clear stats
+        Vertex.CACHE_STATS = {}
+
+
 @pytest.fixture
 def graph_clrs09_22_6() -> tuple[Universe, list[Vertex]]:
     """
