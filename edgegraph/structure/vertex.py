@@ -18,6 +18,32 @@ class Vertex(base.BaseObject):
     both subclass this one, at some level).
     """
 
+    NEIGHBOR_CACHING = False
+    _QA_NB_INVALID = object()
+    CACHE_STATS = {}
+
+    @classmethod
+    def total_cache_stats(cls):
+
+        if cls.NEIGHBOR_CACHING:
+
+            totals = [0, 0, 0, 0]
+            for _, stat in cls.CACHE_STATS.items():
+                totals[0] += stat[0]
+                totals[1] += stat[1]
+                totals[2] += stat[2]
+                totals[3] += stat[3]
+
+            print(f"=== CACHE STATISTICS OVERALL ===")
+            print(f"Size:          {len(CACHE_STATS)}")
+            print(f"Hits:          {totals[0]}")
+            print(f"Misses:        {totals[1]}")
+            print(f"Invalidations: {totals[2]}")
+            print(f"Insertions:    {totals[3]}")
+
+        else:
+            print("Neighbor caching is DISABLED")
+
     def __init__(
         self,
         *,
@@ -41,6 +67,8 @@ class Vertex(base.BaseObject):
         """
         super().__init__(uid=uid, attributes=attributes, universes=universes)
 
+        self.CACHE_STATS.update({self.uid: [0, 0, 0, 0]})
+
         #: Links that this vertex is associated with
         #:
         #: This is a list of links that include this vertex as one of the
@@ -55,6 +83,8 @@ class Vertex(base.BaseObject):
         # ensure that we add ourselves to the universes given
         for uni in self.universes:
             uni.add_vertex(self)
+
+        self.__qa_nb_cache = {}
 
     def add_to_universe(self, universe: Universe) -> None:
         """
@@ -82,6 +112,30 @@ class Vertex(base.BaseObject):
         """
         return tuple(self._links)
 
+    def _qa_neighbors_get(self, *args):
+        if not self.NEIGHBOR_CACHING:
+            return self._QA_NB_INVALID
+
+        if args in self.__qa_nb_cache:
+            self.CACHE_STATS[self.uid][0] += 1
+                
+            return self.__qa_nb_cache[args]
+
+        self.CACHE_STATS[self.uid][1] += 1
+        return self._QA_NB_INVALID
+
+    def _qa_neighbors_invalidate(self):
+        if not self.NEIGHBOR_CACHING:
+            return
+        self.CACHE_STATS[self.uid][2] += 1
+        self.__qa_nb_cache = {}
+
+    def _qa_neighbors_insert(self, answer, *args):
+        if not self.NEIGHBOR_CACHING:
+            return
+        self.CACHE_STATS[self.uid][3] += 1
+        self.__qa_nb_cache[args] = answer
+
     def add_to_link(self, link: Link):
         """
         Add this vertex to a link.
@@ -106,6 +160,8 @@ class Vertex(base.BaseObject):
             if self not in link.vertices:
                 link.add_vertex(self)
 
+        self._qa_neighbors_invalidate()
+
     def remove_from_link(self, link: Link):
         """
         Remove this vertex from a link.
@@ -116,6 +172,8 @@ class Vertex(base.BaseObject):
         if link in self._links:
             self._links.remove(link)
             link.unlink_from(self)
+
+        self._qa_neighbors_invalidate()
 
     def remove_from_universe(self, universe: Universe) -> None:
         """
