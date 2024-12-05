@@ -52,7 +52,7 @@ class Vertex(base.BaseObject):
         else:
             lines.append("Neighbor caching is DISABLED")
 
-        return '\n'.join(lines)
+        return "\n".join(lines)
 
     def __init__(
         self,
@@ -141,7 +141,7 @@ class Vertex(base.BaseObject):
 
         if args in self.__qa_nb_cache:
             self._CACHE_STATS[self.uid][0] += 1
-                
+
             return self.__qa_nb_cache[args]
 
         self._CACHE_STATS[self.uid][1] += 1

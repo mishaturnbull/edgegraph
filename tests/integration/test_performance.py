@@ -83,10 +83,11 @@ def test_bulk_bft(complete_graph_1k_undirected, howmany):
 
     LOG.info(f"BFT performance: total {dur} s, avg {avg} s, {missing} ns miss")
 
+
 @pytest.mark.perf
 @pytest.mark.parametrize(
-        "howmany,nverts", itertools.product([100, 500], [100, 500])
-    )
+    "howmany,nverts", itertools.product([100, 500], [100, 500])
+)
 def test_bulk_bft_on_randgraph(howmany, nverts):
     """
     Generate random graphs, then traverse them many times over.
@@ -118,5 +119,6 @@ def test_bulk_bft_on_randgraph(howmany, nverts):
     missing = overall - sum(times)
     dur = overall / 1_000_000_000
 
-    LOG.info(f"BFT-on-R performance: total {dur} s, avg {avg} s, {missing} ns miss")
-
+    LOG.info(
+        f"BFT-on-R performance: total {dur} s, avg {avg} s, {missing} ns miss"
+    )
