@@ -22,7 +22,7 @@ class Vertex(base.BaseObject):
     #:
     #: .. seealso::
     #:
-    #:    `dev/performance/vert-nb-cache`_ for more information on usage
+    #:    :ref:`dev/performance/vert-nb-cache` for more information on usage
     NEIGHBOR_CACHING = False
 
     _QA_NB_INVALID = object()

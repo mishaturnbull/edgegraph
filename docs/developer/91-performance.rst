@@ -31,8 +31,8 @@ work in tandem with the :py:func:`~edgegraph.traversal.helpers.neighbors`
 function to cache results for the neighbors function, similar in effect to
 :py:func:`functools.cache` but in a safe manner.
 
-**The bottom line to use this is set
-:py:attr:`edgegraph.structure.vertex.Vertex.NEIGHBOR_CACHING` to ``True`` any
+**The bottom line to use this is to set**
+:py:attr:`edgegraph.structure.vertex.Vertex.NEIGHBOR_CACHING` to ``True`` **any
 time before graph traversals begin.**
 
 Unfortunately, using a standard :py:func:`functools.lru_cache` or
