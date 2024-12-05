@@ -25,6 +25,8 @@ class Vertex(base.BaseObject):
     @classmethod
     def total_cache_stats(cls):
 
+        lines = []
+
         if cls.NEIGHBOR_CACHING:
 
             totals = [0, 0, 0, 0]
@@ -34,15 +36,17 @@ class Vertex(base.BaseObject):
                 totals[2] += stat[2]
                 totals[3] += stat[3]
 
-            print(f"=== CACHE STATISTICS OVERALL ===")
-            print(f"Size:          {len(CACHE_STATS)}")
-            print(f"Hits:          {totals[0]}")
-            print(f"Misses:        {totals[1]}")
-            print(f"Invalidations: {totals[2]}")
-            print(f"Insertions:    {totals[3]}")
+            lines.append(f"=== CACHE STATISTICS OVERALL ===")
+            lines.append(f"Size:          {len(Vertex.CACHE_STATS)}")
+            lines.append(f"Hits:          {totals[0]}")
+            lines.append(f"Misses:        {totals[1]}")
+            lines.append(f"Invalidations: {totals[2]}")
+            lines.append(f"Insertions:    {totals[3]}")
 
         else:
-            print("Neighbor caching is DISABLED")
+            lines.append("Neighbor caching is DISABLED")
+
+        return '\n'.join(lines)
 
     def __init__(
         self,
