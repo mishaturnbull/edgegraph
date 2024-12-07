@@ -12,7 +12,7 @@ jobs:
       fail-fast: false
       matrix:
         # check on all non-end-of-life python versions
-        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
 
     steps:
     # get everything set up
@@ -30,7 +30,7 @@ jobs:
         pip install -r scripts/docs-requirements.txt
 
     - name: Documentation coverage
-      if: ${{ matrix.python-version == '3.12' }}
+      if: ${{ matrix.python-version == '3.13' }}
       run: |
         cd docs
         make coverage
@@ -48,7 +48,7 @@ jobs:
       # the same code no matter what, and black performs the same analysis
       # (except on py3.7, which predates black reading from pyproject.toml and
       # missing some configs)
-      if: ${{ matrix.python-version == '3.12' }}
+      if: ${{ matrix.python-version == '3.13' }}
       run: |
         black --check edgegraph tests docs
 
