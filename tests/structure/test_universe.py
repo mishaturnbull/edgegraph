@@ -135,3 +135,23 @@ def test_universe_laws_updating():
     assert (
         u.laws.cycles is False
     ), "switching universe laws did not change the laws"
+
+
+def test_universe_laws_removal():
+    """
+    Ensure universe laws can be removed (set to None).
+    """
+    l = universe.UniverseLaws(cycles=False)
+    u = universe.Universe(laws=l)
+
+    assert u.laws is l
+    assert l.applies_to is u
+
+    u.laws = None
+
+    assert u.laws is None
+    assert l.applies_to is None
+
+    u.laws = None
+
+    assert u.laws is None  # still!

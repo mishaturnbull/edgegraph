@@ -39,6 +39,8 @@ after some surveying (Googling) I decided that metaclasses approach gave:
 """
 
 from __future__ import annotations
+from typing import Optional
+from collections.abc import Generator, Callable, Hashable
 
 import json
 
@@ -49,6 +51,14 @@ import json
 # W0212 -> protected-access ("Access to a protected member [...] of a client
 # class"
 # pylint: disable=W0212
+
+# MyPy's type checker does not understand dynamically-computed metaclasses,
+# therefore, some operations surrounding semi-singletons have local typechecker
+# silencing.  This is **NOT** applied to the entire module; it is to be used
+# **locally only** on the relevant lines.
+#
+# See the last section of this page for more information:
+# https://mypy.readthedocs.io/en/stable/metaclasses.html
 
 
 class TrueSingleton(type):
@@ -126,17 +136,17 @@ class TrueSingleton(type):
     references to the original.
     """
 
-    __singleton_instances = {}
+    _TrueSingleton__singleton_instances: dict[Hashable, object] = {}
 
     def __call__(cls, *args, **kwargs):
-        if cls not in cls.__singleton_instances:
-            cls.__singleton_instances[cls] = super(TrueSingleton, cls).__call__(
-                *args, **kwargs
-            )
-        return cls.__singleton_instances[cls]
+        if cls not in cls._TrueSingleton__singleton_instances:
+            cls._TrueSingleton__singleton_instances[cls] = super(
+                TrueSingleton, cls
+            ).__call__(*args, **kwargs)
+        return cls._TrueSingleton__singleton_instances[cls]
 
 
-def clear_true_singleton(cls: type = None) -> None:
+def clear_true_singleton(cls: Optional[type] = None) -> None:
     """
     Clears TrueSingleton cache for either a specified type, or all
     TrueSingleton types.
@@ -199,7 +209,7 @@ def clear_true_singleton(cls: type = None) -> None:
 # what this function actually does isn't complex, in *theory*.  however,
 # metaclass hacking is some of the deeper black magic of Python -- so document
 # the crap out of it.
-def semi_singleton_metaclass(hashfunc: Callable = None) -> type:
+def semi_singleton_metaclass(hashfunc: Optional[Callable] = None) -> type:
     """
     Generate and return a metaclass for semi-singletons.
 
@@ -319,24 +329,24 @@ def semi_singleton_metaclass(hashfunc: Callable = None) -> type:
               call.
             :return: A hash of the arguments.
             """
-            kwargs = json.dumps(kwargs, sort_keys=True)
-            return hash((args, kwargs))
+            jwargs = json.dumps(kwargs, sort_keys=True)
+            return hash((args, jwargs))
 
     class _SemiSingleton(type):
         """
         Metaclass for semi-singleton types.
         """
 
-        __semisingleton_instance_map = {}
-        __semisingleton_hashfunc = hashfunc
+        _SemiSingleton__semisingleton_instance_map = {}
+        _SemiSingleton__semisingleton_hashfunc = hashfunc
 
         def __call__(cls, *args, **kwargs):
             key = hashfunc(args, kwargs)
-            if key not in cls.__semisingleton_instance_map:
-                cls.__semisingleton_instance_map[key] = super(
+            if key not in cls._SemiSingleton__semisingleton_instance_map:
+                cls._SemiSingleton__semisingleton_instance_map[key] = super(
                     _SemiSingleton, cls
                 ).__call__(*args, **kwargs)
-            return cls.__semisingleton_instance_map[key]
+            return cls._SemiSingleton__semisingleton_instance_map[key]
 
     return _SemiSingleton
 
@@ -384,11 +394,12 @@ def add_mapping(obj: object, *args, **kwargs):
 
     # use the metaclass's hash function to line up with existing / future
     # mappings
-    hashfunc = cls._SemiSingleton__semisingleton_hashfunc
+    # see the note at the top of the file regarding the type-checker silencing
+    hashfunc = cls._SemiSingleton__semisingleton_hashfunc  # type: ignore
     hashid = hashfunc(args, kwargs)
 
     # store the hashed identifier in the metaclass map of hashes to instances
-    cls._SemiSingleton__semisingleton_instance_map[hashid] = obj
+    cls._SemiSingleton__semisingleton_instance_map[hashid] = obj  # type: ignore
 
 
 def drop_semi_singleton_mapping(cls: type, *args, **kwargs):
@@ -435,7 +446,8 @@ def drop_semi_singleton_mapping(cls: type, *args, **kwargs):
     mcls = type(cls)
 
     # use the metaclass's hash function to identify the primary key
-    hashfunc = mcls._SemiSingleton__semisingleton_hashfunc
+    # see the note at the top of the file regarding the type-checker silencing
+    hashfunc = mcls._SemiSingleton__semisingleton_hashfunc  # type: ignore
     hashid = hashfunc(args, kwargs)
 
     del mcls._SemiSingleton__semisingleton_instance_map[hashid]
@@ -479,11 +491,12 @@ def check_semi_singleton_entry_exists(cls: type, *args, **kwargs) -> object:
     mcls = type(cls)
 
     # use the metaclass's hash function to identify the primary key
-    hashfunc = mcls._SemiSingleton__semisingleton_hashfunc
+    # see the note at the top of the file regarding the type-checker silencing
+    hashfunc = mcls._SemiSingleton__semisingleton_hashfunc  # type: ignore
     hashid = hashfunc(args, kwargs)
 
-    if hashid in mcls._SemiSingleton__semisingleton_instance_map:
-        return mcls._SemiSingleton__semisingleton_instance_map[hashid]
+    if hashid in mcls._SemiSingleton__semisingleton_instance_map:  # type: ignore
+        return mcls._SemiSingleton__semisingleton_instance_map[hashid]  # type: ignore
 
     return None
 
@@ -518,7 +531,7 @@ def get_all_semi_singleton_instances(cls: type) -> Generator[object]:
     :param cls: Data type to check singleton instances for.
     :return: Generator expression yielding semi-singleton instances.
     """
-    yield from type(cls)._SemiSingleton__semisingleton_instance_map.values()
+    yield from type(cls)._SemiSingleton__semisingleton_instance_map.values()  # type: ignore
 
 
 def clear_semi_singleton(cls: type) -> None:
@@ -553,4 +566,4 @@ def clear_semi_singleton(cls: type) -> None:
 
     :param cls: Class to clear semisingleton states from.
     """
-    type(cls)._SemiSingleton__semisingleton_instance_map = {}
+    type(cls)._SemiSingleton__semisingleton_instance_map = {}  # type: ignore

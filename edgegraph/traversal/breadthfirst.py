@@ -49,14 +49,18 @@ visiting v9 before v10) is determined by the structure of the universe.
 from __future__ import annotations
 
 import collections
+from typing import Optional
+from collections.abc import Callable
 
 from edgegraph.structure import Universe, Vertex
 from edgegraph.traversal import helpers
 
-# TODO: add (search fn) passthru kwargs to neighbors() options
+# TODO: add (to both these fn's) passthru kwargs to neighbors() options
 
 
-def bfs(uni: Universe, start: Vertex, attrib: str, val: object) -> Vertex:
+def bfs(
+    uni: Universe, start: Vertex, attrib: str, val: object
+) -> Optional[Vertex]:
     """
     Perform a breadth-first search.
 
@@ -112,9 +116,9 @@ def bft(
     start: Vertex,
     direction_sensitive: int = helpers.DIR_SENS_FORWARD,
     unknown_handling: int = helpers.LNK_UNKNOWN_ERROR,
-    ff_via: Callable = None,
-    ff_result: Callable = None,
-) -> list[Vertex]:
+    ff_via: Optional[Callable] = None,
+    ff_result: Optional[Callable] = None,
+) -> Optional[list[Vertex]]:
     """
     Perform a breadth-first traversal.
 
@@ -206,4 +210,5 @@ def bft(
 
     if ff_result:
         return list(filter(ff_result, visited))
-    return visited
+    else:
+        return visited

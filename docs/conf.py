@@ -155,6 +155,8 @@ html_theme_options["announcement"] = "<br>".join(warns)
 latex_elements = {
     # make the index one column wide instead of two
     "printindex": r"\def\twocolumn[#1]{#1}\printindex",
+    "extrapackages": r"\usepackage{enumitem}",
+    "preamble": r"\setlistdepth{9}",
 }
 
 # show all urls / hyperlinks in footnotes (useful for printed copies)

@@ -39,6 +39,9 @@ Generally, the usage pattern for this module is intended to be as:
 
 from __future__ import annotations
 
+from typing import Optional, TYPE_CHECKING
+from collections.abc import Callable
+
 try:
 
     from pyvis import network
@@ -56,12 +59,15 @@ except ImportError as exc:
 
 from edgegraph.structure import Universe, DirectedEdge
 
+if TYPE_CHECKING:  # pragma: no cover
+    import pyvis
+
 
 def make_pyvis_net(
     uni: Universe,
-    rvfunc: Callable = None,
-    refunc: Callable = None,
-    network_kwargs: dict = None,
+    rvfunc: Optional[Callable] = None,
+    refunc: Optional[Callable] = None,
+    network_kwargs: Optional[dict] = None,
 ) -> pyvis.network.Network:
     """
     Convert a given Universe to a PyVis network, suitable for further use
@@ -163,9 +169,9 @@ def make_pyvis_net(
 
 def pyvis_render_customizable(
     uni: Universe,
-    rvfunc: Callable = None,
-    refunc: Callable = None,
-    show_buttons_filter=None,
+    rvfunc: Optional[Callable] = None,
+    refunc: Optional[Callable] = None,
+    show_buttons_filter: Optional[dict[str, str]] = None,
 ) -> pyvis.network.Network:
     """
     Convert a given Universe to a PyVis network, suitable for further use

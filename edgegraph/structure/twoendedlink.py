@@ -6,7 +6,11 @@ Holds the TwoEndedLink class.
 """
 
 from __future__ import annotations
+from typing import Optional, TYPE_CHECKING
 from edgegraph.structure import link, vertex
+
+if TYPE_CHECKING:  # pragma: no cover
+    from edgegraph.structure.vertex import Vertex
 
 
 class TwoEndedLink(link.Link):
@@ -25,11 +29,11 @@ class TwoEndedLink(link.Link):
 
     def __init__(
         self,
-        v1: Vertex = None,
-        v2: Vertex = None,
+        v1: Optional[Vertex] = None,
+        v2: Optional[Vertex] = None,
         *,
-        uid: int = None,
-        attributes: dict = None,
+        uid: Optional[int] = None,
+        attributes: Optional[dict] = None,
     ):
         """
         Instantiate an two-ended edge.
@@ -60,6 +64,13 @@ class TwoEndedLink(link.Link):
         """
         return self.vertices[0]
 
+    @v1.setter
+    def v1(self, new: Vertex):
+        """
+        Sets one vertex of this edge.
+        """
+        self._set_v1(new)
+
     def _set_v1(self, new: Vertex):
         """
         Helper method to set v1.
@@ -80,13 +91,6 @@ class TwoEndedLink(link.Link):
         self.add_vertex(new)
         self._vertices.append(v2)
 
-    @v1.setter
-    def v1(self, new: Vertex):
-        """
-        Sets one vertex of this edge.
-        """
-        self._set_v1(new)
-
     @property
     def v2(self) -> Vertex:
         """
@@ -96,6 +100,13 @@ class TwoEndedLink(link.Link):
         updates; no extra effort is necessary.
         """
         return self.vertices[1]
+
+    @v2.setter
+    def v2(self, new: Vertex):
+        """
+        Sets the other end of this edge.
+        """
+        self._set_v2(new)
 
     def _set_v2(self, new: Vertex):
         """
@@ -109,14 +120,7 @@ class TwoEndedLink(link.Link):
         self._vertices = [v1]
         self.add_vertex(new)
 
-    @v2.setter
-    def v2(self, new: Vertex):
-        """
-        Sets the other end of this edge.
-        """
-        self._set_v2(new)
-
-    def other(self, end: Vertex) -> Vertex:
+    def other(self, end: Vertex) -> Optional[Vertex]:
         """
         Identify and return the other end of this edge.
 
@@ -134,4 +138,5 @@ class TwoEndedLink(link.Link):
             return self.v2
         if end is self.v2:
             return self.v1
+
         return None
