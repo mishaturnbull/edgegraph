@@ -74,3 +74,47 @@ Then, the next time ``neighbors`` is called, it finds no cached data; so it
 reevaluates the most up-to-date information available and inserts it into the
 cache for future reuse.
 
+Cache statistics and determining usefulness
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This method (as is typical with caches) offers the best performance when it has
+a higher rate of cache hits than misses (or reinsertions / invalidations).
+Edgegraph provides a function to assess cache statistics during a program's
+runtime, so that you may assess your application's exact usage pattern of the
+cache.  Call the :py:func:`edgegraph.structure.vertex.Vertex.total_cache_stats`
+classmethod, as shown below:
+
+.. code-block:: python
+   :linenos:
+
+   #!python3
+
+   from edgegraph.structure import Vertex
+   from edgegraph.builder import randgraph
+   from edgegraph.traversal import breadthfirst
+
+   Vertex.NEIGHBOR_CACHING = True
+
+   uni = randgraph.randgraph(count=1000)
+   start = list(uni.vertices[0])
+
+   for i in range(1000):
+
+      _ = breadthfirst.bft(uni, start)
+
+   print(Vertex.total_cache_stats())
+
+Results should be similar to::
+
+   === CACHE STATISTICS OVERALL ===
+   Size:          2002
+   Hits:          3587507
+   Misses:        460
+   Invalidations: 5429
+   Insertions:    460
+
+(standard disclaimers apply; your mileage may vary; etc).  What's important to
+note here is that the hit count is significantly greater than anything else.
+If this is the case for you as well, the neighbor cache will most likely
+improve performance.
+

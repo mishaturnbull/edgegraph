@@ -29,8 +29,23 @@ class Vertex(base.BaseObject):
     _CACHE_STATS = {}
 
     @classmethod
-    def total_cache_stats(cls):
+    def total_cache_stats(cls) -> str:
+        """
+        Return a ready-to-print summary of caching statistics.
 
+        This function can be used to get human-readable cache statistics for
+        the quick-access neighbor caching.  It returns a string intended to be
+        printed, logged, or written to file (it does not do anything other than
+        build the string on its own).
+
+        .. seealso::
+
+           * :ref:`dev/performance/vert-nb-cache` for more on caching
+           * :py:attr:`NEIGHBOR_CACHING` to enable / disable it
+
+        :return: Human-readable string indicating size, hits, misses,
+           invalidations, and insertions to the vertex neighbor cache.
+        """
         lines = []
 
         if cls.NEIGHBOR_CACHING:
