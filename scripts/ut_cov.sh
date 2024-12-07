@@ -15,6 +15,7 @@ fi
 pytest --cov=edgegraph \
     --cov-branch \
     --cov-fail-under=100 \
+    --cov-context=test \
     -m "not (slow or perf)"
 
 coverage html

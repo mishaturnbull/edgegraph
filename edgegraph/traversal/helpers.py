@@ -164,6 +164,12 @@ def neighbors(
        representing neighbors of the specified vertex.
     """
 
+    cached = vert._qa_neighbors_get(
+        direction_sensitive, unknown_handling, filterfunc
+    )
+    if cached is not Vertex._QA_NB_INVALID:
+        return cached
+
     nbs = []
     for link in vert.links:
 
@@ -275,6 +281,10 @@ def neighbors(
             raise ValueError(
                 f"Unknown option for direction_sensitive = {direction_sensitive}"
             )
+
+    vert._qa_neighbors_insert(
+        nbs, direction_sensitive, unknown_handling, filterfunc
+    )
 
     return nbs
 

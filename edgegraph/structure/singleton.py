@@ -274,12 +274,10 @@ def semi_singleton_metaclass(hashfunc: Optional[Callable] = None) -> type:
        attempts to instantiate an object should act as a singleton or actually
        create a new object.
 
-       :param args: A tuple containing the positional arguments given.  Often
-          seen as ``*args``, though not starred in this case (you get the
-          actual tuple).
-       :param kwargs: A dictionary containing keyword arguments given.  Often
-          seen as ``**kwargs``, though not starred in this case (you get the
-          actual dictionary).
+       :param args: Positional arguments as would be given to the class's
+          ``__init__`` constructor.
+       :param kwargs: Keyword arguments as would be given to the class's
+          ``__init__`` constructor.
        :return: Some hashable data time.  Most often, an :py:class:`int`.
 
     If not specified, the default hashfunc inspects all positional and keyword
