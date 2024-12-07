@@ -446,7 +446,8 @@ def drop_semi_singleton_mapping(cls: type, *args, **kwargs):
     mcls = type(cls)
 
     # use the metaclass's hash function to identify the primary key
-    hashfunc = mcls._SemiSingleton__semisingleton_hashfunc
+    # see the note at the top of the file regarding the type-checker silencing
+    hashfunc = mcls._SemiSingleton__semisingleton_hashfunc  # type: ignore
     hashid = hashfunc(args, kwargs)
 
     del mcls._SemiSingleton__semisingleton_instance_map[hashid]
@@ -490,11 +491,12 @@ def check_semi_singleton_entry_exists(cls: type, *args, **kwargs) -> object:
     mcls = type(cls)
 
     # use the metaclass's hash function to identify the primary key
-    hashfunc = mcls._SemiSingleton__semisingleton_hashfunc
+    # see the note at the top of the file regarding the type-checker silencing
+    hashfunc = mcls._SemiSingleton__semisingleton_hashfunc  # type: ignore
     hashid = hashfunc(args, kwargs)
 
-    if hashid in mcls._SemiSingleton__semisingleton_instance_map:
-        return mcls._SemiSingleton__semisingleton_instance_map[hashid]
+    if hashid in mcls._SemiSingleton__semisingleton_instance_map:  # type: ignore
+        return mcls._SemiSingleton__semisingleton_instance_map[hashid]  # type: ignore
 
     return None
 

@@ -16,7 +16,7 @@ functions will get the necessary updates to match, and the API stays unchanged.
 
 from __future__ import annotations
 
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 from edgegraph.structure import (
     Vertex,
     DirectedEdge,
@@ -24,6 +24,9 @@ from edgegraph.structure import (
     TwoEndedLink,
 )
 from edgegraph.traversal import helpers
+
+if TYPE_CHECKING:
+    from edgegraph.structure import Link
 
 
 def link_from_to(

@@ -6,7 +6,7 @@ Holds the Vertex class.
 """
 
 from __future__ import annotations
-from typing import Optional, TYPE_CHECKING
+from typing import Optional, Any, TYPE_CHECKING
 from edgegraph.structure import base
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -28,10 +28,10 @@ class Vertex(base.BaseObject):
     #: .. seealso::
     #:
     #:    :ref:`dev/performance/vert-nb-cache` for more information on usage
-    NEIGHBOR_CACHING = False
+    NEIGHBOR_CACHING: bool = False
 
-    _QA_NB_INVALID = object()
-    _CACHE_STATS = {}
+    _QA_NB_INVALID: object = object()
+    _CACHE_STATS: dict[int, list[int]] = {}
 
     @classmethod
     def total_cache_stats(cls) -> str:
@@ -112,7 +112,7 @@ class Vertex(base.BaseObject):
         for uni in self.universes:
             uni.add_vertex(self)
 
-        self.__qa_nb_cache = {}
+        self.__qa_nb_cache: dict[tuple[Any, ...], list[Vertex]] = {}
 
     def add_to_universe(self, universe: Universe) -> None:
         """
