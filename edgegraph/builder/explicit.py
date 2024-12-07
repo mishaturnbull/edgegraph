@@ -77,15 +77,22 @@ def unlink(v1: Vertex, v2: Vertex, destroy=True) -> None:
         link.unlink_from(v1)
         link.unlink_from(v2)
 
-        if destroy:
-            del link
-        else:
+        if not destroy:
+            # `out` is conditionally defined if destroy=False; we use it here
+            # under the same conditions, ergo, no issue.
+            # pylint: disable-next=possibly-used-before-assignment
             out.add(link)
+
+    if destroy:
+        # TODO: is this actually useful?  need to investigate.  May not do
+        # quite what it says on the tin.
+        links = list(links)
+        for i in range(len(links) - 1, -1, -1):
+            del links[i]
 
     if not destroy:
         return out
-    else:
-        return None
+    return None
 
 
 def link_directed(

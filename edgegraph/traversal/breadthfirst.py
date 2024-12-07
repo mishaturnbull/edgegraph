@@ -53,7 +53,7 @@ import collections
 from edgegraph.structure import Universe, Vertex
 from edgegraph.traversal import helpers
 
-# TODO: add (to both these fn's) passthru kwargs to neighbors() options
+# TODO: add (search fn) passthru kwargs to neighbors() options
 
 
 def bfs(uni: Universe, start: Vertex, attrib: str, val: object) -> Vertex:
@@ -107,7 +107,14 @@ def bfs(uni: Universe, start: Vertex, attrib: str, val: object) -> Vertex:
     return None
 
 
-def bft(uni: Universe, start: Vertex) -> list[Vertex]:
+def bft(
+    uni: Universe,
+    start: Vertex,
+    direction_sensitive: int = helpers.DIR_SENS_FORWARD,
+    unknown_handling: int = helpers.LNK_UNKNOWN_ERROR,
+    ff_via: Callable = None,
+    ff_result: Callable = None,
+) -> list[Vertex]:
     """
     Perform a breadth-first traversal.
 
@@ -119,6 +126,55 @@ def bft(uni: Universe, start: Vertex) -> list[Vertex]:
 
     :param uni: The universe to search in.
     :param start: The vertex to start searching at.
+    :param direction_sensitive: Directly passed through to
+       :py:func:`~edgegraph.traversal.helpers.neighbors`.  This may be one of:
+
+       * :py:const:`~edgegraph.traversal.helpers.DIR_SENS_FORWARD` (default),
+         to follow edges only forward (when directed),
+       * :py:const:`~edgegraph.traversal.helpers.DIR_SENS_ANY`, to follow edges
+         regardless of their direction,
+       * :py:const:`~edgegraph.traversal.helpers.DIR_SENS_BACKWARD`, to only
+         follow edges backwards (when directed).
+
+    :param unknown_handling: Directly passed through to
+       :py:func:`~edgegraph.traversal.helpers.neighbors`.  This may be one of:
+
+       * :py:const:`~edgegraph.traversal.helpers.LNK_UNKNOWN_ERROR` (default),
+         to throw an exception,
+       * :py:const:`~edgegraph.traversal.helpers.LNK_UNKNOWN_NEIGHBOR`, to
+         treat such edges as neighbors (and take the edge),
+       * :py:const:`~edgegraph.traversal.helpers.LNK_UNKNOWN_NONNEIGHBOR`, to
+         treat such edges as non-neighbors (do not take the edge).
+
+    :param ff_via: Directly passed through to
+       :py:func:`~edgegraph.traversal.helpers.neighbors` function's
+       ``filterfunc`` argument.
+
+       .. py:function:: ff_via(e, v2)
+          :noindex:
+
+          Determines if an edge (``e``) from a given vertex to another (``v2``)
+          should be followed.  If not, that entire section of the graph will
+          not be traversed (assuming no other entries to that area).
+
+          :param e: The edge connecting ``v1`` to ``v2``.
+          :param v2: The vertex under consideration.
+          :return: Whether or not ``v2`` should be considered a neighbor of
+             ``v``, when reached via ``e``.
+
+    :param ff_result: Callable used to filter the final output, after traversal
+       has been completed.
+
+       .. py:function:: ff_result(v)
+          :noindex:
+
+          Determines if a vertex should be returned during the final output.
+          This can be useful if you want to mask certain vertices in the
+          result, but still traverse across them.
+
+          :param v: Vertex to be considered
+          :return: Whether or not ``v`` should be part of the output.
+
     :return: The vertices visited during traversal.
     """
     if (uni is not None) and (len(uni.vertices) == 0):
@@ -133,7 +189,12 @@ def bft(uni: Universe, start: Vertex) -> list[Vertex]:
 
     while queue:
         u = queue.popleft()
-        for v in helpers.neighbors(u):
+        for v in helpers.neighbors(
+            u,
+            direction_sensitive=direction_sensitive,
+            unknown_handling=unknown_handling,
+            filterfunc=ff_via,
+        ):
 
             if (uni is not None) and (v not in uni.vertices):
                 continue
@@ -143,4 +204,6 @@ def bft(uni: Universe, start: Vertex) -> list[Vertex]:
                 visited.append(v)
                 queue.append(v)
 
+    if ff_result:
+        return list(filter(ff_result, visited))
     return visited

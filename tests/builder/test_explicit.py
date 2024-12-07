@@ -98,11 +98,11 @@ def test_unlink_multiple():
     v1 = Vertex()
     v2 = Vertex()
     links = []
-    for i in range(30):
+    for _ in range(30):
         links.append(explicit.link_directed(v1, v2))
-    for i in range(30):
+    for _ in range(30):
         links.append(explicit.link_undirected(v1, v2))
-    for i in range(30):
+    for _ in range(30):
         links.append(explicit.link_from_to(v1, TwoEndedLink, v2))
 
     assert len(v1.links) == len(links), "wrong starting conditions!"

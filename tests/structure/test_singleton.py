@@ -457,3 +457,126 @@ def test_semi_singleton_get():
     assert set(insts) == set(
         check
     ), "Did not get expected semi-singleton insts!"
+
+
+def test_semi_singleton_multiname_smoketest():
+    """
+    Smoketest for semi-singleton add_mapping() function; ensures functionality.
+    """
+
+    class A(metaclass=singleton.semi_singleton_metaclass()):
+        def __init__(self, *args):
+            self.args = args
+
+    a1 = A(1)
+    a2 = A(2)
+
+    singleton.add_mapping(a2, 3)
+
+    a3 = A(3)
+
+    assert a1 is not a2, "add_mapping() added unwanted relationship!"
+    assert a3 is a2, "add_mapping() did not double-point instance!"
+
+
+def test_semi_singleton_multiname_no_crosscontamination():
+    """
+    Ensure add_mapping() has no side effects on other classes.
+    """
+
+    class A(metaclass=singleton.semi_singleton_metaclass()):
+        def __init__(self, *args):
+            self.args = args
+
+    class B(metaclass=singleton.semi_singleton_metaclass()):
+        def __init__(self, *args):
+            self.args = args
+
+    a1 = A(1)
+    a2 = A(2)
+    b1 = B(1)
+    b2 = B(2)
+
+    assert a1 is not a2, "pre add_mapping() bad setup!"
+    assert a1 is not b1, "pre add_mapping() bad setup!"
+    assert b1 is not b2, "pre add_mapping() bad setup!"
+    assert a2 is not b2, "pre add_mapping() bad setup!"
+
+    singleton.add_mapping(a2, 3)
+
+    a3 = A(3)
+    b3 = B(3)
+
+    assert a3 is a2, "add_mapping() didn't double-point instance!"
+    assert b3 is not b2, "add_mapping() caused side effect!"
+    assert b3 is not a3, "add_mapping() caused side effect!"
+
+
+def test_semi_singleton_multiname_multiple():
+    """
+    Ensure many mappings can point to a single instance, not just two.
+    """
+
+    class A(metaclass=singleton.semi_singleton_metaclass()):
+        def __init__(self, *args):
+            self.args = args
+
+    a1 = A(1)
+    a2 = A(2)
+
+    for i in range(100):
+        singleton.add_mapping(a2, i)
+        ai = A(i)
+
+        assert ai is a2, f"add_mapping() failed mult-test at {i}!"
+        assert ai is not a1, f"add_mapping() side effect at {i}!"
+
+
+def test_semi_singleton_drop_single_mapping():
+    """
+    Ensure we can drop a single semisingleton mapping without nuking everything
+    else.
+    """
+
+    class A(metaclass=singleton.semi_singleton_metaclass()):
+        def __init__(self, *args):
+            self.args = args
+
+    class B(metaclass=singleton.semi_singleton_metaclass()):
+        def __init__(self, *args):
+            self.args = args
+
+    a1 = A(1)
+    a2 = A(2)
+    b1 = B(1)
+    b2 = B(2)
+
+    singleton.drop_semi_singleton_mapping(A, 1)
+
+    assert singleton.check_semi_singleton_entry_exists(A, 1) is None
+
+
+def test_semi_singleton_check_mapping():
+    """
+    Ensure we can *check* for a semisingleton instance without creating one.
+    """
+
+    class A(metaclass=singleton.semi_singleton_metaclass()):
+        def __init__(self, *args):
+            self.args = args
+
+    class B(metaclass=singleton.semi_singleton_metaclass()):
+        def __init__(self, *args):
+            self.args = args
+
+    a1 = A(1)
+    a2 = A(2)
+    b1 = B(1)
+    b2 = B(2)
+
+    assert singleton.check_semi_singleton_entry_exists(A, 1) is a1
+    assert singleton.check_semi_singleton_entry_exists(A, 2) is a2
+    assert singleton.check_semi_singleton_entry_exists(B, 1) is b1
+    assert singleton.check_semi_singleton_entry_exists(B, 2) is b2
+    assert singleton.check_semi_singleton_entry_exists(A, 3) is None
+    assert singleton.check_semi_singleton_entry_exists(B, 4) is None

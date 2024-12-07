@@ -16,7 +16,7 @@ python3 -m pytest \
     --profile-svg \
     -m perf \
     -o log_cli=true \
-    -v
+    -vv
 
 mv prof/combined.svg docs/_build/
 
