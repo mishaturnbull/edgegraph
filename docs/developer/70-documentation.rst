@@ -21,7 +21,7 @@ Documentation can be built locally using the Sphinx makefile in the
 :file:`docs/` folder.  Ensure you have the following prerequisites:
 
 #. PlantUML installed (see https://plantuml.com/ )
-#. Pip prerequisites: :samp:`pip install -r scripts/docs-requirements.txt`)
+#. Pip prerequisites: :samp:`pip install .[development]`
 
 Then, simply run :samp:`make clean html` to build docs locally.  Output will be
 placed in :file:`docs/_build/`.  You may also inspect the output of :samp:`make
