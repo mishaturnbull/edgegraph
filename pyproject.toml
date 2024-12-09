@@ -38,6 +38,7 @@ development = [
     "coverage",
     "pytest-cov",
     "pytest-profiling",
+    "pytest-randomly",
 
     # code quality control
     # pylint is also needed for documentation
