@@ -52,7 +52,11 @@ class TwoEndedLink(link.Link):
         if (v2 is not None) and (not issubclass(type(v2), vertex.Vertex)):
             raise TypeError(f"v2 is not a Vertex object!  got {v2}")
 
-        super().__init__(vertices=[v1, v2], uid=uid, attributes=attributes)
+        # mypy complains about the vertices list below, that it may contain
+        # None if the v1 or v2 arguments were not specified in our constructor
+        # here.  however, that scenario is prevented by the TypeError checks
+        # above; mypy just doesn't seem to recognize it as type narrowing.
+        super().__init__(vertices=[v1, v2], uid=uid, attributes=attributes)  # type: ignore
 
     @property
     def v1(self) -> Vertex:
