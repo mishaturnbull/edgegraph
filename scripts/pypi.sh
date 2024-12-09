@@ -1,8 +1,9 @@
 #!/bin/bash
 
-if [ -e dist ]
+if [ -z "$1" ]
 then
-    rm -rf dist
+    echo "Must specify an argument; can be 'real' or 'test'."
+    exit 1
 fi
 
 if [ -e lib ]
@@ -45,6 +46,26 @@ echo "before uploading; use ctrl-C to interrupt.  The following files will"
 echo "be uploaded:"
 echo
 ls -lh dist
+
+echo
+echo
+if [ $1 = "real" ]
+then
+    echo "+-----------------------------------------------------------+"
+    echo "| +-------------------------------------------------------+ |"
+    echo "| | These files will be uploaded to the REAL PyPI repo!!! | |"
+    echo "| +-------------------------------------------------------+ |"
+    echo "+-----------------------------------------------------------+"
+
+elif [ $1 = "test" ]
+then
+    echo "These files will be uploaded to the testing PyPi repo."
+else
+    echo "Unrecognized repository specifier '$1'; aborting."
+    echo "Valid options are 'real' or 'test'."
+    exit 1
+fi
+
 echo
 echo
 (
@@ -59,5 +80,11 @@ echo
 echo "Beginning upload!!"
 echo
 
-python -m twine upload dist/*
+if [ $1 = "real" ]
+then
+    python -m twine upload dist/*
+elif [ $1 = "test" ]
+then
+    python -m twine upload --repository testpypi dist/*
+fi
 
