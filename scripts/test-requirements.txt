@@ -1,9 +1,0 @@
-pylint
-pytest
-coverage
-pytest-cov
-pytest-profiling
-pyvis
-black
-mypy
-
