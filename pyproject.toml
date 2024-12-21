@@ -18,6 +18,42 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 
+[project.optional-dependencies]
+foreign = [
+    "pyvis"
+]
+full = [
+    "edgegraph[foreign]"
+]
+development = [
+    # documentation dependencies
+    "sphinxcontrib-plantuml",
+    "sphinx-copybutton",
+    "sphinx-book-theme",
+    "myst-parser",
+    "tomlkit",
+
+    # test dependencies
+    "pytest",
+    "coverage",
+    "pytest-cov",
+    "pytest-profiling",
+    "pytest-randomly",
+
+    # code quality control
+    # pylint is also needed for documentation
+    "pylint",
+    "black",
+    "mypy",
+
+    # build & upload to pypi dependencies
+    "build",
+    "twine",
+
+    # and everything else
+    "edgegraph[full]"
+]
+
 [project.urls]
 Homepage = "https://edgegraph.readthedocs.io/en/latest/"
 Repository = "https://github.com/mishaturnbull/edgegraph"
@@ -74,6 +110,14 @@ log_cli_level = "DEBUG"
 log_cli_format = "%(asctime)s [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)"
 log_cli_date_format = "%Y-%m-%d %H:%M:%S"
 
+[tool.coverage.html]
+show_contexts = true
+
 [tool.black]
 line-length = 80
+
+[tool.mypy]
+pretty = true
+hide_error_codes = false
+show_error_code_links = true
 

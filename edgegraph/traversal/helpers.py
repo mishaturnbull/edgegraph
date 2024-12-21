@@ -7,7 +7,14 @@ Helper functions for graph traversals.
 
 from __future__ import annotations
 
-from edgegraph.structure import Vertex, DirectedEdge, UnDirectedEdge
+from typing import Optional
+from collections.abc import Callable
+from edgegraph.structure import (
+    Vertex,
+    Link,
+    DirectedEdge,
+    UnDirectedEdge,
+)
 
 #: Unknown edge classes treated as non-neighbors.
 #:
@@ -30,12 +37,42 @@ LNK_UNKNOWN_NEIGHBOR = 1
 #:    :py:func:`neighbors`
 LNK_UNKNOWN_ERROR = 2
 
+#: Follow links forward
+#:
+#: This option specifies that links between vertices should be followed in
+#: their direction (that is, normally).
+#:
+#: .. seealso::
+#:
+#:    :py:func:`neighbors`
+DIR_SENS_FORWARD = 0
+
+#: Follow links regardless of directionality
+#:
+#: This option specifies that links between vertices should be followed no
+#: matter what direction they point in (i.e., forwards or backwards).
+#:
+#: .. seealso::
+#:
+#:    :py:func:`neighbors`
+DIR_SENS_ANY = 1
+
+#: Follow links backwards
+#:
+#: This option specifies that links between vertices should be followed only
+#: against their directionality (backwards).
+#:
+#: .. seealso::
+#:
+#:    :py:func:`neighbors`
+DIR_SENS_BACKWARD = 2
+
 
 def neighbors(
     vert: Vertex,
-    direction_sensitive: bool = True,
+    direction_sensitive: int = DIR_SENS_FORWARD,
     unknown_handling: int = LNK_UNKNOWN_ERROR,
-    filterfunc: Callable = None,
+    filterfunc: Optional[Callable] = None,
 ) -> list[Vertex]:
     """
     Identify the neighbors of a given vertex.
@@ -66,11 +103,11 @@ def neighbors(
 
     >>> neighbors(v1)
     [v2, v3]
-    >>> neighbors(v1, direction_sensitive=False)
+    >>> neighbors(v1, direction_sensitive=DIR_SENS_FORWARD)
     [v2, v3, v4]
     >>> neighbors(v4)
     [v1]
-    >>> neighbors(v4, direction_sensitive=False)
+    >>> neighbors(v4, direction_sensitive=DIR_SENS_ANY)
     [v1, v3]
 
     If supplied, the ``filterfunc`` argument should be to a callable object
@@ -105,11 +142,12 @@ def neighbors(
        ``direction_sensitive`` parameter!
 
     :param vert: The vertex to identify neighbors of.
-    :param direction_sensitive: Enables handling of directional links.  If set
-       to ``False``, any subclasses / instances of
-       :py:class:`~edgegraph.structure.directededge.DirectedEdge` are treated
-       as if they were instead subclasses / instances of
-       :py:class:`~edgegraph.structure.undirectededge.UnDirectedEdge`.
+    :param direction_sensitive: How to handle directional edges as they are
+       encountered.  :py:const:`DIR_SENS_FORWARD` will indicates "normal"
+       usages, where edges will only be followed outwards from the given
+       vertex.  :py:const:`DIR_SENS_ANY` will follow *any* edge, regardless of
+       whether it points to or from this vertex.  :py:const:`DIR_SENS_BACKWARD`
+       will follow only edges inbound to this vertex.
     :param unknown_handling: What to do with edges whose class is not
        recognized (not a subclass / instance of either
        :py:class:`~edgegraph.structure.directededge.DirectedEdge` or
@@ -126,12 +164,18 @@ def neighbors(
        representing neighbors of the specified vertex.
     """
 
+    cached = vert._qa_neighbors_get(
+        direction_sensitive, unknown_handling, filterfunc
+    )
+    if cached is not Vertex._QA_NB_INVALID:
+        return cached
+
     nbs = []
     for link in vert.links:
 
         v2 = link.other(vert)
 
-        if direction_sensitive:
+        if direction_sensitive == DIR_SENS_FORWARD:
             # undirected edges don't matter
             if issubclass(type(link), UnDirectedEdge):
 
@@ -187,11 +231,60 @@ def neighbors(
                         f"Unknown link class {type(link)}"
                     )
 
-        else:
+        elif direction_sensitive == DIR_SENS_BACKWARD:
+
+            if issubclass(type(link), UnDirectedEdge):
+
+                if filterfunc is None or filterfunc(link, v2):
+                    nbs.append(v2)
+                else:
+                    # see comment on the above else: continue block for
+                    # explanation of this no-cover statement.
+                    continue  # pragma: no cover
+
+            # for directed edges, only add the neighbor if vert is the origin
+            elif issubclass(type(link), DirectedEdge) and (link.v2 is vert):
+
+                # see above notes on short-circuiting filterfunc() if it's not
+                # provided
+                if filterfunc is None or filterfunc(link, v2):
+                    nbs.append(v2)
+                else:
+                    # see comment on the above else: continue block for
+                    # explanation of this no-cover statement.
+                    continue  # pragma: no cover
+
+            # we're looking at v2 -- the destination
+            # TODO: is it more time efficient to move the v1/v2 comparison into
+            # an if nested under the directededge check?
+            elif issubclass(type(link), DirectedEdge) and (link.v1 is vert):
+                pass
+
+            else:
+                if unknown_handling == LNK_UNKNOWN_NONNEIGHBOR:
+                    continue
+
+                if unknown_handling == LNK_UNKNOWN_NEIGHBOR:
+                    nbs.append(link.other(vert))
+                else:
+                    raise NotImplementedError(
+                        f"Unknown link class {type(link)}"
+                    )
+
+        elif direction_sensitive == DIR_SENS_ANY:
             # see above notes on short-circuiting filterfunc() if it's not
             # provided
             if filterfunc is None or filterfunc(link, v2):
                 nbs.append(v2)
+
+        else:
+            raise ValueError(
+                f"Unknown option for direction_sensitive = {direction_sensitive}"
+            )
+
+    vert._qa_neighbors_insert(
+        nbs, direction_sensitive, unknown_handling, filterfunc
+    )
 
     return nbs
 
@@ -201,8 +294,8 @@ def find_links(
     v2: Vertex,
     direction_sensitive: bool = True,
     unknown_handling: int = LNK_UNKNOWN_ERROR,
-    filterfunc: Callable = None,
-) -> set[TwoEndedLink]:
+    filterfunc: Optional[Callable] = None,
+) -> set[Link]:
     """
     Find the link(s) that connect v1 to v2.
 

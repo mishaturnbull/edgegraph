@@ -56,6 +56,30 @@ def test_universe_vertex_add():
     ), "universes.add_vertex did not set u in vertex.universes"
 
 
+def test_universe_vertex_remove():
+    """
+    Ensure we can remove a vertex from a universe.
+    """
+    u = universe.Universe()
+    vs = []
+    for _ in range(20):
+        vs.append(vertex.Vertex())
+        u.add_vertex(vs[-1])
+
+    remove = vs[0 : len(vs) : 2]
+    stay = vs[1 : len(vs) : 2]
+
+    for v in remove:
+        u.remove_vertex(v)
+
+        assert v not in u.vertices, "remove_vertex did not (uni-side)!"
+        assert u not in v.universes, "remove_vertex did not (vert-side)!"
+
+    for v in stay:
+        assert v in u.vertices, "remove_vertex altered unreq vert (uni-side)!"
+        assert u in v.universes, "remove_vertex altered unreq vert (vert-siee)!"
+
+
 def test_universe_vertex_init():
     """
     Ensure we can pass vertices into a Universe instantiation.
@@ -111,3 +135,23 @@ def test_universe_laws_updating():
     assert (
         u.laws.cycles is False
     ), "switching universe laws did not change the laws"
+
+
+def test_universe_laws_removal():
+    """
+    Ensure universe laws can be removed (set to None).
+    """
+    l = universe.UniverseLaws(cycles=False)
+    u = universe.Universe(laws=l)
+
+    assert u.laws is l
+    assert l.applies_to is u
+
+    u.laws = None
+
+    assert u.laws is None
+    assert l.applies_to is None
+
+    u.laws = None
+
+    assert u.laws is None  # still!

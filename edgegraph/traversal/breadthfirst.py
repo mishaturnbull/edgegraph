@@ -49,6 +49,8 @@ visiting v9 before v10) is determined by the structure of the universe.
 from __future__ import annotations
 
 import collections
+from typing import Optional
+from collections.abc import Callable
 
 from edgegraph.structure import Universe, Vertex
 from edgegraph.traversal import helpers
@@ -56,7 +58,9 @@ from edgegraph.traversal import helpers
 # TODO: add (to both these fn's) passthru kwargs to neighbors() options
 
 
-def bfs(uni: Universe, start: Vertex, attrib: str, val: object) -> Vertex:
+def bfs(
+    uni: Universe, start: Vertex, attrib: str, val: object
+) -> Optional[Vertex]:
     """
     Perform a breadth-first search.
 
@@ -107,7 +111,14 @@ def bfs(uni: Universe, start: Vertex, attrib: str, val: object) -> Vertex:
     return None
 
 
-def ibft(uni: Universe, start: Vertex) -> list[Vertex]:
+def ibft(
+    uni: Universe,
+    start: Vertex,
+    direction_sensitive: int = helpers.DIR_SENS_FORWARD,
+    unknown_handling: int = helpers.LNK_UNKNOWN_ERROR,
+    ff_via: Optional[Callable] = None,
+    ff_result: Optional[Callable] = None,
+    ) -> Generator[Vertex]:
     """
     Perform a breadth-first traversal.
 
@@ -119,6 +130,55 @@ def ibft(uni: Universe, start: Vertex) -> list[Vertex]:
 
     :param uni: The universe to search in.
     :param start: The vertex to start searching at.
+    :param direction_sensitive: Directly passed through to
+       :py:func:`~edgegraph.traversal.helpers.neighbors`.  This may be one of:
+
+       * :py:const:`~edgegraph.traversal.helpers.DIR_SENS_FORWARD` (default),
+         to follow edges only forward (when directed),
+       * :py:const:`~edgegraph.traversal.helpers.DIR_SENS_ANY`, to follow edges
+         regardless of their direction,
+       * :py:const:`~edgegraph.traversal.helpers.DIR_SENS_BACKWARD`, to only
+         follow edges backwards (when directed).
+
+    :param unknown_handling: Directly passed through to
+       :py:func:`~edgegraph.traversal.helpers.neighbors`.  This may be one of:
+
+       * :py:const:`~edgegraph.traversal.helpers.LNK_UNKNOWN_ERROR` (default),
+         to throw an exception,
+       * :py:const:`~edgegraph.traversal.helpers.LNK_UNKNOWN_NEIGHBOR`, to
+         treat such edges as neighbors (and take the edge),
+       * :py:const:`~edgegraph.traversal.helpers.LNK_UNKNOWN_NONNEIGHBOR`, to
+         treat such edges as non-neighbors (do not take the edge).
+
+    :param ff_via: Directly passed through to
+       :py:func:`~edgegraph.traversal.helpers.neighbors` function's
+       ``filterfunc`` argument.
+
+       .. py:function:: ff_via(e, v2)
+          :noindex:
+
+          Determines if an edge (``e``) from a given vertex to another (``v2``)
+          should be followed.  If not, that entire section of the graph will
+          not be traversed (assuming no other entries to that area).
+
+          :param e: The edge connecting ``v1`` to ``v2``.
+          :param v2: The vertex under consideration.
+          :return: Whether or not ``v2`` should be considered a neighbor of
+             ``v``, when reached via ``e``.
+
+    :param ff_result: Callable used to filter the final output, after traversal
+       has been completed.
+
+       .. py:function:: ff_result(v)
+          :noindex:
+
+          Determines if a vertex should be returned during the final output.
+          This can be useful if you want to mask certain vertices in the
+          result, but still traverse across them.
+
+          :param v: Vertex to be considered
+          :return: Whether or not ``v`` should be part of the output.
+
     :return: The vertices visited during traversal.
     """
     if (uni is not None) and (len(uni.vertices) == 0):
@@ -130,11 +190,18 @@ def ibft(uni: Universe, start: Vertex) -> list[Vertex]:
     visited = set()
     queue = collections.deque([start])
     visited.add(start)
-    yield start
+
+    if (ff_result and ff_result(start)) or (not ff_result):
+        yield start
 
     while queue:
         u = queue.popleft()
-        for v in helpers.neighbors(u):
+        for v in helpers.neighbors(
+            u,
+            direction_sensitive=direction_sensitive,
+            unknown_handling=unknown_handling,
+            filterfunc=ff_via,
+        ):
 
             if (uni is not None) and (v not in uni.vertices):
                 continue
@@ -143,11 +210,23 @@ def ibft(uni: Universe, start: Vertex) -> list[Vertex]:
             if v not in visited:
                 visited.add(v)
                 queue.append(v)
-                yield v
+
+                if (ff_result and ff_result(v)) or (not ff_result):
+                    yield v
 
 
-def bft(uni: Universe, start: Vertex) -> list[Vertex]:
-    out = list(ibft(uni, start))
+def bft(
+    uni: Universe,
+    start: Vertex,
+    direction_sensitive: int = helpers.DIR_SENS_FORWARD,
+    unknown_handling: int = helpers.LNK_UNKNOWN_ERROR,
+    ff_via: Optional[Callable] = None,
+    ff_result: Optional[Callable] = None,
+    ) -> list[Vertex]:
+
+    out = list(ibft(uni, start, direction_sensitive=direction_sensitive,
+                    unknown_handling=unknown_handling, ff_via=ff_via,
+                    ff_result=ff_result))
     if out == []:
         return None
     return out

@@ -189,6 +189,41 @@ def test_bft_none_universe(graph_clrs09_22_6):
     ], "BFT did not traverse when uni = None!"
 
 
+def test_bft_ff_result(graph_clrs09_22_6):
+    """
+    Ensure the ff_result parameter works on bft().
+    """
+    _, verts = graph_clrs09_22_6
+    trav = breadthfirst.bft(None, verts[1], ff_result=lambda v2: v2.i > 5)
+    trav = set(v.i for v in trav)
+    assert trav == {6, 7, 8, 9}
+
+
+def test_bft_ff_via(graph_clrs09_22_6):
+    """
+    Ensure the ff_via parameter works on bft().
+    """
+    _, verts = graph_clrs09_22_6
+    trav = breadthfirst.bft(None, verts[1], ff_via=lambda e, v2: v2.i % 2 == 0)
+    trav = set(v.i for v in trav)
+    assert trav == {0, 1, 2, 4, 6, 8}
+
+
+def test_bft_ff_via_and_result(graph_clrs09_22_6):
+    """
+    Ensure the ff_result *and* ff_via parameter work together on bft().
+    """
+    _, verts = graph_clrs09_22_6
+    trav = breadthfirst.bft(
+        None,
+        verts[1],
+        ff_via=lambda e, v2: v2.i % 2 == 0,
+        ff_result=lambda v2: v2.i > 5,
+    )
+    trav = set(v.i for v in trav)
+    assert trav == {6, 8}
+
+
 ###############################################################################
 # stress testing
 

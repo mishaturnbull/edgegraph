@@ -6,7 +6,11 @@ Holds the UnDirectedEdge class.
 """
 
 from __future__ import annotations
+from typing import Optional, TYPE_CHECKING
 from edgegraph.structure import twoendedlink
+
+if TYPE_CHECKING:  # pragma: no cover
+    from edgegraph.structure.vertex import Vertex
 
 
 class UnDirectedEdge(twoendedlink.TwoEndedLink):
@@ -23,13 +27,20 @@ class UnDirectedEdge(twoendedlink.TwoEndedLink):
          creating these classes directly.
     """
 
+    # pylint correctly complains about this superclass call here, citing it is
+    # useless and the method should just not be overridden.  in the strictest
+    # sense, it is true -- no code changes between this __init__ and the
+    # super().__init__().  however, we *do* want to override the docstring to
+    # specify what this method does versus the more abstract TwoEndedLink
+    # parent class.  so, we do it to change the docstring.
+    # pylint: disable-next=useless-parent-delegation
     def __init__(
         self,
-        v1: Vertex = None,
-        v2: Vertex = None,
+        v1: Optional[Vertex] = None,
+        v2: Optional[Vertex] = None,
         *,
-        uid: int = None,
-        attributes: dict = None,
+        uid: Optional[int] = None,
+        attributes: Optional[dict] = None,
     ):
         """
         Instantiate an undirected edge.

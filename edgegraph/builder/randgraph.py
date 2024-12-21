@@ -8,7 +8,7 @@ Procedures for creating random graphs.
 from __future__ import annotations
 
 import random
-
+from typing import Optional
 from edgegraph.structure import Vertex, DirectedEdge, Universe
 from edgegraph.builder import adjlist
 
@@ -16,8 +16,8 @@ from edgegraph.builder import adjlist
 def randgraph(
     count: int = 15,
     edge: type = DirectedEdge,
-    connectivity: float = None,
-    ensurelink: bool = True,
+    connectivity: Optional[float] = None,
+    ensurelink: Optional[bool] = True,
 ) -> Universe:
     """
     Create a random graph.

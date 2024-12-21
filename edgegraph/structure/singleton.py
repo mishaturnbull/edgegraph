@@ -39,6 +39,8 @@ after some surveying (Googling) I decided that metaclasses approach gave:
 """
 
 from __future__ import annotations
+from typing import Optional
+from collections.abc import Generator, Callable, Hashable
 
 import json
 
@@ -49,6 +51,14 @@ import json
 # W0212 -> protected-access ("Access to a protected member [...] of a client
 # class"
 # pylint: disable=W0212
+
+# MyPy's type checker does not understand dynamically-computed metaclasses,
+# therefore, some operations surrounding semi-singletons have local typechecker
+# silencing.  This is **NOT** applied to the entire module; it is to be used
+# **locally only** on the relevant lines.
+#
+# See the last section of this page for more information:
+# https://mypy.readthedocs.io/en/stable/metaclasses.html
 
 
 class TrueSingleton(type):
@@ -126,17 +136,17 @@ class TrueSingleton(type):
     references to the original.
     """
 
-    __singleton_instances = {}
+    _TrueSingleton__singleton_instances: dict[Hashable, object] = {}
 
     def __call__(cls, *args, **kwargs):
-        if cls not in cls.__singleton_instances:
-            cls.__singleton_instances[cls] = super(TrueSingleton, cls).__call__(
-                *args, **kwargs
-            )
-        return cls.__singleton_instances[cls]
+        if cls not in cls._TrueSingleton__singleton_instances:
+            cls._TrueSingleton__singleton_instances[cls] = super(
+                TrueSingleton, cls
+            ).__call__(*args, **kwargs)
+        return cls._TrueSingleton__singleton_instances[cls]
 
 
-def clear_true_singleton(cls: type = None) -> None:
+def clear_true_singleton(cls: Optional[type] = None) -> None:
     """
     Clears TrueSingleton cache for either a specified type, or all
     TrueSingleton types.
@@ -199,7 +209,7 @@ def clear_true_singleton(cls: type = None) -> None:
 # what this function actually does isn't complex, in *theory*.  however,
 # metaclass hacking is some of the deeper black magic of Python -- so document
 # the crap out of it.
-def semi_singleton_metaclass(hashfunc: Callable = None) -> type:
+def semi_singleton_metaclass(hashfunc: Optional[Callable] = None) -> type:
     """
     Generate and return a metaclass for semi-singletons.
 
@@ -264,12 +274,10 @@ def semi_singleton_metaclass(hashfunc: Callable = None) -> type:
        attempts to instantiate an object should act as a singleton or actually
        create a new object.
 
-       :param args: A tuple containing the positional arguments given.  Often
-          seen as ``*args``, though not starred in this case (you get the
-          actual tuple).
-       :param kwargs: A dictionary containing keyword arguments given.  Often
-          seen as ``**kwargs``, though not starred in this case (you get the
-          actual dictionary).
+       :param args: Positional arguments as would be given to the class's
+          ``__init__`` constructor.
+       :param kwargs: Keyword arguments as would be given to the class's
+          ``__init__`` constructor.
        :return: Some hashable data time.  Most often, an :py:class:`int`.
 
     If not specified, the default hashfunc inspects all positional and keyword
@@ -321,25 +329,176 @@ def semi_singleton_metaclass(hashfunc: Callable = None) -> type:
               call.
             :return: A hash of the arguments.
             """
-            kwargs = json.dumps(kwargs, sort_keys=True)
-            return hash((args, kwargs))
+            jwargs = json.dumps(kwargs, sort_keys=True)
+            return hash((args, jwargs))
 
     class _SemiSingleton(type):
         """
         Metaclass for semi-singleton types.
         """
 
-        __semisingleton_instance_map = {}
+        _SemiSingleton__semisingleton_instance_map = {}
+        _SemiSingleton__semisingleton_hashfunc = hashfunc
 
         def __call__(cls, *args, **kwargs):
             key = hashfunc(args, kwargs)
-            if key not in cls.__semisingleton_instance_map:
-                cls.__semisingleton_instance_map[key] = super(
+            if key not in cls._SemiSingleton__semisingleton_instance_map:
+                cls._SemiSingleton__semisingleton_instance_map[key] = super(
                     _SemiSingleton, cls
                 ).__call__(*args, **kwargs)
-            return cls.__semisingleton_instance_map[key]
+            return cls._SemiSingleton__semisingleton_instance_map[key]
 
     return _SemiSingleton
+
+
+def add_mapping(obj: object, *args, **kwargs):
+    """
+    Adds another mapping to a semi-singleton instance.
+
+    This function can be used to add another mapping to an instance of a
+    semi-singleton object.  It can be useful for situations where the same
+    object can have multiple "names" (or, sets of arguments), but it is
+    inefficient to implement this in the metaclass hash function.  Using this
+    function instead allows a memory-time tradeoff, tipping the balance towards
+    more memory usage in favor of a faster hash function (and therefore, object
+    instantiation).
+
+    >>> from edgegraph.singleton import semi_singleton_metaclass, add_mapping
+    >>> class SemiSingleton(metaclass=semi_singleton_metaclass()):
+    ...     def __init__(self, foo, bar=False):
+    ...         self.foo = foo
+    ...         self.bar = bar
+    ...
+    >>> s3 = SemiSingleton(37, True)  # different arguments -- different object
+    >>> s3
+    <__main__.SemiSingleton object at 0x01234567>
+    >>> s2 is s3
+    False
+    >>> add_mapping(s3, 39, bar=True)
+    >>> s4 = SemiSingleton(39, True)  # we get s3 again, despite different args
+    >>> s4
+    <__main__.SemiSingleton object at 0x01234567>
+    >>> s3 is s4
+    True
+
+    :param obj: The object to map the extra identifier to.  Henceforth after
+      this function, this object will be reachable by the identifier given as
+      well as any others it may have already had.
+    :param \\*args: Positional arguments as would normally be passed to the
+      semi-singleton class instantiation.
+    :param \\**kwargs: Positional arguments as would normally be passed to the
+      semi-singleton class instantiation.
+    """
+    # get the metaclass type
+    cls = type(type(obj))
+
+    # use the metaclass's hash function to line up with existing / future
+    # mappings
+    # see the note at the top of the file regarding the type-checker silencing
+    hashfunc = cls._SemiSingleton__semisingleton_hashfunc  # type: ignore
+    hashid = hashfunc(args, kwargs)
+
+    # store the hashed identifier in the metaclass map of hashes to instances
+    cls._SemiSingleton__semisingleton_instance_map[hashid] = obj  # type: ignore
+
+
+def drop_semi_singleton_mapping(cls: type, *args, **kwargs):
+    """
+    Remove an mapping from the specified semi-singleton instance.
+
+    This removes a *single* mapping of a key to instance.  It may be considered
+    removing a semisingleton instance, though if multiple mappings exist to
+    single instance, it will still be accessible by other remaining
+    identifiers.
+
+    .. seealso::
+
+       * :py:func:`clear_semi_singleton`, a clear-all operation instead of this
+         clear-one
+
+    >>> from edgegraph.singleton import semi_singleton_metaclass, \\
+            drop_semi_singleton_mapping
+    >>> class SemiSingleton(metaclass=semi_singleton_metaclass()):
+    ...     def __init__(self, foo, bar=False):
+    ...         self.foo = foo
+    ...         self.bar = bar
+    ...
+    >>> s3 = SemiSingleton(37, True)  # different arguments -- different object
+    >>> s3
+    <__main__.SemiSingleton object at 0x01234567>
+    >>> s4 = SemiSingleton(4)
+    >>> s5 = SemiSingleton(5)
+    >>> drop_semi_singleton_mapping(SemiSingleton, 4)  # drop s4
+    >>> s4_2 = SemiSingleton(4)  # will now return a new instance
+    >>> s4 is s4_2
+    False
+    >>> SemiSingleton(5) is s5  # other mappings unaffected
+    True
+
+    :param cls: Class to remove the mapping from.  This is typically thought of
+      as ``type(some_object)``.
+    :param \\*args: Positional arguments as would normally be passed to the
+      semi-singleton class instantiation.
+    :param \\**kwargs: Positional arguments as would normally be passed to the
+      semi-singleton class instantiation.
+    """
+    # get the metaclass type
+    mcls = type(cls)
+
+    # use the metaclass's hash function to identify the primary key
+    # see the note at the top of the file regarding the type-checker silencing
+    hashfunc = mcls._SemiSingleton__semisingleton_hashfunc  # type: ignore
+    hashid = hashfunc(args, kwargs)
+
+    del mcls._SemiSingleton__semisingleton_instance_map[hashid]
+
+
+def check_semi_singleton_entry_exists(cls: type, *args, **kwargs) -> object:
+    """
+    Test whether a semisingleton exists for the given mapping without creating
+    it.
+
+    This function allows checking whether a semisingleton instance exists for
+    the provided identifier, without creating it if it does not exist.
+
+    >>> from edgegraph.singleton import semi_singleton_metaclass, \\
+            check_semi_singleton_entry_exists
+    >>> class SemiSingleton(metaclass=semi_singleton_metaclass()):
+    ...     def __init__(self, foo, bar=False):
+    ...         self.foo = foo
+    ...         self.bar = bar
+    ...
+    >>> s3 = SemiSingleton(37, True)  # different arguments -- different object
+    >>> s3
+    <__main__.SemiSingleton object at 0x01234567>
+    >>> # object exists; it will be returned, but unaffected
+    >>> check_semi_singleton_entry_exists(SemiSingleton, 37, bar=True)
+    <__main__.SemiSingleton object at 0x01234567>
+    >>> # object does not exist; None returned, such an object is *not* created
+    >>> check_semi_singleton_entry_exists(128)
+    >>>
+
+    :param cls: Class to test.  This is typically thought of as
+      ``type(some_object)``.
+    :param \\*args: Positional arguments as would normally be passed to the
+      semi-singleton class instantiation.
+    :param \\**kwargs: Positional arguments as would normally be passed to the
+      semi-singleton class instantiation.
+    :return: The instance accessible via the given mapping if such exists; else
+      ``None``.
+    """
+    # get the real semisingleton metaclass, not just the user type
+    mcls = type(cls)
+
+    # use the metaclass's hash function to identify the primary key
+    # see the note at the top of the file regarding the type-checker silencing
+    hashfunc = mcls._SemiSingleton__semisingleton_hashfunc  # type: ignore
+    hashid = hashfunc(args, kwargs)
+
+    if hashid in mcls._SemiSingleton__semisingleton_instance_map:  # type: ignore
+        return mcls._SemiSingleton__semisingleton_instance_map[hashid]  # type: ignore
+
+    return None
 
 
 def get_all_semi_singleton_instances(cls: type) -> Generator[object]:
@@ -372,7 +531,7 @@ def get_all_semi_singleton_instances(cls: type) -> Generator[object]:
     :param cls: Data type to check singleton instances for.
     :return: Generator expression yielding semi-singleton instances.
     """
-    yield from type(cls)._SemiSingleton__semisingleton_instance_map.values()
+    yield from type(cls)._SemiSingleton__semisingleton_instance_map.values()  # type: ignore
 
 
 def clear_semi_singleton(cls: type) -> None:
@@ -407,4 +566,4 @@ def clear_semi_singleton(cls: type) -> None:
 
     :param cls: Class to clear semisingleton states from.
     """
-    type(cls)._SemiSingleton__semisingleton_instance_map = {}
+    type(cls)._SemiSingleton__semisingleton_instance_map = {}  # type: ignore
