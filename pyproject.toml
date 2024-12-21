@@ -39,6 +39,7 @@ development = [
     "pytest-cov",
     "pytest-profiling",
     "pytest-randomly",
+    "pytest-timeout",
 
     # code quality control
     # pylint is also needed for documentation
