@@ -16,7 +16,7 @@ functions will get the necessary updates to match, and the API stays unchanged.
 
 from __future__ import annotations
 
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING
 from edgegraph.structure import (
     Vertex,
     DirectedEdge,
@@ -64,7 +64,7 @@ def link_from_to(
     return lnktype(v1, v2)
 
 
-def unlink(v1: Vertex, v2: Vertex, destroy=True) -> Optional[set[TwoEndedLink]]:
+def unlink(v1: Vertex, v2: Vertex, destroy=True) -> set[TwoEndedLink] | None:
     """
     Remive all links between ``v1`` and ``v2``.
 

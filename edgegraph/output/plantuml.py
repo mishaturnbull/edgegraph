@@ -64,7 +64,6 @@ import subprocess
 import shutil
 import tempfile
 import datetime
-from typing import Optional
 
 from edgegraph.structure import Universe, Vertex, DirectedEdge, UnDirectedEdge
 
@@ -282,7 +281,7 @@ def _one_vert_to_skinparam(vert, options):
     return output
 
 
-def render_to_plantuml_src(uni: Universe, options: dict) -> Optional[str]:
+def render_to_plantuml_src(uni: Universe, options: dict) -> str | None:
     """
     Render a universe to PlantUML source.
 
