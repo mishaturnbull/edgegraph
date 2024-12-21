@@ -6,7 +6,7 @@ Holds the TwoEndedLink class.
 """
 
 from __future__ import annotations
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING
 from edgegraph.structure import link, vertex
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -29,11 +29,11 @@ class TwoEndedLink(link.Link):
 
     def __init__(
         self,
-        v1: Optional[Vertex] = None,
-        v2: Optional[Vertex] = None,
+        v1: Vertex | None = None,
+        v2: Vertex | None = None,
         *,
-        uid: Optional[int] = None,
-        attributes: Optional[dict] = None,
+        uid: int | None = None,
+        attributes: dict | None = None,
     ):
         """
         Instantiate an two-ended edge.
@@ -124,7 +124,7 @@ class TwoEndedLink(link.Link):
         self._vertices = [v1]
         self.add_vertex(new)
 
-    def other(self, end: Vertex) -> Optional[Vertex]:
+    def other(self, end: Vertex) -> Vertex | None:
         """
         Identify and return the other end of this edge.
 

@@ -6,7 +6,7 @@ Holds the Vertex class.
 """
 
 from __future__ import annotations
-from typing import Optional, Any, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 from edgegraph.structure import base
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -77,10 +77,10 @@ class Vertex(base.BaseObject):
     def __init__(
         self,
         *,
-        links: Optional[list[Link]] = None,
-        uid: Optional[int] = None,
-        attributes: Optional[dict] = None,
-        universes: Optional[set[Universe]] = None,
+        links: list[Link] | None = None,
+        uid: int | None = None,
+        attributes: dict | None = None,
+        universes: set[Universe] | None = None,
     ):
         """
         Creates a new vertex.

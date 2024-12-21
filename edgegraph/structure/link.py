@@ -6,7 +6,7 @@ Holds the Link class.
 """
 
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 from edgegraph.structure import base
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -35,10 +35,10 @@ class Link(base.BaseObject):
     def __init__(
         self,
         *,
-        vertices: Optional[list[Vertex]] = None,
-        uid: Optional[int] = None,
-        attributes: Optional[dict] = None,
-        _force_creation: Optional[bool] = False,
+        vertices: list[Vertex] | None = None,
+        uid: int | None = None,
+        attributes: dict | None = None,
+        _force_creation: bool | None = False,
     ):
         """
         Instantiate a new link ("edge").

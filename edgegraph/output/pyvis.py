@@ -39,7 +39,7 @@ Generally, the usage pattern for this module is intended to be as:
 
 from __future__ import annotations
 
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING
 from collections.abc import Callable
 
 try:
@@ -65,9 +65,9 @@ if TYPE_CHECKING:  # pragma: no cover
 
 def make_pyvis_net(
     uni: Universe,
-    rvfunc: Optional[Callable] = None,
-    refunc: Optional[Callable] = None,
-    network_kwargs: Optional[dict] = None,
+    rvfunc: Callable | None = None,
+    refunc: Callable | None = None,
+    network_kwargs: dict = None,
 ) -> pyvis.network.Network:
     """
     Convert a given Universe to a PyVis network, suitable for further use
@@ -169,9 +169,9 @@ def make_pyvis_net(
 
 def pyvis_render_customizable(
     uni: Universe,
-    rvfunc: Optional[Callable] = None,
-    refunc: Optional[Callable] = None,
-    show_buttons_filter: Optional[dict[str, str]] = None,
+    rvfunc: Callable | None = None,
+    refunc: Callable | None = None,
+    show_buttons_filter: dict[str, str] | None = None,
 ) -> pyvis.network.Network:
     """
     Convert a given Universe to a PyVis network, suitable for further use

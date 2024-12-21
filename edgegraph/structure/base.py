@@ -6,7 +6,7 @@ Contains the BaseObject class.
 """
 
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 import uuid
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -52,11 +52,9 @@ class BaseObject(object):
     def __init__(
         self,
         *,
-        uid: Optional[int] = None,
-        attributes: Optional[dict] = None,
-        # WHY does this work??  __future__ annotations??  Universe isn't
-        # imported!!
-        universes: Optional[set[Universe]] = None,
+        uid: int | None = None,
+        attributes: dict | None = None,
+        universes: set[Universe] | None = None,
     ):
         """
         Instantiate a BaseObject.
