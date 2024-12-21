@@ -209,5 +209,4 @@ def bft(
 
     if ff_result:
         return list(filter(ff_result, visited))
-    else:
-        return visited
+    return visited

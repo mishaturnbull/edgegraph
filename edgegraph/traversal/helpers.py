@@ -7,13 +7,12 @@ Helper functions for graph traversals.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
 from collections.abc import Callable
 from edgegraph.structure import (
     Vertex,
+    Link,
     DirectedEdge,
     UnDirectedEdge,
-    TwoEndedLink,
 )
 
 #: Unknown edge classes treated as non-neighbors.
