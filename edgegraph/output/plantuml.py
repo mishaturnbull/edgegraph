@@ -378,6 +378,10 @@ def render_to_image(src: str, out_file: str, plantuml: str = "plantuml"):
             capture_output=True,
             check=True,
         )
-        shutil.move(outfile, out_file)
+        # TODO: re-ensure coverage of this line!!
+        # due to the planutml timeout issue (#59), some unit tests are
+        # currently tagged with an xfail + timeout; however, when they fail to
+        # run, this line is not executed
+        shutil.move(outfile, out_file)  # pragma: no cover
     finally:
         shutil.rmtree(tmpdir)
