@@ -67,7 +67,7 @@ def make_pyvis_net(
     uni: Universe,
     rvfunc: Callable | None = None,
     refunc: Callable | None = None,
-    network_kwargs: dict = None,
+    network_kwargs: dict[str, Any] | None = None,
 ) -> pyvis.network.Network:
     """
     Convert a given Universe to a PyVis network, suitable for further use
