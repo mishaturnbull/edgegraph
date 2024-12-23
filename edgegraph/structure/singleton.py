@@ -39,7 +39,6 @@ after some surveying (Googling) I decided that metaclasses approach gave:
 """
 
 from __future__ import annotations
-from typing import Optional
 from collections.abc import Generator, Callable, Hashable
 
 import json
@@ -146,7 +145,7 @@ class TrueSingleton(type):
         return cls._TrueSingleton__singleton_instances[cls]
 
 
-def clear_true_singleton(cls: Optional[type] = None) -> None:
+def clear_true_singleton(cls: type | None = None) -> None:
     """
     Clears TrueSingleton cache for either a specified type, or all
     TrueSingleton types.
@@ -209,7 +208,7 @@ def clear_true_singleton(cls: Optional[type] = None) -> None:
 # what this function actually does isn't complex, in *theory*.  however,
 # metaclass hacking is some of the deeper black magic of Python -- so document
 # the crap out of it.
-def semi_singleton_metaclass(hashfunc: Optional[Callable] = None) -> type:
+def semi_singleton_metaclass(hashfunc: Callable | None = None) -> type:
     """
     Generate and return a metaclass for semi-singletons.
 

@@ -6,7 +6,7 @@ Holds the Universe class.
 """
 
 from __future__ import annotations
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING
 import types
 from edgegraph.structure import base, vertex
 
@@ -37,12 +37,12 @@ class UniverseLaws(base.BaseObject):
 
     def __init__(
         self,
-        edge_whitelist: Optional[dict] = None,
+        edge_whitelist: dict | None = None,
         mixed_links: bool = False,
         cycles: bool = True,
         multipath: bool = True,
         multiverse: bool = False,
-        applies_to: Optional[Universe] = None,
+        applies_to: Universe | None = None,
     ):
         """
         Instantiate a set of universal laws.
@@ -139,7 +139,7 @@ class UniverseLaws(base.BaseObject):
         return self._multiverse
 
     @property
-    def applies_to(self) -> Optional[Universe]:
+    def applies_to(self) -> Universe | None:
         """
         Returns the universe that these laws apply to.
         """
@@ -184,10 +184,10 @@ class Universe(vertex.Vertex):
     def __init__(
         self,
         *,
-        vertices: Optional[set[vertex.Vertex]] = None,
-        laws: Optional[UniverseLaws] = None,
-        uid: Optional[int] = None,
-        attributes: Optional[dict] = None,
+        vertices: set[vertex.Vertex] | None = None,
+        laws: UniverseLaws | None = None,
+        uid: int | None = None,
+        attributes: dict | None = None,
     ):
         """
         Instantiate a Universe.
@@ -203,7 +203,7 @@ class Universe(vertex.Vertex):
         super().__init__(uid=uid, attributes=attributes)
 
         #: Laws of the universe
-        self._laws: Optional[UniverseLaws] = laws
+        self._laws: UniverseLaws | None = laws
         if self._laws is None:
             self._laws = UniverseLaws(applies_to=self)
         self._laws.applies_to = self
@@ -251,7 +251,7 @@ class Universe(vertex.Vertex):
             vert.remove_from_universe(self)
 
     @property
-    def laws(self) -> Optional[UniverseLaws]:
+    def laws(self) -> UniverseLaws | None:
         """
         Get the laws of this universe.
         """

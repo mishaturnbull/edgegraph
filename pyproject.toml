@@ -11,7 +11,7 @@ readme = "README.md"
 license = {file = "LICENSE.txt"}
 description = "Object oriented edge-vertex graph library."
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3 :: Only",
@@ -39,6 +39,7 @@ development = [
     "pytest-cov",
     "pytest-profiling",
     "pytest-randomly",
+    "pytest-timeout",
 
     # code quality control
     # pylint is also needed for documentation
