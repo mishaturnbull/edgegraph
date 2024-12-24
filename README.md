@@ -12,37 +12,15 @@ and the functions to perform it.
 The base classes are also usable directly, should you wish to test-drive this
 idea or study abstract graphs.
 
-See [the docs][1] for more.
+See [the docs][1] for more!
 
-## Prealpha
+## Beta
 
-At this time, this project is extremely young.  Per [semantic versioning][0],
-it is in version 0.  This means that the API may be changed at any time,
-without warning.
+At this time, this project is still rather young.  Per [semantic
+versioning][0], it is in version 0.  This means that the API may be changed at
+any time, without warning.
 
-Planned features include:
-
-* [x] Single base class for all objects, with custom data support
-* [x] Vertex-edge graphs
-* [x] "Universe" class to contain graphs as a single unit
-* [x] Class-based edges, can associate arbitrary data with edges
-* [x] Automatic edge update propagation to necessary endpoints
-* [x] Adjacency list / matrix build-a-graph
-* [ ] Build-an-adjlist / build-an-adjmat from graphs
-* [x] Breadth-first search and traversal
-* [x] Depth-first search and traversal
-* [ ] Topological sorting
-* [ ] Strongly connected component detection
-* [ ] Universe island detection
-* [ ] Shortest path detection
-* [x] Graph drawing generation via PlantUML
-* [x] Graph export to PyVis, ready for interactive display
-* [ ] Formal automata modelling (DFA, NFA, etc)
-* [ ] Operation flow graph modelling (nodes as operations instead of states)
-* [ ] "Functional graphs" -- attach executable code to nodes and run a graph as
-      a program
-* [ ] Object serialization, save-to- and load-from-file
-* [x] Singleton and semi-singleton utilities
+Planned features include can be viewed at the [features list milestone][2].
 
 These features, as with the API, may be changed or dropped at any time without
 warning.  I do have a day job, after all :)
@@ -50,6 +28,28 @@ warning.  I do have a day job, after all :)
 Sphinx documentation and full Pytest-driven unit testing coverage is expected
 to match the progress of the code.
 
+## Installation and quickstart
+
+Edgegraph can be installed via pip with `pip install edgegraph`.
+
+A few optional dependencies are available:
+
+* `pip install edgegraph[foreign]` for all the other libraries that edgegraph
+  can interact with
+* `pip install edgegraph[full]` to install all the above (at the time of
+  writing, only the one.  But, this "metapackage" exists for future-proofing)
+
+You can start right out building graphs:
+
+```python
+from edgegraph.builder import randgraph
+from edgegraph.traversal import breadthfirst
+
+uni = randgraph.randgraph(count=10)
+print(breadthfirst.bft(uni, uni.vertices[0]))
+```
+
 [0]: https://semver.org
 [1]: https://edgegraph.readthedocs.io/en/latest/index.html
+[2]: https://github.com/mishaturnbull/edgegraph/milestone/2
 

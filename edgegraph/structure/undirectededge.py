@@ -6,7 +6,7 @@ Holds the UnDirectedEdge class.
 """
 
 from __future__ import annotations
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING
 from edgegraph.structure import twoendedlink
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -36,11 +36,11 @@ class UnDirectedEdge(twoendedlink.TwoEndedLink):
     # pylint: disable-next=useless-parent-delegation
     def __init__(
         self,
-        v1: Optional[Vertex] = None,
-        v2: Optional[Vertex] = None,
+        v1: Vertex | None = None,
+        v2: Vertex | None = None,
         *,
-        uid: Optional[int] = None,
-        attributes: Optional[dict] = None,
+        uid: int | None = None,
+        attributes: dict | None = None,
     ):
         """
         Instantiate an undirected edge.

@@ -49,7 +49,6 @@ visiting v9 before v10) is determined by the structure of the universe.
 from __future__ import annotations
 
 import collections
-from typing import Optional
 from collections.abc import Callable
 
 from edgegraph.structure import Universe, Vertex
@@ -60,7 +59,7 @@ from edgegraph.traversal import helpers
 
 def bfs(
     uni: Universe, start: Vertex, attrib: str, val: object
-) -> Optional[Vertex]:
+) -> Vertex | None:
     """
     Perform a breadth-first search.
 
@@ -116,9 +115,9 @@ def ibft(
     start: Vertex,
     direction_sensitive: int = helpers.DIR_SENS_FORWARD,
     unknown_handling: int = helpers.LNK_UNKNOWN_ERROR,
-    ff_via: Optional[Callable] = None,
-    ff_result: Optional[Callable] = None,
-    ) -> Generator[Vertex]:
+    ff_via: Callable | None = None,
+    ff_result: Callable | None = None,
+) -> Generator[Vertex]:
     """
     Perform a breadth-first traversal.
 
