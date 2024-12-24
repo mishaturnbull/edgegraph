@@ -52,6 +52,7 @@ visiting v3 before v6) is determined by the structure of the universe.
 
 from __future__ import annotations
 from collections.abc import Callable
+from typing import Generator
 from edgegraph.structure import Universe, Vertex
 from edgegraph.traversal import helpers
 
@@ -93,7 +94,10 @@ def _dft_recur(
     :return: Order of traversal of the given subtree.
     """
     visited[v] = None
-    out = [v]
+
+    if (ff_result and ff_result(v)) or (not ff_result):
+        yield v
+
     for w in helpers.neighbors(
         v,
         direction_sensitive=direction_sensitive,
@@ -103,31 +107,25 @@ def _dft_recur(
         if (uni is not None) and (w not in uni.vertices):
             continue
         if w not in visited:
-            out.extend(
-                _dft_recur(
-                    uni,
-                    w,
-                    visited,
-                    direction_sensitive,
-                    unknown_handling,
-                    ff_via,
-                    ff_result,
-                )
+            yield from _dft_recur(
+                uni,
+                w,
+                visited,
+                direction_sensitive,
+                unknown_handling,
+                ff_via,
+                ff_result,
             )
 
-    if ff_result:
-        return list(filter(ff_result, out))
-    return out
 
-
-def dft_recursive(
+def idft_recursive(
     uni: Universe,
     start: Vertex,
     direction_sensitive: int = helpers.DIR_SENS_FORWARD,
     unknown_handling: int = helpers.LNK_UNKNOWN_ERROR,
     ff_via: Callable | None = None,
     ff_result: Callable | None = None,
-) -> list[Vertex]:
+) -> Generator[Vertex]:
     """
     Perform a recursive depth-first traversal of the given universe, starting
     at the given vertex.
@@ -147,7 +145,7 @@ def dft_recursive(
     _df_preflight_checks(uni, start)
 
     visited: dict[Vertex, None] = {}
-    return _dft_recur(
+    yield from _dft_recur(
         uni,
         start,
         visited,
@@ -155,6 +153,21 @@ def dft_recursive(
         unknown_handling,
         ff_via,
         ff_result,
+    )
+
+
+def dft_recursive(
+    uni: Universe,
+    start: Vertex,
+    direction_sensitive: int = helpers.DIR_SENS_FORWARD,
+    unknown_handling: int = helpers.LNK_UNKNOWN_ERROR,
+    ff_via: Callable | None = None,
+    ff_result: Callable | None = None,
+) -> list[Vertex]:
+    return list(
+        idft_recursive(
+            uni, start, direction_sensitive, unknown_handling, ff_via, ff_result
+        )
     )
 
 
@@ -232,7 +245,7 @@ def dfs_recursive(
     return _dfs_recur(uni, start, visited, attrib, val)
 
 
-def dft_iterative(
+def idft_iterative(
     uni: Universe,
     start: Vertex,
     direction_sensitive: int = helpers.DIR_SENS_FORWARD,
@@ -265,7 +278,11 @@ def dft_iterative(
         if v not in discovered:
             if (uni is not None) and (v not in uni.vertices):
                 continue
+
             discovered.append(v)
+            if (ff_result and ff_result(v)) or (not ff_result):
+                yield v
+
             for w in helpers.neighbors(
                 v,
                 direction_sensitive=direction_sensitive,
@@ -273,9 +290,21 @@ def dft_iterative(
                 filterfunc=ff_via,
             ):
                 stack.append(w)
-    if ff_result:
-        return list(filter(ff_result, discovered))
-    return discovered
+
+
+def dft_iterative(
+    uni: Universe,
+    start: Vertex,
+    direction_sensitive: int = helpers.DIR_SENS_FORWARD,
+    unknown_handling: int = helpers.LNK_UNKNOWN_ERROR,
+    ff_via: Callable | None = None,
+    ff_result: Callable | None = None,
+) -> list[Vertex]:
+    return list(
+        idft_iterative(
+            uni, start, direction_sensitive, unknown_handling, ff_via, ff_result
+        )
+    )
 
 
 def dfs_iterative(
