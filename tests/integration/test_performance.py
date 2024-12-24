@@ -84,7 +84,6 @@ def test_bulk_bft(complete_graph_1k_undirected, howmany):
     LOG.info(f"BFT performance: total {dur} s, avg {avg} s, {missing} ns miss")
 
 
-
 @pytest.mark.perf
 @pytest.mark.parametrize(
     "howmany,nverts", itertools.product([100, 500], [100, 500])
@@ -126,8 +125,10 @@ def test_bulk_bft_on_randgraph(howmany, nverts):
 
 
 @pytest.mark.perf
-@pytest.mark.parametrize("trav",
-        [depthfirst.dft_iterative, depthfirst.dft_recursive, breadthfirst.bft])
+@pytest.mark.parametrize(
+    "trav",
+    [depthfirst.dft_iterative, depthfirst.dft_recursive, breadthfirst.bft],
+)
 def test_trav_versus(graph_clrs09_22_6, trav):
     """
     Test traversal methods on the same graph and time results.
@@ -149,7 +150,7 @@ def test_trav_versus(graph_clrs09_22_6, trav):
         t_subend = time.monotonic_ns()
         times[i] = t_subend - t_substart
 
-    t_end = time.monotonic_ns() 
+    t_end = time.monotonic_ns()
 
     overall = t_end - t_start
     avg = sum(times) / len(times)
@@ -157,5 +158,6 @@ def test_trav_versus(graph_clrs09_22_6, trav):
     missing = overall - sum(times)
     dur = overall / 1_000_000_000
 
-    LOG.info(f"{fname} performance: total {dur} s, avg {avg} s, {missing} ns miss")
-
+    LOG.info(
+        f"{fname} performance: total {dur} s, avg {avg} s, {missing} ns miss"
+    )

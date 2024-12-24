@@ -50,6 +50,7 @@ from __future__ import annotations
 
 import collections
 from collections.abc import Callable
+from typing import Generator
 
 from edgegraph.structure import Universe, Vertex
 from edgegraph.traversal import helpers
@@ -219,14 +220,20 @@ def bft(
     start: Vertex,
     direction_sensitive: int = helpers.DIR_SENS_FORWARD,
     unknown_handling: int = helpers.LNK_UNKNOWN_ERROR,
-    ff_via: Optional[Callable] = None,
-    ff_result: Optional[Callable] = None,
-    ) -> list[Vertex]:
+    ff_via: Callable | None = None,
+    ff_result: Callable | None = None,
+) -> list[Vertex] | None:
 
-    out = list(ibft(uni, start, direction_sensitive=direction_sensitive,
-                    unknown_handling=unknown_handling, ff_via=ff_via,
-                    ff_result=ff_result))
-    if out == []:
+    out = list(
+        ibft(
+            uni,
+            start,
+            direction_sensitive=direction_sensitive,
+            unknown_handling=unknown_handling,
+            ff_via=ff_via,
+            ff_result=ff_result,
+        )
+    )
+    if not out:
         return None
     return out
-
