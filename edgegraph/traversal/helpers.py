@@ -140,6 +140,15 @@ def neighbors(
        The ``filterfunc`` parameter operates **in addition to** the
        ``direction_sensitive`` parameter!
 
+    .. seealso::
+
+       If you find yourself calling this function a lot on vertices that
+       haven't changed nieghbors, you may wish to read about
+       :ref:`dev/performance/vert-nb-cache`.  This technique allows this
+       function to work in tandem with the Vertex class to cache neighbor
+       lookups in a safe manner, drastically improving performance in some
+       scenarios.
+
     :param vert: The vertex to identify neighbors of.
     :param direction_sensitive: How to handle directional edges as they are
        encountered.  :py:const:`DIR_SENS_FORWARD` will indicates "normal"
@@ -303,7 +312,7 @@ def find_links(
     It respects edge directionality if/when necessary, and can handle arbitrary
     edge types given they are subclasses of either
     :py:class:`~edgegraph.structure.directededge.DirectedEdge` or
-    :py:class:~edgegraph.structure.undirectededge.UnDirectedEdge`.
+    :py:class:`~edgegraph.structure.undirectededge.UnDirectedEdge`.
 
     For example, with the given graph:
 

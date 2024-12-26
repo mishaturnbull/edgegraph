@@ -70,7 +70,7 @@ def bfs(
     [GoTa60]_, Algorithm 13.8.  Slight modifications have been made to break
     early when the desired value is found.
 
-    :param uni: The universe to search in.
+    :param uni: The universe to search in.  Set to ``None`` for no limitations.
     :param start: The vertex to start searching at.
     :param attrib: The attribute name to check for each vertex.
     :param val: The value to check for in the aforementioned attribute.
@@ -127,7 +127,7 @@ def bft(
     This algorithm is detailed in pseudocode in [CLRS09]_, figure 22.3, and
     [GoTa60]_, Algorithm 13.8.
 
-    :param uni: The universe to search in.
+    :param uni: The universe to search in.  Set to ``None`` for no limiations.
     :param start: The vertex to start searching at.
     :param direction_sensitive: Directly passed through to
        :py:func:`~edgegraph.traversal.helpers.neighbors`.  This may be one of:

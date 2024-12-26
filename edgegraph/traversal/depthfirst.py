@@ -86,7 +86,7 @@ def _dft_recur(
 
     :meta private:
 
-    :param uni: Universe to traverse.
+    :param uni: Universe to traverse, or ``None`` for no universe limits.
     :param v: Top of recursive tree.
     :param visited: List of vertices already visited.  Must be
        pass-by-reference!
@@ -138,7 +138,7 @@ def dft_recursive(
     a list of :py:class:`~edgegraph.structure.vertex.Vertex` objects, in the
     order of the traversal performed.
 
-    :param uni: The universe to traverse.
+    :param uni: The universe to traverse, or ``None`` for no universe limits.
     :param start: The vertex to begin traversal at.
     :return: The vertices visited during traversal.
     :raises ValueError: if the ``start`` vertex is not a member of the
@@ -170,7 +170,7 @@ def _dfs_recur(
 
     :meta private:
 
-    :param uni: Universe to search in.
+    :param uni: Universe to search in, or ``None`` for no universe limits.
     :param v: Top of the recursion subtree.
     :param visited: List of vertices already visited.  Must be
        pass-by-reference!
@@ -213,7 +213,7 @@ def dfs_recursive(
     A ``==`` check is used for comparison (not ``is``).  Traversal stops as
     soon as such an attribute is found.
 
-    :param uni: The universe to search in.
+    :param uni: The universe to search in, or ``None`` for no universe limits.
     :param start: The vertex to start searching at.
     :param attrib: Name of the attribute to check each vertex for.
     :param val: Value to look for in the specified attribute.
@@ -250,7 +250,7 @@ def dft_iterative(
     :py:class:`~edgegraph.structure.vertex.Vertex` objects, in the order of the
     traversal performed.
 
-    :param uni: The universe to traverse.
+    :param uni: The universe to traverse, or ``None`` for no universe limits.
     :param start: Vertex to start searching at.
     :return: The vertices visited during traversal.
     :raises ValueError: if the ``start`` vertex is not a member of the
@@ -296,7 +296,7 @@ def dfs_iterative(
     A ``==`` check is used for comparison (not ``is``).  Traversal stops as
     soon as such an attribute is found.
 
-    :param uni: The universe to search in.
+    :param uni: The universe to search in, or ``None`` for no universe limits.
     :param start: The vertex to start searching at.
     :param attrib: Name of the attribute to check each vertex for.
     :param val: Value to look for in the specified attribute.
