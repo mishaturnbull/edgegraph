@@ -8,7 +8,7 @@ __pycache__/
 
 # doc output
 docs/_build
-docs/developer/_autosummary
+docs/usage/_autosummary
 docs/_auto/**/*.plantuml
 
 # code coverage info
