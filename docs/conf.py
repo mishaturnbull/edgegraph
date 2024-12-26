@@ -131,12 +131,16 @@ if eg_version.VERSION_MAJOR == 0:
         f"{version}, and may change at any time!</b>"
     )
 
+master_branches = ["master"]
+if READTHEDOCS:
+    master_branches.append("latest")
+
 if branch != "master" and not git.is_clean() and not READTHEDOCS:
     warns.append(
         '<b style="color:yellow;">this documentation was built on'
         f" branch {branch}, and in an unclean git state!</b>"
     )
-elif (branch != "master") or (READTHEDOCS and branch != "latest"):
+elif branch not in master_branches:
     warns.append(
         '<b style="color:yellow;">this documentation was built on'
         f" branch {branch}!</b>"
