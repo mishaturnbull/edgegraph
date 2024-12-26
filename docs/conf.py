@@ -136,7 +136,7 @@ if branch != "master" and not git.is_clean() and not READTHEDOCS:
         '<b style="color:yellow;">this documentation was built on'
         f" branch {branch}, and in an unclean git state!</b>"
     )
-elif branch != "master":
+elif (branch != "master") or (READTHEDOCS and branch != "latest"):
     warns.append(
         '<b style="color:yellow;">this documentation was built on'
         f" branch {branch}!</b>"
