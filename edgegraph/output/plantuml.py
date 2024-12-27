@@ -49,7 +49,7 @@ handled in three possible ways:
    :data:`PLANTUML_INVOKE_ARGS` list.  This affects all invocations to PlantUML
    that this module will make.
 2. If you need to customize environs available to PlantUML, use the
-   :data`PLANTUML_INVOKE_ENV` dict.  This affects all invocations to PlantUML
+   :data:`PLANTUML_INVOKE_ENV` dict.  This affects all invocations to PlantUML
    that this module will make.
 3. If you need to change the location / execution of PlantUML, see the
    ``plantuml`` argument to :func:`is_plantuml_installed` and

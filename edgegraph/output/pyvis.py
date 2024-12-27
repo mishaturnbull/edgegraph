@@ -99,8 +99,8 @@ def make_pyvis_net(
        thereof), and must return a :py:class:`str`.  If not provided, edges
        will not be labelled.
     :param network_kwargs: An optional dictionary of keyword arguments to pass
-      to :py:class:`network.Network`.  If not supplied, the default will select
-      ``"cdn_resources": "local"`` and nothing else.
+      to :py:class:`pyvis.network.Network`.  If not supplied, the default will
+      select ``"cdn_resources": "local"`` and nothing else.
     :return: A :py:class:`pyvis.network.Network` instance containing the data
        found in the given universe.
     """
