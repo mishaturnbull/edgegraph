@@ -30,6 +30,25 @@ You can run these checks locally on your machine with the following invocations:
 * :samp:`black edgegraph tests docs` to *apply* Black formatting changes.
 * :samp:`pylint edgegraph tests` to check Pylint results
 
+Type checking
+-------------
+
+Edgegraph is a fully type-hinted library, using `MyPy`_ as its type checker.
+MyPy is run automatically on all pull requests; but does not *fail* a build;
+there remain about a dozen known issues.  However, pull requests that add
+*more* failures will not be accepted.
+
+You can run type checking locally on your machine with the following
+invocation(s):
+
+* :samp:`mypy edgegraph` to check the entire library.  This is what is run on
+  the GitHub actions pipeline.
+* :samp:`mypy edgegraph/traversal/helpers.py` to check a single file
+* :samp:`mypy edgegraph/traversal/helpers.py --follow-imports=silent` to check
+  a single file, but not reporting errors in modules it imports (recommended
+  for rapid-fire fixups of a single module, it keeps the error report focused
+  on the module you're working on)
+
 .. _dev/vcs:
 
 Version Control
@@ -144,4 +163,5 @@ request and upload to PyPI.
 .. _Black: https://black.readthedocs.io/en/stable/
 .. _pylint: https://www.pylint.org/
 .. _git flow: https://nvie.com/posts/a-successful-git-branching-model/
+.. _MyPy: https://mypy-lang.org/
 
