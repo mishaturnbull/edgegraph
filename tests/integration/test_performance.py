@@ -127,7 +127,14 @@ def test_bulk_bft_on_randgraph(howmany, nverts):
 @pytest.mark.perf
 @pytest.mark.parametrize(
     "trav",
-    [depthfirst.dft_iterative, depthfirst.dft_recursive, breadthfirst.bft],
+    [
+        depthfirst.dft_iterative,
+        depthfirst.dft_recursive,
+        breadthfirst.bft,
+        depthfirst.idft_iterative,
+        depthfirst.idft_iterative,
+        breadthfirst.ibft,
+    ],
 )
 def test_trav_versus(graph_clrs09_22_6, trav):
     """
