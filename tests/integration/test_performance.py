@@ -152,7 +152,9 @@ def test_trav_versus(graph_clrs09_22_6, trav):
     for i in range(howmany):
         t_substart = time.monotonic_ns()
 
-        trav(None, verts[0])
+        out = trav(None, verts[0])
+        if not isinstance(out, list):
+            list(out)
 
         t_subend = time.monotonic_ns()
         times[i] = t_subend - t_substart
