@@ -49,8 +49,7 @@ visiting v9 before v10) is determined by the structure of the universe.
 from __future__ import annotations
 
 import collections
-from collections.abc import Callable
-from typing import Generator
+from collections.abc import Callable, Iterator
 
 from edgegraph.structure import Universe, Vertex
 from edgegraph.traversal import helpers
@@ -118,9 +117,9 @@ def ibft(
     unknown_handling: int = helpers.LNK_UNKNOWN_ERROR,
     ff_via: Callable | None = None,
     ff_result: Callable | None = None,
-) -> Generator[Vertex]:
+) -> Iterator[Vertex]:
     """
-    Perform a breadth-first traversal.
+    Perform a breadth-first traversal (generator).
 
     This function performs a breadth-first traversal within ``uni``, starting
     at ``start``, and returns the vertices visited in a list.
@@ -179,7 +178,8 @@ def ibft(
           :param v: Vertex to be considered
           :return: Whether or not ``v`` should be part of the output.
 
-    :return: The vertices visited during traversal.
+    :return: A generator object that yields vertices in the order of a
+       breadth-first traversal in accordance with the set parameters.
     """
     if (uni is not None) and (len(uni.vertices) == 0):
         # empty!
@@ -223,6 +223,18 @@ def bft(
     ff_via: Callable | None = None,
     ff_result: Callable | None = None,
 ) -> list[Vertex] | None:
+    """
+    Perform a breadth-first traversal (**non**-generator).
+
+    .. seealso::
+
+       Please refer to the documentation of :py:func:`ibft`!  This function
+       simply wraps that one, only forcing full expansion to a list before
+       returning.  All parameters are exactly the same and passed through
+       without alteration.
+
+    :return: A list of vertices in order of a breadth-first traversal.
+    """
 
     out = list(
         ibft(
