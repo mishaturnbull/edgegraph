@@ -51,7 +51,7 @@ visiting v3 before v6) is determined by the structure of the universe.
 """
 
 from __future__ import annotations
-from collections.abc import Callable
+from collections.abc import Callable, Iterator
 from edgegraph.structure import Universe, Vertex
 from edgegraph.traversal import helpers
 
@@ -80,7 +80,7 @@ def _dft_recur(
     unknown_handling: int,
     ff_via: Callable | None = None,
     ff_result: Callable | None = None,
-) -> list[Vertex]:
+) -> Iterator[Vertex]:
     """
     Recursion helper for :py:func:`dft_recursive`.  For internal use only!
 
@@ -93,7 +93,10 @@ def _dft_recur(
     :return: Order of traversal of the given subtree.
     """
     visited[v] = None
-    out = [v]
+
+    if (ff_result and ff_result(v)) or (not ff_result):
+        yield v
+
     for w in helpers.neighbors(
         v,
         direction_sensitive=direction_sensitive,
@@ -103,21 +106,54 @@ def _dft_recur(
         if (uni is not None) and (w not in uni.vertices):
             continue
         if w not in visited:
-            out.extend(
-                _dft_recur(
-                    uni,
-                    w,
-                    visited,
-                    direction_sensitive,
-                    unknown_handling,
-                    ff_via,
-                    ff_result,
-                )
+            yield from _dft_recur(
+                uni,
+                w,
+                visited,
+                direction_sensitive,
+                unknown_handling,
+                ff_via,
+                ff_result,
             )
 
-    if ff_result:
-        return list(filter(ff_result, out))
-    return out
+
+def idft_recursive(
+    uni: Universe,
+    start: Vertex,
+    direction_sensitive: int = helpers.DIR_SENS_FORWARD,
+    unknown_handling: int = helpers.LNK_UNKNOWN_ERROR,
+    ff_via: Callable | None = None,
+    ff_result: Callable | None = None,
+) -> Iterator[Vertex]:
+    """
+    Perform a recursive depth-first traversal of the given universe, starting
+    at the given vertex (generator).
+
+    The algorithm used is detailed in [CLRS09]_, figure 22.4, and [GoTa60]_,
+    Algorithm 13.6.  Slight modifications have been made due to the nature of
+    EdgeGraph's data model.  This is a *recursive* implementation that returns
+    a list of :py:class:`~edgegraph.structure.vertex.Vertex` objects, in the
+    order of the traversal performed.
+
+    :param uni: The universe to traverse, or ``None`` for no universe limits.
+    :param start: The vertex to begin traversal at.
+    :return: A generator object that yields vertices in the order of a
+       recursive depth-first traversal in accordance with the set parameters.
+    :raises ValueError: if the ``start`` vertex is not a member of the
+       specified universe, or if the universe is empty.
+    """
+    _df_preflight_checks(uni, start)
+
+    visited: dict[Vertex, None] = {}
+    yield from _dft_recur(
+        uni,
+        start,
+        visited,
+        direction_sensitive,
+        unknown_handling,
+        ff_via,
+        ff_result,
+    )
 
 
 def dft_recursive(
@@ -130,31 +166,24 @@ def dft_recursive(
 ) -> list[Vertex]:
     """
     Perform a recursive depth-first traversal of the given universe, starting
-    at the given vertex.
+    at the given vertex (**non**-generator).
 
-    The algorithm used is detailed in [CLRS09]_, figure 22.4, and [GoTa60]_,
-    Algorithm 13.6.  Slight modifications have been made due to the nature of
-    EdgeGraph's data model.  This is a *recursive* implementation that returns
-    a list of :py:class:`~edgegraph.structure.vertex.Vertex` objects, in the
-    order of the traversal performed.
+    .. seealso::
 
-    :param uni: The universe to traverse, or ``None`` for no universe limits.
-    :param start: The vertex to begin traversal at.
-    :return: The vertices visited during traversal.
+       Please refer to the documentation of :py:func:`idft_recursive`!  This
+       function simply wraps that one, only forcing full expansion to a list
+       before returning  All parameters are exactly the same and passed through
+       without alteration.
+
+    :return: A list of vertices in order of a recursive depth-first traversal.
     :raises ValueError: if the ``start`` vertex is not a member of the
        specified universe, or if the universe is empty.
     """
-    _df_preflight_checks(uni, start)
 
-    visited: dict[Vertex, None] = {}
-    return _dft_recur(
-        uni,
-        start,
-        visited,
-        direction_sensitive,
-        unknown_handling,
-        ff_via,
-        ff_result,
+    return list(
+        idft_recursive(
+            uni, start, direction_sensitive, unknown_handling, ff_via, ff_result
+        )
     )
 
 
@@ -232,17 +261,17 @@ def dfs_recursive(
     return _dfs_recur(uni, start, visited, attrib, val)
 
 
-def dft_iterative(
+def idft_iterative(
     uni: Universe,
     start: Vertex,
     direction_sensitive: int = helpers.DIR_SENS_FORWARD,
     unknown_handling: int = helpers.LNK_UNKNOWN_ERROR,
     ff_via: Callable | None = None,
     ff_result: Callable | None = None,
-) -> list[Vertex]:
+) -> Iterator[Vertex]:
     """
     Perform an iterative depth-first traversal of the given universe, starting
-    at the given vertex.
+    at the given vertex (generator).
 
     This algorithm used is similar to that in [KlTa05]_, algorithm 3.12.
     Slight modifications have been made to preclude re-visited vertices in the
@@ -252,7 +281,8 @@ def dft_iterative(
 
     :param uni: The universe to traverse, or ``None`` for no universe limits.
     :param start: Vertex to start searching at.
-    :return: The vertices visited during traversal.
+    :return: A generator object yielding vertices in the order of an iterative
+       depth-first traversal, in accordance with the set parameters.
     :raises ValueError: if the ``start`` vertex is not a member of the
        specified universe, or if the universe is empty.
     """
@@ -265,7 +295,11 @@ def dft_iterative(
         if v not in discovered:
             if (uni is not None) and (v not in uni.vertices):
                 continue
+
             discovered.append(v)
+            if (ff_result and ff_result(v)) or (not ff_result):
+                yield v
+
             for w in helpers.neighbors(
                 v,
                 direction_sensitive=direction_sensitive,
@@ -273,9 +307,37 @@ def dft_iterative(
                 filterfunc=ff_via,
             ):
                 stack.append(w)
-    if ff_result:
-        return list(filter(ff_result, discovered))
-    return discovered
+
+
+def dft_iterative(
+    uni: Universe,
+    start: Vertex,
+    direction_sensitive: int = helpers.DIR_SENS_FORWARD,
+    unknown_handling: int = helpers.LNK_UNKNOWN_ERROR,
+    ff_via: Callable | None = None,
+    ff_result: Callable | None = None,
+) -> list[Vertex]:
+    """
+    Perform an iterative depth-first traversal of the given universe, starting at the given vertex (**non**-generator).
+
+    .. seealso::
+
+       Please refer to the documentation of :py:func:`idft_iterative`!  This
+       function simply wraps that one, only forcing full expansion to a list
+       before returning.  All parameters are exactly the same and passed
+       through without alteration.
+
+    :return: A list of vertices in the order of an iterative depth-first
+       traversal.
+    :raises ValueError: if the ``start`` vertex is not a member of the
+       specified universe, or if the universe is empty.
+    """
+
+    return list(
+        idft_iterative(
+            uni, start, direction_sensitive, unknown_handling, ff_via, ff_result
+        )
+    )
 
 
 def dfs_iterative(
