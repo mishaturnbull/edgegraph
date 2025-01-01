@@ -21,12 +21,18 @@ CALLS = [
 
 
 def call_one(call):
+    """
+    Print and make a syscall.
+    """
     call = call.format(options=" ".join(DEFAULT_OPTS))
     print(call)
     os.system(call)
 
 
 def main():
+    """
+    Call all necessary pyrev options to generate diagrams.
+    """
     orig_path = os.getcwd()
     os.chdir(PROJ_PATH)
     for call in CALLS:

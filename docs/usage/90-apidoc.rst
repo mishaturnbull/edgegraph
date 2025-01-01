@@ -7,5 +7,4 @@ API documentation
    :recursive:
 
    edgegraph
-   tests
 

@@ -14,8 +14,7 @@ impact the tests.
 Tests are written in the ``tests/`` directory of the project, and are *not*
 bundled with the module to end users.  Nonetheless, standards for documentation
 and code quality are enforced on all unit tests.  The entire directory is
-scanned with PyLint on all GitHub pull requests, and you can browse the tests
-as if they were a module under the API section :py:mod:`here <tests>`.
+scanned with PyLint on all GitHub pull requests.
 
 Running tests
 -------------
@@ -76,6 +75,18 @@ themselves with the :py:mod:`tests.conftest` module.  This module contains
 PyTest fixtures available to all test modules (automatically, no import
 needed!).  Commonly-used graph constructors can be found here.  See the module
 documentation for more info.
+
+Test List
+---------
+
+You can find an API-like summary & description of all unit tests here:
+
+.. autosummary::
+   :toctree: _autosummary_tests
+   :template: custom-mod-template.rst
+   :recursive:
+
+   tests
 
 .. _PyTest: https://docs.pytest.org/en/latest/contents.html
 .. _Coverage.py: https://coverage.readthedocs.io/en/latest/

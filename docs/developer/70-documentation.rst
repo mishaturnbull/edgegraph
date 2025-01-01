@@ -27,6 +27,14 @@ Then, simply run :samp:`make clean html` to build docs locally.  Output will be
 placed in :file:`docs/_build/`.  You may also inspect the output of :samp:`make
 help` to show additional formats that can be built.
 
+Advanced documentation control
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Some more-than-trivial tasks are performed while building the documentation.
+Some examples are checking the Git repo status (to add a banner for docs built
+on non-master branches), version number checks, and cleaning old build data.
+As usual for Sphinx, the configuration is maintained in :file:`docs/conf.py`.
+
 Coverage assessment
 ^^^^^^^^^^^^^^^^^^^
 
