@@ -75,6 +75,7 @@ def _df_preflight_checks(uni: Universe, start: Vertex):
 def _dft_recur(
     uni: Universe,
     v: Vertex,
+    *,
     visited: dict[Vertex, None],
     direction_sensitive: int,
     unknown_handling: int,
@@ -109,17 +110,18 @@ def _dft_recur(
             yield from _dft_recur(
                 uni,
                 w,
-                visited,
-                direction_sensitive,
-                unknown_handling,
-                ff_via,
-                ff_result,
+                visited=visited,
+                direction_sensitive=direction_sensitive,
+                unknown_handling=unknown_handling,
+                ff_via=ff_via,
+                ff_result=ff_result,
             )
 
 
 def idft_recursive(
     uni: Universe,
     start: Vertex,
+    *,
     direction_sensitive: int = helpers.DIR_SENS_FORWARD,
     unknown_handling: int = helpers.LNK_UNKNOWN_ERROR,
     ff_via: Callable | None = None,
@@ -148,17 +150,18 @@ def idft_recursive(
     yield from _dft_recur(
         uni,
         start,
-        visited,
-        direction_sensitive,
-        unknown_handling,
-        ff_via,
-        ff_result,
+        visited=visited,
+        direction_sensitive=direction_sensitive,
+        unknown_handling=unknown_handling,
+        ff_via=ff_via,
+        ff_result=ff_result,
     )
 
 
 def dft_recursive(
     uni: Universe,
     start: Vertex,
+    *,
     direction_sensitive: int = helpers.DIR_SENS_FORWARD,
     unknown_handling: int = helpers.LNK_UNKNOWN_ERROR,
     ff_via: Callable | None = None,
@@ -182,7 +185,14 @@ def dft_recursive(
 
     return list(
         idft_recursive(
-            uni, start, direction_sensitive, unknown_handling, ff_via, ff_result
+            # multiple functions have the same arguments... not a duplicate!
+            # pylint: disable=duplicate-code
+            uni,
+            start,
+            direction_sensitive=direction_sensitive,
+            unknown_handling=unknown_handling,
+            ff_via=ff_via,
+            ff_result=ff_result,
         )
     )
 
@@ -264,6 +274,7 @@ def dfs_recursive(
 def idft_iterative(
     uni: Universe,
     start: Vertex,
+    *,
     direction_sensitive: int = helpers.DIR_SENS_FORWARD,
     unknown_handling: int = helpers.LNK_UNKNOWN_ERROR,
     ff_via: Callable | None = None,
@@ -312,6 +323,7 @@ def idft_iterative(
 def dft_iterative(
     uni: Universe,
     start: Vertex,
+    *,
     direction_sensitive: int = helpers.DIR_SENS_FORWARD,
     unknown_handling: int = helpers.LNK_UNKNOWN_ERROR,
     ff_via: Callable | None = None,
@@ -335,7 +347,12 @@ def dft_iterative(
 
     return list(
         idft_iterative(
-            uni, start, direction_sensitive, unknown_handling, ff_via, ff_result
+            uni,
+            start,
+            direction_sensitive=direction_sensitive,
+            unknown_handling=unknown_handling,
+            ff_via=ff_via,
+            ff_result=ff_result,
         )
     )
 

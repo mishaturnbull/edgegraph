@@ -54,8 +54,6 @@ from collections.abc import Callable, Iterator
 from edgegraph.structure import Universe, Vertex
 from edgegraph.traversal import helpers
 
-# TODO: add (to both these fn's) passthru kwargs to neighbors() options
-
 
 def bfs(
     uni: Universe, start: Vertex, attrib: str, val: object
@@ -113,6 +111,7 @@ def bfs(
 def ibft(
     uni: Universe,
     start: Vertex,
+    *,
     direction_sensitive: int = helpers.DIR_SENS_FORWARD,
     unknown_handling: int = helpers.LNK_UNKNOWN_ERROR,
     ff_via: Callable | None = None,
@@ -218,6 +217,7 @@ def ibft(
 def bft(
     uni: Universe,
     start: Vertex,
+    *,
     direction_sensitive: int = helpers.DIR_SENS_FORWARD,
     unknown_handling: int = helpers.LNK_UNKNOWN_ERROR,
     ff_via: Callable | None = None,
@@ -238,6 +238,8 @@ def bft(
 
     out = list(
         ibft(
+            # multiple functions have the same arguments... not a duplicate!
+            # pylint: disable=duplicate-code
             uni,
             start,
             direction_sensitive=direction_sensitive,

@@ -172,9 +172,15 @@ def neighbors(
        representing neighbors of the specified vertex.
     """
 
+    # pylint complains about this operation, with fairly good reason -- we're
+    # accessing a private member of a client class.  however, since this is
+    # still edgegraph-internal code, this is ok; it would be a problem were the
+    # consumer of edgegraph doing this, though.
+    # pylint: disable-next=protected-access
     cached = vert._qa_neighbors_get(
         direction_sensitive, unknown_handling, filterfunc
     )
+    # pylint: disable-next=protected-access
     if cached is not Vertex._QA_NB_INVALID:
         return cached
 
@@ -290,6 +296,8 @@ def neighbors(
                 f"Unknown option for direction_sensitive = {direction_sensitive}"
             )
 
+    # see note near top of function about justification for this ignore
+    # pylint: disable-next=protected-access
     vert._qa_neighbors_insert(
         nbs, direction_sensitive, unknown_handling, filterfunc
     )

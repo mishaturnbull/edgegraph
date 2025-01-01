@@ -39,7 +39,7 @@ Generally, the usage pattern for this module is intended to be as:
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 from collections.abc import Callable
 
 try:
