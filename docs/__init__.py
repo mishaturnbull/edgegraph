@@ -4,4 +4,3 @@
 """
 Documentation control and content.
 """
-
