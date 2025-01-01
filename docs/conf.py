@@ -5,6 +5,7 @@ For the full list of built-in configuration values, see the documentation:
 https://www.sphinx-doc.org/en/master/usage/configuration.html
 """
 
+import datetime
 import os
 import sys
 import tomlkit
@@ -28,7 +29,8 @@ pyrev_helper.main()
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "edgegraph"
-copyright = "2024, Michael Turnbull"
+year = datetime.datetime.strftime(datetime.datetime.now(), "%Y")
+copyright = f"{year}, Michael Turnbull"
 author = "Misha Turnbull"
 version = f"v{eg_version.VERSION_MAJOR}.{eg_version.VERSION_MINOR}"
 release = eg_version.__version__
