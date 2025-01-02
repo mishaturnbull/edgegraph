@@ -27,9 +27,10 @@ LOG = logging.getLogger(__name__)
 def enforce_cache_testing(request):
     enable = request.param == "cache"
     Vertex.NEIGHBOR_CACHING = enable
-    if not enable:
-        # clear stats
-        Vertex.CACHE_STATS = {}
+
+    # reset cache stats and sentinel
+    Vertex._QA_NB_INVALID = object()
+    Vertex._CACHE_STATS = {}
 
     yield
 
