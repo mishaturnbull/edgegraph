@@ -144,7 +144,7 @@ def test_bft_empty():
     Ensure no traversal on an empty universe.
     """
     trav = breadthfirst.bft(Universe(), None)
-    assert trav is None, "BFT did not return None on empty universe!"
+    assert trav == [], "BFT did not return [] on empty universe!"
 
 
 def test_bft_nonuniverse_vert(graph_clrs09_22_6):
