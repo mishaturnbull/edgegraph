@@ -11,10 +11,14 @@ import sys
 import logging
 import pytest
 
-from edgegraph.structure import singleton, vertex
+from edgegraph.structure import singleton, vertex, universe
 from edgegraph.traversal import breadthfirst
 from edgegraph.builder import randgraph
 from edgegraph.output import nrpickler
+
+# https://stackoverflow.com/a/65318623
+import __main__
+__main__.universe = universe
 
 # similarly to the singleton tests, this module tests *a lot* of custom
 # classes.  the classes defined here are never exposed to users of edgegraph,
@@ -70,6 +74,9 @@ def test_p_up_large(straightline_graph_1k_directed, protocol):
     # ensure we'll hit a recursion limit if there exists any such issues
     sys.setrecursionlimit(500)
 
+    test_rcr_depth = sys.getrecursionlimit()
+    LOG.debug(f"test_rcr_depth = {test_rcr_depth}")
+
     uni, verts = straightline_graph_1k_directed
 
     # replace the normal `set()`-typed uni._vertices with the list from the
@@ -80,6 +87,10 @@ def test_p_up_large(straightline_graph_1k_directed, protocol):
     # cause intermittent unexpected passes (*not* running out of recursion
     # depth)
     uni._vertices = verts
+
+    # troubleshooting!!!
+    LOG.debug(f"{id(universe.Universe)=}")
+    LOG.debug(f"{id(__main__.universe.Universe)=}")
 
     try:
         serial = nrpickler.dumps(uni, protocol=protocol)
