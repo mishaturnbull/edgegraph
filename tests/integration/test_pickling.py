@@ -16,10 +16,6 @@ from edgegraph.traversal import breadthfirst
 from edgegraph.builder import randgraph
 from edgegraph.output import nrpickler
 
-# https://stackoverflow.com/a/65318623
-import __main__
-__main__.universe = universe
-
 # similarly to the singleton tests, this module tests *a lot* of custom
 # classes.  the classes defined here are never exposed to users of edgegraph,
 # nor any of the edgegraph module, therefore don't need:
@@ -35,7 +31,6 @@ __main__.universe = universe
 # pylint: disable=multiple-statements
 
 LOG = logging.getLogger(__name__)
-
 
 def test_p_up_smoketest():
     """
@@ -60,7 +55,6 @@ def test_p_up_smoketest():
     assert trav_pr == trav_po, "traversal order wrong after P/UP"
 
 
-# NOTE: this test has been observed to fail with --randomly-seed=3991981975
 @pytest.mark.parametrize("protocol", list(range(pickle.HIGHEST_PROTOCOL)))
 def test_p_up_large(straightline_graph_1k_directed, protocol):
     """
@@ -88,10 +82,6 @@ def test_p_up_large(straightline_graph_1k_directed, protocol):
     # depth)
     uni._vertices = verts
 
-    # troubleshooting!!!
-    LOG.debug(f"{id(universe.Universe)=}")
-    LOG.debug(f"{id(__main__.universe.Universe)=}")
-
     try:
         serial = nrpickler.dumps(uni, protocol=protocol)
         postpickle = pickle.loads(serial)
@@ -99,5 +89,7 @@ def test_p_up_large(straightline_graph_1k_directed, protocol):
         assert len(uni.vertices) == len(postpickle.vertices)
 
     finally:
+        # ...but also restore the earlier recursion depth for tests which come
+        # after us (even in the event of a failure)
         sys.setrecursionlimit(orig_rcr_depth)
     
