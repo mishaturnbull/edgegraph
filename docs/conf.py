@@ -29,11 +29,14 @@ pyrev_helper.main()
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "edgegraph"
-year = datetime.datetime.strftime(datetime.datetime.now(), "%Y")
-copyright = f"{year}, Michael Turnbull"
 author = "Misha Turnbull"
 version = f"v{eg_version.VERSION_MAJOR}.{eg_version.VERSION_MINOR}"
 release = eg_version.__version__
+
+# project started in 2023 Nov and copyright continues through author's life
+year = datetime.datetime.strftime(datetime.datetime.now(), "%Y")
+copyright = f"2023-{year}, Michael Turnbull"
+
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
