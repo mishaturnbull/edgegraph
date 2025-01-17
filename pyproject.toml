@@ -6,7 +6,9 @@ build-backend = "setuptools.build_meta"
 dynamic = ["version"]
 name = "edgegraph"
 requires-python = ">= 3.7"
-dependencies = []
+dependencies = [
+    "dill"
+]
 readme = "README.md"
 license = {file = "LICENSE.txt"}
 description = "Object oriented edge-vertex graph library."

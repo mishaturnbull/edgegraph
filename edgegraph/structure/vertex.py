@@ -254,7 +254,6 @@ class Vertex(base.BaseObject):
 
     # TODO: remove this, debugging only!!!
     def __repr__(self):
-        if hasattr(self, 'i'):
+        if hasattr(self, "i"):
             return f"v{self.i}"
         return super().__repr__()
-

@@ -59,4 +59,3 @@ def test_pyvis_not_installed(monkeypatch):
         # us, even in the event of a failure
         for modname, module in restore_mods.items():
             sys.modules[modname] = module
-

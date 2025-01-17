@@ -244,6 +244,7 @@ def complete_graph_1k_undirected():
 
     return uni, verts
 
+
 @pytest.fixture
 def straightline_graph_1k_directed():
     """
@@ -253,9 +254,9 @@ def straightline_graph_1k_directed():
     """
 
     uni = Universe()
-    verts = [Vertex(attributes={'i': i}, universes=[uni]) for i in range(1000)]
+    verts = [Vertex(attributes={"i": i}, universes=[uni]) for i in range(1000)]
 
     for i, v in enumerate(verts[:-1]):
-        explicit.link_directed(v, verts[i+1])
+        explicit.link_directed(v, verts[i + 1])
 
     return uni, verts
