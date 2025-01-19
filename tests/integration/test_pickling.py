@@ -120,6 +120,7 @@ def test_p_singleton(protocol):
     assert postpickle[0] is not st1, "Post-pickle singleton *IS* pre-pickle!"
     assert postpickle[1] is not st2, "Post-pickle singleton *IS* pre-pickle!"
     assert postpickle[0] is postpickle[1], "Post-pickle singletons differ!"
+    assert isinstance(postpickle[0], SingleTex), "Class defined in module level didn't unpickle to the same"
 
 
 class MultiTex(vertex.Vertex, metaclass=singleton.semi_singleton_metaclass()):
@@ -157,6 +158,7 @@ def test_p_semisingleton(protocol):
     ), "Post-pickle semisingleton *IS NOT* expected!"
     assert postpickle[0] is not mt1a, "Post-pickle semisingleton IS pre-pickle!"
     assert postpickle[1] is not mt1b, "Post pickle semisingleton IS pre-pickle!"
+    assert isinstance(postpickle[0], MultiTex), "Class defined in module level didn't unpickle to the same"
 
 
 @pytest.mark.parametrize("protocol", list(range(pickle.HIGHEST_PROTOCOL)))
@@ -190,12 +192,6 @@ def test_p_runtime_attributes(protocol):
     assert p2.words == "words", "Post-pickle v2.words is wrong"
 
 
-@pytest.mark.xfail(
-    reason="dill deserializes local classes into new defs",
-    run=True,
-    raises=AssertionError,
-    strict=False,
-)
 @pytest.mark.parametrize("protocol", list(range(pickle.HIGHEST_PROTOCOL)))
 def test_p_subclasses(protocol):
     """
@@ -244,6 +240,23 @@ def test_p_subclasses(protocol):
     assert (
         type(v4).__qualname__ == type(p4).__qualname__
     ), "post-pickle vt4 wrong qn"
+
+    with pytest.raises(AssertionError):
+        assert isinstance(
+            p1, VertType1
+        ), "p1 not expected to be real instance of VT1"
+    with pytest.raises(AssertionError):
+        assert isinstance(
+            p2, VertType2
+        ), "p2 not expected to be real instance of VT2"
+    with pytest.raises(AssertionError):
+        assert isinstance(
+            p3, VertType3
+        ), "p3 not expected to be real instance of VT3"
+    with pytest.raises(AssertionError):
+        assert isinstance(
+            p4, VertType4
+        ), "p4 not expected to be real instance of VT4"
 
 
 @pytest.mark.parametrize("protocol", list(range(pickle.HIGHEST_PROTOCOL)))
