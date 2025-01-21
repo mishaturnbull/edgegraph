@@ -209,7 +209,7 @@ class Universe(vertex.Vertex):
         self._laws.applies_to = self
 
         #: Internal set of vertices
-        self._vertices: set[Vertex] = set()
+        self._vertices: list[Vertex] = []
         if vertices is not None:
             for v in vertices:
                 self.add_vertex(v)
@@ -219,20 +219,24 @@ class Universe(vertex.Vertex):
         """
         Return a (frozen) set of the vertices in this universe.
 
-        :rtype: frozenset[Vertex]
+        :rtype: list[Vertex]
         """
-        return frozenset(self._vertices)
+        return list(self._vertices)
 
     def add_vertex(self, vert: vertex.Vertex):
         """
         Adds a new vertex to this universe.
 
         The vertex in question will automatically have its universes updated to
-        include this one, if needed.
+        include this one, if needed.  If the vertex is already present, no
+        action is taken.
 
         :param vert: the vertex to be added
         """
-        self._vertices.add(vert)
+        if vert in self._vertices:
+            return
+
+        self._vertices.append(vert)
         if self not in vert.universes:
             vert.add_to_universe(self)
 
