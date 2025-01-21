@@ -28,7 +28,24 @@ recursive implementation, so this is necessary for use with ``dill`` as well.
    shamelessly, only making minor changes for Python 3.x, dill compatibility,
    and readability / formatting.  Thank you, Daniel!
 
+Usage of this pickler should be similar to the built-in one::
 
+   >>> from edgegraph.builder import randgraph
+   >>> from edgegraph.output import nrpickler
+   >>> import pickle
+   >>> graph = randgraph.randgraph(count=100)
+   >>> serial = nrpickler.dumps(graph)
+   >>> serial
+   b'\\x80\\x04\\x8c\\x1cedgegraph.structure.universe\\x94\\x8c\\x08...'
+   >>> unpacked = pickle.loads(serial)  # use the regular pickle module to unpack
+   >>> unpacked is graph
+   False
+   >>> len(unpacked.vertices) == len(graph.vertices)
+   True
+
+At this point, the ``unpacked`` object is a Universe identical in every way to
+``graph``, except it is a different instance.  All of its vertices, links, and
+any attributes of have all been unpacked.
 """
 
 import io
@@ -68,6 +85,11 @@ class NonrecursivePickler(dill.Pickler):
     method with a non-recursive implementation, making it safe to use with
     arbitrary edgegraph objects regardless of the size of graphs they may be a
     part of.
+
+    This class it not *really* intended for direct usage; see also
+    :py:func:`dumps` for a better interface.  For unpickling, use the regular
+    built-in :py:mod:`pickle` module (nonrecursive specialties are only needed
+    on the pickling side, not the unpickling side).
     """
 
     def __init__(self, file, **kwargs):

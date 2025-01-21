@@ -40,7 +40,6 @@ after some surveying (Googling) I decided that metaclasses approach gave:
 
 from __future__ import annotations
 from collections.abc import Generator, Callable, Hashable
-import copyreg
 
 import json
 

@@ -120,7 +120,9 @@ def test_p_singleton(protocol):
     assert postpickle[0] is not st1, "Post-pickle singleton *IS* pre-pickle!"
     assert postpickle[1] is not st2, "Post-pickle singleton *IS* pre-pickle!"
     assert postpickle[0] is postpickle[1], "Post-pickle singletons differ!"
-    assert isinstance(postpickle[0], SingleTex), "Class defined in module level didn't unpickle to the same"
+    assert isinstance(
+        postpickle[0], SingleTex
+    ), "Class defined in module level didn't unpickle to the same"
 
 
 class MultiTex(vertex.Vertex, metaclass=singleton.semi_singleton_metaclass()):
@@ -158,7 +160,9 @@ def test_p_semisingleton(protocol):
     ), "Post-pickle semisingleton *IS NOT* expected!"
     assert postpickle[0] is not mt1a, "Post-pickle semisingleton IS pre-pickle!"
     assert postpickle[1] is not mt1b, "Post pickle semisingleton IS pre-pickle!"
-    assert isinstance(postpickle[0], MultiTex), "Class defined in module level didn't unpickle to the same"
+    assert isinstance(
+        postpickle[0], MultiTex
+    ), "Class defined in module level didn't unpickle to the same"
 
 
 @pytest.mark.parametrize("protocol", list(range(pickle.HIGHEST_PROTOCOL)))
@@ -259,8 +263,34 @@ def test_p_subclasses(protocol):
         ), "p4 not expected to be real instance of VT4"
 
 
+def _main_func_foo(x):
+    """
+    Main module-level test function for pickling purposes.
+    """
+    return x * 4
+
+
 @pytest.mark.parametrize("protocol", list(range(pickle.HIGHEST_PROTOCOL)))
-def test_p_executable(protocol):
+def test_p_executable_nonlocal(protocol):
+    """
+    Ensure that instances with extra non-local code can be pickled.
+    """
+
+    v1 = vertex.Vertex()
+    v1.func = _main_func_foo
+
+    assert v1.func(4) == 16, "precondition wrong!"
+
+    serial = nrpickler.dumps(v1, protocol=protocol)
+    p1 = pickle.loads(serial)
+
+    assert p1 is not v1, "unpickling gave the same instance"
+    assert p1.func is v1.func, "did not pickle function by ref"
+    assert p1.func(3) == 12, "3*4 did not equal 12"
+
+
+@pytest.mark.parametrize("protocol", list(range(pickle.HIGHEST_PROTOCOL)))
+def test_p_executable_local(protocol):
     """
     ENsure that instances with extra code attached can be pickled.
     """
@@ -277,3 +307,5 @@ def test_p_executable(protocol):
     p1 = pickle.loads(serial)
 
     assert p1.somefunc(2) == 4, "2*2 did not equal 4"
+    assert p1 is not v1, "unpickling gave the same instance"
+    assert p1.somefunc is not v1.somefunc, "unpickling returned same function"
