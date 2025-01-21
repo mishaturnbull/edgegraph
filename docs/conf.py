@@ -53,6 +53,8 @@ extensions = [
     "sphinxcontrib.plantuml",
     "sphinx_copybutton",
     "myst_parser",
+    # custom extensions
+    "docs.ext.fullcleanautosummary",
 ]
 
 templates_path = ["_templates"]
