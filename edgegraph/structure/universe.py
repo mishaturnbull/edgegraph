@@ -215,11 +215,15 @@ class Universe(vertex.Vertex):
                 self.add_vertex(v)
 
     @property
-    def vertices(self):
+    def vertices(self) -> list[vertex.Vertex]:
         """
-        Return a (frozen) set of the vertices in this universe.
+        Return a list of vertices that this universe contains.
 
-        :rtype: list[Vertex]
+        Note that the returned copy is just that, a copy.  Modifications to the
+        list that you may make will have no impact to the universe.
+
+        :return: vertices belonging to this universe, ordered by insertion
+           order.
         """
         return list(self._vertices)
 
