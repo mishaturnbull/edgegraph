@@ -47,7 +47,7 @@ time before graph traversals begin.**
    Vertex.NEIGHBOR_CACHING = True
 
    uni = randgraph.randgraph(count=1000)
-   start = list(uni.vertices)[0]
+   start = uni.vertices[0]
 
    for i in range(1000):
 
@@ -115,7 +115,7 @@ classmethod, as shown below:
    Vertex.NEIGHBOR_CACHING = True
 
    uni = randgraph.randgraph(count=1000)
-   start = list(uni.vertices)[0]
+   start = uni.vertices[0]
 
    for i in range(1000):
 

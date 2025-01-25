@@ -222,6 +222,11 @@ class Universe(vertex.Vertex):
         Note that the returned copy is just that, a copy.  Modifications to the
         list that you may make will have no impact to the universe.
 
+        .. seealso::
+
+           :py:meth:`add_vertex` can be used to add a vertex, and
+           :py:meth:`remove_vertex` can be used to remove one.
+
         :return: vertices belonging to this universe, ordered by insertion
            order.
         """
@@ -234,6 +239,11 @@ class Universe(vertex.Vertex):
         The vertex in question will automatically have its universes updated to
         include this one, if needed.  If the vertex is already present, no
         action is taken.
+
+        .. seealso::
+
+           :py:attr:`vertices` to see what vertices are present in this
+           universe, and :py:meth:`remove_vertex` to remove a vertex.
 
         :param vert: the vertex to be added
         """

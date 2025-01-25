@@ -108,8 +108,8 @@ class BaseObject(object):
         """
         Get the universes this object belongs to.
 
-        Note that this gives you a :py:class:`frozenset`; you cannot add or
-        remove universes from this attribute.
+        Note that the copy returned is just that, a copy.  Modifications to
+        this list that you may make will have no effect on the object.
 
         .. seealso::
 
