@@ -222,7 +222,7 @@ def bft(
     unknown_handling: int = helpers.LNK_UNKNOWN_ERROR,
     ff_via: Callable | None = None,
     ff_result: Callable | None = None,
-) -> list[Vertex] | None:
+) -> list[Vertex]:
     """
     Perform a breadth-first traversal (**non**-generator).
 
@@ -248,6 +248,4 @@ def bft(
             ff_result=ff_result,
         )
     )
-    if not out:
-        return None
     return out
