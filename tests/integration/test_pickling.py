@@ -74,15 +74,6 @@ def test_p_up_large(straightline_graph_1k_directed, protocol):
 
     uni, verts = straightline_graph_1k_directed
 
-    # replace the normal `set()`-typed uni._vertices with the list from the
-    # graph contructor.  this way, the vertices are always ordered -- starting
-    # at v0 and increasing to v999 -- which is necessary to trigger the
-    # recursion error every time.  if we leave it as the set, then the "first"
-    # vertex the pickler encounters may be halfway down the list, which will
-    # cause intermittent unexpected passes (*not* running out of recursion
-    # depth)
-    uni._vertices = verts
-
     try:
         serial = nrpickler.dumps(uni, protocol=protocol)
         postpickle = pickle.loads(serial)
