@@ -32,10 +32,13 @@ def test_pyvis_not_installed(monkeypatch):
     LOG.info(f"Adding {badmods} to sys.path (prepend): {sys.path}")
     monkeypatch.syspath_prepend(badmods)
 
+    restore_mods = {}
+
     LOG.debug("Flushing package caches...")
     for mod in list(sys.modules.keys()):
         if mod.startswith("pyvis") or mod.startswith("edgegraph"):
             LOG.debug(f"Deleting {mod} from sys.modules")
+            restore_mods[mod] = sys.modules[mod]
             del sys.modules[mod]
     importlib.invalidate_caches()
 
@@ -48,4 +51,11 @@ def test_pyvis_not_installed(monkeypatch):
     from edgegraph.builder import randgraph
 
     uni = randgraph.randgraph()
-    assert len(uni.vertices) > 0
+
+    try:
+        assert len(uni.vertices) > 0
+    finally:
+        # restore the earlier modules to not break tests which might come after
+        # us, even in the event of a failure
+        for modname, module in restore_mods.items():
+            sys.modules[modname] = module
