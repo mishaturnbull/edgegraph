@@ -9,9 +9,10 @@ This module contains a non-recursive implementation of a pickler that is
 suggested for use when serializing edgegraph objects.  This overcomes a
 limitation of the default builtin pickler, which struggles with highly
 recursive data structures -- edgegraph's internal linkage structure is indeed
-very recursive, and graphs bigger than ``sys.getrecursionlimit()`` will often
-cause ``RecursionError``\\ s when being pickled.  Even :py:mod:`dill` uses a
-recursive implementation, so this is necessary for use with ``dill`` as well.
+very recursive, and graphs even a fraction of :py:func:`the recursion limit
+<sys.getrecursionlimit>` will often cause ``RecursionError``\\ s when being
+pickled.  Even :py:mod:`dill` uses a recursive implementation, so this is
+necessary for use with ``dill`` as well.
 
 .. danger::
 
@@ -101,14 +102,22 @@ class NonrecursivePickler(dill.Pickler):
         self.write = self.lazywrite
 
     def lazywrite(self, *args):
+        """
+        Lazily write an object to the memo.
+        """
         if self.lazywrites:
             self.lazywrites.append(args)
         else:
             self.realwrite(*args)
 
     def save(self, obj):
+        """
+        Lazy-save the given object (that is, add it to the queue for writing
+        later).
+        """
         self.lazywrites.append(_LazySave(obj))
 
+    #: Alias to the true :py:meth:`dill.Pickler.save`.
     realsave = dill.Pickler.save
 
     def lazymemoize(self, obj):
