@@ -14,8 +14,8 @@ fi
 
 python -m pytest \
     --profile-svg \
+    -m perf \
     -o log_cli=true \
-    -k pickl \
     -vv
 
 mv prof/combined.svg docs/_build/
