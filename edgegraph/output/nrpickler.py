@@ -140,12 +140,12 @@ class NonrecursivePickler(dill.Pickler):
             self.lazywrites = []
             while lws:
                 lw = lws.pop(0)
-                if type(lw) is _LazySave:
+                if isinstance(lw, _LazySave):
                     self.realsave(lw.obj)
                     if self.lazywrites:
                         self.lazywrites.extend(lws)
                         break
-                elif type(lw) is _LazyMemo:
+                elif isinstance(lw, _LazyMemo):
                     self.realmemoize(lw.obj)
                 else:
                     self.realwrite(*lw)
