@@ -163,7 +163,7 @@ def dumps(
     """
     Module-level interface to the non-recursive pickler ``dumps``.
 
-    This is intended to mirror :py:func:`pickle.dumps` in functionality, but is
+    This is intended to mirror :py:func:`dill.dumps` in functionality, but is
     safe to use with edgegraph objects (i.e. will not cause recursion
     problems).
     """
@@ -178,3 +178,27 @@ def dumps(
     )
     p.dump(obj)
     return f.getvalue()
+
+
+def dump(
+    obj, file, protocol=None, byref=None, fmode=None, recurse=None, **kwargs
+):
+    """
+    Module-level interface to the non-recursive pickler ``dump``.
+
+    When using this with a file object, ensure it has been opened in binary
+    mode!
+
+    This is intended to mirror :py:func:`dill.dump` in functionality, but is
+    safe to use with edgegraph objects (i.e., will not cause recursion
+    problems).
+    """
+    p = NonrecursivePickler(
+        file,
+        protocol=protocol,
+        byref=byref,
+        fmode=fmode,
+        recurse=recurse,
+        **kwargs,
+    )
+    p.dump(obj)

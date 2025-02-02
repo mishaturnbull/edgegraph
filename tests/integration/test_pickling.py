@@ -283,7 +283,7 @@ def test_p_executable_nonlocal(protocol):
 @pytest.mark.parametrize("protocol", list(range(pickle.HIGHEST_PROTOCOL)))
 def test_p_executable_local(protocol):
     """
-    ENsure that instances with extra code attached can be pickled.
+    Ensure that instances with extra code attached can be pickled.
     """
 
     def foo(bar):
@@ -300,3 +300,20 @@ def test_p_executable_local(protocol):
     assert p1.somefunc(2) == 4, "2*2 did not equal 4"
     assert p1 is not v1, "unpickling gave the same instance"
     assert p1.somefunc is not v1.somefunc, "unpickling returned same function"
+
+
+@pytest.mark.parametrize("protocol", list(range(pickle.HIGHEST_PROTOCOL)))
+def test_p_up_file(protocol, tmp_path, straightline_graph_1k_directed):
+    """
+    Ensure pickle data can actually be written to / read from a real file.
+    """
+    uni, verts = straightline_graph_1k_directed
+
+    fname = tmp_path / "store.pkl"
+    with open(fname, "wb") as wfp:
+        nrpickler.dump((uni, verts), wfp)
+
+    with open(fname, "rb") as rfp:
+        puni, pverts = pickle.load(rfp)
+
+    assert len(pverts) == len(verts), "Wrong length of vertices"
