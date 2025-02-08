@@ -121,8 +121,9 @@ class _NonrecursivePickler(dill.Pickler):
         Lazy-save the given object (that is, add it to the queue for writing
         later).
         """
-        if save_persistent_id is not None:
-            raise NotImplementedError(
+        # do not coverage-test this line, as it's intended to never be run
+        if save_persistent_id is not None:  # pragma: no branch
+            raise NotImplementedError(  # pragma: no cover
                 "Edgegraph _NonrecursivePickler does not support save_persistent_id option!"
             )
         self.lazywrites.append(_LazySave(obj))
