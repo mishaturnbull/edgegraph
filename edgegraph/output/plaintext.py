@@ -12,8 +12,8 @@ formats may be added in the future.
 
    Nothing in this module is intended to be *parsed* by anyone, for any reason.
    If you are trying to persistently store graphs, or exchange them between
-   processes, or something else, know that this functionality is presently
-   considered **unsupported**.
+   processes, or something else, see the :py:mod:`output.nrpickler
+   <edgegraph.output.nrpickler>` module.
 """
 
 from __future__ import annotations

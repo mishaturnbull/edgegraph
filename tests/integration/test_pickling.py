@@ -7,8 +7,9 @@ Unit tests that ensure all Edgegraph objects are pickleable and unpickleable.
 
 import pickle
 import sys
-
 import logging
+
+import dill
 import pytest
 
 from edgegraph.structure import singleton, vertex, universe, singleton
@@ -317,3 +318,18 @@ def test_p_up_file(protocol, tmp_path, straightline_graph_1k_directed):
         puni, pverts = pickle.load(rfp)
 
     assert len(pverts) == len(verts), "Wrong length of vertices"
+
+
+@pytest.mark.parametrize("protocol", list(range(pickle.HIGHEST_PROTOCOL)))
+def test_up_with_dill(protocol, straightline_graph_1k_directed):
+    """
+    Ensure that the nonrecursive pickler data can be deserialized by dill.
+    """
+    uni, verts = straightline_graph_1k_directed
+    serial = nrpickler.dumps((uni, verts), protocol=protocol)
+    p1 = dill.loads(serial)
+
+    assert p1[0] is not uni, "Dill deserialized same object!"
+
+    for i in range(len(verts)):
+        assert p1[1][i].i == verts[i].i, "dill deserialized wrong order!"

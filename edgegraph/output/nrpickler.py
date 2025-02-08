@@ -11,8 +11,9 @@ limitation of the default builtin pickler, which struggles with highly
 recursive data structures -- edgegraph's internal linkage structure is indeed
 very recursive, and graphs even a fraction of :py:func:`the recursion limit
 <sys.getrecursionlimit>` will often cause ``RecursionError``\\ s when being
-pickled.  Even :py:mod:`dill` uses a recursive implementation, so this is
-necessary for use with ``dill`` as well.
+pickled.  This module uses :py:mod:`dill` ([dill]_) to perform pickling of more
+object types than the standard pickler; but even Dill uses a recursive pickler,
+so needs the special handling provided here.
 
 .. danger::
 
@@ -28,6 +29,11 @@ necessary for use with ``dill`` as well.
    Darabos (cyhawk) on https://bugs.python.org/issue2480 .  I stole it
    shamelessly, only making minor changes for Python 3.x, dill compatibility,
    and readability / formatting.  Thank you, Daniel!
+
+As the special handling of recursive structure is only needed on the pickling
+side, not the unpickling side, this module need only be used to serialize data.
+Either the standard library :py:mod:`pickle` or the third-party :py:mod:`dill`
+can be used to unpickle data.
 
 Usage of this pickler should be similar to the built-in one::
 
@@ -78,7 +84,7 @@ class _LazyMemo(object):
         return f"<_LazyMemo {self.obj}>"
 
 
-class NonrecursivePickler(dill.Pickler):
+class _NonrecursivePickler(dill.Pickler):
     """
     Non-recursive pickler class.
 
@@ -117,7 +123,7 @@ class NonrecursivePickler(dill.Pickler):
         """
         if save_persistent_id is not None:
             raise NotImplementedError(
-                "Edgegraph NonrecursivePickler does not support save_persistent_id option!"
+                "Edgegraph _NonrecursivePickler does not support save_persistent_id option!"
             )
         self.lazywrites.append(_LazySave(obj))
 
@@ -172,7 +178,7 @@ def dumps(
     problems).
     """
     f = io.BytesIO()
-    p = NonrecursivePickler(
+    p = _NonrecursivePickler(
         f,
         protocol=protocol,
         byref=byref,
@@ -197,7 +203,7 @@ def dump(
     safe to use with edgegraph objects (i.e., will not cause recursion
     problems).
     """
-    p = NonrecursivePickler(
+    p = _NonrecursivePickler(
         file,
         protocol=protocol,
         byref=byref,
