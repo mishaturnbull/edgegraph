@@ -63,7 +63,7 @@ class _LazySave(object):
         self.obj = obj
 
     def __repr__(self):
-        return f"<_LazySave {self.obj}>"  # pragma: no cover
+        return f"<_LazySave {self.obj}>"
 
 
 class _LazyMemo(object):
@@ -75,7 +75,7 @@ class _LazyMemo(object):
         self.obj = obj
 
     def __repr__(self):
-        return f"<_LazyMemo {self.obj}>"  # pragma: no cover
+        return f"<_LazyMemo {self.obj}>"
 
 
 class NonrecursivePickler(dill.Pickler):
@@ -110,11 +110,15 @@ class NonrecursivePickler(dill.Pickler):
         else:
             self.realwrite(*args)
 
-    def save(self, obj):
+    def save(self, obj, save_persistent_id=None):
         """
         Lazy-save the given object (that is, add it to the queue for writing
         later).
         """
+        if save_persistent_id is not None:
+            raise NotImplementedError(
+                "Edgegraph NonrecursivePickler does not support save_persistent_id option!"
+            )
         self.lazywrites.append(_LazySave(obj))
 
     #: Alias to the true :py:meth:`dill.Pickler.save`.

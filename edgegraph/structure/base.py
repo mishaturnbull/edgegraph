@@ -7,9 +7,10 @@ Contains the BaseObject class.
 
 from __future__ import annotations
 from typing import TYPE_CHECKING
+from collections.abc import Iterator
 import uuid
 
-if TYPE_CHECKING:  # pragma: no cover
+if TYPE_CHECKING:
     from edgegraph.structure.universe import Universe
 
 
@@ -54,7 +55,7 @@ class BaseObject(object):
         *,
         uid: int | None = None,
         attributes: dict | None = None,
-        universes: set[Universe] | None = None,
+        universes: Iterator[Universe] | None = None,
     ):
         """
         Instantiate a BaseObject.
@@ -88,9 +89,9 @@ class BaseObject(object):
         #: Internal reference to the universes this object is a part of
         #:
         #: :meta private:
-        self._universes = universes or []
-        if not isinstance(self._universes, list):
-            self._universes = list(self._universes)
+        self._universes: list[Universe] = (
+            list(universes) if universes is not None else []
+        )
 
         # deduplicate it while keeping order
         # https://stackoverflow.com/a/17016257

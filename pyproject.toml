@@ -116,6 +116,12 @@ log_cli_date_format = "%Y-%m-%d %H:%M:%S"
 [tool.coverage.html]
 show_contexts = true
 
+[tool.coverage.report]
+exclude_also = [
+    "if TYPE_CHECKING:",
+    "def __repr__",
+]
+
 [tool.black]
 line-length = 80
 

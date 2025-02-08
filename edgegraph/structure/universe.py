@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 import types
 from edgegraph.structure import base, vertex
 
-if TYPE_CHECKING:  # pragma: no cover
+if TYPE_CHECKING:
     Vertex = vertex.Vertex
 
 
