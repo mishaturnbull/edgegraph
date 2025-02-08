@@ -7,3 +7,5 @@ References
 
 .. [KlTa05] Kleinberg, J; Tardos, E: Algorithm Design
 
+.. [dill] M.M. McKerns, L. Strand, T. Sullivan, A. Fang, M.A.G. Aivazis, "Building a framework for predictive science", Proceedings of the 10th Python in Science COnference, 2011; http://arxiv.org/pdf/1202.1056
+

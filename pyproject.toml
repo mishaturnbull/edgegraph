@@ -6,7 +6,9 @@ build-backend = "setuptools.build_meta"
 dynamic = ["version"]
 name = "edgegraph"
 requires-python = ">= 3.7"
-dependencies = []
+dependencies = [
+    "dill"
+]
 readme = "README.md"
 license = {file = "LICENSE.txt"}
 description = "Object oriented edge-vertex graph library."
@@ -113,6 +115,12 @@ log_cli_date_format = "%Y-%m-%d %H:%M:%S"
 
 [tool.coverage.html]
 show_contexts = true
+
+[tool.coverage.report]
+exclude_also = [
+    "if TYPE_CHECKING:",
+    "def __repr__",
+]
 
 [tool.black]
 line-length = 80

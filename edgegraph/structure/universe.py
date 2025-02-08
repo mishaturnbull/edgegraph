@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 import types
 from edgegraph.structure import base, vertex
 
-if TYPE_CHECKING:  # pragma: no cover
+if TYPE_CHECKING:
     Vertex = vertex.Vertex
 
 
@@ -209,30 +209,48 @@ class Universe(vertex.Vertex):
         self._laws.applies_to = self
 
         #: Internal set of vertices
-        self._vertices: set[Vertex] = set()
+        self._vertices: list[Vertex] = []
         if vertices is not None:
             for v in vertices:
                 self.add_vertex(v)
 
     @property
-    def vertices(self):
+    def vertices(self) -> list[vertex.Vertex]:
         """
-        Return a (frozen) set of the vertices in this universe.
+        Return a list of vertices that this universe contains.
 
-        :rtype: frozenset[Vertex]
+        Note that the returned copy is just that, a copy.  Modifications to the
+        list that you may make will have no impact to the universe.
+
+        .. seealso::
+
+           :py:meth:`add_vertex` can be used to add a vertex, and
+           :py:meth:`remove_vertex` can be used to remove one.
+
+        :return: vertices belonging to this universe, ordered by insertion
+           order.
         """
-        return frozenset(self._vertices)
+        return list(self._vertices)
 
     def add_vertex(self, vert: vertex.Vertex):
         """
         Adds a new vertex to this universe.
 
         The vertex in question will automatically have its universes updated to
-        include this one, if needed.
+        include this one, if needed.  If the vertex is already present, no
+        action is taken.
+
+        .. seealso::
+
+           :py:attr:`vertices` to see what vertices are present in this
+           universe, and :py:meth:`remove_vertex` to remove a vertex.
 
         :param vert: the vertex to be added
         """
-        self._vertices.add(vert)
+        if vert in self._vertices:
+            return
+
+        self._vertices.append(vert)
         if self not in vert.universes:
             vert.add_to_universe(self)
 

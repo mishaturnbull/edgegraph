@@ -25,7 +25,7 @@ from edgegraph.structure import (
 )
 from edgegraph.traversal import helpers
 
-if TYPE_CHECKING:  # pragma: no cover
+if TYPE_CHECKING:
     from edgegraph.structure import Link
 
 

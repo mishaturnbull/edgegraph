@@ -9,7 +9,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from edgegraph.structure import twoendedlink
 
-if TYPE_CHECKING:  # pragma: no cover
+if TYPE_CHECKING:
     from edgegraph.structure.vertex import Vertex
 
 

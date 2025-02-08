@@ -206,8 +206,9 @@ def test_base_obj_universes():
     assert uni not in bo._universes, "remove_from_universe didn't!"
 
     # should fail, as the universe has already been removed.  when trying to
-    # remove an object from a set that does not contain it, you get a KeyError
-    with pytest.raises(KeyError):
+    # remove an object from a list that does not contain it, you get a
+    # ValueError
+    with pytest.raises(ValueError):
         bo.remove_from_universe(uni)
 
 
@@ -227,7 +228,7 @@ def test_base_obj_init_universes_list():
     assert len(bo.universes) == len(
         unis
     ), "universes passed to __init__ is not same len as .universes!"
-    assert isinstance(bo.universes, frozenset), ".universes gave wrong type"
+    assert isinstance(bo.universes, list), ".universes gave wrong type"
 
 
 def test_base_obj_init_universes_set():
@@ -246,7 +247,7 @@ def test_base_obj_init_universes_set():
     assert len(bo.universes) == len(
         unis
     ), "universes passed to __init__ is not same len as .universes!"
-    assert isinstance(bo.universes, frozenset), ".universes gave wrong type"
+    assert isinstance(bo.universes, list), ".universes gave wrong type"
 
 
 def test_base_obj_init_universes_tuple():
@@ -263,7 +264,7 @@ def test_base_obj_init_universes_tuple():
     assert len(bo.universes) == len(
         unis
     ), "universes passed to __init__ is not same len as .universes!"
-    assert isinstance(bo.universes, frozenset), ".universes gave wrong type"
+    assert isinstance(bo.universes, list), ".universes gave wrong type"
 
 
 def test_base_obj_init_universes_generator():
@@ -285,7 +286,7 @@ def test_base_obj_init_universes_generator():
     assert len(bo.universes) == len(
         unis
     ), "universes passed to __init__ is not same len as .universes!"
-    assert isinstance(bo.universes, frozenset), ".universes gave wrong type"
+    assert isinstance(bo.universes, list), ".universes gave wrong type"
 
 
 def test_base_obj_init_universes_deduplicate():
