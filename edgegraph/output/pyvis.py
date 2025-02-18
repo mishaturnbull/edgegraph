@@ -59,7 +59,7 @@ except ImportError as exc:
 
 from edgegraph.structure import Universe, DirectedEdge
 
-if TYPE_CHECKING:  # pragma: no cover
+if TYPE_CHECKING:
     import pyvis
 
 

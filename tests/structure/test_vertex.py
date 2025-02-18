@@ -162,14 +162,14 @@ def test_vert_init_with_uni():
 
     v1 = vertex.Vertex(universes=[unis[0]])
 
-    assert v1.universes == set(
-        [unis[0]]
-    ), "vertex .universes does not match what was given to init!"
+    assert v1.universes == [
+        unis[0]
+    ], "vertex .universes does not match what was given to init!"
     assert v1 in unis[0].vertices, "vertex did not register itself in universe!"
 
     v2 = vertex.Vertex(universes=unis)
-    assert v2.universes == set(
-        unis
+    assert (
+        v2.universes == unis
     ), "vertex .universes does not match what was given to init!"
     for uni in unis:
         assert (

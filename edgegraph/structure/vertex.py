@@ -7,9 +7,10 @@ Holds the Vertex class.
 
 from __future__ import annotations
 from typing import Any, TYPE_CHECKING
+from collections.abc import Iterator
 from edgegraph.structure import base
 
-if TYPE_CHECKING:  # pragma: no cover
+if TYPE_CHECKING:
     from edgegraph.structure.link import Link
     from edgegraph.structure.universe import Universe
 
@@ -80,7 +81,7 @@ class Vertex(base.BaseObject):
         links: list[Link] | None = None,
         uid: int | None = None,
         attributes: dict | None = None,
-        universes: set[Universe] | None = None,
+        universes: Iterator[Universe] | None = None,
     ):
         """
         Creates a new vertex.
