@@ -6,7 +6,11 @@ Holds the DirectedEdge class.
 """
 
 from __future__ import annotations
+from typing import TYPE_CHECKING
 from edgegraph.structure import twoendedlink
+
+if TYPE_CHECKING:
+    from edgegraph.structure.vertex import Vertex
 
 
 class DirectedEdge(twoendedlink.TwoEndedLink):
@@ -25,11 +29,11 @@ class DirectedEdge(twoendedlink.TwoEndedLink):
 
     def __init__(
         self,
-        v1: Vertex = None,
-        v2: Vertex = None,
+        v1: Vertex | None = None,
+        v2: Vertex | None = None,
         *,
-        uid: int = None,
-        attributes: dict = None,
+        uid: int | None = None,
+        attributes: dict | None = None,
     ):
         """
         Instantiate a directed edge.

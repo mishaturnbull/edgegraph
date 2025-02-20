@@ -6,8 +6,12 @@ Holds the Universe class.
 """
 
 from __future__ import annotations
+from typing import TYPE_CHECKING
 import types
 from edgegraph.structure import base, vertex
+
+if TYPE_CHECKING:
+    Vertex = vertex.Vertex
 
 
 class UniverseLaws(base.BaseObject):
@@ -33,12 +37,12 @@ class UniverseLaws(base.BaseObject):
 
     def __init__(
         self,
-        edge_whitelist: dict = None,
+        edge_whitelist: dict | None = None,
         mixed_links: bool = False,
         cycles: bool = True,
         multipath: bool = True,
         multiverse: bool = False,
-        applies_to: Universe = None,
+        applies_to: Universe | None = None,
     ):
         """
         Instantiate a set of universal laws.
@@ -135,7 +139,7 @@ class UniverseLaws(base.BaseObject):
         return self._multiverse
 
     @property
-    def applies_to(self) -> Universe:
+    def applies_to(self) -> Universe | None:
         """
         Returns the universe that these laws apply to.
         """
@@ -180,10 +184,10 @@ class Universe(vertex.Vertex):
     def __init__(
         self,
         *,
-        vertices: set[vertex.Vertex] = None,
-        laws: UniverseLaws = None,
-        uid: int = None,
-        attributes: dict = None,
+        vertices: set[vertex.Vertex] | None = None,
+        laws: UniverseLaws | None = None,
+        uid: int | None = None,
+        attributes: dict | None = None,
     ):
         """
         Instantiate a Universe.
@@ -199,40 +203,54 @@ class Universe(vertex.Vertex):
         super().__init__(uid=uid, attributes=attributes)
 
         #: Laws of the universe
-        #:
-        #: :type: UniverseLaws
-        self._laws = laws
+        self._laws: UniverseLaws | None = laws
         if self._laws is None:
             self._laws = UniverseLaws(applies_to=self)
         self._laws.applies_to = self
 
         #: Internal set of vertices
-        #:
-        #: :type: set[vertex.Vertex]
-        self._vertices = set()
+        self._vertices: list[Vertex] = []
         if vertices is not None:
             for v in vertices:
                 self.add_vertex(v)
 
     @property
-    def vertices(self):
+    def vertices(self) -> list[vertex.Vertex]:
         """
-        Return a (frozen) set of the vertices in this universe.
+        Return a list of vertices that this universe contains.
 
-        :rtype: frozenset[Vertex]
+        Note that the returned copy is just that, a copy.  Modifications to the
+        list that you may make will have no impact to the universe.
+
+        .. seealso::
+
+           :py:meth:`add_vertex` can be used to add a vertex, and
+           :py:meth:`remove_vertex` can be used to remove one.
+
+        :return: vertices belonging to this universe, ordered by insertion
+           order.
         """
-        return frozenset(self._vertices)
+        return list(self._vertices)
 
     def add_vertex(self, vert: vertex.Vertex):
         """
         Adds a new vertex to this universe.
 
         The vertex in question will automatically have its universes updated to
-        include this one, if needed.
+        include this one, if needed.  If the vertex is already present, no
+        action is taken.
+
+        .. seealso::
+
+           :py:attr:`vertices` to see what vertices are present in this
+           universe, and :py:meth:`remove_vertex` to remove a vertex.
 
         :param vert: the vertex to be added
         """
-        self._vertices.add(vert)
+        if vert in self._vertices:
+            return
+
+        self._vertices.append(vert)
         if self not in vert.universes:
             vert.add_to_universe(self)
 
@@ -251,7 +269,7 @@ class Universe(vertex.Vertex):
             vert.remove_from_universe(self)
 
     @property
-    def laws(self) -> UniverseLaws:
+    def laws(self) -> UniverseLaws | None:
         """
         Get the laws of this universe.
         """
@@ -262,10 +280,25 @@ class Universe(vertex.Vertex):
         """
         Set the laws of this universe.
         """
+        # covers the None-and-None case as well as already-assigned
         if new is self._laws:
             return
 
-        self._laws.applies_to = None
+        # deassignment
+        if self._laws is not None and new is None:
+            # pylint (rightfully) complains about the access to a private
+            # member here -- but, since we're still within the library, this is
+            # allowed.  it would, however, be an issue if a user of edgegraph
+            # were accessing this
+            # pylint: disable-next=protected-access
+            self._laws._applies_to = None
+            self._laws = None
 
-        self._laws = new
-        self._laws.applies_to = self
+        # new- and re-assignment
+        else:
+            # mypy can't seem to figure out the type-narrowing here.  in this
+            # else clause, self._laws won't be none
+            self._laws.applies_to = None  # type: ignore
+
+            self._laws = new
+            self._laws.applies_to = self

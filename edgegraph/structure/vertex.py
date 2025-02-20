@@ -6,7 +6,13 @@ Holds the Vertex class.
 """
 
 from __future__ import annotations
+from typing import Any, TYPE_CHECKING
+from collections.abc import Iterator
 from edgegraph.structure import base
+
+if TYPE_CHECKING:
+    from edgegraph.structure.link import Link
+    from edgegraph.structure.universe import Universe
 
 
 class Vertex(base.BaseObject):
@@ -23,10 +29,10 @@ class Vertex(base.BaseObject):
     #: .. seealso::
     #:
     #:    :ref:`dev/performance/vert-nb-cache` for more information on usage
-    NEIGHBOR_CACHING = False
+    NEIGHBOR_CACHING: bool = False
 
-    _QA_NB_INVALID = object()
-    _CACHE_STATS = {}
+    _QA_NB_INVALID: object = object()
+    _CACHE_STATS: dict[int, list[int]] = {}
 
     @classmethod
     def total_cache_stats(cls) -> str:
@@ -57,7 +63,7 @@ class Vertex(base.BaseObject):
                 totals[2] += stat[2]
                 totals[3] += stat[3]
 
-            lines.append(f"=== CACHE STATISTICS OVERALL ===")
+            lines.append("=== CACHE STATISTICS OVERALL ===")
             lines.append(f"Size:          {len(Vertex._CACHE_STATS)}")
             lines.append(f"Hits:          {totals[0]}")
             lines.append(f"Misses:        {totals[1]}")
@@ -72,10 +78,10 @@ class Vertex(base.BaseObject):
     def __init__(
         self,
         *,
-        links: list[Link] = None,
-        uid: int = None,
-        attributes: dict = None,
-        universes: set[Universe] = None,
+        links: list[Link] | None = None,
+        uid: int | None = None,
+        attributes: dict | None = None,
+        universes: Iterator[Universe] | None = None,
     ):
         """
         Creates a new vertex.
@@ -98,9 +104,7 @@ class Vertex(base.BaseObject):
         #:
         #: This is a list of links that include this vertex as one of the
         #: linked vertices.
-        #:
-        #: :type: list[Link]
-        self._links = []
+        self._links: list[Link] = []
         if links is not None:
             for link in links:
                 self.add_to_link(link)
@@ -109,7 +113,7 @@ class Vertex(base.BaseObject):
         for uni in self.universes:
             uni.add_vertex(self)
 
-        self.__qa_nb_cache = {}
+        self.__qa_nb_cache: dict[tuple[Any, ...], list[Vertex]] = {}
 
     def add_to_universe(self, universe: Universe) -> None:
         """
@@ -128,7 +132,7 @@ class Vertex(base.BaseObject):
             universe.add_vertex(self)
 
     @property
-    def links(self) -> tuple[Link]:
+    def links(self) -> tuple[Link, ...]:
         """
         Return a tuple of links that are attached to this object.
 

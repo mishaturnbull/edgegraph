@@ -35,6 +35,25 @@ function to cache results for the neighbors function, similar in effect to
 :py:attr:`edgegraph.structure.vertex.Vertex.NEIGHBOR_CACHING` to ``True`` **any
 time before graph traversals begin.**
 
+.. code-block:: python
+   :linenos:
+
+   #!python3
+   from edgegraph.structure import Vertex
+   from edgegraph.builder import randgraph
+   from edgegraph.traversal import breadthfirst
+
+   # this enables vertex neighbor caching.  no other configuration is needed!
+   Vertex.NEIGHBOR_CACHING = True
+
+   uni = randgraph.randgraph(count=1000)
+   start = uni.vertices[0]
+
+   for i in range(1000):
+
+      _ = breadthfirst.bft(uni, start)
+
+
 Unfortunately, using a standard :py:func:`functools.lru_cache` or
 :py:func:`functools.cache` on the
 :py:func:`~edgegraph.traversal.helpers.neighbors` is unsafe, as the vertex may
@@ -96,7 +115,7 @@ classmethod, as shown below:
    Vertex.NEIGHBOR_CACHING = True
 
    uni = randgraph.randgraph(count=1000)
-   start = list(uni.vertices[0])
+   start = uni.vertices[0]
 
    for i in range(1000):
 

@@ -12,19 +12,21 @@ formats may be added in the future.
 
    Nothing in this module is intended to be *parsed* by anyone, for any reason.
    If you are trying to persistently store graphs, or exchange them between
-   processes, or something else, know that this functionality is presently
-   considered **unsupported**.
+   processes, or something else, see the :py:mod:`output.nrpickler
+   <edgegraph.output.nrpickler>` module.
 """
 
 from __future__ import annotations
-
+from collections.abc import Callable
 from edgegraph.structure import Universe
 from edgegraph.traversal import helpers
 
 
 def basic_render(
-    uni: Universe, rfunc: Callable = None, sort: Callable = None
-) -> str:
+    uni: Universe,
+    rfunc: Callable | None = None,
+    sort: Callable | None = None,
+) -> str | None:
     """
     Perform a very basic rendering of a graph into a string.
 

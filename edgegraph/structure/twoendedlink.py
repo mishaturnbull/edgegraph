@@ -6,7 +6,11 @@ Holds the TwoEndedLink class.
 """
 
 from __future__ import annotations
+from typing import TYPE_CHECKING
 from edgegraph.structure import link, vertex
+
+if TYPE_CHECKING:
+    from edgegraph.structure.vertex import Vertex
 
 
 class TwoEndedLink(link.Link):
@@ -25,11 +29,11 @@ class TwoEndedLink(link.Link):
 
     def __init__(
         self,
-        v1: Vertex = None,
-        v2: Vertex = None,
+        v1: Vertex | None = None,
+        v2: Vertex | None = None,
         *,
-        uid: int = None,
-        attributes: dict = None,
+        uid: int | None = None,
+        attributes: dict | None = None,
     ):
         """
         Instantiate an two-ended edge.
@@ -48,7 +52,11 @@ class TwoEndedLink(link.Link):
         if (v2 is not None) and (not issubclass(type(v2), vertex.Vertex)):
             raise TypeError(f"v2 is not a Vertex object!  got {v2}")
 
-        super().__init__(vertices=[v1, v2], uid=uid, attributes=attributes)
+        # mypy complains about the vertices list below, that it may contain
+        # None if the v1 or v2 arguments were not specified in our constructor
+        # here.  however, that scenario is prevented by the TypeError checks
+        # above; mypy just doesn't seem to recognize it as type narrowing.
+        super().__init__(vertices=[v1, v2], uid=uid, attributes=attributes)  # type: ignore
 
     @property
     def v1(self) -> Vertex:
@@ -59,6 +67,13 @@ class TwoEndedLink(link.Link):
         updates; no extra effort is necessary.
         """
         return self.vertices[0]
+
+    @v1.setter
+    def v1(self, new: Vertex):
+        """
+        Sets one vertex of this edge.
+        """
+        self._set_v1(new)
 
     def _set_v1(self, new: Vertex):
         """
@@ -80,13 +95,6 @@ class TwoEndedLink(link.Link):
         self.add_vertex(new)
         self._vertices.append(v2)
 
-    @v1.setter
-    def v1(self, new: Vertex):
-        """
-        Sets one vertex of this edge.
-        """
-        self._set_v1(new)
-
     @property
     def v2(self) -> Vertex:
         """
@@ -96,6 +104,13 @@ class TwoEndedLink(link.Link):
         updates; no extra effort is necessary.
         """
         return self.vertices[1]
+
+    @v2.setter
+    def v2(self, new: Vertex):
+        """
+        Sets the other end of this edge.
+        """
+        self._set_v2(new)
 
     def _set_v2(self, new: Vertex):
         """
@@ -109,14 +124,7 @@ class TwoEndedLink(link.Link):
         self._vertices = [v1]
         self.add_vertex(new)
 
-    @v2.setter
-    def v2(self, new: Vertex):
-        """
-        Sets the other end of this edge.
-        """
-        self._set_v2(new)
-
-    def other(self, end: Vertex) -> Vertex:
+    def other(self, end: Vertex) -> Vertex | None:
         """
         Identify and return the other end of this edge.
 
@@ -134,4 +142,5 @@ class TwoEndedLink(link.Link):
             return self.v2
         if end is self.v2:
             return self.v1
+
         return None

@@ -39,6 +39,9 @@ Generally, the usage pattern for this module is intended to be as:
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING, Any
+from collections.abc import Callable
+
 try:
 
     from pyvis import network
@@ -56,12 +59,15 @@ except ImportError as exc:
 
 from edgegraph.structure import Universe, DirectedEdge
 
+if TYPE_CHECKING:
+    import pyvis
+
 
 def make_pyvis_net(
     uni: Universe,
-    rvfunc: Callable = None,
-    refunc: Callable = None,
-    network_kwargs: dict = None,
+    rvfunc: Callable | None = None,
+    refunc: Callable | None = None,
+    network_kwargs: dict[str, Any] | None = None,
 ) -> pyvis.network.Network:
     """
     Convert a given Universe to a PyVis network, suitable for further use
@@ -93,8 +99,8 @@ def make_pyvis_net(
        thereof), and must return a :py:class:`str`.  If not provided, edges
        will not be labelled.
     :param network_kwargs: An optional dictionary of keyword arguments to pass
-      to :py:class:`network.Network`.  If not supplied, the default will select
-      ``"cdn_resources": "local"`` and nothing else.
+      to :py:class:`pyvis.network.Network`.  If not supplied, the default will
+      select ``"cdn_resources": "local"`` and nothing else.
     :return: A :py:class:`pyvis.network.Network` instance containing the data
        found in the given universe.
     """
@@ -163,9 +169,9 @@ def make_pyvis_net(
 
 def pyvis_render_customizable(
     uni: Universe,
-    rvfunc: Callable = None,
-    refunc: Callable = None,
-    show_buttons_filter=None,
+    rvfunc: Callable | None = None,
+    refunc: Callable | None = None,
+    show_buttons_filter: dict[str, str] | None = None,
 ) -> pyvis.network.Network:
     """
     Convert a given Universe to a PyVis network, suitable for further use

@@ -1,8 +1,11 @@
-# Configuration file for the Sphinx documentation builder.
-#
-# For the full list of built-in configuration values, see the documentation:
-# https://www.sphinx-doc.org/en/master/usage/configuration.html
+"""
+Configuration file for the Sphinx documentation builder.
 
+For the full list of built-in configuration values, see the documentation:
+https://www.sphinx-doc.org/en/master/usage/configuration.html
+"""
+
+import datetime
 import os
 import sys
 import tomlkit
@@ -26,10 +29,14 @@ pyrev_helper.main()
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "edgegraph"
-copyright = "2024, Michael Turnbull"
 author = "Misha Turnbull"
 version = f"v{eg_version.VERSION_MAJOR}.{eg_version.VERSION_MINOR}"
 release = eg_version.__version__
+
+# project started in 2023 Nov and copyright continues through author's life
+year = datetime.datetime.strftime(datetime.datetime.now(), "%Y")
+copyright = f"2023-{year}, Michael Turnbull"
+
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -49,6 +56,8 @@ extensions = [
     "sphinxcontrib.plantuml",
     "sphinx_copybutton",
     "myst_parser",
+    # custom extensions
+    "docs.ext.fullcleanautosummary",
 ]
 
 templates_path = ["_templates"]
@@ -71,6 +80,7 @@ rst_prolog = """
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
     "pyvis": ("https://pyvis.readthedocs.io/en/latest", None),
+    "dill": ("https://dill.readthedocs.io/en/latest/", None),
 }
 intersphinx_timeout = 10  # seconds
 
@@ -131,12 +141,16 @@ if eg_version.VERSION_MAJOR == 0:
         f"{version}, and may change at any time!</b>"
     )
 
+master_branches = ["master"]
+if READTHEDOCS:
+    master_branches.append("latest")
+
 if branch != "master" and not git.is_clean() and not READTHEDOCS:
     warns.append(
         '<b style="color:yellow;">this documentation was built on'
         f" branch {branch}, and in an unclean git state!</b>"
     )
-elif branch != "master":
+elif branch not in master_branches:
     warns.append(
         '<b style="color:yellow;">this documentation was built on'
         f" branch {branch}!</b>"
@@ -155,6 +169,8 @@ html_theme_options["announcement"] = "<br>".join(warns)
 latex_elements = {
     # make the index one column wide instead of two
     "printindex": r"\def\twocolumn[#1]{#1}\printindex",
+    "extrapackages": r"\usepackage{enumitem}",
+    "preamble": r"\setlistdepth{9}",
 }
 
 # show all urls / hyperlinks in footnotes (useful for printed copies)

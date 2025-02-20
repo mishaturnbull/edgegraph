@@ -10,6 +10,20 @@ Installation of EdgeGraph is rather simple via Pip:
 Details of the Pip package can be found on Pip at
 https://pypi.org/project/edgegraph/ .
 
+.. _install/extras:
+
+Extras
+------
+
+Edgegraph's pip definition contains some optional extra components:
+
+* :samp:`$ pip install edgegraph[foreign]` for all the foreign Python modules
+  edgegraph can interface with
+* :samp:`$ pip install edgegraph[full]` for all the above options
+* :samp:`$ pip install edgegraph[development]` for the full devops packages
+  needed to develop, test, document, build, and publish edgegraph itself (this
+  includes `edgegraph[full]`)
+
 .. _versioning:
 
 Versioning

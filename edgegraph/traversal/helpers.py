@@ -7,7 +7,13 @@ Helper functions for graph traversals.
 
 from __future__ import annotations
 
-from edgegraph.structure import Vertex, DirectedEdge, UnDirectedEdge
+from collections.abc import Callable
+from edgegraph.structure import (
+    Vertex,
+    Link,
+    DirectedEdge,
+    UnDirectedEdge,
+)
 
 #: Unknown edge classes treated as non-neighbors.
 #:
@@ -65,7 +71,7 @@ def neighbors(
     vert: Vertex,
     direction_sensitive: int = DIR_SENS_FORWARD,
     unknown_handling: int = LNK_UNKNOWN_ERROR,
-    filterfunc: Callable = None,
+    filterfunc: Callable | None = None,
 ) -> list[Vertex]:
     """
     Identify the neighbors of a given vertex.
@@ -134,6 +140,15 @@ def neighbors(
        The ``filterfunc`` parameter operates **in addition to** the
        ``direction_sensitive`` parameter!
 
+    .. seealso::
+
+       If you find yourself calling this function a lot on vertices that
+       haven't changed nieghbors, you may wish to read about
+       :ref:`dev/performance/vert-nb-cache`.  This technique allows this
+       function to work in tandem with the Vertex class to cache neighbor
+       lookups in a safe manner, drastically improving performance in some
+       scenarios.
+
     :param vert: The vertex to identify neighbors of.
     :param direction_sensitive: How to handle directional edges as they are
        encountered.  :py:const:`DIR_SENS_FORWARD` will indicates "normal"
@@ -157,9 +172,15 @@ def neighbors(
        representing neighbors of the specified vertex.
     """
 
+    # pylint complains about this operation, with fairly good reason -- we're
+    # accessing a private member of a client class.  however, since this is
+    # still edgegraph-internal code, this is ok; it would be a problem were the
+    # consumer of edgegraph doing this, though.
+    # pylint: disable-next=protected-access
     cached = vert._qa_neighbors_get(
         direction_sensitive, unknown_handling, filterfunc
     )
+    # pylint: disable-next=protected-access
     if cached is not Vertex._QA_NB_INVALID:
         return cached
 
@@ -275,6 +296,8 @@ def neighbors(
                 f"Unknown option for direction_sensitive = {direction_sensitive}"
             )
 
+    # see note near top of function about justification for this ignore
+    # pylint: disable-next=protected-access
     vert._qa_neighbors_insert(
         nbs, direction_sensitive, unknown_handling, filterfunc
     )
@@ -287,8 +310,8 @@ def find_links(
     v2: Vertex,
     direction_sensitive: bool = True,
     unknown_handling: int = LNK_UNKNOWN_ERROR,
-    filterfunc: Callable = None,
-) -> set[TwoEndedLink]:
+    filterfunc: Callable | None = None,
+) -> set[Link]:
     """
     Find the link(s) that connect v1 to v2.
 
@@ -297,7 +320,7 @@ def find_links(
     It respects edge directionality if/when necessary, and can handle arbitrary
     edge types given they are subclasses of either
     :py:class:`~edgegraph.structure.directededge.DirectedEdge` or
-    :py:class:~edgegraph.structure.undirectededge.UnDirectedEdge`.
+    :py:class:`~edgegraph.structure.undirectededge.UnDirectedEdge`.
 
     For example, with the given graph:
 

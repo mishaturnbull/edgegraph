@@ -6,16 +6,55 @@ build-backend = "setuptools.build_meta"
 dynamic = ["version"]
 name = "edgegraph"
 requires-python = ">= 3.7"
-dependencies = []
+dependencies = [
+    "dill"
+]
 readme = "README.md"
 license = {file = "LICENSE.txt"}
 description = "Object oriented edge-vertex graph library."
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3 :: Only",
     "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+[project.optional-dependencies]
+foreign = [
+    "pyvis"
+]
+full = [
+    "edgegraph[foreign]"
+]
+development = [
+    # documentation dependencies
+    "sphinxcontrib-plantuml",
+    "sphinx-copybutton",
+    "sphinx-book-theme",
+    "myst-parser",
+    "tomlkit",
+
+    # test dependencies
+    "pytest",
+    "coverage",
+    "pytest-cov",
+    "pytest-profiling",
+    "pytest-randomly",
+    "pytest-timeout",
+
+    # code quality control
+    # pylint is also needed for documentation
+    "pylint",
+    "black",
+    "mypy",
+
+    # build & upload to pypi dependencies
+    "build",
+    "twine",
+
+    # and everything else
+    "edgegraph[full]"
 ]
 
 [project.urls]
@@ -68,7 +107,7 @@ markers = [
     "slow: marks tests as slow (deselect with '-m \"not slow\"')",
     "perf: really slow performance tests",
 ]
-addopts = "-ra --durations=5 -m 'not (slow or perf)'"
+addopts = "--durations=5 -m 'not (slow or perf)'"
 log_cli = false
 log_cli_level = "DEBUG"
 log_cli_format = "%(asctime)s [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)"
@@ -77,6 +116,17 @@ log_cli_date_format = "%Y-%m-%d %H:%M:%S"
 [tool.coverage.html]
 show_contexts = true
 
+[tool.coverage.report]
+exclude_also = [
+    "if TYPE_CHECKING:",
+    "def __repr__",
+]
+
 [tool.black]
 line-length = 80
+
+[tool.mypy]
+pretty = true
+hide_error_codes = false
+show_error_code_links = true
 

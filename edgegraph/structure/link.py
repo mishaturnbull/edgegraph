@@ -6,7 +6,11 @@ Holds the Link class.
 """
 
 from __future__ import annotations
+from typing import TYPE_CHECKING
 from edgegraph.structure import base
+
+if TYPE_CHECKING:
+    from edgegraph.structure.vertex import Vertex
 
 
 class Link(base.BaseObject):
@@ -31,10 +35,10 @@ class Link(base.BaseObject):
     def __init__(
         self,
         *,
-        vertices: list[Vertex] = None,
-        uid: int = None,
-        attributes: dict = None,
-        _force_creation: bool = False,
+        vertices: list[Vertex] | None = None,
+        uid: int | None = None,
+        attributes: dict | None = None,
+        _force_creation: bool | None = False,
     ):
         """
         Instantiate a new link ("edge").
@@ -73,23 +77,19 @@ class Link(base.BaseObject):
         #:
         #: This is a list of vertex objects that are linked together by this
         #: class.
-        #:
-        #: :type: list[Vertex]
-        self._vertices = []
+        self._vertices: list[Vertex] = []
         if vertices is not None:
             for vert in vertices:
                 self.add_vertex(vert)
 
     @property
-    def vertices(self):
+    def vertices(self) -> tuple[Vertex, ...]:
         """
         Return a tuple of vertices this edge connects.
 
         A tuple object is given because the addition or removal of vertex
         objects using this attribute is not intended; it is meant to be
         immutable.
-
-        :rtype: tuple[Vertex]
         """
         return tuple(self._vertices)
 

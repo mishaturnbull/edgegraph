@@ -6,7 +6,12 @@ Contains the BaseObject class.
 """
 
 from __future__ import annotations
+from typing import TYPE_CHECKING
+from collections.abc import Iterator
 import uuid
+
+if TYPE_CHECKING:
+    from edgegraph.structure.universe import Universe
 
 
 class BaseObject(object):
@@ -48,11 +53,9 @@ class BaseObject(object):
     def __init__(
         self,
         *,
-        uid: int = None,
-        attributes: dict = None,
-        # WHY does this work??  __future__ annotations??  Universe isn't
-        # imported!!
-        universes: set[Universe] = None,
+        uid: int | None = None,
+        attributes: dict | None = None,
+        universes: Iterator[Universe] | None = None,
     ):
         """
         Instantiate a BaseObject.
@@ -86,9 +89,13 @@ class BaseObject(object):
         #: Internal reference to the universes this object is a part of
         #:
         #: :meta private:
-        self._universes = universes or set()
-        if not isinstance(self._universes, set):
-            self._universes = set(self._universes)
+        self._universes: list[Universe] = (
+            list(universes) if universes is not None else []
+        )
+
+        # deduplicate it while keeping order
+        # https://stackoverflow.com/a/17016257
+        self._universes = [*dict.fromkeys(self._universes)]
 
     @property
     def uid(self) -> int:
@@ -98,22 +105,20 @@ class BaseObject(object):
         return self._uid
 
     @property
-    def universes(self) -> frozenset[Universe]:
+    def universes(self) -> list[Universe]:
         """
         Get the universes this object belongs to.
 
-        Note that this gives you a :py:class:`frozenset`; you cannot add or
-        remove universes from this attribute.
+        Note that the copy returned is just that, a copy.  Modifications to
+        this list that you may make will have no effect on the object.
 
         .. seealso::
 
            :py:meth:`~edgegraph.structure.base.BaseObject.add_to_universe`,
            :py:meth:`~edgegraph.structure.base.BaseObject.remove_from_universe`
            to add or remove this object from a given universe
-
-        :rtype: frozenset[Universe]
         """
-        return frozenset(self._universes)
+        return list(self._universes)
 
     def add_to_universe(self, universe: Universe) -> None:
         """
@@ -122,14 +127,18 @@ class BaseObject(object):
 
         :param universe: the new universe to add this object to
         """
-        self._universes.add(universe)
+        # do not accept duplicates
+        if universe in self._universes:
+            return
+
+        self._universes.append(universe)
 
     def remove_from_universe(self, universe: Universe) -> None:
         """
         Remove this object from the specified universe.
 
         :param universe: the universe that this object will be removed from
-        :raises KeyError: if this object is not present in the given universe
+        :raises ValueError: if this object is not present in the given universe
         """
         self._universes.remove(universe)
 

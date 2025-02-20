@@ -16,11 +16,22 @@ functions will get the necessary updates to match, and the API stays unchanged.
 
 from __future__ import annotations
 
-from edgegraph.structure import Vertex, DirectedEdge, UnDirectedEdge
+from typing import TYPE_CHECKING
+from edgegraph.structure import (
+    Vertex,
+    DirectedEdge,
+    UnDirectedEdge,
+    TwoEndedLink,
+)
 from edgegraph.traversal import helpers
 
+if TYPE_CHECKING:
+    from edgegraph.structure import Link
 
-def link_from_to(v1: Vertex, lnktype: type, v2: Vertex, dontdup: bool = False):
+
+def link_from_to(
+    v1: Vertex, lnktype: type, v2: Vertex, dontdup: bool = False
+) -> Link:
     """
     Create a link of type ``lnktype`` from ``v1`` to ``v2``.
 
@@ -43,7 +54,6 @@ def link_from_to(v1: Vertex, lnktype: type, v2: Vertex, dontdup: bool = False):
       undirected), no new link is created, but the already-existing one is
       returned silently.
     :return: The link instance.
-    :rtype: An instance of the param ``lnktype``.
     """
 
     if dontdup:
@@ -54,7 +64,7 @@ def link_from_to(v1: Vertex, lnktype: type, v2: Vertex, dontdup: bool = False):
     return lnktype(v1, v2)
 
 
-def unlink(v1: Vertex, v2: Vertex, destroy=True) -> None:
+def unlink(v1: Vertex, v2: Vertex, destroy=True) -> set[TwoEndedLink] | None:
     """
     Remive all links between ``v1`` and ``v2``.
 
@@ -86,9 +96,9 @@ def unlink(v1: Vertex, v2: Vertex, destroy=True) -> None:
     if destroy:
         # TODO: is this actually useful?  need to investigate.  May not do
         # quite what it says on the tin.
-        links = list(links)
-        for i in range(len(links) - 1, -1, -1):
-            del links[i]
+        llinks = list(links)
+        for i in range(len(llinks) - 1, -1, -1):
+            del llinks[i]
 
     if not destroy:
         return out

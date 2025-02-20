@@ -49,14 +49,15 @@ visiting v9 before v10) is determined by the structure of the universe.
 from __future__ import annotations
 
 import collections
+from collections.abc import Callable, Iterator
 
 from edgegraph.structure import Universe, Vertex
 from edgegraph.traversal import helpers
 
-# TODO: add (search fn) passthru kwargs to neighbors() options
 
-
-def bfs(uni: Universe, start: Vertex, attrib: str, val: object) -> Vertex:
+def bfs(
+    uni: Universe, start: Vertex, attrib: str, val: object
+) -> Vertex | None:
     """
     Perform a breadth-first search.
 
@@ -67,7 +68,7 @@ def bfs(uni: Universe, start: Vertex, attrib: str, val: object) -> Vertex:
     [GoTa60]_, Algorithm 13.8.  Slight modifications have been made to break
     early when the desired value is found.
 
-    :param uni: The universe to search in.
+    :param uni: The universe to search in.  Set to ``None`` for no limitations.
     :param start: The vertex to start searching at.
     :param attrib: The attribute name to check for each vertex.
     :param val: The value to check for in the aforementioned attribute.
@@ -107,16 +108,17 @@ def bfs(uni: Universe, start: Vertex, attrib: str, val: object) -> Vertex:
     return None
 
 
-def bft(
+def ibft(
     uni: Universe,
     start: Vertex,
+    *,
     direction_sensitive: int = helpers.DIR_SENS_FORWARD,
     unknown_handling: int = helpers.LNK_UNKNOWN_ERROR,
-    ff_via: Callable = None,
-    ff_result: Callable = None,
-) -> list[Vertex]:
+    ff_via: Callable | None = None,
+    ff_result: Callable | None = None,
+) -> Iterator[Vertex]:
     """
-    Perform a breadth-first traversal.
+    Perform a breadth-first traversal (generator).
 
     This function performs a breadth-first traversal within ``uni``, starting
     at ``start``, and returns the vertices visited in a list.
@@ -124,7 +126,7 @@ def bft(
     This algorithm is detailed in pseudocode in [CLRS09]_, figure 22.3, and
     [GoTa60]_, Algorithm 13.8.
 
-    :param uni: The universe to search in.
+    :param uni: The universe to search in.  Set to ``None`` for no limiations.
     :param start: The vertex to start searching at.
     :param direction_sensitive: Directly passed through to
        :py:func:`~edgegraph.traversal.helpers.neighbors`.  This may be one of:
@@ -175,17 +177,21 @@ def bft(
           :param v: Vertex to be considered
           :return: Whether or not ``v`` should be part of the output.
 
-    :return: The vertices visited during traversal.
+    :return: A generator object that yields vertices in the order of a
+       breadth-first traversal in accordance with the set parameters.
     """
     if (uni is not None) and (len(uni.vertices) == 0):
         # empty!
-        return None
+        return
     if (uni is not None) and (start not in uni.vertices):
         raise ValueError("Start vertex not in specified universe!")
 
-    visited = []
+    visited = set()
     queue = collections.deque([start])
-    visited.append(start)
+    visited.add(start)
+
+    if (ff_result and ff_result(start)) or (not ff_result):
+        yield start
 
     while queue:
         u = queue.popleft()
@@ -201,9 +207,45 @@ def bft(
 
             # make sure we don't re-visit as a duplicate
             if v not in visited:
-                visited.append(v)
+                visited.add(v)
                 queue.append(v)
 
-    if ff_result:
-        return list(filter(ff_result, visited))
-    return visited
+                if (ff_result and ff_result(v)) or (not ff_result):
+                    yield v
+
+
+def bft(
+    uni: Universe,
+    start: Vertex,
+    *,
+    direction_sensitive: int = helpers.DIR_SENS_FORWARD,
+    unknown_handling: int = helpers.LNK_UNKNOWN_ERROR,
+    ff_via: Callable | None = None,
+    ff_result: Callable | None = None,
+) -> list[Vertex]:
+    """
+    Perform a breadth-first traversal (**non**-generator).
+
+    .. seealso::
+
+       Please refer to the documentation of :py:func:`ibft`!  This function
+       simply wraps that one, only forcing full expansion to a list before
+       returning.  All parameters are exactly the same and passed through
+       without alteration.
+
+    :return: A list of vertices in order of a breadth-first traversal.
+    """
+
+    out = list(
+        ibft(
+            # multiple functions have the same arguments... not a duplicate!
+            # pylint: disable=duplicate-code
+            uni,
+            start,
+            direction_sensitive=direction_sensitive,
+            unknown_handling=unknown_handling,
+            ff_via=ff_via,
+            ff_result=ff_result,
+        )
+    )
+    return out

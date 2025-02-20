@@ -49,7 +49,7 @@ handled in three possible ways:
    :data:`PLANTUML_INVOKE_ARGS` list.  This affects all invocations to PlantUML
    that this module will make.
 2. If you need to customize environs available to PlantUML, use the
-   :data`PLANTUML_INVOKE_ENV` dict.  This affects all invocations to PlantUML
+   :data:`PLANTUML_INVOKE_ENV` dict.  This affects all invocations to PlantUML
    that this module will make.
 3. If you need to change the location / execution of PlantUML, see the
    ``plantuml`` argument to :func:`is_plantuml_installed` and
@@ -157,9 +157,7 @@ PLANTUML_RENDER_OPTIONS = {
 #: -jar plantuml.jar -Djava.awt.headless=true {...}`.  This may cause
 #: unintended effects, as it is not possible to pass arguments to the java
 #: executor itself by this method.
-#:
-#: :type: list[str]
-PLANTUML_INVOKE_ARGS = []
+PLANTUML_INVOKE_ARGS: list[str] = []
 
 #: Environment variable overrides to invoke plantuml with.
 #:
@@ -283,7 +281,7 @@ def _one_vert_to_skinparam(vert, options):
     return output
 
 
-def render_to_plantuml_src(uni: Universe, options: dict) -> str:
+def render_to_plantuml_src(uni: Universe, options: dict) -> str | None:
     """
     Render a universe to PlantUML source.
 
@@ -380,6 +378,10 @@ def render_to_image(src: str, out_file: str, plantuml: str = "plantuml"):
             capture_output=True,
             check=True,
         )
-        shutil.move(outfile, out_file)
+        # TODO: re-ensure coverage of this line!!
+        # due to the planutml timeout issue (#59), some unit tests are
+        # currently tagged with an xfail + timeout; however, when they fail to
+        # run, this line is not executed
+        shutil.move(outfile, out_file)  # pragma: no cover
     finally:
         shutil.rmtree(tmpdir)
