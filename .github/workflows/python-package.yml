@@ -40,6 +40,12 @@ jobs:
         python -m pip install --upgrade pip
         pip install .[development]
 
+    - name: Version Info Dump
+      run: |
+        uname -r
+        python -VV
+        python -m pip freeze
+
     - name: Documentation coverage
       if: ${{ matrix.python-version == '3.13' }}
       run: |
