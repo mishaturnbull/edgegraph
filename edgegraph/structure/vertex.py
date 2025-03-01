@@ -56,12 +56,13 @@ class Vertex(base.BaseObject):
 
         if cls.NEIGHBOR_CACHING:
 
-            totals = [0, 0, 0, 0]
+            totals = [0, 0, 0, 0, 0]
             for _, stat in cls._CACHE_STATS.items():
                 totals[0] += stat[0]
                 totals[1] += stat[1]
                 totals[2] += stat[2]
                 totals[3] += stat[3]
+                totals[4] += stat[4]
 
             lines.append("=== CACHE STATISTICS OVERALL ===")
             lines.append(f"Size:          {len(Vertex._CACHE_STATS)}")
@@ -69,6 +70,7 @@ class Vertex(base.BaseObject):
             lines.append(f"Misses:        {totals[1]}")
             lines.append(f"Invalidations: {totals[2]}")
             lines.append(f"Insertions:    {totals[3]}")
+            lines.append(f"1-item insrts: {totals[4]}")
 
         else:
             lines.append("Neighbor caching is DISABLED")
@@ -98,7 +100,7 @@ class Vertex(base.BaseObject):
         """
         super().__init__(uid=uid, attributes=attributes, universes=universes)
 
-        self._CACHE_STATS.update({self.uid: [0, 0, 0, 0]})
+        self._CACHE_STATS.update({self.uid: [0, 0, 0, 0, 0]})
 
         #: Links that this vertex is associated with
         #:
@@ -215,6 +217,8 @@ class Vertex(base.BaseObject):
             return
         if args not in self.__qa_nb_cache:
             self.__qa_nb_cache[args] = []
+
+        self._CACHE_STATS[self.uid][4] += 1
         self.__qa_nb_cache[args].append(item)
 
     def add_to_link(self, link: Link):

@@ -203,7 +203,11 @@ def ineighbors(
                 # this goes for all three places filterfunc() is used in this
                 # neighbors function
                 if filterfunc is None or filterfunc(link, v2):
-                    vert._qa_neighbors_insert_1(v2, direction_sensitive, unknown_handling, filterfunc)
+                    # see note near top of this function for justification
+                    # pylint: disable-next=protected-access
+                    vert._qa_neighbors_insert_1(
+                        v2, direction_sensitive, unknown_handling, filterfunc
+                    )
                     yield v2
                 else:
 
@@ -223,7 +227,11 @@ def ineighbors(
                 # see above notes on short-circuiting filterfunc() if it's not
                 # provided
                 if filterfunc is None or filterfunc(link, v2):
-                    vert._qa_neighbors_insert_1(v2, direction_sensitive, unknown_handling, filterfunc)
+                    # see note near top of this function for justification
+                    # pylint: disable-next=protected-access
+                    vert._qa_neighbors_insert_1(
+                        v2, direction_sensitive, unknown_handling, filterfunc
+                    )
                     yield v2
                 else:
                     # see comment on the above else: continue block for
@@ -242,7 +250,12 @@ def ineighbors(
 
                 if unknown_handling == LNK_UNKNOWN_NEIGHBOR:
                     yld = link.other(vert)
-                    vert._qa_neighbors_insert_1(yld, direction_sensitive, unknown_handling, filterfunc)
+
+                    # see note near top of this function for justification
+                    # pylint: disable-next=protected-access
+                    vert._qa_neighbors_insert_1(
+                        yld, direction_sensitive, unknown_handling, filterfunc
+                    )
                     yield yld
                 else:
                     raise NotImplementedError(
@@ -254,7 +267,11 @@ def ineighbors(
             if issubclass(type(link), UnDirectedEdge):
 
                 if filterfunc is None or filterfunc(link, v2):
-                    vert._qa_neighbors_insert_1(v2, direction_sensitive, unknown_handling, filterfunc)
+                    # see note near top of this function for justification
+                    # pylint: disable-next=protected-access
+                    vert._qa_neighbors_insert_1(
+                        v2, direction_sensitive, unknown_handling, filterfunc
+                    )
                     yield v2
                 else:
                     # see comment on the above else: continue block for
@@ -267,7 +284,11 @@ def ineighbors(
                 # see above notes on short-circuiting filterfunc() if it's not
                 # provided
                 if filterfunc is None or filterfunc(link, v2):
-                    vert._qa_neighbors_insert_1(v2, direction_sensitive, unknown_handling, filterfunc)
+                    # see note near top of this function for justification
+                    # pylint: disable-next=protected-access
+                    vert._qa_neighbors_insert_1(
+                        v2, direction_sensitive, unknown_handling, filterfunc
+                    )
                     yield v2
                 else:
                     # see comment on the above else: continue block for
@@ -286,7 +307,12 @@ def ineighbors(
 
                 if unknown_handling == LNK_UNKNOWN_NEIGHBOR:
                     yld = link.other(vert)
-                    vert._qa_neighbors_insert_1(yld, direction_sensitive, unknown_handling, filterfunc)
+
+                    # see note near top of this function for justification
+                    # pylint: disable-next=protected-access
+                    vert._qa_neighbors_insert_1(
+                        yld, direction_sensitive, unknown_handling, filterfunc
+                    )
                     yield yld
                 else:
                     raise NotImplementedError(
@@ -297,7 +323,11 @@ def ineighbors(
             # see above notes on short-circuiting filterfunc() if it's not
             # provided
             if filterfunc is None or filterfunc(link, v2):
-                vert._qa_neighbors_insert_1(v2, direction_sensitive, unknown_handling, filterfunc)
+                # see note near top of this function for justification
+                # pylint: disable-next=protected-access
+                vert._qa_neighbors_insert_1(
+                    v2, direction_sensitive, unknown_handling, filterfunc
+                )
                 yield v2
 
         else:
@@ -305,13 +335,17 @@ def ineighbors(
                 f"Unknown option for direction_sensitive = {direction_sensitive}"
             )
 
+
 def neighbors(
     vert: Vertex,
     direction_sensitive: int = DIR_SENS_FORWARD,
     unknown_handling: int = LNK_UNKNOWN_ERROR,
     filterfunc: Callable | None = None,
 ) -> list[Vertex]:
-    return list(ineighbors(vert, direction_sensitive, unknown_handling, filterfunc))
+    return list(
+        ineighbors(vert, direction_sensitive, unknown_handling, filterfunc)
+    )
+
 
 def find_links(
     v1: Vertex,
