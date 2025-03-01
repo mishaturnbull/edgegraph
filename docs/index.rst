@@ -16,6 +16,7 @@ EdgeGraph is an object-oriented approach to vertex-edge network graphs.
    usage/index
    developer/index
 
+   changelog/index
    bib
 
 Indices and tables
