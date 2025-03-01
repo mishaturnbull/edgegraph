@@ -18,7 +18,7 @@ python3 -m pytest \
     -o log_cli=true \
     -vv
 
-mv prof/combined.svg docs/_build/
+mv prof/combined.svg docs/_build/combined-$(date -Iseconds).svg
 
 echo Done!
 
