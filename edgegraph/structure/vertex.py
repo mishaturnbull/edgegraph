@@ -56,21 +56,19 @@ class Vertex(base.BaseObject):
 
         if cls.NEIGHBOR_CACHING:
 
-            totals = [0, 0, 0, 0, 0]
+            totals = [0, 0, 0, 0]
             for _, stat in cls._CACHE_STATS.items():
                 totals[0] += stat[0]
                 totals[1] += stat[1]
                 totals[2] += stat[2]
                 totals[3] += stat[3]
-                totals[4] += stat[4]
 
             lines.append("=== CACHE STATISTICS OVERALL ===")
             lines.append(f"Size:          {len(Vertex._CACHE_STATS)}")
             lines.append(f"Hits:          {totals[0]}")
             lines.append(f"Misses:        {totals[1]}")
             lines.append(f"Invalidations: {totals[2]}")
-            lines.append(f"Insertions:    {totals[3]}")
-            lines.append(f"1-item insrts: {totals[4]}")
+            lines.append(f"1-item insrts: {totals[3]}")
 
         else:
             lines.append("Neighbor caching is DISABLED")
@@ -184,23 +182,6 @@ class Vertex(base.BaseObject):
         self._CACHE_STATS[self.uid][2] += 1
         self.__qa_nb_cache = {}
 
-    def _qa_neighbors_insert(self, answer, *args):
-        """
-        Insert data into the quick-access neighbor cache.
-
-        **FOR INTERNAL USE ONLY!!**
-
-        This function inserts the "answer" into the neighbor cache for this
-        object, with a key of ``*args``.
-
-        :param answer: the neighbors of this object
-        :param *args: Arguments passed to the neighbors() function
-        """
-        if not self.NEIGHBOR_CACHING:
-            return
-        self._CACHE_STATS[self.uid][3] += 1
-        self.__qa_nb_cache[args] = answer
-
     def _qa_neighbors_insert_1(self, item, *args):
         """
         Insert one item into the quick-access neighbors cache.
@@ -218,7 +199,7 @@ class Vertex(base.BaseObject):
         if args not in self.__qa_nb_cache:
             self.__qa_nb_cache[args] = []
 
-        self._CACHE_STATS[self.uid][4] += 1
+        self._CACHE_STATS[self.uid][3] += 1
         self.__qa_nb_cache[args].append(item)
 
     def add_to_link(self, link: Link):
