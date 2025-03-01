@@ -199,6 +199,24 @@ class Vertex(base.BaseObject):
         self._CACHE_STATS[self.uid][3] += 1
         self.__qa_nb_cache[args] = answer
 
+    def _qa_neighbors_insert_1(self, item, *args):
+        """
+        Insert one item into the quick-access neighbors cache.
+
+        **FOR INTERNAL USE ONLY!!**
+
+        This function inserts the given item into the "answer key" for this
+        object, with a key of ``*args``.
+
+        :param item: The item to insert.
+        :param *args: Arguments passed to the neighbors() function.
+        """
+        if not self.NEIGHBOR_CACHING:
+            return
+        if args not in self.__qa_nb_cache:
+            self.__qa_nb_cache[args] = []
+        self.__qa_nb_cache[args].append(item)
+
     def add_to_link(self, link: Link):
         """
         Add this vertex to a link.

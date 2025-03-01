@@ -67,7 +67,7 @@ DIR_SENS_ANY = 1
 DIR_SENS_BACKWARD = 2
 
 
-def neighbors(
+def ineighbors(
     vert: Vertex,
     direction_sensitive: int = DIR_SENS_FORWARD,
     unknown_handling: int = LNK_UNKNOWN_ERROR,
@@ -182,9 +182,9 @@ def neighbors(
     )
     # pylint: disable-next=protected-access
     if cached is not Vertex._QA_NB_INVALID:
-        return cached
+        yield from cached
+        return
 
-    nbs = []
     for link in vert.links:
 
         v2 = link.other(vert)
@@ -203,7 +203,8 @@ def neighbors(
                 # this goes for all three places filterfunc() is used in this
                 # neighbors function
                 if filterfunc is None or filterfunc(link, v2):
-                    nbs.append(v2)
+                    vert._qa_neighbors_insert_1(v2, direction_sensitive, unknown_handling, filterfunc)
+                    yield v2
                 else:
 
                     # this is not detectable by coverage.py, due to a ~~bug~~
@@ -222,7 +223,8 @@ def neighbors(
                 # see above notes on short-circuiting filterfunc() if it's not
                 # provided
                 if filterfunc is None or filterfunc(link, v2):
-                    nbs.append(v2)
+                    vert._qa_neighbors_insert_1(v2, direction_sensitive, unknown_handling, filterfunc)
+                    yield v2
                 else:
                     # see comment on the above else: continue block for
                     # explanation of this no-cover statement.
@@ -239,7 +241,9 @@ def neighbors(
                     continue
 
                 if unknown_handling == LNK_UNKNOWN_NEIGHBOR:
-                    nbs.append(link.other(vert))
+                    yld = link.other(vert)
+                    vert._qa_neighbors_insert_1(yld, direction_sensitive, unknown_handling, filterfunc)
+                    yield yld
                 else:
                     raise NotImplementedError(
                         f"Unknown link class {type(link)}"
@@ -250,7 +254,8 @@ def neighbors(
             if issubclass(type(link), UnDirectedEdge):
 
                 if filterfunc is None or filterfunc(link, v2):
-                    nbs.append(v2)
+                    vert._qa_neighbors_insert_1(v2, direction_sensitive, unknown_handling, filterfunc)
+                    yield v2
                 else:
                     # see comment on the above else: continue block for
                     # explanation of this no-cover statement.
@@ -262,7 +267,8 @@ def neighbors(
                 # see above notes on short-circuiting filterfunc() if it's not
                 # provided
                 if filterfunc is None or filterfunc(link, v2):
-                    nbs.append(v2)
+                    vert._qa_neighbors_insert_1(v2, direction_sensitive, unknown_handling, filterfunc)
+                    yield v2
                 else:
                     # see comment on the above else: continue block for
                     # explanation of this no-cover statement.
@@ -279,7 +285,9 @@ def neighbors(
                     continue
 
                 if unknown_handling == LNK_UNKNOWN_NEIGHBOR:
-                    nbs.append(link.other(vert))
+                    yld = link.other(vert)
+                    vert._qa_neighbors_insert_1(yld, direction_sensitive, unknown_handling, filterfunc)
+                    yield yld
                 else:
                     raise NotImplementedError(
                         f"Unknown link class {type(link)}"
@@ -289,21 +297,21 @@ def neighbors(
             # see above notes on short-circuiting filterfunc() if it's not
             # provided
             if filterfunc is None or filterfunc(link, v2):
-                nbs.append(v2)
+                vert._qa_neighbors_insert_1(v2, direction_sensitive, unknown_handling, filterfunc)
+                yield v2
 
         else:
             raise ValueError(
                 f"Unknown option for direction_sensitive = {direction_sensitive}"
             )
 
-    # see note near top of function about justification for this ignore
-    # pylint: disable-next=protected-access
-    vert._qa_neighbors_insert(
-        nbs, direction_sensitive, unknown_handling, filterfunc
-    )
-
-    return nbs
-
+def neighbors(
+    vert: Vertex,
+    direction_sensitive: int = DIR_SENS_FORWARD,
+    unknown_handling: int = LNK_UNKNOWN_ERROR,
+    filterfunc: Callable | None = None,
+) -> list[Vertex]:
+    return list(ineighbors(vert, direction_sensitive, unknown_handling, filterfunc))
 
 def find_links(
     v1: Vertex,
