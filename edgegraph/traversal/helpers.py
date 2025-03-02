@@ -74,7 +74,7 @@ def ineighbors(
     filterfunc: Callable | None = None,
 ) -> list[Vertex]:
     """
-    Identify the neighbors of a given vertex.
+    Identify the neighbors of a given vertex (generator).
 
     This function checks the edges associated with the given vertex, identifies
     the vertices on the other end of those edges, and returns them.  It
@@ -100,13 +100,13 @@ def ineighbors(
 
     the function would operate as:
 
-    >>> neighbors(v1)
+    >>> list(ineighbors(v1))
     [v2, v3]
-    >>> neighbors(v1, direction_sensitive=DIR_SENS_FORWARD)
+    >>> list(ineighbors(v1, direction_sensitive=DIR_SENS_FORWARD))
     [v2, v3, v4]
-    >>> neighbors(v4)
+    >>> list(ineighbors(v4))
     [v1]
-    >>> neighbors(v4, direction_sensitive=DIR_SENS_ANY)
+    >>> list(ineighbors(v4, direction_sensitive=DIR_SENS_ANY))
     [v1, v3]
 
     If supplied, the ``filterfunc`` argument should be to a callable object
@@ -130,9 +130,9 @@ def ineighbors(
     For example, one may wish to only consider vertices if a given attribute
     meets some criteria:
 
-    >>> neighbors(v1)
+    >>> list(ineighbors(v1))
     [v2, v3]
-    >>> neighbors(v1, filterfunc=lambda e, v2: v2.i >= 3)
+    >>> list(ineighbors(v1, filterfunc=lambda e, v2: v2.i >= 3))
     [v3]
 
     .. note::
@@ -168,8 +168,9 @@ def ineighbors(
        vertex should be included in the neighbors output.
     :raises NotImplementedError: if kwarg ``unknown_handling`` is set to
        :py:const:`LNK_UNKNOWN_ERROR` and an unknown edge class is enountered.
-    :return: A list of :py:class:`~edgegraph.structure.vertex.Vertex` objects
-       representing neighbors of the specified vertex.
+    :return: A generator object which yields
+       :py:class:`~edgegraph.structure.vertex.Vertex` objects representing
+       neighbors of the specified vertex.
     """
 
     # pylint complains about this operation, with fairly good reason -- we're
@@ -342,6 +343,26 @@ def neighbors(
     unknown_handling: int = LNK_UNKNOWN_ERROR,
     filterfunc: Callable | None = None,
 ) -> list[Vertex]:
+    """
+    Identify the neighbors of a given vertex (**non**-generator).
+
+    This function checks the edges associated with the given vertex, identifies
+    the vertices on the other end of those edges, and returns them.  It
+    respects edge directionality if/when necessary, and can handle arbitrary
+    edge types given they are subclasses of either
+    :py:class:`~edgegraph.structure.directededge.DirectedEdge` or
+    :py:class:`~edgegraph.structure.undirectededge.UnDirectedEdge`.
+
+    .. seealso::
+
+       Please refer to the documentation of :py:func:`ineighbors`!  This
+       function simply wraps that one, only forcing full expansion to a list
+       before returning.  All parameters are exactly the same and passed
+       through without alteration.
+
+    :return: A list of  :py:class:`~edgegraph.structure.vertex.Vertex` objects
+       representing neighbors of the specified vertex.
+    """
     return list(
         ineighbors(vert, direction_sensitive, unknown_handling, filterfunc)
     )
