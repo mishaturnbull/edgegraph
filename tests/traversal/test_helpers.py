@@ -66,6 +66,7 @@ def test_neighbors_directed():
     assert v0nb == [v[1]], "v0 neighbors incorrect!"
     assert v1nb == [v[2]], "v1 neighbors incorrect!"
 
+
 def test_ineighbors_generator():
     """
     Ensure the ineighbors function yields an iterator.
@@ -79,8 +80,8 @@ def test_ineighbors_generator():
 
     v0nb = helpers.ineighbors(v[0])
 
-    assert hasattr(v0nb, '__next__'), "ineighbors() did not return a generator!"
-    assert hasattr(v0nb, 'send'), "ineighbors() did not return a generator!"
+    assert hasattr(v0nb, "__next__"), "ineighbors() did not return a generator!"
+    assert hasattr(v0nb, "send"), "ineighbors() did not return a generator!"
 
     exp = list(v0nb)
 
@@ -613,6 +614,7 @@ def test_findlinks_filterfunc():
     assert l4 == {
         e2,
     }, "find_links did not find the right link!"
+
 
 @pytest.mark.slow
 @pytest.mark.parametrize("n_links", [1, 10, 100, 500])

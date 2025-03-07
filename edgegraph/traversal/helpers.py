@@ -313,7 +313,10 @@ def ineighbors(
                 f"Unknown option for direction_sensitive = {direction_sensitive}"
             )
 
-    vert._qa_neighbors_insert(cache, direction_sensitive, unknown_handling, filterfunc)
+    vert._qa_neighbors_insert(
+        cache, direction_sensitive, unknown_handling, filterfunc
+    )
+
 
 def neighbors(
     vert: Vertex,
