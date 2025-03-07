@@ -186,6 +186,8 @@ def ineighbors(
         yield from cached
         return
 
+    cache = []
+
     for link in vert.links:
 
         v2 = link.other(vert)
@@ -204,11 +206,8 @@ def ineighbors(
                 # this goes for all three places filterfunc() is used in this
                 # neighbors function
                 if filterfunc is None or filterfunc(link, v2):
-                    # see note near top of this function for justification
-                    # pylint: disable-next=protected-access
-                    vert._qa_neighbors_insert_1(
-                        v2, direction_sensitive, unknown_handling, filterfunc
-                    )
+                    if Vertex.NEIGHBOR_CACHING:
+                        cache.append(v2)
                     yield v2
                 else:
 
@@ -228,11 +227,8 @@ def ineighbors(
                 # see above notes on short-circuiting filterfunc() if it's not
                 # provided
                 if filterfunc is None or filterfunc(link, v2):
-                    # see note near top of this function for justification
-                    # pylint: disable-next=protected-access
-                    vert._qa_neighbors_insert_1(
-                        v2, direction_sensitive, unknown_handling, filterfunc
-                    )
+                    if Vertex.NEIGHBOR_CACHING:
+                        cache.append(v2)
                     yield v2
                 else:
                     # see comment on the above else: continue block for
@@ -240,8 +236,6 @@ def ineighbors(
                     continue  # pragma: no cover
 
             # we're looking at v2 -- the destination
-            # TODO: is it more time efficient to move the v1/v2 comparison into
-            # an if nested under the directededge check?
             elif issubclass(type(link), DirectedEdge) and (link.v2 is vert):
                 pass
 
@@ -252,11 +246,8 @@ def ineighbors(
                 if unknown_handling == LNK_UNKNOWN_NEIGHBOR:
                     yld = link.other(vert)
 
-                    # see note near top of this function for justification
-                    # pylint: disable-next=protected-access
-                    vert._qa_neighbors_insert_1(
-                        yld, direction_sensitive, unknown_handling, filterfunc
-                    )
+                    if Vertex.NEIGHBOR_CACHING:
+                        cache.append(yld)
                     yield yld
                 else:
                     raise NotImplementedError(
@@ -268,11 +259,8 @@ def ineighbors(
             if issubclass(type(link), UnDirectedEdge):
 
                 if filterfunc is None or filterfunc(link, v2):
-                    # see note near top of this function for justification
-                    # pylint: disable-next=protected-access
-                    vert._qa_neighbors_insert_1(
-                        v2, direction_sensitive, unknown_handling, filterfunc
-                    )
+                    if Vertex.NEIGHBOR_CACHING:
+                        cache.append(v2)
                     yield v2
                 else:
                     # see comment on the above else: continue block for
@@ -285,11 +273,8 @@ def ineighbors(
                 # see above notes on short-circuiting filterfunc() if it's not
                 # provided
                 if filterfunc is None or filterfunc(link, v2):
-                    # see note near top of this function for justification
-                    # pylint: disable-next=protected-access
-                    vert._qa_neighbors_insert_1(
-                        v2, direction_sensitive, unknown_handling, filterfunc
-                    )
+                    if Vertex.NEIGHBOR_CACHING:
+                        cache.append(v2)
                     yield v2
                 else:
                     # see comment on the above else: continue block for
@@ -297,8 +282,6 @@ def ineighbors(
                     continue  # pragma: no cover
 
             # we're looking at v2 -- the destination
-            # TODO: is it more time efficient to move the v1/v2 comparison into
-            # an if nested under the directededge check?
             elif issubclass(type(link), DirectedEdge) and (link.v1 is vert):
                 pass
 
@@ -309,11 +292,8 @@ def ineighbors(
                 if unknown_handling == LNK_UNKNOWN_NEIGHBOR:
                     yld = link.other(vert)
 
-                    # see note near top of this function for justification
-                    # pylint: disable-next=protected-access
-                    vert._qa_neighbors_insert_1(
-                        yld, direction_sensitive, unknown_handling, filterfunc
-                    )
+                    if Vertex.NEIGHBOR_CACHING:
+                        cache.append(yld)
                     yield yld
                 else:
                     raise NotImplementedError(
@@ -324,11 +304,8 @@ def ineighbors(
             # see above notes on short-circuiting filterfunc() if it's not
             # provided
             if filterfunc is None or filterfunc(link, v2):
-                # see note near top of this function for justification
-                # pylint: disable-next=protected-access
-                vert._qa_neighbors_insert_1(
-                    v2, direction_sensitive, unknown_handling, filterfunc
-                )
+                if Vertex.NEIGHBOR_CACHING:
+                    cache.append(v2)
                 yield v2
 
         else:
@@ -336,6 +313,8 @@ def ineighbors(
                 f"Unknown option for direction_sensitive = {direction_sensitive}"
             )
 
+    if Vertex.NEIGHBOR_CACHING:
+        vert._qa_neighbors_insert(cache, direction_sensitive, unknown_handling, filterfunc)
 
 def neighbors(
     vert: Vertex,

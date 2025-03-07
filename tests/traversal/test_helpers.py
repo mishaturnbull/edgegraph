@@ -66,6 +66,52 @@ def test_neighbors_directed():
     assert v0nb == [v[1]], "v0 neighbors incorrect!"
     assert v1nb == [v[2]], "v1 neighbors incorrect!"
 
+def test_ineighbors_generator():
+    """
+    Ensure the ineighbors function yields an iterator.
+    """
+    v = [Vertex(), Vertex(), Vertex(), Vertex()]
+    adj = {
+        v[0]: [v[1]],
+        v[1]: [v[2]],
+    }
+    adjlist.load_adj_dict(adj, UnDirectedEdge)
+
+    v0nb = helpers.ineighbors(v[0])
+
+    assert hasattr(v0nb, '__next__'), "ineighbors() did not return a generator!"
+    assert hasattr(v0nb, 'send'), "ineighbors() did not return a generator!"
+
+    exp = list(v0nb)
+
+    assert exp == [v[1]], "ineighbors yielded wrong values!"
+
+
+def test_ineighbors_partial_cache_safety():
+    """
+    Ensure the ineighbors function isn't buggy with partial cache insertions.
+    """
+    v = [Vertex(), Vertex(), Vertex(), Vertex()]
+    adj = {
+        v[0]: [v[1], v[2], v[3]],
+    }
+    nb = helpers.neighbors(v[0])
+    assert nb == [], "neighbors before linking!"
+
+    adjlist.load_adj_dict(adj, UnDirectedEdge)
+
+    itr = helpers.ineighbors(v[0])
+
+    assert next(itr) == v[1], "First of ineighbors() wrong!"
+    assert next(itr) == v[2], "Second of ineighbors() wrong!"
+
+    # DON'T call next again to get the third neighbor
+
+    itr2 = helpers.ineighbors(v[0])
+    nbs = list(itr2)
+
+    assert nbs == [v[1], v[2], v[3]], "ineighbors left a partial cache!!!"
+
 
 def test_neighbors_directed_nonsensitive():
     """
@@ -567,7 +613,6 @@ def test_findlinks_filterfunc():
     assert l4 == {
         e2,
     }, "find_links did not find the right link!"
-
 
 @pytest.mark.slow
 @pytest.mark.parametrize("n_links", [1, 10, 100, 500])

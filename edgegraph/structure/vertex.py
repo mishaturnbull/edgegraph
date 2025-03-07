@@ -68,7 +68,7 @@ class Vertex(base.BaseObject):
             lines.append(f"Hits:          {totals[0]}")
             lines.append(f"Misses:        {totals[1]}")
             lines.append(f"Invalidations: {totals[2]}")
-            lines.append(f"1-item insrts: {totals[3]}")
+            lines.append(f"Insertions:    {totals[3]}")
 
         else:
             lines.append("Neighbor caching is DISABLED")
@@ -98,7 +98,7 @@ class Vertex(base.BaseObject):
         """
         super().__init__(uid=uid, attributes=attributes, universes=universes)
 
-        self._CACHE_STATS.update({self.uid: [0, 0, 0, 0, 0]})
+        self._CACHE_STATS.update({self.uid: [0, 0, 0, 0]})
 
         #: Links that this vertex is associated with
         #:
@@ -182,25 +182,22 @@ class Vertex(base.BaseObject):
         self._CACHE_STATS[self.uid][2] += 1
         self.__qa_nb_cache = {}
 
-    def _qa_neighbors_insert_1(self, item, *args):
+    def _qa_neighbors_insert(self, answer, *args):
         """
-        Insert one item into the quick-access neighbors cache.
+        Insert data into the quick-access neighbor cache.
 
         **FOR INTERNAL USE ONLY!!**
 
-        This function inserts the given item into the "answer key" for this
+        This function inserts the "answer" into the neighbor cache for this
         object, with a key of ``*args``.
 
-        :param item: The item to insert.
-        :param *args: Arguments passed to the neighbors() function.
+        :param answer: the neighbors of this object
+        :param *args: Arguments passed to the neighbors() function
         """
         if not self.NEIGHBOR_CACHING:
             return
-        if args not in self.__qa_nb_cache:
-            self.__qa_nb_cache[args] = []
-
         self._CACHE_STATS[self.uid][3] += 1
-        self.__qa_nb_cache[args].append(item)
+        self.__qa_nb_cache[args] = answer
 
     def add_to_link(self, link: Link):
         """
