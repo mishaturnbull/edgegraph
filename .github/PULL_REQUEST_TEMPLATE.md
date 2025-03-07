@@ -23,6 +23,7 @@ and `resolved`*
 
 * [ ] Code changes are complete
 * [ ] Documentation updates are made as applicable
+  * [ ] For release PRs, the changelog has been updated
 * [ ] Unit tests are updated as applicable
 * [ ] Target branch is correct (`master` for releases and hotfixes; `develop`
   for all else)
