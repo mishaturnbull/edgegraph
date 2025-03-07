@@ -98,7 +98,7 @@ def _dft_recur(
     if (ff_result and ff_result(v)) or (not ff_result):
         yield v
 
-    for w in helpers.neighbors(
+    for w in helpers.ineighbors(
         v,
         direction_sensitive=direction_sensitive,
         unknown_handling=unknown_handling,
@@ -218,7 +218,7 @@ def _dfs_recur(
     :return: The target vertex, or None if not found in this subtree.
     """
     visited[v] = None
-    for w in helpers.neighbors(v):
+    for w in helpers.ineighbors(v):
         if (uni is not None) and (w not in uni.vertices):
             continue
         if w not in visited:
@@ -311,7 +311,7 @@ def idft_iterative(
             if (ff_result and ff_result(v)) or (not ff_result):
                 yield v
 
-            for w in helpers.neighbors(
+            for w in helpers.ineighbors(
                 v,
                 direction_sensitive=direction_sensitive,
                 unknown_handling=unknown_handling,
@@ -397,6 +397,6 @@ def dfs_iterative(
                 if v[attrib] == val:
                     return v
             discovered.append(v)
-            for w in helpers.neighbors(v):
+            for w in helpers.ineighbors(v):
                 stack.append(w)
     return None
