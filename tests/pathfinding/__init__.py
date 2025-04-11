@@ -4,4 +4,3 @@
 """
 Unit tests for pathfinding submodule.
 """
-
