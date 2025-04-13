@@ -15,7 +15,6 @@ import heapq
 
 from edgegraph.traversal import helpers, breadthfirst
 
-
 def _init_single_source(start):
     """
     INITIALIZE-SINGLE-SOURCE() subroutine.
@@ -27,10 +26,9 @@ def _init_single_source(start):
     :return: Three-tuple of dictionaries, for ``dist[v]``, ``prev[v]``, and
        ``weight[v]``.
     """
-    return {start: 0}, {start: None}, {start: 0}
+    return {start: 0}, {start: None}
 
-
-def _relax(dist, prev, weight, u, v, weightfunc):
+def _relax(dist, prev, u, v, weightfunc):
     """
     RELAX() subroutine.
 
@@ -51,8 +49,6 @@ def _relax(dist, prev, weight, u, v, weightfunc):
     if dist[v] > dist[u] + w:
         dist[v] = dist[u] + w
         prev[v] = u
-        weight[v] = weight[u] + w
-
 
 def _sssp_base_dijkstra(uni, start, weightfunc):
     """
@@ -66,13 +62,13 @@ def _sssp_base_dijkstra(uni, start, weightfunc):
        * all neighbors passthru (ff_via, ff_result?  does that make sense here?)
        * code comments
     """
-    dist, prev, weight = _init_single_source(start)
+    dist, prev = _init_single_source(start)
     S = set()
     Q = []
     heapq.heappush(Q, (0, 0, start))
     entry = 1
 
-    infinity = float("inf")
+    infinity = float('inf')
 
     while len(Q):
         u = heapq.heappop(Q)[2]
@@ -90,15 +86,18 @@ def _sssp_base_dijkstra(uni, start, weightfunc):
             # discover edges on-the-fly
             if v not in dist:
                 dist[v] = infinity
-                weight[v] = infinity
+
+            alt = dist[u] + weightfunc(u, v)
+            if alt < dist[v]:
+                dist[v] = alt
+                prev[v] = u
 
             heapq.heappush(Q, (dist[v], entry, v))
             entry += 1
 
-            _relax(dist, prev, weight, u, v, weightfunc)
+            _relax(dist, prev, u, v, weightfunc)
 
-    return dist, prev, weight
-
+    return dist, prev
 
 def _route_dijkstra(dist, prev, source, dest):
     S = []
@@ -110,19 +109,15 @@ def _route_dijkstra(dist, prev, source, dest):
 
     return S
 
-
-def single_pair_shortest_path(
-    uni, start, dest, weightfunc=None, method="dijkstra"
-):
+def single_pair_shortest_path(uni, start, dest, weightfunc=None, method='dijkstra'):
     if weightfunc is None:
         weightfunc = lambda u, v: 1
 
-    if method == "dijkstra":
-        dist, prev, weight = _sssp_base_dijkstra(uni, start, weightfunc)
-        breakpoint()
+    if method == 'dijkstra':
+        dist, prev = _sssp_base_dijkstra(uni, start, weightfunc)
         path = _route_dijkstra(dist, prev, start, dest)
         dist = dist[dest]
-        weight = weight[dest]
-        return (path, dist, weight)
+        return (path, dist)
 
     raise NotImplementedError(f"method='{method}' is unrecognized")
+

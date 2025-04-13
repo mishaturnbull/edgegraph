@@ -20,11 +20,10 @@ def test_sssp_dijkstra_smoketest(graph_clrs09_22_6):
         uni, start, dest, weightfunc=None, method="dijkstra"
     )
 
-    path, dist, weight = sol
+    path, dist= sol
 
     assert path == [verts[1], verts[8], verts[0], verts[6]]
     assert dist == 3
-    assert weight == 3
 
 def _getweight(u, v):
     edges = helpers.find_links(u, v)
@@ -42,11 +41,10 @@ def test_sssp_dijkstra_weighted_nochange(graph_cheapest_is_shortest):
     sol = shortestpath.single_pair_shortest_path(
             uni, start, dest, weightfunc=_getweight, method="dijkstra"
     )
-    path, dist, weight = sol
+    path, dist = sol
 
     assert path == [verts[0], verts[5]]
-    assert dist == 1
-    assert weight == 4
+    assert dist == 4
 
 def test_sssp_dijkstra_weighted_diff(graph_cheapest_is_longest):
     uni, verts = graph_cheapest_is_longest
@@ -57,8 +55,7 @@ def test_sssp_dijkstra_weighted_diff(graph_cheapest_is_longest):
     sol = shortestpath.single_pair_shortest_path(
             uni, start, dest, weightfunc=_getweight, method="dijkstra"
     )
-    path, dist, weight = sol
+    path, dist = sol
 
+    assert dist == 15
     assert path == verts
-    assert dist == 4
-    assert weight == 15
