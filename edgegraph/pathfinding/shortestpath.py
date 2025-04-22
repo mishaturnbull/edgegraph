@@ -15,6 +15,7 @@ import heapq
 
 from edgegraph.traversal import helpers, breadthfirst
 
+
 def _init_single_source(start):
     """
     INITIALIZE-SINGLE-SOURCE() subroutine.
@@ -27,6 +28,7 @@ def _init_single_source(start):
        ``weight[v]``.
     """
     return {start: 0}, {start: None}
+
 
 def _relax(dist, prev, u, v, weightfunc):
     """
@@ -50,6 +52,7 @@ def _relax(dist, prev, u, v, weightfunc):
         dist[v] = dist[u] + w
         prev[v] = u
 
+
 def _sssp_base_dijkstra(uni, start, weightfunc):
     """
     Perform Dijkstra's algorithm to identify single-source shortest paths
@@ -68,7 +71,7 @@ def _sssp_base_dijkstra(uni, start, weightfunc):
     heapq.heappush(Q, (0, 0, start))
     entry = 1
 
-    infinity = float('inf')
+    infinity = float("inf")
 
     while len(Q):
         u = heapq.heappop(Q)[2]
@@ -99,6 +102,7 @@ def _sssp_base_dijkstra(uni, start, weightfunc):
 
     return dist, prev
 
+
 def _route_dijkstra(dist, prev, source, dest):
     S = []
     u = dest
@@ -109,15 +113,17 @@ def _route_dijkstra(dist, prev, source, dest):
 
     return S
 
-def single_pair_shortest_path(uni, start, dest, weightfunc=None, method='dijkstra'):
+
+def single_pair_shortest_path(
+    uni, start, dest, weightfunc=None, method="dijkstra"
+):
     if weightfunc is None:
         weightfunc = lambda u, v: 1
 
-    if method == 'dijkstra':
+    if method == "dijkstra":
         dist, prev = _sssp_base_dijkstra(uni, start, weightfunc)
         path = _route_dijkstra(dist, prev, start, dest)
         dist = dist[dest]
         return (path, dist)
 
     raise NotImplementedError(f"method='{method}' is unrecognized")
-

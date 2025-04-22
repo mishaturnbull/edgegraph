@@ -11,12 +11,16 @@ import pytest
 from edgegraph.structure import Vertex, DirectedEdge, Universe
 from edgegraph.builder import explicit
 
-class WeightedDirectedEdge (DirectedEdge):
 
-    def __init__(self, v1=None, v2=None, weight=None, *, uid=None, attributes=None):
+class WeightedDirectedEdge(DirectedEdge):
+
+    def __init__(
+        self, v1=None, v2=None, weight=None, *, uid=None, attributes=None
+    ):
         super().__init__(v1, v2, uid=uid, attributes=attributes)
 
         self.weight = weight
+
 
 @pytest.fixture
 def graph_cheapest_is_shortest():
@@ -39,6 +43,7 @@ def graph_cheapest_is_shortest():
     explicit.link_from_to(verts[0], WeightedDirectedEdge, verts[5]).weight = 4
 
     return Universe(vertices=verts), verts
+
 
 @pytest.fixture
 def graph_cheapest_is_longest():
