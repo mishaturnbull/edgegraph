@@ -104,6 +104,10 @@ def _sssp_base_dijkstra(uni, start, weightfunc):
 
 
 def _route_dijkstra(dist, prev, source, dest):
+    """
+    Given a solved internal base Dijkstra map, identify the actual route
+    between source and dest.
+    """
     S = []
     u = dest
     if prev[u] is not None or u is source:
@@ -117,6 +121,49 @@ def _route_dijkstra(dist, prev, source, dest):
 def single_pair_shortest_path(
     uni, start, dest, weightfunc=None, method="dijkstra"
 ):
+    """
+    Find the shortest path between two vertices in the given universe.
+
+    This function is a frontend for various implementations / algorithms for
+    computing the single-pair shortest path (SPSP) problem; that is, finding
+    the shortest path between a single pair of nodes.  It returns the path
+    between the given nodes (also sometimes called the route), as well as the
+    total weight (also sometimes called cost).
+
+    Custom weights on edges are possible via the ``weightfunc`` argument.  It
+    must be a callable object accepting exactly two position arguments, ``u``
+    and ``v``, which represent a "from" and "to" vertex.  It must return a
+    number representing the weight of pathing from ``u`` to ``v``.  (Hint:
+    :py:func:`~edgegraph.traversal.helpers.find_links` can quickly find you the
+    edges(s) between these two!)
+
+    .. warning::
+
+       Some ``method`` options require that all edges are weighted positively,
+       or that no negative-weight cycles exist.
+
+    :param uni: Universe to search within.  Set to ``None`` for no universe
+       limiting.
+    :param start: Vertex to start searching from.
+    :param dest: Vertex to search for.
+    :param weightfunc: Callback function to determine the weight (also
+       sometimes called cost) of transiting between two vertices.  If not
+       specified, the default behavior is to weight all edges equally (weight
+       of 1).
+    :param method: The backend algorithm to use.  Options are:
+
+       * ``"dijkstra"``: Use Dijkstra's algorithm with a priority queue; worst
+         case is :math:`O(V^2)`. (**default**)
+
+    :return: A two-tuple of:
+
+       #. A :py:class:`list` of :py:class:`~edgegraph.structure.vertex.Vertex`
+          objects representing the actual path taken to reach from ``start`` to
+          ``dest``.  The start and end vertices are included in this list.
+       #. The total weight of the path between start and end vertices (the sum
+          of the given ``weightfunc``'s return for all hops in the discovered
+          path).
+    """
     if weightfunc is None:
         weightfunc = lambda u, v: 1
 
