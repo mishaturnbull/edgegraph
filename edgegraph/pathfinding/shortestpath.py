@@ -53,7 +53,15 @@ def _relax(dist, prev, u, v, weightfunc):
         prev[v] = u
 
 
-def _sssp_base_dijkstra(uni, start, weightfunc):
+def _sssp_base_dijkstra(
+    uni,
+    start,
+    weightfunc,
+    stop_at=None,
+    direction_sensitive=None,
+    ff_via=None,
+    unknown_handling=None,
+):
     """
     Perform Dijkstra's algorithm to identify single-source shortest paths
     cross the given graph.
@@ -61,7 +69,6 @@ def _sssp_base_dijkstra(uni, start, weightfunc):
     .. todo::
 
        * documentation
-       * add an early-break option if we know to look for a specific node
        * all neighbors passthru (ff_via, ff_result?  does that make sense here?)
        * code comments
     """
@@ -80,7 +87,15 @@ def _sssp_base_dijkstra(uni, start, weightfunc):
             continue
         S.add(u)
 
-        nbs = helpers.neighbors(u)
+        if stop_at and stop_at is u:
+            return dist, prev
+
+        nbs = helpers.neighbors(
+            u,
+            direction_sensitive=direction_sensitive,
+            unknown_handling=unknown_handling,
+            filterfunc=ff_via,
+        )
         for v in nbs:
 
             if v in S:
@@ -119,7 +134,15 @@ def _route_dijkstra(dist, prev, source, dest):
 
 
 def single_pair_shortest_path(
-    uni, start, dest, weightfunc=None, method="dijkstra"
+    uni,
+    start,
+    dest,
+    *,
+    weightfunc=None,
+    direction_sensitive=helpers.DIR_SENS_FORWARD,
+    unknown_handling=helpers.LNK_UNKNOWN_ERROR,
+    ff_via=None,
+    method="dijkstra",
 ):
     """
     Find the shortest path between two vertices in the given universe.
@@ -167,8 +190,21 @@ def single_pair_shortest_path(
     if weightfunc is None:
         weightfunc = lambda u, v: 1
 
+    # Omission of "if ff_via is None" and always-true lambda here is not a
+    # mistake!  helpers.neighbors() has a special case for its filterfunc being
+    # None, which improves performance over an always-true function (it can
+    # eliminate a stack frame transition).
+
     if method == "dijkstra":
-        dist, prev = _sssp_base_dijkstra(uni, start, weightfunc)
+        dist, prev = _sssp_base_dijkstra(
+            uni,
+            start,
+            weightfunc,
+            stop_at=dest,
+            unknown_handling=unknown_handling,
+            direction_sensitive=direction_sensitive,
+            ff_via=ff_via,
+        )
         path = _route_dijkstra(dist, prev, start, dest)
         dist = dist[dest]
         return (path, dist)
