@@ -66,20 +66,37 @@ def _sssp_base_dijkstra(
     Perform Dijkstra's algorithm to identify single-source shortest paths
     cross the given graph.
 
-    .. todo::
-
-       * documentation
-       * all neighbors passthru (ff_via, ff_result?  does that make sense here?)
-       * code comments
+    As this is a private, internal function, the entire algorithm and options
+    are not detailed here.  See single_pair_shortest_path() for more
+    information.
     """
     dist, prev = _init_single_source(start)
+
+    # Set of vertices we've already visited.
     S = set()
+
+    # The heap elements here have *three* elements, not just priority and item.
+    # The first element of each tuple is indeed the priority, and the third
+    # element indeed the item -- but the second is an "entry number", or "key",
+    # that monotonically increases for each heap push.  This is to work around
+    # Python's heap implementation using a built-in sort on a list of tuples,
+    # which fails if two tuples are equivalent.  The always-unique entry value
+    # ensures no two heap entries are totally identical, but still maintains
+    # sort stability -- that is, of items with equal priority, their insertion
+    # order is maintained.
     Q = []
     heapq.heappush(Q, (0, 0, start))
     entry = 1
 
     infinity = float("inf")
 
+    # Fairly standard implementation of Dijkstra's algorithm.  Notable
+    # differences from the typical textbook implementations include:
+    #
+    # 1. We discover neighbors on the fly rather than being given a large map
+    #    at the start
+    # 2. There exists an optional early-break condition if we know the user
+    #    wants to only look for a specific vertex (stop_at).
     while len(Q):
         u = heapq.heappop(Q)[2]
 
@@ -153,17 +170,6 @@ def single_pair_shortest_path(
     between the given nodes (also sometimes called the route), as well as the
     total weight (also sometimes called cost).
 
-    Custom weights on edges are possible via the ``weightfunc`` argument.  It
-    must be a callable object accepting exactly two position arguments, ``u``
-    and ``v``, which represent a "from" and "to" vertex.  It must return a
-    number representing the weight of pathing from ``u`` to ``v``.  (Hint:
-    :py:func:`~edgegraph.traversal.helpers.find_links` can quickly find you the
-    edges(s) between these two!)
-
-    .. warning::
-
-       Some ``method`` options require that all edges are weighted positively,
-       or that no negative-weight cycles exist.
 
     :param uni: Universe to search within.  Set to ``None`` for no universe
        limiting.
@@ -173,10 +179,71 @@ def single_pair_shortest_path(
        sometimes called cost) of transiting between two vertices.  If not
        specified, the default behavior is to weight all edges equally (weight
        of 1).
+
+       .. py:function:: weightfunc(v1, v2)
+          :noindex:
+
+          Custom weights on edges are possible via the ``weightfunc`` argument.
+          It must be a callable object accepting exactly two position
+          arguments, ``u`` and ``v``, which represent a "from" and "to" vertex.
+          It must return a number representing the weight of pathing from ``u``
+          to ``v``.
+
+          .. seealso::
+
+             Hint: :py:func:`~edgegraph.traversal.helpers.find_links` can
+             quickly find you the edges(s) between these two!
+
+          .. warning::
+
+             Some ``method`` options require that all edges are weighted
+             positively, or that no negative-weight cycles exist.
+
+          :param v1: The "from" vertex
+          :param v2: The "to" vertex
+          :return: Cost of transiting from ``v1`` to ``v2``
+
     :param method: The backend algorithm to use.  Options are:
 
        * ``"dijkstra"``: Use Dijkstra's algorithm with a priority queue; worst
-         case is :math:`O(V^2)`. (**default**)
+         case is :math:`O(V^2)`.  No negative weights are allowed.
+         (**default**)
+
+    :param direction_sensitive: Directly passed through to
+       :py:func:`~edgegraph.traversal.helpers.neighbors`.  This may be one of:
+
+       * :py:const:`~edgegraph.traversal.helpers.DIR_SENS_FORWARD` (default),
+         to follow edges only forward (when directed),
+       * :py:const:`~edgegraph.traversal.helpers.DIR_SENS_ANY`, to follow edges
+         regardless of their direction,
+       * :py:const:`~edgegraph.traversal.helpers.DIR_SENS_BACKWARD`, to only
+         follow edges backwards (when directed).
+
+    :param unknown_handling: Directly passed through to
+       :py:func:`~edgegraph.traversal.helpers.neighbors`.  This may be one of:
+
+       * :py:const:`~edgegraph.traversal.helpers.LNK_UNKNOWN_ERROR` (default),
+         to throw an exception,
+       * :py:const:`~edgegraph.traversal.helpers.LNK_UNKNOWN_NEIGHBOR`, to
+         treat such edges as neighbors (and take the edge),
+       * :py:const:`~edgegraph.traversal.helpers.LNK_UNKNOWN_NONNEIGHBOR`, to
+         treat such edges as non-neighbors (do not take the edge).
+
+    :param ff_via: Directly passed through to
+       :py:func:`~edgegraph.traversal.helpers.neighbors` function's
+       ``filterfunc`` argument.
+
+       .. py:function:: ff_via(e, v2)
+          :noindex:
+
+          Determines if an edge (``e``) from a given vertex to another (``v2``)
+          should be followed.  If not, that entire section of the graph will
+          not be searched (assuming no other entries to that area).
+
+          :param e: The edge connecting ``v1`` to ``v2``.
+          :param v2: The vertex under consideration.
+          :return: Whether or not ``v2`` should be considered a neighbor of
+             ``v``, when reached via ``e``.
 
     :return: A two-tuple of:
 
