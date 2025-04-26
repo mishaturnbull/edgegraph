@@ -12,11 +12,18 @@ Algorithms for finding the shortest path between two points.
 from __future__ import annotations
 
 import heapq
+from typing import TYPE_CHECKING
+from collections.abc import Callable
 
 from edgegraph.traversal import helpers, breadthfirst
 
+if TYPE_CHECKING:
+    from edgegraph.structure import Vertex, Universe
 
-def _init_single_source(start):
+
+def _init_single_source(
+    start: Vertex,
+) -> tuple[dict[Vertex, float], dict[Vertex, Vertex | None]]:
     """
     INITIALIZE-SINGLE-SOURCE() subroutine.
 
@@ -30,7 +37,13 @@ def _init_single_source(start):
     return {start: 0}, {start: None}
 
 
-def _relax(dist, prev, u, v, weightfunc):
+def _relax(
+    dist: dict[Vertex, float],
+    prev: dict[Vertex, Vertex | None],
+    u: Vertex,
+    v: Vertex,
+    weightfunc: Callable,
+) -> None:
     """
     RELAX() subroutine.
 
@@ -54,13 +67,13 @@ def _relax(dist, prev, u, v, weightfunc):
 
 
 def _sssp_base_dijkstra(
-    uni,
-    start,
-    weightfunc,
-    stop_at=None,
-    direction_sensitive=None,
-    ff_via=None,
-    unknown_handling=None,
+    uni: Universe,
+    start: Vertex,
+    weightfunc: Callable,
+    stop_at: Vertex | None = None,
+    direction_sensitive: int = helpers.DIR_SENS_FORWARD,
+    ff_via: Callable | None = None,
+    unknown_handling: int = helpers.LNK_UNKNOWN_ERROR,
 ):
     """
     Perform Dijkstra's algorithm to identify single-source shortest paths
@@ -84,7 +97,7 @@ def _sssp_base_dijkstra(
     # ensures no two heap entries are totally identical, but still maintains
     # sort stability -- that is, of items with equal priority, their insertion
     # order is maintained.
-    Q = []
+    Q: list[Vertex] = []
     heapq.heappush(Q, (0, 0, start))
     entry = 1
 
@@ -135,13 +148,18 @@ def _sssp_base_dijkstra(
     return dist, prev
 
 
-def _route_dijkstra(dist, prev, source, dest):
+def _route_dijkstra(
+    dist: dict[Vertex, float],
+    prev: dict[Vertex, Vertex | None],
+    source: Vertex,
+    dest: Vertex,
+) -> list[Vertex]:
     """
     Given a solved internal base Dijkstra map, identify the actual route
     between source and dest.
     """
-    S = []
-    u = dest
+    S: list[Vertex] = []
+    u: Vertex | None = dest
     if prev[u] is not None or u is source:
         while u is not None:
             S.insert(0, u)
@@ -151,16 +169,16 @@ def _route_dijkstra(dist, prev, source, dest):
 
 
 def single_pair_shortest_path(
-    uni,
-    start,
-    dest,
+    uni: Universe,
+    start: Vertex,
+    dest: Vertex,
     *,
-    weightfunc=None,
-    direction_sensitive=helpers.DIR_SENS_FORWARD,
-    unknown_handling=helpers.LNK_UNKNOWN_ERROR,
-    ff_via=None,
-    method="dijkstra",
-):
+    weightfunc: Callable | None = None,
+    direction_sensitive: int = helpers.DIR_SENS_FORWARD,
+    unknown_handling: int = helpers.LNK_UNKNOWN_ERROR,
+    ff_via: Callable | None = None,
+    method: str = "dijkstra",
+) -> tuple[list[Vertex], int]:
     """
     Find the shortest path between two vertices in the given universe.
 
