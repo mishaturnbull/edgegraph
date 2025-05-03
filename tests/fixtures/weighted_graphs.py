@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Graphs with heterogenous weights set on all edges.
+Graphs with weights set on all edges.
 """
 
 from __future__ import annotations
@@ -25,9 +25,34 @@ class WeightedDirectedEdge(DirectedEdge):
 @pytest.fixture
 def graph_cheapest_is_shortest():
     """
-    .. todo::
+    This graph is a fairly common case in the wild where the cheapest path is
+    also the shortest, but it is not homogenously weighted.
 
-       doc
+    .. uml::
+
+       left to right direction
+
+       object 0
+       object 1
+       object 2
+       object 3
+       object 4
+       object 5
+
+       0 --> 1 : 1
+       1 --> 2 : 1
+       2 --> 3 : 1
+       3 --> 4 : 1
+       4 --> 5 : 1
+       0 --> 5 : 4
+
+    :return: a two-tuple containing a
+       :py:class:`~edgegraph.structure.universe.Universe` of the graph, and a
+       :py:class:`list` of all :py:class:`~edgegraph.structure.vertex.Vertex`
+       objects.  The order of this list is shown by the numbers in the above
+       diagram; the number of a vertex is its index in the list.
+
+       Edges on the graph have a ``weight`` attribute.
     """
 
     verts = [Vertex(attributes={"i": i}) for i in range(6)]
@@ -48,9 +73,35 @@ def graph_cheapest_is_shortest():
 @pytest.fixture
 def graph_cheapest_is_longest():
     """
-    .. todo::
+    This graph is set up with a fewer-hops path between two nodes that is
+    *more* expensive than another path with more hops.  It is meant to ensure
+    pathfinding weight evaluation is working properly.
 
-       doc
+    .. uml::
+
+       left to right direction
+
+       object 0
+       object 1
+       object 2
+       object 3
+       object 4
+       object 5
+
+       0 --> 1 : 1
+       1 --> 2 : 2
+       2 --> 3 : 3
+       3 --> 4 : 4
+       4 --> 5 : 5
+       0 --> 5 : 20
+
+    :return: a two-tuple containing a
+       :py:class:`~edgegraph.structure.universe.Universe` of the graph, and a
+       :py:class:`list` of all :py:class:`~edgegraph.structure.vertex.Vertex`
+       objects.  The order of this list is shown by the numbers in the above
+       diagram; the number of a vertex is its index in the list.
+
+       Edges on the graph have a ``weight`` attribute.
     """
 
     verts = [Vertex(attributes={"i": i}) for i in range(6)]

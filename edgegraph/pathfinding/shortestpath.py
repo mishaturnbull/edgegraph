@@ -21,6 +21,11 @@ if TYPE_CHECKING:
     from edgegraph.structure import Vertex, Universe
 
 
+METHODS = [
+    "dijkstra",
+]
+
+
 def _init_single_source(
     start: Vertex,
 ) -> tuple[dict[Vertex, float], dict[Vertex, Vertex | None]]:
@@ -135,15 +140,10 @@ def _sssp_base_dijkstra(
             if v not in dist:
                 dist[v] = infinity
 
-            alt = dist[u] + weightfunc(u, v)
-            if alt < dist[v]:
-                dist[v] = alt
-                prev[v] = u
+            _relax(dist, prev, u, v, weightfunc)
 
             heapq.heappush(Q, (dist[v], entry, v))
             entry += 1
-
-            _relax(dist, prev, u, v, weightfunc)
 
     return dist, prev
 
@@ -153,17 +153,20 @@ def _route_dijkstra(
     prev: dict[Vertex, Vertex | None],
     source: Vertex,
     dest: Vertex,
-) -> list[Vertex]:
+) -> list[Vertex] | None:
     """
     Given a solved internal base Dijkstra map, identify the actual route
     between source and dest.
     """
     S: list[Vertex] = []
     u: Vertex | None = dest
-    if prev[u] is not None or u is source:
-        while u is not None:
-            S.insert(0, u)
-            u = prev[u]
+
+    if u not in prev:
+        return None
+
+    while u is not None:
+        S.insert(0, u)
+        u = prev[u]
 
     return S
 
@@ -178,7 +181,7 @@ def single_pair_shortest_path(
     unknown_handling: int = helpers.LNK_UNKNOWN_ERROR,
     ff_via: Callable | None = None,
     method: str = "dijkstra",
-) -> tuple[list[Vertex], int]:
+) -> tuple[list[Vertex], float] | tuple[None, None]:
     """
     Find the shortest path between two vertices in the given universe.
 
@@ -268,12 +271,30 @@ def single_pair_shortest_path(
        #. A :py:class:`list` of :py:class:`~edgegraph.structure.vertex.Vertex`
           objects representing the actual path taken to reach from ``start`` to
           ``dest``.  The start and end vertices are included in this list.
+
+          If there is no path between the given vertices, ``None`` is given
+          here instead.  If the start and destination vertices are the same,
+          the value here will be ``[v1, v1]``.
+
        #. The total weight of the path between start and end vertices (the sum
           of the given ``weightfunc``'s return for all hops in the discovered
           path).
+
+          If there is no path between the given vertices, ``None`` is given
+          here instead.  If the start and destination vertices are the same,
+          the value here will be zero regardless of edge weighting (as there is
+          no distance between an object and itself).
     """
     if weightfunc is None:
         weightfunc = lambda u, v: 1
+
+    if start is None:
+        raise ValueError("Cannot begin path searching with start=None!")
+
+    if start is dest:
+        # if the start *is* the destination, then we don't have to do anything
+        # at all!
+        return [start, start], 0
 
     # Omission of "if ff_via is None" and always-true lambda here is not a
     # mistake!  helpers.neighbors() has a special case for its filterfunc being
@@ -291,7 +312,10 @@ def single_pair_shortest_path(
             ff_via=ff_via,
         )
         path = _route_dijkstra(dist, prev, start, dest)
-        dist = dist[dest]
+        if path is not None:
+            dist = dist[dest]
+        else:
+            dist = None
         return (path, dist)
 
     raise NotImplementedError(f"method='{method}' is unrecognized")

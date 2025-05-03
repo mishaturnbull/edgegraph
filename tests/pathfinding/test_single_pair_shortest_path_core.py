@@ -1,0 +1,229 @@
+#!python3
+# -*- coding: utf-8 -*-
+
+"""
+Unit tests for the core functionality (dispatch, API) of the SPSP module.
+"""
+
+import itertools
+import pytest
+
+from edgegraph.structure import Vertex
+from edgegraph.traversal import helpers
+from edgegraph.pathfinding import shortestpath
+
+
+@pytest.mark.parametrize("method", shortestpath.METHODS)
+def test_spsp_smoketest(graph_clrs09_22_6, method):
+    """
+    Smoke-test single-pair-shortest-path for each method.
+
+    This does basically nothing except verify that all the advertised methods
+    are available and do not (immediately) crash.  Further verification of
+    their correctness will be performed in a separate test.
+    """
+
+    uni, verts = graph_clrs09_22_6
+
+    # start at vert R (1) and pathfind over to W (6)
+    start = verts[1]
+    dest = verts[6]
+
+    sol = shortestpath.single_pair_shortest_path(
+        uni, start, dest, weightfunc=None, method=method
+    )
+
+    path, dist = sol
+
+    assert path == [verts[1], verts[8], verts[0], verts[6]]
+    assert dist == 3
+
+
+def test_spsp_unknown_method(graph_clrs09_22_6):
+    """
+    Ensure the SPSP function does not allow unknown methods.
+    """
+    uni, verts = graph_clrs09_22_6
+    start = verts[1]
+    dest = verts[0]
+
+    with pytest.raises(NotImplementedError):
+        sol = shortestpath.single_pair_shortest_path(
+            # these arguments are all fine -- ensure the only possibility of
+            # failure is from the solver name
+            uni,
+            start,
+            dest,
+            weightfunc=None,
+            # despite "Dijkstra" being here, this is not valid...
+            method="I would like you to use Dijkstra's method, please.",
+        )
+
+
+@pytest.mark.parametrize("method", shortestpath.METHODS)
+def test_spsp_vert_not_found(graph_clrs09_22_6, method):
+    """
+    Ensure the desired ``(None, None)`` is returned if there is no available
+    solution for the given pair (i.e., ``v`` is unreachable from ``u``).
+
+    This case is for a vertex that has no edges reaching to it.
+    """
+    uni, verts = graph_clrs09_22_6
+    start = verts[1]
+    dest = Vertex()
+
+    sol = shortestpath.single_pair_shortest_path(
+        uni, start, dest, weightfunc=None, method=method
+    )
+
+    path, dist = sol
+
+    assert path is None, "SPSP found a path for an impossible solution!"
+    assert dist is None, "SPSP found a dist for an impossible solution!"
+
+@pytest.mark.parametrize("method", shortestpath.METHODS)
+def test_spsp_no_valid_path(graph_clrs09_22_6, method):
+    """
+    Ensure the desired ``(None, None)`` is returned if there is no available
+    solution -- but they are connected (i.e., edges point the wrong way, etc).
+
+    This case is for a vertex that is connected, but the edge directionality
+    prevents traversing to it.
+    """
+    uni, verts = graph_clrs09_22_6
+    start = verts[8]
+    dest = verts[1]
+
+    sol = shortestpath.single_pair_shortest_path(
+        uni, start, dest, weightfunc=None, method=method
+    )
+
+    path, dist = sol
+
+    assert path is None, "SPSP found a path for an impossible solution!"
+    assert dist is None, "SPSP found a dist for an impossible solution!"
+
+def test_spsp_arg_validation(graph_clrs09_22_6):
+    """
+    Confirm the SPSP argument validation and early-return cases.
+    """
+    uni, verts = graph_clrs09_22_6
+
+    # test start == dest case
+    sol = shortestpath.single_pair_shortest_path(
+        uni, verts[1], verts[1], weightfunc=None, method="dijkstra"
+    )
+
+    path, dist = sol
+
+    assert path == [
+        verts[1],
+        verts[1],
+    ], "SPSP returned incorrect path for start == dest"
+    assert dist == 0, "Should never have distance between a vertex and itself"
+
+    # test start is None case
+    with pytest.raises(ValueError):
+        sol = shortestpath.single_pair_shortest_path(
+            uni, None, verts[1], weightfunc=None, method="dijkstra"
+        )
+
+
+###############################################################################
+# Test for pathfinding correctness
+###############################################################################
+
+spsp_data = [
+    # start, dest, [path], dist
+    [0, 6, [0, 6], 1],
+    [1, 8, [1, 8], 1],
+    [1, 6, [1, 8, 0, 6], 3],
+    [0, 0, [0, 0], 0],
+    [9, 9, [9, 9], 0],
+    [5, 2, [5, 6, 2], 2],
+    [1, 7, [1, 8, 0, 3, 7], 4],
+    [1, 9, [1, 8, 0, 3, 7, 9], 5],
+]
+
+
+@pytest.mark.parametrize(
+    "method,data", itertools.product(shortestpath.METHODS, spsp_data)
+)
+def test_spsp_correct_defaults(graph_clrs09_22_6, method, data):
+    """
+    Test the single-pair shortest path solvers for correctness.
+    """
+    uni, verts = graph_clrs09_22_6
+
+    path, dist = shortestpath.single_pair_shortest_path(
+        uni,
+        verts[data[0]],
+        verts[data[1]],
+        method=method,
+    )
+
+    # verify path answer
+    for pathidx, vertidx in enumerate(data[2]):
+
+        entry_in_path = path[pathidx]
+        vertex = verts[vertidx]
+
+        assert entry_in_path is vertex, f"solver got bad step; path = {path}"
+
+    # verify distance answer
+    assert dist is data[3], f"{method} solver got dist wrong"
+
+
+def _getweight(u, v):
+    """
+    Testing purposes only - access edge weights from the weighted-graph
+    fixtures.
+    """
+    edges = helpers.find_links(u, v)
+    weight = float("inf")
+    for e in edges:
+        weight = min(weight, e.weight)
+    return weight
+
+
+spsp_data_weighted = [
+    # graph fixture name, start, dest, [path], dist
+    ["graph_cheapest_is_shortest", 0, 5, [0, 5], 4],
+    ["graph_cheapest_is_shortest", 1, 5, [1, 2, 3, 4, 5], 4],
+    ["graph_cheapest_is_shortest", 2, 5, [2, 3, 4, 5], 3],
+    ["graph_cheapest_is_shortest", 0, 4, [0, 1, 2, 3, 4], 4],
+    ["graph_cheapest_is_longest", 0, 5, [0, 1, 2, 3, 4, 5], 15],
+    ["graph_cheapest_is_longest", 1, 5, [1, 2, 3, 4, 5], 2+3+4+5],
+    ["graph_cheapest_is_longest", 2, 5, [2, 3, 4, 5], 3+4+5],
+    ["graph_cheapest_is_longest", 0, 4, [0, 1, 2, 3, 4], 1+2+3+4],
+]
+
+
+@pytest.mark.parametrize(
+    "method,data", itertools.product(shortestpath.METHODS, spsp_data_weighted)
+)
+def test_spsp_correct_weighted(request, method, data):
+    """
+    Test the single-pair shortest path solvers for correctness in a
+    non-standard weight environment.
+    """
+    graph = request.getfixturevalue(data[0])
+    uni, verts = graph
+    path, dist = shortestpath.single_pair_shortest_path(
+        uni,
+        verts[data[1]],
+        verts[data[2]],
+        weightfunc=_getweight,
+        method=method,
+    )
+
+    # verify path answer
+    for pathidx, vertidx in enumerate(data[3]):
+
+        entry_in_path = path[pathidx]
+        vertex = verts[vertidx]
+
+        assert entry_in_path is vertex, f"solver got bad step; path = {path}"
+
+    # verify distance answer
+    assert dist is data[4], f"{method} solver got dist wrong"

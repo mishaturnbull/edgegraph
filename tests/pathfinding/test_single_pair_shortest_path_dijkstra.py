@@ -9,24 +9,11 @@ from edgegraph.traversal import helpers
 from edgegraph.pathfinding import shortestpath
 
 
-def test_sssp_dijkstra_smoketest(graph_clrs09_22_6):
-    uni, verts = graph_clrs09_22_6
-
-    # start at vert R (1) and pathfind over to W (6)
-    start = verts[1]
-    dest = verts[6]
-
-    sol = shortestpath.single_pair_shortest_path(
-        uni, start, dest, weightfunc=None, method="dijkstra"
-    )
-
-    path, dist = sol
-
-    assert path == [verts[1], verts[8], verts[0], verts[6]]
-    assert dist == 3
-
-
 def _getweight(u, v):
+    """
+    Testing purposes only - access edge weights from the weighted-graph
+    fixtures.
+    """
     edges = helpers.find_links(u, v)
     weight = float("inf")
     for e in edges:
@@ -34,7 +21,11 @@ def _getweight(u, v):
     return weight
 
 
-def test_sssp_dijkstra_weighted_nochange(graph_cheapest_is_shortest):
+def test_spsp_dijkstra_weighted_nochange(graph_cheapest_is_shortest):
+    """
+    Ensure that graphs with a custom weighting function A.) work, and B.) solve
+    as expected in the case where :math:`weight(u, v) = 1`.
+    """
     uni, verts = graph_cheapest_is_shortest
 
     start = verts[0]
@@ -49,7 +40,11 @@ def test_sssp_dijkstra_weighted_nochange(graph_cheapest_is_shortest):
     assert dist == 4
 
 
-def test_sssp_dijkstra_weighted_diff(graph_cheapest_is_longest):
+def test_spsp_dijkstra_weighted_diff(graph_cheapest_is_longest):
+    """
+    Ensure that graphs with a custom weight function A.) work, and B.) solve as
+    expected in the case where :math:`weight(u, v) \\neq  1`.
+    """
     uni, verts = graph_cheapest_is_longest
 
     start = verts[0]
