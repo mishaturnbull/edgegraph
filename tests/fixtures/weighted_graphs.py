@@ -122,6 +122,7 @@ def graph_cheapest_is_longest():
 
     return Universe(vertices=verts), verts
 
+
 @pytest.fixture
 def graph_neg_weight_no_loops():
     """
@@ -152,4 +153,3 @@ def graph_neg_weight_no_loops():
     explicit.link_from_to(verts[0], WeightedDirectedEdge, verts[3]).weight = 2
 
     return Universe(vertices=verts), verts
-

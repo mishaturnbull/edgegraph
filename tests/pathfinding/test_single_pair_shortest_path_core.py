@@ -81,6 +81,7 @@ def test_spsp_vert_not_found(graph_clrs09_22_6, method):
     assert path is None, "SPSP found a path for an impossible solution!"
     assert dist is None, "SPSP found a dist for an impossible solution!"
 
+
 @pytest.mark.parametrize("method", shortestpath.METHODS)
 def test_spsp_no_valid_path(graph_clrs09_22_6, method):
     """
@@ -102,6 +103,7 @@ def test_spsp_no_valid_path(graph_clrs09_22_6, method):
 
     assert path is None, "SPSP found a path for an impossible solution!"
     assert dist is None, "SPSP found a dist for an impossible solution!"
+
 
 def test_spsp_arg_validation(graph_clrs09_22_6):
     """
@@ -193,9 +195,9 @@ spsp_data_weighted = [
     ["graph_cheapest_is_shortest", 2, 5, [2, 3, 4, 5], 3],
     ["graph_cheapest_is_shortest", 0, 4, [0, 1, 2, 3, 4], 4],
     ["graph_cheapest_is_longest", 0, 5, [0, 1, 2, 3, 4, 5], 15],
-    ["graph_cheapest_is_longest", 1, 5, [1, 2, 3, 4, 5], 2+3+4+5],
-    ["graph_cheapest_is_longest", 2, 5, [2, 3, 4, 5], 3+4+5],
-    ["graph_cheapest_is_longest", 0, 4, [0, 1, 2, 3, 4], 1+2+3+4],
+    ["graph_cheapest_is_longest", 1, 5, [1, 2, 3, 4, 5], 2 + 3 + 4 + 5],
+    ["graph_cheapest_is_longest", 2, 5, [2, 3, 4, 5], 3 + 4 + 5],
+    ["graph_cheapest_is_longest", 0, 4, [0, 1, 2, 3, 4], 1 + 2 + 3 + 4],
 ]
 
 
