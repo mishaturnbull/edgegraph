@@ -230,6 +230,12 @@ def single_pair_shortest_path(
          case is :math:`O(V^2)`.  No negative weights are allowed.
          (**default**)
 
+
+       .. seealso::
+
+          More information on these options is available in the
+          :ref:`usage/algos/pathfinding` section.
+
     :param direction_sensitive: Directly passed through to
        :py:func:`~edgegraph.traversal.helpers.neighbors`.  This may be one of:
 
