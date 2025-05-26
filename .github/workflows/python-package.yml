@@ -30,7 +30,7 @@ jobs:
     # get everything set up
     - uses: actions/checkout@main
     - name: Set up Python ${{ matrix.python-version }}
-      uses: Quansight-Labs/setup-python@v5
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
@@ -71,7 +71,7 @@ jobs:
 
     - name: MyPy type-hinting check
       # similarly to black, we only need to run this on latest version
-      if: ${{ matrix.python-version == '3.12' }}
+      if: ${{ matrix.python-version == '3.13' }}
       run: |
         # hide it behind || true to mask mypy lacking an --exit-zero esque flag
         mypy edgegraph || true
