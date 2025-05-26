@@ -24,7 +24,7 @@ import heapq
 from typing import TYPE_CHECKING
 from collections.abc import Callable
 
-from edgegraph.traversal import helpers, breadthfirst
+from edgegraph.traversal import helpers
 
 if TYPE_CHECKING:
     from edgegraph.structure import Vertex, Universe
@@ -124,7 +124,7 @@ def _sssp_base_dijkstra(
     #    at the start
     # 2. There exists an optional early-break condition if we know the user
     #    wants to only look for a specific vertex (stop_at).
-    while len(Q):
+    while Q:
         u = heapq.heappop(Q)[2]
 
         if u in S:
@@ -165,9 +165,7 @@ def _sssp_base_dijkstra(
 
 
 def _route_dijkstra(
-    dist: dict[Vertex, float],
     prev: dict[Vertex, Vertex | None],
-    source: Vertex,
     dest: Vertex,
 ) -> list[Vertex] | None:
     """
@@ -333,7 +331,7 @@ def single_pair_shortest_path(
             direction_sensitive=direction_sensitive,
             ff_via=ff_via,
         )
-        path = _route_dijkstra(dist, prev, start, dest)
+        path = _route_dijkstra(prev, dest)
 
         # decide whether to return a distance or not.  use a renamed variable
         # to avoid confusing mypy too much.
