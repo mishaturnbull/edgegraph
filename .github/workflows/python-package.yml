@@ -71,7 +71,7 @@ jobs:
 
     - name: MyPy type-hinting check
       # similarly to black, we only need to run this on latest version
-      if: ${{ matrix.python-version == '3.12' }}
+      if: ${{ matrix.python-version == '3.13' }}
       run: |
         # hide it behind || true to mask mypy lacking an --exit-zero esque flag
         mypy edgegraph || true
