@@ -9,5 +9,6 @@ This section covers the usage of edgegraph as a consumer of the module.
    :glob:
 
    *
+   algos/index
 
 
