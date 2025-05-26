@@ -8,6 +8,7 @@ Helper functions for graph traversals.
 from __future__ import annotations
 
 from collections.abc import Callable
+from typing import Generator
 from edgegraph.structure import (
     Vertex,
     Link,
@@ -72,7 +73,7 @@ def ineighbors(
     direction_sensitive: int = DIR_SENS_FORWARD,
     unknown_handling: int = LNK_UNKNOWN_ERROR,
     filterfunc: Callable | None = None,
-) -> list[Vertex]:
+    ) -> Generator[Vertex, None, None]:
     """
     Identify the neighbors of a given vertex (generator).
 
