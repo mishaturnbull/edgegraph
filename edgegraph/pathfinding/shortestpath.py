@@ -4,9 +4,18 @@
 """
 Algorithms for finding the shortest path between two points.
 
-.. todo::
+This module provides functions to solve the shortest path problem and its
+variants:
 
-   documentation
+* Single pair shortest path; the shortest path between a known start and
+  destination vertex
+
+... and at this time, that's all that's implemented!  More to come soon!
+
+.. seealso::
+
+   Descriptive documentation about what solvers are implemented can be found
+   here: :ref:`usage/algos/pathfinding`.
 """
 
 from __future__ import annotations
@@ -79,7 +88,7 @@ def _sssp_base_dijkstra(
     direction_sensitive: int = helpers.DIR_SENS_FORWARD,
     ff_via: Callable | None = None,
     unknown_handling: int = helpers.LNK_UNKNOWN_ERROR,
-):
+) -> tuple[dict[Vertex, float], dict[Vertex, Vertex | None]]:
     """
     Perform Dijkstra's algorithm to identify single-source shortest paths
     cross the given graph.
@@ -133,6 +142,13 @@ def _sssp_base_dijkstra(
         )
         for v in nbs:
 
+            # filter out vertices not a member of the given universe, if any.
+            # by putting the `uni is not None` check first, we can
+            # short-circuit the container check if it is not needed
+            if (uni is not None) and (v not in uni.vertices):
+                continue
+
+            # skip already visited nodes
             if v in S:
                 continue
 
@@ -181,7 +197,7 @@ def single_pair_shortest_path(
     unknown_handling: int = helpers.LNK_UNKNOWN_ERROR,
     ff_via: Callable | None = None,
     method: str = "dijkstra",
-) -> tuple[list[Vertex], float] | tuple[None, None]:
+) -> tuple[list[Vertex] | None, float | None]:
     """
     Find the shortest path between two vertices in the given universe.
 
@@ -318,10 +334,14 @@ def single_pair_shortest_path(
             ff_via=ff_via,
         )
         path = _route_dijkstra(dist, prev, start, dest)
+
+        # decide whether to return a distance or not.  use a renamed variable
+        # to avoid confusing mypy too much.
         if path is not None:
-            dist = dist[dest]
+            retdist = dist[dest]
         else:
-            dist = None
-        return (path, dist)
+            retdist = None
+
+        return (path, retdist)
 
     raise NotImplementedError(f"method='{method}' is unrecognized")

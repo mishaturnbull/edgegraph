@@ -9,6 +9,7 @@ import itertools
 import pytest
 
 from edgegraph.structure import Vertex
+from edgegraph.builder import explicit
 from edgegraph.traversal import helpers
 from edgegraph.pathfinding import shortestpath
 
@@ -131,6 +132,51 @@ def test_spsp_arg_validation(graph_clrs09_22_6):
         )
 
 
+@pytest.mark.parametrize("method", shortestpath.METHODS)
+def test_spsp_uni_none(graph_clrs09_22_6, method):
+    """
+    Ensure the shortest path solvers correctly respect the universe=None and
+    universe!=None cases.
+    """
+    uni, verts = graph_clrs09_22_6
+    start = verts[1]
+    dest = verts[9]
+
+    # create another vertex which connects the start and dest in a much shorter
+    # fashion, but is not a member of the universe
+    extra = Vertex(attributes={"i": 10})
+    explicit.link_directed(start, extra)
+    explicit.link_directed(extra, dest)
+
+    # with uni=uni, we should NOT hop over the extra vertex, as it is not a
+    # member of the universe
+    path, dist = shortestpath.single_pair_shortest_path(
+        uni, start, dest, weightfunc=None, method=method
+    )
+
+    assert path == [
+        start,
+        verts[8],
+        verts[0],
+        verts[3],
+        verts[7],
+        dest,
+    ], "SPSP uni=uni did not find correct path"
+    assert dist == 5, "SPSP uni=uni got the wrong distance"
+
+    # with uni=None, we should take the shortcut
+    path, dist = shortestpath.single_pair_shortest_path(
+        None, start, dest, weightfunc=None, method=method
+    )
+
+    assert path == [
+        start,
+        extra,
+        dest,
+    ], "SPSP uni=None did not find correct path"
+    assert dist == 2, "SPSP uni=None got the wrong distance"
+
+
 ###############################################################################
 # Test for pathfinding correctness
 ###############################################################################
@@ -209,8 +255,7 @@ def test_spsp_correct_weighted(request, method, data):
     Test the single-pair shortest path solvers for correctness in a
     non-standard weight environment.
     """
-    graph = request.getfixturevalue(data[0])
-    uni, verts = graph
+    uni, verts = request.getfixturevalue(data[0])
     path, dist = shortestpath.single_pair_shortest_path(
         uni,
         verts[data[1]],

@@ -252,8 +252,3 @@ class Vertex(base.BaseObject):
         super().remove_from_universe(universe)
         if self in universe.vertices:
             universe.remove_vertex(self)
-
-    def __repr__(self):
-        if hasattr(self, "i"):
-            return f"v{self.i}"
-        return super().__repr__()
