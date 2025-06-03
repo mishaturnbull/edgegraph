@@ -12,13 +12,25 @@ jobs:
       fail-fast: false
       matrix:
         # check on all non-end-of-life python versions
-        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
+        python-version: [
+          "3.13t",
+          "3.13",
+          "3.12",
+          "3.11",
+          "3.10",
+          "3.9",
+          "3.8",
+          "3.7",
+        ]
+
+        include:
+        - { python-version: "3.13t", disable-gil: true }
 
     steps:
     # get everything set up
     - uses: actions/checkout@main
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@main
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
@@ -28,8 +40,14 @@ jobs:
         python -m pip install --upgrade pip
         pip install .[development]
 
+    - name: Version Info Dump
+      run: |
+        uname -r
+        python -VV
+        python -m pip freeze
+
     - name: Documentation coverage
-      if: ${{ matrix.python-version == '3.12' }}
+      if: ${{ matrix.python-version == '3.13' }}
       run: |
         cd docs
         make coverage
@@ -47,13 +65,13 @@ jobs:
       # the same code no matter what, and black performs the same analysis
       # (except on py3.7, which predates black reading from pyproject.toml and
       # missing some configs)
-      if: ${{ matrix.python-version == '3.12' }}
+      if: ${{ matrix.python-version == '3.13' }}
       run: |
         black --check edgegraph tests docs
 
     - name: MyPy type-hinting check
       # similarly to black, we only need to run this on latest version
-      if: ${{ matrix.python-version == '3.12' }}
+      if: ${{ matrix.python-version == '3.13' }}
       run: |
         # hide it behind || true to mask mypy lacking an --exit-zero esque flag
         mypy edgegraph || true

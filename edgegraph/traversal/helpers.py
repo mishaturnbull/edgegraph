@@ -8,6 +8,7 @@ Helper functions for graph traversals.
 from __future__ import annotations
 
 from collections.abc import Callable
+from typing import Generator
 from edgegraph.structure import (
     Vertex,
     Link,
@@ -67,14 +68,14 @@ DIR_SENS_ANY = 1
 DIR_SENS_BACKWARD = 2
 
 
-def neighbors(
+def ineighbors(
     vert: Vertex,
     direction_sensitive: int = DIR_SENS_FORWARD,
     unknown_handling: int = LNK_UNKNOWN_ERROR,
     filterfunc: Callable | None = None,
-) -> list[Vertex]:
+) -> Generator[Vertex, None, None]:
     """
-    Identify the neighbors of a given vertex.
+    Identify the neighbors of a given vertex (generator).
 
     This function checks the edges associated with the given vertex, identifies
     the vertices on the other end of those edges, and returns them.  It
@@ -100,13 +101,13 @@ def neighbors(
 
     the function would operate as:
 
-    >>> neighbors(v1)
+    >>> list(ineighbors(v1))
     [v2, v3]
-    >>> neighbors(v1, direction_sensitive=DIR_SENS_FORWARD)
+    >>> list(ineighbors(v1, direction_sensitive=DIR_SENS_FORWARD))
     [v2, v3, v4]
-    >>> neighbors(v4)
+    >>> list(ineighbors(v4))
     [v1]
-    >>> neighbors(v4, direction_sensitive=DIR_SENS_ANY)
+    >>> list(ineighbors(v4, direction_sensitive=DIR_SENS_ANY))
     [v1, v3]
 
     If supplied, the ``filterfunc`` argument should be to a callable object
@@ -130,9 +131,9 @@ def neighbors(
     For example, one may wish to only consider vertices if a given attribute
     meets some criteria:
 
-    >>> neighbors(v1)
+    >>> list(ineighbors(v1))
     [v2, v3]
-    >>> neighbors(v1, filterfunc=lambda e, v2: v2.i >= 3)
+    >>> list(ineighbors(v1, filterfunc=lambda e, v2: v2.i >= 3))
     [v3]
 
     .. note::
@@ -168,8 +169,9 @@ def neighbors(
        vertex should be included in the neighbors output.
     :raises NotImplementedError: if kwarg ``unknown_handling`` is set to
        :py:const:`LNK_UNKNOWN_ERROR` and an unknown edge class is enountered.
-    :return: A list of :py:class:`~edgegraph.structure.vertex.Vertex` objects
-       representing neighbors of the specified vertex.
+    :return: A generator object which yields
+       :py:class:`~edgegraph.structure.vertex.Vertex` objects representing
+       neighbors of the specified vertex.
     """
 
     # pylint complains about this operation, with fairly good reason -- we're
@@ -182,9 +184,11 @@ def neighbors(
     )
     # pylint: disable-next=protected-access
     if cached is not Vertex._QA_NB_INVALID:
-        return cached
+        yield from cached
+        return
 
-    nbs = []
+    cache = []
+
     for link in vert.links:
 
         v2 = link.other(vert)
@@ -203,7 +207,9 @@ def neighbors(
                 # this goes for all three places filterfunc() is used in this
                 # neighbors function
                 if filterfunc is None or filterfunc(link, v2):
-                    nbs.append(v2)
+                    if Vertex.NEIGHBOR_CACHING:
+                        cache.append(v2)
+                    yield v2
                 else:
 
                     # this is not detectable by coverage.py, due to a ~~bug~~
@@ -222,15 +228,15 @@ def neighbors(
                 # see above notes on short-circuiting filterfunc() if it's not
                 # provided
                 if filterfunc is None or filterfunc(link, v2):
-                    nbs.append(v2)
+                    if Vertex.NEIGHBOR_CACHING:
+                        cache.append(v2)
+                    yield v2
                 else:
                     # see comment on the above else: continue block for
                     # explanation of this no-cover statement.
                     continue  # pragma: no cover
 
             # we're looking at v2 -- the destination
-            # TODO: is it more time efficient to move the v1/v2 comparison into
-            # an if nested under the directededge check?
             elif issubclass(type(link), DirectedEdge) and (link.v2 is vert):
                 pass
 
@@ -239,7 +245,11 @@ def neighbors(
                     continue
 
                 if unknown_handling == LNK_UNKNOWN_NEIGHBOR:
-                    nbs.append(link.other(vert))
+                    yld = link.other(vert)
+
+                    if Vertex.NEIGHBOR_CACHING:
+                        cache.append(yld)
+                    yield yld
                 else:
                     raise NotImplementedError(
                         f"Unknown link class {type(link)}"
@@ -250,7 +260,9 @@ def neighbors(
             if issubclass(type(link), UnDirectedEdge):
 
                 if filterfunc is None or filterfunc(link, v2):
-                    nbs.append(v2)
+                    if Vertex.NEIGHBOR_CACHING:
+                        cache.append(v2)
+                    yield v2
                 else:
                     # see comment on the above else: continue block for
                     # explanation of this no-cover statement.
@@ -262,15 +274,15 @@ def neighbors(
                 # see above notes on short-circuiting filterfunc() if it's not
                 # provided
                 if filterfunc is None or filterfunc(link, v2):
-                    nbs.append(v2)
+                    if Vertex.NEIGHBOR_CACHING:
+                        cache.append(v2)
+                    yield v2
                 else:
                     # see comment on the above else: continue block for
                     # explanation of this no-cover statement.
                     continue  # pragma: no cover
 
             # we're looking at v2 -- the destination
-            # TODO: is it more time efficient to move the v1/v2 comparison into
-            # an if nested under the directededge check?
             elif issubclass(type(link), DirectedEdge) and (link.v1 is vert):
                 pass
 
@@ -279,7 +291,11 @@ def neighbors(
                     continue
 
                 if unknown_handling == LNK_UNKNOWN_NEIGHBOR:
-                    nbs.append(link.other(vert))
+                    yld = link.other(vert)
+
+                    if Vertex.NEIGHBOR_CACHING:
+                        cache.append(yld)
+                    yield yld
                 else:
                     raise NotImplementedError(
                         f"Unknown link class {type(link)}"
@@ -289,20 +305,49 @@ def neighbors(
             # see above notes on short-circuiting filterfunc() if it's not
             # provided
             if filterfunc is None or filterfunc(link, v2):
-                nbs.append(v2)
+                if Vertex.NEIGHBOR_CACHING:
+                    cache.append(v2)
+                yield v2
 
         else:
             raise ValueError(
                 f"Unknown option for direction_sensitive = {direction_sensitive}"
             )
 
-    # see note near top of function about justification for this ignore
-    # pylint: disable-next=protected-access
     vert._qa_neighbors_insert(
-        nbs, direction_sensitive, unknown_handling, filterfunc
+        cache, direction_sensitive, unknown_handling, filterfunc
     )
 
-    return nbs
+
+def neighbors(
+    vert: Vertex,
+    direction_sensitive: int = DIR_SENS_FORWARD,
+    unknown_handling: int = LNK_UNKNOWN_ERROR,
+    filterfunc: Callable | None = None,
+) -> list[Vertex]:
+    """
+    Identify the neighbors of a given vertex (**non**-generator).
+
+    This function checks the edges associated with the given vertex, identifies
+    the vertices on the other end of those edges, and returns them.  It
+    respects edge directionality if/when necessary, and can handle arbitrary
+    edge types given they are subclasses of either
+    :py:class:`~edgegraph.structure.directededge.DirectedEdge` or
+    :py:class:`~edgegraph.structure.undirectededge.UnDirectedEdge`.
+
+    .. seealso::
+
+       Please refer to the documentation of :py:func:`ineighbors`!  This
+       function simply wraps that one, only forcing full expansion to a list
+       before returning.  All parameters are exactly the same and passed
+       through without alteration.
+
+    :return: A list of  :py:class:`~edgegraph.structure.vertex.Vertex` objects
+       representing neighbors of the specified vertex.
+    """
+    return list(
+        ineighbors(vert, direction_sensitive, unknown_handling, filterfunc)
+    )
 
 
 def find_links(

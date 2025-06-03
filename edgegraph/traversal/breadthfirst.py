@@ -90,7 +90,7 @@ def bfs(
 
     while queue:
         u = queue.popleft()
-        for v in helpers.neighbors(u):
+        for v in helpers.ineighbors(u):
 
             if (uni is not None) and (v not in uni.vertices):
                 continue
@@ -195,7 +195,7 @@ def ibft(
 
     while queue:
         u = queue.popleft()
-        for v in helpers.neighbors(
+        for v in helpers.ineighbors(
             u,
             direction_sensitive=direction_sensitive,
             unknown_handling=unknown_handling,

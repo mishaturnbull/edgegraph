@@ -93,9 +93,9 @@ def basic_render(
         line += f"{start} -> "
 
         if sort:
-            nbs = sorted(helpers.neighbors(vert), key=sort)
+            nbs = sorted(helpers.ineighbors(vert), key=sort)
         else:
-            nbs = helpers.neighbors(vert)
+            nbs = helpers.ineighbors(vert)
         for end in nbs:
             if rfunc:
                 node = rfunc(end)

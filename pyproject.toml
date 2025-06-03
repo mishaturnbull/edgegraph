@@ -49,12 +49,20 @@ development = [
     "black",
     "mypy",
 
+    # and everything else
+    "edgegraph[full]"
+]
+# hate having to do this, but twine requries cryptography which doesn't
+# currently work on py3.13t and doesn't really have an expected date of when
+# that can work.  in the mean time, the rest of the dependencies are fine, so
+# separate out the pypi-publishing needs here
+administer = [
     # build & upload to pypi dependencies
     "build",
     "twine",
 
     # and everything else
-    "edgegraph[full]"
+    "edgegraph[development]"
 ]
 
 [project.urls]
