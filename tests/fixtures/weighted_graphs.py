@@ -23,7 +23,7 @@ class WeightedDirectedEdge(DirectedEdge):
     ):
         """
         Create a weighted directed edge.  All parameters the same as
-        :cls:`~edgegraph.structure.directededge.DirectedEdge`, except the
+        :class:`~edgegraph.structure.directededge.DirectedEdge`, except the
         addition of a numerical ``weight``.
         """
         super().__init__(v1, v2, uid=uid, attributes=attributes)
