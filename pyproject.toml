@@ -45,8 +45,7 @@ development = [
 
     # code quality control
     # pylint is also needed for documentation
-    "pylint",
-    "black",
+    "ruff",
     "mypy",
 
     # and everything else
