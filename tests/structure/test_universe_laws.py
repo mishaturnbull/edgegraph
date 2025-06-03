@@ -18,9 +18,9 @@ def test_uni_laws_inheritance():
     """
     Ensure UniverseLaws trees up to correct subclass.
     """
-    assert issubclass(
-        universe.UniverseLaws, base.BaseObject
-    ), "UniverseLaws has wrong superclass!"
+    assert issubclass(universe.UniverseLaws, base.BaseObject), (
+        "UniverseLaws has wrong superclass!"
+    )
 
 
 def test_uni_laws_init_defaults():
@@ -57,9 +57,9 @@ def test_uni_laws_init_nondefault():
         "_multipath": False,
         "_multiverse": False,
         "_applies_to": None,
-    }.items() <= vars(
-        l2
-    ).items(), "UniverseLaws did not respect __init__ options!"
+    }.items() <= vars(l2).items(), (
+        "UniverseLaws did not respect __init__ options!"
+    )
 
 
 def test_uni_laws_wrong_edge_rules():

@@ -267,9 +267,9 @@ def test_dfs_search_wrong_attr(graph_clrs09_22_6, func):
     verts[6].j = 10
     search = func(uni, verts[0], "i", 10)
     right = func(uni, verts[0], "j", 10)
-    assert (
-        search is None
-    ), f"{func} found an answer when shouldn't: i={search.i}"
+    assert search is None, (
+        f"{func} found an answer when shouldn't: i={search.i}"
+    )
     assert right is verts[6], f"{func} did not find right answer!"
 
 
@@ -313,6 +313,6 @@ def test_dft_stress(graph_clrs09_22_6, combo):
     func, answer = combo
     for _ in range(10000):
         trav = func(uni, verts[0])
-        assert [
-            v.i for v in trav
-        ] == answer, "Depth-first traversal gave wrong answer in stress test!"
+        assert [v.i for v in trav] == answer, (
+            "Depth-first traversal gave wrong answer in stress test!"
+        )

@@ -20,9 +20,9 @@ def test_pyvis_makes_net_default_args(graph_clrs09_22_6):
     """
     uni, verts = graph_clrs09_22_6
     pvn = pyvis.make_pyvis_net(uni)
-    assert len(verts) == len(
-        pvn.get_nodes()
-    ), "Did not get the right number of vertices back!"
+    assert len(verts) == len(pvn.get_nodes()), (
+        "Did not get the right number of vertices back!"
+    )
 
 
 def test_pyvis_makes_net(graph_clrs09_22_6):
@@ -45,9 +45,9 @@ def test_pyvis_makes_net(graph_clrs09_22_6):
         node = pvn.get_node(nodei)
         nodes_found.add(node["label"])
 
-    assert (
-        nodes_expected == nodes_found
-    ), "Did not retrieve expected nodes from pyvis network!"
+    assert nodes_expected == nodes_found, (
+        "Did not retrieve expected nodes from pyvis network!"
+    )
 
     edges = set()
     for vert in verts:
@@ -98,9 +98,9 @@ def test_pyvis_vert_outside_uni(graph_clrs09_22_6):
     pvn = pyvis.make_pyvis_net(uni)
 
     nodes_present = pvn.get_nodes()
-    assert len(nodes_present) == len(
-        verts
-    ), "Extra vertex detected in PyVIS network"
+    assert len(nodes_present) == len(verts), (
+        "Extra vertex detected in PyVIS network"
+    )
 
 
 def test_pyvis_vert_outside_uni_hard(graph_clrs09_22_6):
@@ -118,9 +118,9 @@ def test_pyvis_vert_outside_uni_hard(graph_clrs09_22_6):
     pvn = pyvis.make_pyvis_net(uni)
 
     nodes_present = pvn.get_nodes()
-    assert len(nodes_present) == len(
-        verts
-    ), "Extra vertex detected in PyVIS network"
+    assert len(nodes_present) == len(verts), (
+        "Extra vertex detected in PyVIS network"
+    )
 
 
 def test_pyvis_create_with_options(graph_clrs09_22_6):

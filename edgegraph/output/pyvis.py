@@ -43,11 +43,9 @@ from typing import TYPE_CHECKING, Any
 from collections.abc import Callable
 
 try:
-
     from pyvis import network
 
 except ImportError as exc:
-
     import sys
 
     msg = (
@@ -122,7 +120,6 @@ def make_pyvis_net(
 
     for i, vert in enumerate(verts):
         for edge in vert.links:
-
             # only draw arrows when we're at the *from* node
             if vert is edge.v2:
                 continue

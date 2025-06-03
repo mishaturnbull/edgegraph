@@ -212,7 +212,6 @@ def test_spsp_correct_defaults(graph_clrs09_22_6, method, data):
 
     # verify path answer
     for pathidx, vertidx in enumerate(data[2]):
-
         entry_in_path = path[pathidx]
         vertex = verts[vertidx]
 
@@ -266,7 +265,6 @@ def test_spsp_correct_weighted(request, method, data):
 
     # verify path answer
     for pathidx, vertidx in enumerate(data[3]):
-
         entry_in_path = path[pathidx]
         vertex = verts[vertidx]
 

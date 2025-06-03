@@ -445,9 +445,9 @@ def test_semi_singleton_get():
 
     check = singleton.get_all_semi_singleton_instances(SemiSingle)
 
-    assert set(insts) == set(
-        check
-    ), "Did not get expected semi-singleton insts!"
+    assert set(insts) == set(check), (
+        "Did not get expected semi-singleton insts!"
+    )
 
 
 def test_semi_singleton_multiname_smoketest():

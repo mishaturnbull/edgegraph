@@ -189,13 +189,11 @@ def ineighbors(
     cache = []
 
     for link in vert.links:
-
         v2 = link.other(vert)
 
         if direction_sensitive == DIR_SENS_FORWARD:
             # undirected edges don't matter
             if issubclass(type(link), UnDirectedEdge):
-
                 # we'll use boolean short-circuiting to prevent an unnecessary
                 # call into a default filterfunc if one is not provided.  such
                 # a default would always return True, but be an unnecessary
@@ -210,7 +208,6 @@ def ineighbors(
                         cache.append(v2)
                     yield v2
                 else:
-
                     # this is not detectable by coverage.py, due to a ~~bug~~
                     # side effect of the python peephole optimizer.  continue
                     # statements inside else: blocks are often skipped /
@@ -223,7 +220,6 @@ def ineighbors(
 
             # for directed edges, only add the neighbor if vert is the origin
             elif issubclass(type(link), DirectedEdge) and (link.v1 is vert):
-
                 # see above notes on short-circuiting filterfunc() if it's not
                 # provided
                 if filterfunc is None or filterfunc(link, v2):
@@ -255,9 +251,7 @@ def ineighbors(
                     )
 
         elif direction_sensitive == DIR_SENS_BACKWARD:
-
             if issubclass(type(link), UnDirectedEdge):
-
                 if filterfunc is None or filterfunc(link, v2):
                     if Vertex.NEIGHBOR_CACHING:
                         cache.append(v2)
@@ -269,7 +263,6 @@ def ineighbors(
 
             # for directed edges, only add the neighbor if vert is the origin
             elif issubclass(type(link), DirectedEdge) and (link.v2 is vert):
-
                 # see above notes on short-circuiting filterfunc() if it's not
                 # provided
                 if filterfunc is None or filterfunc(link, v2):
@@ -428,15 +421,12 @@ def find_links(
 
     links = set()
     for link in v1.links:
-
         # no matter what the other options are, don't care!
         if link.other(v1) is not v2:
             continue
 
         if direction_sensitive:
-
             if issubclass(type(link), UnDirectedEdge):
-
                 # short-circuit operation, just like in neighbors()
                 if filterfunc is None or filterfunc(link):
                     links.add(link)
@@ -446,7 +436,6 @@ def find_links(
                     continue  # pragma: no cover
 
             elif issubclass(type(link), DirectedEdge):
-
                 if link.v1 is not v1:
                     # this is a link from v2 to v1, not the way we want
                     continue

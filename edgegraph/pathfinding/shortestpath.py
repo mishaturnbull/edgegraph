@@ -141,7 +141,6 @@ def _sssp_base_dijkstra(
             filterfunc=ff_via,
         )
         for v in nbs:
-
             # filter out vertices not a member of the given universe, if any.
             # by putting the `uni is not None` check first, we can
             # short-circuit the container check if it is not needed
@@ -192,6 +191,7 @@ def _default_weightfunc(u, v):
     Always returns 1, no matter the two arguments.
     """
     return 1
+
 
 def single_pair_shortest_path(
     uni: Universe,

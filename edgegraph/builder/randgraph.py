@@ -44,7 +44,6 @@ def randgraph(
 
     adj = {}
     for i in range(count):
-
         k = int(random.randint(1, max(1, i)) * connectivity)
         if ensurelink:
             k = max(k, 1)

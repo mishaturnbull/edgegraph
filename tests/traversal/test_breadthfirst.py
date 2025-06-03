@@ -236,6 +236,6 @@ def test_bft_stress(graph_clrs09_22_6):
     uni, verts = graph_clrs09_22_6
     for _ in range(10000):
         trav = breadthfirst.bft(uni, verts[0])
-        assert [v.i for v in trav] == bft_data[0][
-            1
-        ], "BFT traversal wrong in stress-test!"
+        assert [v.i for v in trav] == bft_data[0][1], (
+            "BFT traversal wrong in stress-test!"
+        )

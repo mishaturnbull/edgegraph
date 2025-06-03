@@ -106,15 +106,15 @@ def test_semisingleton_vert_graphs():
     uni = adjlist.load_adj_dict(adj, directededge.DirectedEdge)
 
     for v, nbs in adj.items():
-        assert set(helpers.neighbors(v)) == set(
-            nbs
-        ), f"Vertex {v.i} neighbors are wrong!"
+        assert set(helpers.neighbors(v)) == set(nbs), (
+            f"Vertex {v.i} neighbors are wrong!"
+        )
 
         m = SemiSingleTex(v.i)
         assert m is v, f"semi-singleton failed on {v.i}"
-        assert helpers.neighbors(v) == helpers.neighbors(
-            m
-        ), "semi-singleton broke neighbors lookup"
+        assert helpers.neighbors(v) == helpers.neighbors(m), (
+            "semi-singleton broke neighbors lookup"
+        )
 
     trav = breadthfirst.bft(uni, q)
     vals = [v.i for v in trav]

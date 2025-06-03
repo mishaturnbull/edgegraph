@@ -13,9 +13,9 @@ def test_twoendlink_subclass():
     """
     Ensure that a TwoEndedLink looks like a Link and quacks like a Link.
     """
-    assert issubclass(
-        twoendedlink.TwoEndedLink, link.Link
-    ), "TwoEndedLink has wrong superclass!"
+    assert issubclass(twoendedlink.TwoEndedLink, link.Link), (
+        "TwoEndedLink has wrong superclass!"
+    )
 
     v1 = vertex.Vertex()
     v2 = vertex.Vertex()
@@ -73,6 +73,6 @@ def test_twoendedlink_other():
 
     assert e.other(v1) is v2, "TwoEndedLink.other took v1 and did not give v2"
     assert e.other(v2) is v1, "TwoEndedLink.other took v2 and did not give v1"
-    assert (
-        e.other(v3) is None
-    ), "TwoEndedLink took <not in edge> and did not give None"
+    assert e.other(v3) is None, (
+        "TwoEndedLink took <not in edge> and did not give None"
+    )

@@ -79,9 +79,9 @@ def test_p_up_large(straightline_graph_1k_directed, protocol):
         serial = nrpickler.dumps(uni, protocol=protocol)
         postpickle = pickle.loads(serial)
 
-        assert len(uni.vertices) == len(
-            postpickle.vertices
-        ), "Did not serialize all vertices!"
+        assert len(uni.vertices) == len(postpickle.vertices), (
+            "Did not serialize all vertices!"
+        )
 
     finally:
         # ...but also restore the earlier recursion depth for tests which come
@@ -112,9 +112,9 @@ def test_p_singleton(protocol):
     assert postpickle[0] is not st1, "Post-pickle singleton *IS* pre-pickle!"
     assert postpickle[1] is not st2, "Post-pickle singleton *IS* pre-pickle!"
     assert postpickle[0] is postpickle[1], "Post-pickle singletons differ!"
-    assert isinstance(
-        postpickle[0], SingleTex
-    ), "Class defined in module level didn't unpickle to the same"
+    assert isinstance(postpickle[0], SingleTex), (
+        "Class defined in module level didn't unpickle to the same"
+    )
 
 
 class MultiTex(vertex.Vertex, metaclass=singleton.semi_singleton_metaclass()):
@@ -141,20 +141,20 @@ def test_p_semisingleton(protocol):
     assert postpickle[1].i == 1, "Post-pickle semisingleton has wrong .i"
     assert postpickle[2].i == 2, "Post-pickle semisingleton has wrong .i"
     assert postpickle[3].i == 2, "Post-pickle semisingleton has wrong .i"
-    assert (
-        postpickle[0] is postpickle[1]
-    ), "Post-pickle semisingleton *IS NOT* expected!"
-    assert (
-        postpickle[1] is not postpickle[2]
-    ), "Post-pickle semisingleton *IS NOT* expected!"
-    assert (
-        postpickle[2] is postpickle[3]
-    ), "Post-pickle semisingleton *IS NOT* expected!"
+    assert postpickle[0] is postpickle[1], (
+        "Post-pickle semisingleton *IS NOT* expected!"
+    )
+    assert postpickle[1] is not postpickle[2], (
+        "Post-pickle semisingleton *IS NOT* expected!"
+    )
+    assert postpickle[2] is postpickle[3], (
+        "Post-pickle semisingleton *IS NOT* expected!"
+    )
     assert postpickle[0] is not mt1a, "Post-pickle semisingleton IS pre-pickle!"
     assert postpickle[1] is not mt1b, "Post pickle semisingleton IS pre-pickle!"
-    assert isinstance(
-        postpickle[0], MultiTex
-    ), "Class defined in module level didn't unpickle to the same"
+    assert isinstance(postpickle[0], MultiTex), (
+        "Class defined in module level didn't unpickle to the same"
+    )
 
 
 @pytest.mark.parametrize("protocol", list(range(pickle.HIGHEST_PROTOCOL)))
@@ -224,35 +224,35 @@ def test_p_subclasses(protocol):
     # different, type instances.  therefore, we can't do isinstance() or is
     # checks on them, this is the next best thing
 
-    assert (
-        type(v1).__qualname__ == type(p1).__qualname__
-    ), "post-pickle vt1 wrong qn"
-    assert (
-        type(v2).__qualname__ == type(p2).__qualname__
-    ), "post-pickle vt2 wrong qn"
-    assert (
-        type(v3).__qualname__ == type(p3).__qualname__
-    ), "post-pickle vt3 wrong qn"
-    assert (
-        type(v4).__qualname__ == type(p4).__qualname__
-    ), "post-pickle vt4 wrong qn"
+    assert type(v1).__qualname__ == type(p1).__qualname__, (
+        "post-pickle vt1 wrong qn"
+    )
+    assert type(v2).__qualname__ == type(p2).__qualname__, (
+        "post-pickle vt2 wrong qn"
+    )
+    assert type(v3).__qualname__ == type(p3).__qualname__, (
+        "post-pickle vt3 wrong qn"
+    )
+    assert type(v4).__qualname__ == type(p4).__qualname__, (
+        "post-pickle vt4 wrong qn"
+    )
 
     with pytest.raises(AssertionError):
-        assert isinstance(
-            p1, VertType1
-        ), "p1 not expected to be real instance of VT1"
+        assert isinstance(p1, VertType1), (
+            "p1 not expected to be real instance of VT1"
+        )
     with pytest.raises(AssertionError):
-        assert isinstance(
-            p2, VertType2
-        ), "p2 not expected to be real instance of VT2"
+        assert isinstance(p2, VertType2), (
+            "p2 not expected to be real instance of VT2"
+        )
     with pytest.raises(AssertionError):
-        assert isinstance(
-            p3, VertType3
-        ), "p3 not expected to be real instance of VT3"
+        assert isinstance(p3, VertType3), (
+            "p3 not expected to be real instance of VT3"
+        )
     with pytest.raises(AssertionError):
-        assert isinstance(
-            p4, VertType4
-        ), "p4 not expected to be real instance of VT4"
+        assert isinstance(p4, VertType4), (
+            "p4 not expected to be real instance of VT4"
+        )
 
 
 def _main_func_foo(x):

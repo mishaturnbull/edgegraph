@@ -55,7 +55,6 @@ def wipe_autosummary_dirs(app, exception):
     to_delete = set()
 
     for docname in files:
-
         with open(docname + ".rst", "r") as fp:
             lines = fp.readlines()
 

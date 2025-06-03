@@ -73,9 +73,9 @@ def test_diredge_assoc_update_v1():
     e.v1 = v3
 
     assert e.vertices == (v3, v2), "DirEdge did not set v1 correctly!"
-    assert (
-        v1.links == tuple()
-    ), "DirEdge v1-set did not remove links from old v1!"
+    assert v1.links == tuple(), (
+        "DirEdge v1-set did not remove links from old v1!"
+    )
     assert v2.links == (e,), "DirEdge v1-set altered v2 links!"
     assert v3.links == (e,), "DirEdge v1-set did not bind to new v1!"
 
@@ -98,7 +98,7 @@ def test_diredge_assoc_update_v2():
 
     assert e.vertices == (v1, v3), "DirEdge did not set v2 correctly!"
     assert v1.links == (e,), "DirEdge v2-set altered v1 links!"
-    assert (
-        v2.links == tuple()
-    ), "DirEdge v2-set did not remove links from old v2!"
+    assert v2.links == tuple(), (
+        "DirEdge v2-set did not remove links from old v2!"
+    )
     assert v3.links == (e,), "DirEdge v2-set did not bind to new v2!"
