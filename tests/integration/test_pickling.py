@@ -12,7 +12,7 @@ import logging
 import dill
 import pytest
 
-from edgegraph.structure import singleton, vertex, universe, singleton
+from edgegraph.structure import singleton, vertex
 from edgegraph.traversal import breadthfirst
 from edgegraph.builder import randgraph
 from edgegraph.output import nrpickler

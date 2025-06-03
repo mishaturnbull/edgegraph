@@ -5,11 +5,9 @@
 Unit tests to ensure module structure is operable.
 """
 
-# W0611 is unused-import.  The entire objective of these tests is to ensure we
-# can import the objects; their usage is tested elsewhere.
-# C0415 is import-outside-toplevel.  We don't perform unit tests at the module
-# scope.
-# pylint: disable=W0611, C0415
+# disable import-related checks; everything imported here is unused.  that's
+# fine.
+# ruff: noqa: F401
 
 
 def test_full_qual_imports():

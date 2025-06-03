@@ -101,6 +101,7 @@ indent-style = "space"
 line-ending = "lf"
 
 [tool.ruff.lint]
+
 # see https://docs.astral.sh/ruff/rules/
 select = [
     # defaults
@@ -138,6 +139,16 @@ ignore = [
     # requires summary line on first line of docstring (with the quotes).
     # incompatible with D213; disabling this one due to author preference.
     "D212",
+]
+
+[tool.ruff.lint.extend-per-file-ignores]
+"tests/**/*.py" = [
+    # disabled due to https://github.com/astral-sh/ruff/issues/17386.  VERY
+    # high rate of false positives in the test module
+    "F821",
+
+    # variable naming rules in unit tests are a bit more relaxed
+    "E741",
 ]
 
 [tool.mypy]

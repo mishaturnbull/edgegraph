@@ -11,19 +11,10 @@ import pytest
 
 from edgegraph.structure import singleton
 
-# this module is all about testing with classes.  the classes we define in this
-# file are never exposed to users of edgegraph, nor any of the edgegraph
-# module, therefore don't need:
-# * any use-case besides their sole existence,
-#   * sufficient public methods (R0903, too-few-public-methods)
-# * docstrings (C0115, missing-class-docstring),
-# * amazing formatting
-#   * class Something: pass  will be allowed (C0321, multiple-statements)
-#
-# therefore:
-# pylint: disable=too-few-public-methods
-# pylint: disable=missing-class-docstring
-# pylint: disable=multiple-statements
+# Many of the variables defined in this class are not used; only stored for
+# brief local testing to ensure objects are not garbage collected.  Further,
+# many brief variable names are used for the same reason.
+# ruff: noqa: F841
 
 
 def test_true_singleton_smoketest():

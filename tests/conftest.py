@@ -13,8 +13,10 @@ from __future__ import annotations
 import logging
 import pytest
 
+from edgegraph.structure import Vertex
+
 # guido, forgive me
-from .fixtures import *
+from .fixtures import *  # noqa: F403
 
 
 LOG = logging.getLogger(__name__)

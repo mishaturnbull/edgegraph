@@ -49,7 +49,7 @@ def test_spsp_unknown_method(graph_clrs09_22_6):
     dest = verts[0]
 
     with pytest.raises(NotImplementedError):
-        sol = shortestpath.single_pair_shortest_path(
+        shortestpath.single_pair_shortest_path(
             # these arguments are all fine -- ensure the only possibility of
             # failure is from the solver name
             uni,
