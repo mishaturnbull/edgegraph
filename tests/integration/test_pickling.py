@@ -1,21 +1,20 @@
-#!python3
 # -*- coding: utf-8 -*-
 
 """
 Unit tests that ensure all Edgegraph objects are pickleable and unpickleable.
 """
 
+import logging
 import pickle
 import sys
-import logging
 
 import dill
 import pytest
 
-from edgegraph.structure import singleton, vertex
-from edgegraph.traversal import breadthfirst
 from edgegraph.builder import randgraph
 from edgegraph.output import nrpickler
+from edgegraph.structure import singleton, vertex
+from edgegraph.traversal import breadthfirst
 
 # similarly to the singleton tests, this module tests *a lot* of custom
 # classes.  the classes defined here are never exposed to users of edgegraph,
@@ -48,10 +47,10 @@ def test_p_up_smoketest():
     assert prepickle is not postpickle, "same object returned from P/UP"
     assert isinstance(serial, bytes), "pickle didn't pickle!"
 
-    pre_v0 = [v for v in prepickle.vertices if v.i == 0][0]
+    pre_v0 = next(v for v in prepickle.vertices if v.i == 0)
     trav_pr = [v.i for v in breadthfirst.bft(prepickle, pre_v0)]
 
-    post_v0 = [v for v in postpickle.vertices if v.i == 0][0]
+    post_v0 = next(v for v in postpickle.vertices if v.i == 0)
     trav_po = [v.i for v in breadthfirst.bft(postpickle, post_v0)]
 
     assert trav_pr == trav_po, "traversal order wrong after P/UP"

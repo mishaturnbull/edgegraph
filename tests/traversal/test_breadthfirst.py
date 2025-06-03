@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -6,9 +5,10 @@ Unit tests for traversal.breadthfirst module.
 """
 
 import pytest
-from edgegraph.structure import Vertex, Universe
-from edgegraph.traversal import breadthfirst
+
 from edgegraph.builder import explicit
+from edgegraph.structure import Universe, Vertex
+from edgegraph.traversal import breadthfirst
 
 # everything except 1 and 4 should be findable from the starting vertex
 bfs_searchdat = [[i, True] for i in range(10)]
@@ -16,7 +16,7 @@ bfs_searchdat[1][1] = False
 bfs_searchdat[4][1] = False
 
 
-@pytest.mark.parametrize("target,find", bfs_searchdat)
+@pytest.mark.parametrize(("target", "find"), bfs_searchdat)
 def test_bfs_search_for(graph_clrs09_22_6, target, find):
     """
     Ensure we can find vertices with a breadth-first search.
@@ -50,7 +50,7 @@ def test_bfs_nonuniverse_vert(graph_clrs09_22_6):
     uni, _ = graph_clrs09_22_6
     extra = Vertex(attributes={"i": -1})
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="vertex not in specified universe"):
         breadthfirst.bfs(uni, extra, "i", 7)
 
 
@@ -124,7 +124,7 @@ bft_data = [
 ]
 
 
-@pytest.mark.parametrize("start,expected", bft_data)
+@pytest.mark.parametrize(("start", "expected"), bft_data)
 def test_bft_from(graph_clrs09_22_6, start, expected):
     """
     Make sure traversals work right, starting from any given node.
@@ -154,7 +154,7 @@ def test_bft_nonuniverse_vert(graph_clrs09_22_6):
     uni, _ = graph_clrs09_22_6
     extra = Vertex(attributes={"i": -1})
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="vertex not in specified universe"):
         breadthfirst.bft(uni, extra)
 
 

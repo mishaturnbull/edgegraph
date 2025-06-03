@@ -1,4 +1,3 @@
-#!/usr/env/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -51,7 +50,9 @@ visiting v3 before v6) is determined by the structure of the universe.
 """
 
 from __future__ import annotations
+
 from collections.abc import Callable, Iterator
+
 from edgegraph.structure import Universe, Vertex
 from edgegraph.traversal import helpers
 
@@ -223,9 +224,8 @@ def _dfs_recur(
             continue
         if w not in visited:
             # check for a match first -- then we can exit early
-            if hasattr(w, attrib):
-                if w[attrib] == val:
-                    return w
+            if hasattr(w, attrib) and w[attrib] == val:
+                return w
             ret = _dfs_recur(uni, w, visited, attrib, val)
             if ret:
                 return ret
@@ -263,9 +263,8 @@ def dfs_recursive(
     """
     _df_preflight_checks(uni, start)
 
-    if hasattr(start, attrib):
-        if start[attrib] == val:
-            return start
+    if hasattr(start, attrib) and start[attrib] == val:
+        return start
 
     visited: dict[Vertex, None] = {}
     return _dfs_recur(uni, start, visited, attrib, val)
@@ -392,9 +391,8 @@ def dfs_iterative(
         if (uni is not None) and (v not in uni.vertices):
             continue
         if v not in discovered:
-            if hasattr(v, attrib):
-                if v[attrib] == val:
-                    return v
+            if hasattr(v, attrib) and v[attrib] == val:
+                return v
             discovered.append(v)
             stack.extend(helpers.ineighbors(v))
     return None

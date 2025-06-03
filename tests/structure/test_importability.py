@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -16,12 +15,12 @@ def test_full_qual_imports():
     modules.
     """
     import edgegraph.structure.base
-    import edgegraph.structure.vertex
     import edgegraph.structure.universe
+    import edgegraph.structure.vertex
 
 
 def test_structure_imports():
     """
     Ensure we can import structure objects directly from the structure module.
     """
-    from edgegraph.structure import BaseObject, Vertex, Universe
+    from edgegraph.structure import BaseObject, Universe, Vertex

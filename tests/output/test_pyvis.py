@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -6,9 +5,10 @@ Unit tests for output.pyvis module.
 """
 
 import logging
-from edgegraph.structure import Vertex
+
 from edgegraph.builder import explicit
 from edgegraph.output import pyvis
+from edgegraph.structure import Vertex
 from edgegraph.traversal import helpers
 
 LOG = logging.getLogger(__name__)

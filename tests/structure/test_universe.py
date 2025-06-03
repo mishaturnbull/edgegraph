@@ -1,11 +1,10 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
 Unit tests for Universe object.
 """
 
-from edgegraph.structure import vertex, universe
+from edgegraph.structure import universe, vertex
 
 
 def test_universe_subclass():

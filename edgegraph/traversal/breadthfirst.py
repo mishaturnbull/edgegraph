@@ -1,4 +1,3 @@
-#!/usr/env/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -80,9 +79,8 @@ def bfs(
     if (uni is not None) and (start not in uni.vertices):
         raise ValueError("Start vertex not in specified universe!")
 
-    if hasattr(start, attrib):
-        if start[attrib] == val:
-            return start
+    if hasattr(start, attrib) and start[attrib] == val:
+        return start
 
     visited = set()
     queue = collections.deque([start])
@@ -95,9 +93,8 @@ def bfs(
                 continue
 
             # check for a match first -- then we can exit early
-            if hasattr(v, attrib):
-                if v[attrib] == val:
-                    return v
+            if hasattr(v, attrib) and v[attrib] == val:
+                return v
 
             # make sure we don't re-visit as a duplicate
             if v not in visited:

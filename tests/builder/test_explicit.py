@@ -1,17 +1,16 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
 Unit tests for builder.explicit module.
 """
 
-from edgegraph.structure import (
-    Vertex,
-    TwoEndedLink,
-    DirectedEdge,
-    UnDirectedEdge,
-)
 from edgegraph.builder import explicit
+from edgegraph.structure import (
+    DirectedEdge,
+    TwoEndedLink,
+    UnDirectedEdge,
+    Vertex,
+)
 from edgegraph.traversal import helpers
 
 

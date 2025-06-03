@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -7,15 +6,17 @@ Unit tests for structure.twoendedlink.TwoEndedLink class.
 
 import logging
 import time
+
 import pytest
+
+from edgegraph.builder import adjlist, explicit
 from edgegraph.structure import (
-    Vertex,
-    TwoEndedLink,
     DirectedEdge,
+    TwoEndedLink,
     UnDirectedEdge,
+    Vertex,
 )
 from edgegraph.traversal import helpers
-from edgegraph.builder import adjlist, explicit
 
 # C1803 is use-implicit-booleaness-not-comparison
 # however, the caes it wants to correct in here are like ``assert nb == []``,
@@ -481,7 +482,7 @@ def test_neighbors_bad_directionality(graph_clrs09_22_6):
     """
 
     _, verts = graph_clrs09_22_6
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Unknown option for direction_sensitive"):
         helpers.neighbors(verts[0], direction_sensitive=-1)
 
 
@@ -534,7 +535,7 @@ def test_findlinks_tlyf(graph_clrs09_22_6):
 
     s_out = helpers.find_links(verts[2], verts[5])
     assert len(s_out) == 1, "find_links found more than it should've!"
-    e1 = list(s_out)[0]
+    e1 = next(iter(s_out))
     assert e1.v1 is verts[2], "find_links found the wrong link!"
     assert e1.v2 is verts[5], "find_links found the wrong link!"
 
@@ -555,7 +556,7 @@ def test_findlinks_non_dir_sensitive(graph_clrs09_22_6):
 
     xout = helpers.find_links(verts[7], verts[9], direction_sensitive=True)
     assert len(xout) == 1, "find_links accepted a back-link!"
-    e1 = list(xout)[0]
+    e1 = next(iter(xout))
     assert e1.v1 is verts[7], "find_links found the wrong link!"
     assert e1.v2 is verts[9], "find_links found the wrong link!"
 

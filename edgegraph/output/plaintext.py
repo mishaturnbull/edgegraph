@@ -1,4 +1,3 @@
-#!/usr/env/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -17,7 +16,9 @@ formats may be added in the future.
 """
 
 from __future__ import annotations
+
 from collections.abc import Callable
+
 from edgegraph.structure import Universe
 from edgegraph.traversal import helpers
 
@@ -79,28 +80,18 @@ def basic_render(
 
     lines = []
     start, node = "", ""
-    if sort:
-        verts = sorted(uni.vertices, key=sort)
-    else:
-        verts = uni.vertices
+    verts = sorted(uni.vertices, key=sort) if sort else uni.vertices
     for vert in verts:
         line = ""
-        if rfunc:
-            start = rfunc(vert)
-        else:
-            start = repr(vert)
+        start = rfunc(vert) if rfunc else repr(vert)
 
         line += f"{start} -> "
 
+        nbs = helpers.ineighbors(vert)
         if sort:
-            nbs = sorted(helpers.ineighbors(vert), key=sort)
-        else:
-            nbs = helpers.ineighbors(vert)
+            nbs = sorted(nbs, key=sort)
         for end in nbs:
-            if rfunc:
-                node = rfunc(end)
-            else:
-                node = repr(end)
+            node = rfunc(end) if rfunc else repr(end)
             line += f"{node}, "
 
         # remove trailing comma & space

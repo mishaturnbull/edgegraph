@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -6,10 +5,12 @@ Unit tests for traversal.depthfirst module.
 """
 
 import itertools
+
 import pytest
-from edgegraph.structure import Vertex, Universe
-from edgegraph.traversal import depthfirst
+
 from edgegraph.builder import explicit
+from edgegraph.structure import Universe, Vertex
+from edgegraph.traversal import depthfirst
 
 ###############################################################################
 # traversals!
@@ -28,7 +29,7 @@ dftr_data = [
 ]
 
 
-@pytest.mark.parametrize("start,expected", dftr_data)
+@pytest.mark.parametrize(("start", "expected"), dftr_data)
 def test_dftr_from(graph_clrs09_22_6, start, expected):
     """
     Test traversing from a given starting point, using the recursive
@@ -55,7 +56,7 @@ dfti_data = [
 ]
 
 
-@pytest.mark.parametrize("start,expected", dfti_data)
+@pytest.mark.parametrize(("start", "expected"), dfti_data)
 def test_dfti_from(graph_clrs09_22_6, start, expected):
     """
     Test traversing from a given starting point, using the iterative
@@ -82,7 +83,7 @@ def test_dft_empty(func):
     """
     uni = Universe()
     start = None
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Universe is empty"):
         func(uni, start)
 
 
@@ -94,7 +95,7 @@ def test_dft_nonuniverse(graph_clrs09_22_6, func):
     uni, _ = graph_clrs09_22_6
     extra = Vertex(attributes={"i": -1})
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="vertex not in specified universe"):
         func(uni, extra)
 
 
@@ -202,7 +203,7 @@ dfs_data[1][1] = False
 dfs_data[4][1] = False
 
 
-@pytest.mark.parametrize("func,sdat", itertools.product(searches, dfs_data))
+@pytest.mark.parametrize(("func", "sdat"), itertools.product(searches, dfs_data))
 def test_dfs_search_for(graph_clrs09_22_6, func, sdat):
     """
     Test that we find vertices we should, and don't we shouldn't.
@@ -229,7 +230,7 @@ def test_dfs_empty(func):
     """
     uni = Universe()
     start = None
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Universe is empty"):
         func(uni, start, "i", 15)
 
 
@@ -241,7 +242,7 @@ def test_dfs_nonuniverse(graph_clrs09_22_6, func):
     uni, _ = graph_clrs09_22_6
     extra = Vertex(attributes={"i": -1})
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="vertex not in specified universe"):
         func(uni, extra, "i", -1)
 
 

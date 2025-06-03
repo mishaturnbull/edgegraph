@@ -1,14 +1,14 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
 Unit testing for PyVis not being installed.  Maybe...
 """
 
-import os
-import sys
 import importlib
 import logging
+import os
+import sys
+
 import pytest
 
 # this test module does a few unorthodox imports -- but, that's the point of

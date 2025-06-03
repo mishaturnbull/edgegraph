@@ -1,4 +1,3 @@
-#!/usr/env/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -58,14 +57,14 @@ handled in three possible ways:
 
 from __future__ import annotations
 
+import datetime
 import os
 import re
-import subprocess
 import shutil
+import subprocess
 import tempfile
-import datetime
 
-from edgegraph.structure import Universe, Vertex, DirectedEdge, UnDirectedEdge
+from edgegraph.structure import DirectedEdge, UnDirectedEdge, Universe, Vertex
 
 PLANTUML_AUTOGEN_NOTE = f"""
 note as n1

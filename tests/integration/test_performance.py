@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -8,7 +7,9 @@ Dedicated performance tests designed to identify slow points.
 import itertools
 import logging
 import time
+
 import pytest
+
 from edgegraph.builder import randgraph
 from edgegraph.traversal import breadthfirst, depthfirst
 
@@ -19,7 +20,7 @@ LOG = logging.getLogger(__name__)
 
 @pytest.mark.perf
 @pytest.mark.parametrize(
-    "howmany,nverts", itertools.product([3, 10, 30, 50], [10, 100, 500])
+        ("howmany", "nverts"), itertools.product([3, 10, 30, 50], [10, 100, 500])
 )
 def test_bulk_randgraph(howmany, nverts):
     """
@@ -86,7 +87,7 @@ def test_bulk_bft(complete_graph_1k_undirected, howmany):
 
 @pytest.mark.perf
 @pytest.mark.parametrize(
-    "howmany,nverts", itertools.product([100, 500], [100, 500])
+    ("howmany", "nverts"), itertools.product([100, 500], [100, 500])
 )
 def test_bulk_bft_on_randgraph(howmany, nverts):
     """
@@ -132,7 +133,7 @@ def test_bulk_bft_on_randgraph(howmany, nverts):
         depthfirst.dft_recursive,
         breadthfirst.bft,
         depthfirst.idft_iterative,
-        depthfirst.idft_iterative,
+        depthfirst.idft_recursive,
         breadthfirst.ibft,
     ],
 )

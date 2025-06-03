@@ -1,4 +1,3 @@
-#!python3
 # -*- coding: utf-8 -*-
 
 """
@@ -8,8 +7,9 @@ Graphs taken from textbook examples.
 from __future__ import annotations
 
 import pytest
-from edgegraph.structure import Vertex, DirectedEdge
+
 from edgegraph.builder import adjlist
+from edgegraph.structure import DirectedEdge, Vertex
 
 
 @pytest.fixture

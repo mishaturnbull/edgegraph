@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -6,7 +5,8 @@ Unit tests for structure.twoendedlink.TwoEndedLink class.
 """
 
 import pytest
-from edgegraph.structure import vertex, link, twoendedlink
+
+from edgegraph.structure import link, twoendedlink, vertex
 
 
 def test_twoendlink_subclass():

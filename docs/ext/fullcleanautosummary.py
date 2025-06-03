@@ -1,4 +1,3 @@
-#!python3
 # -*- coding: utf-8 -*-
 
 """
@@ -35,6 +34,7 @@ I'm not happy about this.
 
 import os
 import shutil
+
 from sphinx.util import logging
 
 LOG = logging.getLogger(__name__)

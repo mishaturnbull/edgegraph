@@ -8,14 +8,15 @@ https://www.sphinx-doc.org/en/master/usage/configuration.html
 import datetime
 import os
 import sys
+
 import tomlkit
 
 topdir = os.path.split(os.path.split(__file__)[0])[0]
 sys.path.insert(0, topdir)
 
 # cannot put this at the top of the file, as it needs the sys path messed with
+from docs._scripts import git, nitpick_warn_list, pyrev_helper  # noqa: E402
 from edgegraph import version as eg_version  # noqa: E402
-from docs._scripts import pyrev_helper, git, nitpick_warn_list  # noqa: E402
 
 with open(os.path.join(topdir, "pyproject.toml"), "r") as ppyfile:
     pyproject = tomlkit.parse(ppyfile.read())

@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -6,6 +5,7 @@ Unit tests for UniverseLaws object.
 """
 
 import pytest
+
 from edgegraph.structure import base, universe
 
 # W0212 is protected-access, or, access to a protected member (starting with a
@@ -73,7 +73,7 @@ def test_uni_laws_wrong_edge_rules():
     ]
 
     for wrong in bad:
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="incorrect structure"):
             universe.UniverseLaws(edge_whitelist=wrong)
 
 

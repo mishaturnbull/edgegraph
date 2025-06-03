@@ -1,12 +1,11 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
 Unit tests for structure.twoendedlink.TwoEndedLink class.
 """
 
-from edgegraph.structure import Vertex, DirectedEdge, UnDirectedEdge
 from edgegraph.builder import adjlist
+from edgegraph.structure import DirectedEdge, UnDirectedEdge, Vertex
 
 
 def test_adjlist_edgetype():

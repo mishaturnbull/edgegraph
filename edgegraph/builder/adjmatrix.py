@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -14,8 +13,8 @@ adjacency matrix structure, as is common in graph algorithms and software.
 
 from __future__ import annotations
 
-from edgegraph.structure import Universe, Vertex, DirectedEdge
 from edgegraph.builder import explicit
+from edgegraph.structure import DirectedEdge, Universe, Vertex
 
 
 def load_adj_matrix(

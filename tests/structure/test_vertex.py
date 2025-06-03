@@ -1,11 +1,10 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
 Unit tests for structure.vertex.Vertex class.
 """
 
-from edgegraph.structure import base, vertex, universe, link
+from edgegraph.structure import base, link, universe, vertex
 
 # W0212 is protected-access, or, access to a protected member (starting with a
 # _) of a client class.  In this case, the test objectives require we inspect

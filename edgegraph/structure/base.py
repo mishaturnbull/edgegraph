@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -6,9 +5,10 @@ Contains the BaseObject class.
 """
 
 from __future__ import annotations
-from typing import TYPE_CHECKING
-from collections.abc import Iterator
+
 import uuid
+from collections.abc import Iterator
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from edgegraph.structure.universe import Universe

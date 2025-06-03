@@ -1,4 +1,3 @@
-#!/usr/env/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -8,11 +7,12 @@ Helper functions for graph traversals.
 from __future__ import annotations
 
 from collections.abc import Callable
+
 from edgegraph.structure import (
-    Vertex,
-    Link,
     DirectedEdge,
+    Link,
     UnDirectedEdge,
+    Vertex,
 )
 
 #: Unknown edge classes treated as non-neighbors.

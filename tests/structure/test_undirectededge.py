@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -6,7 +5,8 @@ Unit tests for structure.undirectededge.UnDirectedEdge class.
 """
 
 import pytest
-from edgegraph.structure import vertex, link, undirectededge
+
+from edgegraph.structure import link, undirectededge, vertex
 
 
 def test_undiedge_subclass():

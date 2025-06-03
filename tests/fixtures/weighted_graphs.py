@@ -1,4 +1,3 @@
-#!python3
 # -*- coding: utf-8 -*-
 
 """
@@ -8,8 +7,9 @@ Graphs with weights set on all edges.
 from __future__ import annotations
 
 import pytest
-from edgegraph.structure import Vertex, DirectedEdge, Universe
+
 from edgegraph.builder import explicit
+from edgegraph.structure import DirectedEdge, Universe, Vertex
 
 
 class WeightedDirectedEdge(DirectedEdge):

@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -6,6 +5,7 @@ Ensure the versioning constants are valid.
 """
 
 import re
+
 from edgegraph import version
 
 

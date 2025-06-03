@@ -1,11 +1,10 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
 Unit tests for DirectedEdge assocations with their vertices.
 """
 
-from edgegraph.structure import vertex, directededge
+from edgegraph.structure import directededge, vertex
 
 
 def test_diredge_assoc_on_init():

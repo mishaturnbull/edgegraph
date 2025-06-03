@@ -1,4 +1,3 @@
-#!/usr/env/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -39,8 +38,8 @@ Generally, the usage pattern for this module is intended to be as:
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
 from collections.abc import Callable
+from typing import TYPE_CHECKING, Any
 
 try:
     from pyvis import network
@@ -55,7 +54,7 @@ except ImportError as exc:
     )
     raise ImportError(msg) from exc
 
-from edgegraph.structure import Universe, DirectedEdge
+from edgegraph.structure import DirectedEdge, Universe
 
 if TYPE_CHECKING:
     import pyvis

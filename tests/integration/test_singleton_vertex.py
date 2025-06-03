@@ -1,12 +1,11 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
 Behavioral tests for singletons and vertices playing together.
 """
 
-from edgegraph.structure import vertex, singleton, universe, directededge
 from edgegraph.builder import adjlist
+from edgegraph.structure import directededge, singleton, universe, vertex
 from edgegraph.traversal import breadthfirst, helpers
 
 # this module is all about testing with classes.  the classes we define in this

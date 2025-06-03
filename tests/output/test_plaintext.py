@@ -1,13 +1,12 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
 Unit tests for output.plaintext module.
 """
 
+from edgegraph.output import plaintext
 from edgegraph.structure import Universe
 from edgegraph.traversal import helpers
-from edgegraph.output import plaintext
 
 
 def test_basic_render_sorted(graph_clrs09_22_6):

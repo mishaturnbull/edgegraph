@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -17,11 +16,12 @@ functions will get the necessary updates to match, and the API stays unchanged.
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
+
 from edgegraph.structure import (
-    Vertex,
     DirectedEdge,
-    UnDirectedEdge,
     TwoEndedLink,
+    UnDirectedEdge,
+    Vertex,
 )
 from edgegraph.traversal import helpers
 

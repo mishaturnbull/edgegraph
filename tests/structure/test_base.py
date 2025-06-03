@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -6,6 +5,7 @@ Unit tests for structure.base module.
 """
 
 import pytest
+
 from edgegraph.structure import base, universe
 
 # W0212 is protected-access, or, access to a protected member (starting with a
@@ -208,7 +208,7 @@ def test_base_obj_universes():
     # should fail, as the universe has already been removed.  when trying to
     # remove an object from a list that does not contain it, you get a
     # ValueError
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="not in list"):
         bo.remove_from_universe(uni)
 
 

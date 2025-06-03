@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -6,7 +5,8 @@ Unit tests for structure.link.Link class.
 """
 
 import pytest
-from edgegraph.structure import base, vertex, link
+
+from edgegraph.structure import base, link, vertex
 
 # W0611 is unused-import.  The entire objective of these tests is to ensure we
 # can import the objects; their usage is tested elsewhere.

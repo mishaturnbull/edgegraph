@@ -1,11 +1,10 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
 Unit tests for UnDirectedEdge assocations with their vertices.
 """
 
-from edgegraph.structure import vertex, undirectededge
+from edgegraph.structure import undirectededge, vertex
 
 
 def test_undiredge_assoc_on_init():

@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -6,8 +5,10 @@ Holds the Vertex class.
 """
 
 from __future__ import annotations
-from typing import Any, TYPE_CHECKING
+
 from collections.abc import Iterator
+from typing import TYPE_CHECKING, Any, ClassVar
+
 from edgegraph.structure import base
 
 if TYPE_CHECKING:
@@ -32,7 +33,7 @@ class Vertex(base.BaseObject):
     NEIGHBOR_CACHING: bool = False
 
     _QA_NB_INVALID: object = object()
-    _CACHE_STATS: dict[int, list[int]] = {}
+    _CACHE_STATS: ClassVar[dict[int, list[int]]] = {}
 
     @classmethod
     def total_cache_stats(cls) -> str:

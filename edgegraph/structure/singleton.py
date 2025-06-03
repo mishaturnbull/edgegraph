@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -39,9 +38,10 @@ after some surveying (Googling) I decided that metaclasses approach gave:
 """
 
 from __future__ import annotations
-from collections.abc import Generator, Callable, Hashable
 
 import json
+from collections.abc import Callable, Generator, Hashable
+from typing import ClassVar
 
 # this is one of the rare occurrances of a module-wide pylint ignore... working
 # with shared-state objects, the machinery of which is private, requires
@@ -135,7 +135,7 @@ class TrueSingleton(type):
     references to the original.
     """
 
-    _TrueSingleton__singleton_instances: dict[Hashable, object] = {}
+    _TrueSingleton__singleton_instances: ClassVar[dict[Hashable, object]] = {}
 
     def __call__(cls, *args, **kwargs):
         if cls not in cls._TrueSingleton__singleton_instances:
@@ -336,8 +336,8 @@ def semi_singleton_metaclass(hashfunc: Callable | None = None) -> type:
         Metaclass for semi-singleton types.
         """
 
-        _SemiSingleton__semisingleton_instance_map = {}
-        _SemiSingleton__semisingleton_hashfunc = hashfunc
+        _SemiSingleton__semisingleton_instance_map: ClassVar[dict[Hashable, object]] = {}
+        _SemiSingleton__semisingleton_hashfunc: Callable = hashfunc
 
         def __call__(cls, *args, **kwargs):
             key = hashfunc(args, kwargs)

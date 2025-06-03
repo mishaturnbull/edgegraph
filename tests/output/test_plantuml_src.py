@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -8,10 +7,12 @@ generation.
 
 import copy
 import re
+
 import pytest
-from edgegraph.structure import Vertex, DirectedEdge, Universe
+
 from edgegraph.builder import adjlist
 from edgegraph.output import plantuml
+from edgegraph.structure import DirectedEdge, Universe, Vertex
 
 
 def test_plantuml_src_empty():
@@ -92,7 +93,7 @@ def test_plantuml_class_option_resolution_fail(graph_clrs09_22_6):
     opts = copy.deepcopy(plantuml.PLANTUML_RENDER_OPTIONS)
     del opts[Vertex]
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Cannot identify (useful )?superclass of"):
         plantuml.render_to_plantuml_src(graph_clrs09_22_6[0], opts)
 
 

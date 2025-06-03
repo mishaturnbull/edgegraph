@@ -111,16 +111,16 @@ select = [
     "A",        # don't shadow builtins
     "B",        # enable bugbear
     "COM",      # catch weird comma situations
+    "EXE",      # shebang and permissions checks
+    "I",        # isort
     "PERF",     # performance hits
+    "PT",       # pytest style control
+    "Q",        # quote controls
+    "RUF",      # ruff-specific rules
+    "SIM",      # code simplicity
 ]
 
-#    "EXE",      # shebang and permissions checks
-#    "PT",       # pytest style control
-#    "Q",        # quote controls
-#    "SIM",      # code simplicity
-#    "I",        # isort
 #    "D",        # docstring checks & linting
-#    "RUF",      # ruff-specific rules
 #]
 
 ignore = [

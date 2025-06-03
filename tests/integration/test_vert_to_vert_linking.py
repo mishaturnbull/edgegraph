@@ -1,11 +1,10 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
 Unit tests for linking vertices to vertices.
 """
 
-from edgegraph.structure import vertex, link
+from edgegraph.structure import link, vertex
 
 # W0212 (protected-access) is about accessing protected members (those starting
 # with _) of a client class.  This is performed quite a lot in this test suite,

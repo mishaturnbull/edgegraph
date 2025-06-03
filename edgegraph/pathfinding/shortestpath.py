@@ -1,4 +1,3 @@
-#!/usr/env/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -21,13 +20,13 @@ variants:
 from __future__ import annotations
 
 import heapq
-from typing import TYPE_CHECKING
 from collections.abc import Callable
+from typing import TYPE_CHECKING
 
 from edgegraph.traversal import helpers
 
 if TYPE_CHECKING:
-    from edgegraph.structure import Vertex, Universe
+    from edgegraph.structure import Universe, Vertex
 
 
 METHODS = [
@@ -343,10 +342,7 @@ def single_pair_shortest_path(
 
         # decide whether to return a distance or not.  use a renamed variable
         # to avoid confusing mypy too much.
-        if path is not None:
-            retdist = dist[dest]
-        else:
-            retdist = None
+        retdist = None if path is None else dist[dest]
 
         return (path, retdist)
 

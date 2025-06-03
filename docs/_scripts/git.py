@@ -1,4 +1,3 @@
-#!python3
 # -*- coding: utf-8 -*-
 
 """
@@ -8,8 +7,8 @@ Provides functions and utilities for detecting Git versions while building
 documentation.
 """
 
-import subprocess
 import shlex
+import subprocess
 
 
 def _run_cmd(cmd):

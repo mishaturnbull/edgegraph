@@ -15,8 +15,9 @@ structure printed to the console, and the universe is available as the
 import code
 import random
 
-from edgegraph.builder import randgraph, explicit
-from edgegraph.output import plaintext, plantuml as pu, pyvis
+from edgegraph.builder import explicit, randgraph
+from edgegraph.output import plaintext, pyvis
+from edgegraph.output import plantuml as pu
 
 
 def main():

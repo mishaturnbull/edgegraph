@@ -1,4 +1,3 @@
-#!python3
 # -*- coding: utf-8 -*-
 
 """
@@ -6,12 +5,13 @@ Unit tests for the core functionality (dispatch, API) of the SPSP module.
 """
 
 import itertools
+
 import pytest
 
-from edgegraph.structure import Vertex
 from edgegraph.builder import explicit
-from edgegraph.traversal import helpers
 from edgegraph.pathfinding import shortestpath
+from edgegraph.structure import Vertex
+from edgegraph.traversal import helpers
 
 
 @pytest.mark.parametrize("method", shortestpath.METHODS)
@@ -126,7 +126,7 @@ def test_spsp_arg_validation(graph_clrs09_22_6):
     assert dist == 0, "Should never have distance between a vertex and itself"
 
     # test start is None case
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="path searching with start=None"):
         sol = shortestpath.single_pair_shortest_path(
             uni, None, verts[1], weightfunc=None, method="dijkstra"
         )
@@ -195,7 +195,7 @@ spsp_data = [
 
 
 @pytest.mark.parametrize(
-    "method,data", itertools.product(shortestpath.METHODS, spsp_data)
+    ("method", "data"), itertools.product(shortestpath.METHODS, spsp_data)
 )
 def test_spsp_correct_defaults(graph_clrs09_22_6, method, data):
     """
@@ -247,7 +247,7 @@ spsp_data_weighted = [
 
 
 @pytest.mark.parametrize(
-    "method,data", itertools.product(shortestpath.METHODS, spsp_data_weighted)
+    ("method", "data"), itertools.product(shortestpath.METHODS, spsp_data_weighted)
 )
 def test_spsp_correct_weighted(request, method, data):
     """

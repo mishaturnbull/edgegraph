@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -6,8 +5,9 @@ Unit tests for structure.twoendedlink.TwoEndedLink class.
 """
 
 import pytest
-from edgegraph.structure import Vertex, UnDirectedEdge
+
 from edgegraph.builder import adjmatrix
+from edgegraph.structure import UnDirectedEdge, Vertex
 
 
 def test_adjmatrix_edgetype():
@@ -45,7 +45,7 @@ def test_adjmatrix_nonsquare():
         [0, 1, 0],
     ]
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="given matrix was not a square"):
         adjmatrix.load_adj_matrix(mat, v)
 
 
@@ -60,8 +60,7 @@ def test_adjmatrix_sidelen():
         [0, 1, 0],
         [0, 1, 0],
     ]
-
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"needs len\(vertices\) to be matrix len"):
         adjmatrix.load_adj_matrix(mat, v)
 
 
