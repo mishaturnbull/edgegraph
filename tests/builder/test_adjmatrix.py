@@ -60,7 +60,9 @@ def test_adjmatrix_sidelen():
         [0, 1, 0],
         [0, 1, 0],
     ]
-    with pytest.raises(ValueError, match=r"needs len\(vertices\) to be matrix len"):
+    with pytest.raises(
+        ValueError, match=r"needs len\(vertices\) to be matrix len"
+    ):
         adjmatrix.load_adj_matrix(mat, v)
 
 

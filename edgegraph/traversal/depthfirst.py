@@ -312,12 +312,15 @@ def idft_iterative(
             if (ff_result and ff_result(v)) or (not ff_result):
                 yield v
 
-            stack.extend(w for w in helpers.ineighbors(
-                v,
-                direction_sensitive=direction_sensitive,
-                unknown_handling=unknown_handling,
-                filterfunc=ff_via,
-                ))
+            stack.extend(
+                w
+                for w in helpers.ineighbors(
+                    v,
+                    direction_sensitive=direction_sensitive,
+                    unknown_handling=unknown_handling,
+                    filterfunc=ff_via,
+                )
+            )
 
 
 def dft_iterative(

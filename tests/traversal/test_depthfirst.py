@@ -203,7 +203,9 @@ dfs_data[1][1] = False
 dfs_data[4][1] = False
 
 
-@pytest.mark.parametrize(("func", "sdat"), itertools.product(searches, dfs_data))
+@pytest.mark.parametrize(
+    ("func", "sdat"), itertools.product(searches, dfs_data)
+)
 def test_dfs_search_for(graph_clrs09_22_6, func, sdat):
     """
     Test that we find vertices we should, and don't we shouldn't.

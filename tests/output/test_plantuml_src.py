@@ -93,7 +93,9 @@ def test_plantuml_class_option_resolution_fail(graph_clrs09_22_6):
     opts = copy.deepcopy(plantuml.PLANTUML_RENDER_OPTIONS)
     del opts[Vertex]
 
-    with pytest.raises(ValueError, match="Cannot identify (useful )?superclass of"):
+    with pytest.raises(
+        ValueError, match="Cannot identify (useful )?superclass of"
+    ):
         plantuml.render_to_plantuml_src(graph_clrs09_22_6[0], opts)
 
 

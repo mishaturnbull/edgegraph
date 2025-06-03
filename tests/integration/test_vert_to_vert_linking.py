@@ -128,9 +128,7 @@ def test_link_removal_by_vertex():
 
     v1.remove_from_link(l)
 
-    assert v1.links == (), (
-        "Vertex remove_from_link did not unassociate link!"
-    )
+    assert v1.links == (), "Vertex remove_from_link did not unassociate link!"
     assert l.vertices == (v2,), (
         "Vertex remove_from_link did not unassociate vertex from link!"
     )
@@ -138,9 +136,7 @@ def test_link_removal_by_vertex():
     # test that removing something not present has no action
     v1.remove_from_link(l)
 
-    assert v1.links == (), (
-        "Removing link-not-present from vertex readded it??"
-    )
+    assert v1.links == (), "Removing link-not-present from vertex readded it??"
     assert l.vertices == (v2,), (
         "Removing link-not-present from vertex reassoc'd it to link??"
     )

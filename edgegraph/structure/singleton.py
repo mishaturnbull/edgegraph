@@ -343,7 +343,9 @@ def semi_singleton_metaclass(hashfunc: Callable | None = None) -> type:
         Metaclass for semi-singleton types.
         """
 
-        _SemiSingleton__semisingleton_instance_map: ClassVar[dict[Hashable, object]] = {}
+        _SemiSingleton__semisingleton_instance_map: ClassVar[
+            dict[Hashable, object]
+        ] = {}
         _SemiSingleton__semisingleton_hashfunc: Callable = hashfunc
 
         def __call__(cls, *args, **kwargs):

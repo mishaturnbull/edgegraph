@@ -20,7 +20,7 @@ LOG = logging.getLogger(__name__)
 
 @pytest.mark.perf
 @pytest.mark.parametrize(
-        ("howmany", "nverts"), itertools.product([3, 10, 30, 50], [10, 100, 500])
+    ("howmany", "nverts"), itertools.product([3, 10, 30, 50], [10, 100, 500])
 )
 def test_bulk_randgraph(howmany, nverts):
     """

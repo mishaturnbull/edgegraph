@@ -482,7 +482,9 @@ def test_neighbors_bad_directionality(graph_clrs09_22_6):
     """
 
     _, verts = graph_clrs09_22_6
-    with pytest.raises(ValueError, match="Unknown option for direction_sensitive"):
+    with pytest.raises(
+        ValueError, match="Unknown option for direction_sensitive"
+    ):
         helpers.neighbors(verts[0], direction_sensitive=-1)
 
 

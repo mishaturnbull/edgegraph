@@ -247,7 +247,8 @@ spsp_data_weighted = [
 
 
 @pytest.mark.parametrize(
-    ("method", "data"), itertools.product(shortestpath.METHODS, spsp_data_weighted)
+    ("method", "data"),
+    itertools.product(shortestpath.METHODS, spsp_data_weighted),
 )
 def test_spsp_correct_weighted(request, method, data):
     """

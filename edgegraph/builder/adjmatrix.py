@@ -131,8 +131,10 @@ def load_adj_matrix(
     # and make sure that the matrix is a square
     for i, row in enumerate(matrix):
         if len(row) != matrixlen:
-            msg = f"given matrix was not a square!  row {i} had len {len(row)}" \
-                    ",should have {matrixlen}"
+            msg = (
+                f"given matrix was not a square!  row {i} had len {len(row)}"
+                ",should have {matrixlen}"
+            )
             raise ValueError(msg)
     # okay, good enough!
 

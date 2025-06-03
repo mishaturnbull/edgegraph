@@ -13,11 +13,11 @@ from .universe import Universe
 from .vertex import Vertex
 
 __all__ = [
-        "BaseObject",
-        "DirectedEdge",
-        "Link",
-        "TwoEndedLink",
-        "UnDirectedEdge",
-        "Universe",
-        "Vertex",
-        ]
+    "BaseObject",
+    "DirectedEdge",
+    "Link",
+    "TwoEndedLink",
+    "UnDirectedEdge",
+    "Universe",
+    "Vertex",
+]

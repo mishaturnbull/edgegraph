@@ -180,7 +180,7 @@ def _route_dijkstra(
         s.insert(0, u)
         u = prev[u]
 
-    return s 
+    return s
 
 
 def _default_weightfunc(u, v):
