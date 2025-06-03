@@ -159,7 +159,7 @@ def test_dft_ff_result(graph_clrs09_22_6, func):
     """
     _, verts = graph_clrs09_22_6
     trav = func(None, verts[1], ff_result=lambda v: v.i > 5)
-    trav = set(v.i for v in trav)
+    trav = {v.i for v in trav}
     assert trav == {6, 7, 8, 9}
 
 
@@ -170,7 +170,7 @@ def test_dft_ff_via(graph_clrs09_22_6, func):
     """
     _, verts = graph_clrs09_22_6
     trav = func(None, verts[1], ff_via=lambda e, v2: v2.i % 2 == 0)
-    trav = set(v.i for v in trav)
+    trav = {v.i for v in trav}
     assert trav == {0, 1, 2, 4, 6, 8}
 
 
@@ -187,7 +187,7 @@ def test_dft_ff_via_and_result(graph_clrs09_22_6, func):
         ff_via=lambda e, v2: v2.i % 2 == 0,
         ff_result=lambda v: v.i > 5,
     )
-    trav = set(v.i for v in trav)
+    trav = {v.i for v in trav}
     assert trav == {6, 8}
 
 

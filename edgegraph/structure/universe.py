@@ -74,9 +74,8 @@ class UniverseLaws(base.BaseObject):
             self.edge_whitelist  # noqa: B018
         except (ValueError, AttributeError) as exc:
             # re-raise, but with a more clear message of what's happening
-            raise ValueError(
-                "Given edge_whitelist is of incorrect structure!"
-            ) from exc
+            msg = "Given edge_whitelist is of incorrect structure!"
+            raise ValueError(msg) from exc
 
         #: whether or not mixed link types are allowed
         #:
@@ -105,13 +104,12 @@ class UniverseLaws(base.BaseObject):
         if self._edge_whitelist is None:
             return None
 
-        out = types.MappingProxyType(
+        return types.MappingProxyType(
             {
                 t: types.MappingProxyType(dict(linkset.items()))
                 for t, linkset in self._edge_whitelist.items()
             }
         )
-        return out
 
     @property
     def mixed_links(self) -> bool:

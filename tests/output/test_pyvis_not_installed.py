@@ -34,7 +34,7 @@ def test_pyvis_not_installed(monkeypatch):
 
     LOG.debug("Flushing package caches...")
     for mod in list(sys.modules.keys()):
-        if mod.startswith("pyvis") or mod.startswith("edgegraph"):
+        if mod.startswith(("pyvis", "edgegraph")):
             LOG.debug(f"Deleting {mod} from sys.modules")
             restore_mods[mod] = sys.modules[mod]
             del sys.modules[mod]

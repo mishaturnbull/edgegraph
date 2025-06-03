@@ -182,7 +182,7 @@ def test_spsp_uni_none(graph_clrs09_22_6, method):
 ###############################################################################
 
 spsp_data = [
-    # start, dest, [path], dist
+    # format of the data is start, dest, [path], dist
     [0, 6, [0, 6], 1],
     [1, 8, [1, 8], 1],
     [1, 6, [1, 8, 0, 6], 3],

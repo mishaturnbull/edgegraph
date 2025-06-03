@@ -19,6 +19,9 @@ from edgegraph.builder import explicit, randgraph
 from edgegraph.output import plaintext, pyvis
 from edgegraph.output import plantuml as pu
 
+# this is meant to be an interactive script.
+# ruff: noqa: T201, T203
+
 
 def main():
     """

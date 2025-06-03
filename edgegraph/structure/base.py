@@ -80,9 +80,8 @@ class BaseObject(object):
 
         if attributes is not None:
             if not isinstance(attributes, dict):
-                raise TypeError(
-                    f"`attributes` must be a dictionary; got {type(attributes)}"
-                )
+                msg = f"`attributes` must be a dictionary; got {type(attributes)}"
+                raise TypeError(msg)
             for key, val in attributes.items():
                 setattr(self, key, val)
 
@@ -144,7 +143,7 @@ class BaseObject(object):
         self._universes.remove(universe)
 
     # These three control attrib access via KEYS; bobj['x'], bobj['y'] = y; del
-    # bobj['y']
+    # bobj['y']  # noqa: ERA001
     def __getitem__(self, name):
         """
         Supply the :py:`bobj['x']` operation to get the ``x`` item.

@@ -77,7 +77,8 @@ def bfs(
         # empty!
         return None
     if (uni is not None) and (start not in uni.vertices):
-        raise ValueError("Start vertex not in specified universe!")
+        msg = "Start vertex not in specified universe!"
+        raise ValueError(msg)
 
     if hasattr(start, attrib) and start[attrib] == val:
         return start
@@ -180,7 +181,8 @@ def ibft(
         # empty!
         return
     if (uni is not None) and (start not in uni.vertices):
-        raise ValueError("Start vertex not in specified universe!")
+        msg = "Start vertex not in specified universe!"
+        raise ValueError(msg)
 
     visited = set()
     queue = collections.deque([start])
@@ -231,7 +233,7 @@ def bft(
     :return: A list of vertices in order of a breadth-first traversal.
     """
 
-    out = list(
+    return list(
         ibft(
             # multiple functions have the same arguments... not a duplicate!
             # pylint: disable=duplicate-code
@@ -243,4 +245,3 @@ def bft(
             ff_result=ff_result,
         )
     )
-    return out

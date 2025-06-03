@@ -70,9 +70,8 @@ class Link(base.BaseObject):
         # we are.
         # pylint: disable-next=unidiomatic-typecheck
         if (type(self) is Link) and not _force_creation:
-            raise TypeError(
-                "Base class <Link> may not be instantiated directly!"
-            )
+            msg = "Base class <Link> may not be instantiated directly!"
+            raise TypeError(msg)
 
         #: Vertices that this link links
         #:

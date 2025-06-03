@@ -214,7 +214,7 @@ def ineighbors(
                     # replaced with a jump opcode.  see
                     # https://github.com/nedbat/coveragepy/issues/198#issuecomment-399705984
                     # for more info.  for proof that this IS run, uncomment:
-                    # raise Exception("look, ma!  this happened!")
+                    # raise Exception("look, ma!  this happened!")  # noqa: ERA001
                     # and re-run unit tests.  You'll get that exception.
                     continue  # pragma: no cover
 
@@ -246,9 +246,8 @@ def ineighbors(
                         cache.append(yld)
                     yield yld
                 else:
-                    raise NotImplementedError(
-                        f"Unknown link class {type(link)}"
-                    )
+                    msg = f"Unknown link class {type(link)}"
+                    raise NotImplementedError(msg)
 
         elif direction_sensitive == DIR_SENS_BACKWARD:
             if issubclass(type(link), UnDirectedEdge):
@@ -289,9 +288,8 @@ def ineighbors(
                         cache.append(yld)
                     yield yld
                 else:
-                    raise NotImplementedError(
-                        f"Unknown link class {type(link)}"
-                    )
+                    msg = f"Unknown link class {type(link)}"
+                    raise NotImplementedError(msg)
 
         elif direction_sensitive == DIR_SENS_ANY:
             # see above notes on short-circuiting filterfunc() if it's not
@@ -302,9 +300,8 @@ def ineighbors(
                 yield v2
 
         else:
-            raise ValueError(
-                f"Unknown option for direction_sensitive = {direction_sensitive}"
-            )
+            msg = f"Unknown option for direction_sensitive = {direction_sensitive}"
+            raise ValueError(msg)
 
     vert._qa_neighbors_insert(
         cache, direction_sensitive, unknown_handling, filterfunc
@@ -453,9 +450,8 @@ def find_links(
                 if unknown_handling == LNK_UNKNOWN_NEIGHBOR:
                     links.add(link)
                 else:
-                    raise NotImplementedError(
-                        f"Unknown link class {type(link)}"
-                    )
+                    msg = f"Unknown link class {type(link)}"
+                    raise NotImplementedError(msg)
 
         else:
             # see above notes on short-circuiting filterfunc() if it's not

@@ -125,16 +125,15 @@ def load_adj_matrix(
     # make sure the side array is the same size as the matrix
     matrixlen = len(matrix)
     if len(vertices) != matrixlen:
-        raise ValueError(
-            "load_adj_matrix needs len(vertices) to be matrix len!"
-        )
+        msg = "load_adj_matrix needs len(vertices) to be matrix len!"
+        raise ValueError(msg)
+
     # and make sure that the matrix is a square
     for i, row in enumerate(matrix):
         if len(row) != matrixlen:
-            raise ValueError(
-                f"given matrix was not a square!  row {i} had "
-                f"len {len(row)}, should have {matrixlen}"
-            )
+            msg = f"given matrix was not a square!  row {i} had len {len(row)}" \
+                    ",should have {matrixlen}"
+            raise ValueError(msg)
     # okay, good enough!
 
     uni = Universe()

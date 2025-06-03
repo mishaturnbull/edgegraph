@@ -68,9 +68,11 @@ def _df_preflight_checks(uni: Universe, start: Vertex):
        in the given universe.
     """
     if (uni is not None) and (len(uni.vertices) == 0):
-        raise ValueError("Universe is empty; cannot perform this operation!")
+        msg = "Universe is empty; cannot perform this operation!"
+        raise ValueError(msg)
     if (uni is not None) and (start not in uni.vertices):
-        raise ValueError("Start vertex not in specified universe!")
+        msg = "Start vertex not in specified universe!"
+        raise ValueError(msg)
 
 
 def _dft_recur(

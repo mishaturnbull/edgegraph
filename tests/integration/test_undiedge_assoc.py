@@ -50,7 +50,7 @@ def test_undiredge_assoc_postinit():
         None,
     ), "UnDirectedEdge did not associate v1 postinit!"
     assert v1.links == (e,), "UnDIrectedEdge did not bind vertex link!"
-    assert v2.links == tuple(), "What the actual hell happened here"
+    assert v2.links == (), "What the actual hell happened here"
 
     e.v2 = v2
 
@@ -79,7 +79,7 @@ def test_undiredge_assoc_update_v1():
     e.v1 = v3
 
     assert e.vertices == (v3, v2), "UnDirEdge did not set v1 correctly!"
-    assert v1.links == tuple(), (
+    assert v1.links == (), (
         "UnDirEdge v1-set did not remove links from old v1!"
     )
     assert v2.links == (e,), "UnDirEdge v1-set altered v2 links!"
@@ -104,7 +104,7 @@ def test_undiredge_assoc_update_v2():
 
     assert e.vertices == (v1, v3), "UnDirEdge did not set v2 correctly!"
     assert v1.links == (e,), "UnDirEdge v2-set altered v1 links!"
-    assert v2.links == tuple(), (
+    assert v2.links == (), (
         "UnDirEdge v2-set did not remove links from old v2!"
     )
     assert v3.links == (e,), "UnDirEdge v2-set did not bind to new v2!"

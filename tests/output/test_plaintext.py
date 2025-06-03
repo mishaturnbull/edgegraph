@@ -40,11 +40,11 @@ def test_basic_render_nonsorted(graph_clrs09_22_6):
 
     for line in render.splitlines():
         start = verts[int(line.split(" ")[0])]
-        out = set(
+        out = {
             verts[int(n.replace(",", ""))]
             for n in line.split("->")[1].split(" ")
             if len(n)
-        )
+        }
         assert set(helpers.neighbors(start)) == out
 
 

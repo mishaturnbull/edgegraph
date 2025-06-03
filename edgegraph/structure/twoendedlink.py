@@ -48,10 +48,12 @@ class TwoEndedLink(link.Link):
              superclass constructor
         """
         if (v1 is not None) and (not issubclass(type(v1), vertex.Vertex)):
-            raise TypeError(f"v1 is not a Vertex object!  got {v1}")
+            msg = f"v1 is not a Vertex object!  got {v1}"
+            raise TypeError(msg)
 
         if (v2 is not None) and (not issubclass(type(v2), vertex.Vertex)):
-            raise TypeError(f"v2 is not a Vertex object!  got {v2}")
+            msg = f"v2 is not a Vertex object!  got {v2}"
+            raise TypeError(msg)
 
         # mypy complains about the vertices list below, that it may contain
         # None if the v1 or v2 arguments were not specified in our constructor

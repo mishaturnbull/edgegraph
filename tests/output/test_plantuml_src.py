@@ -130,7 +130,7 @@ def test_plantuml_no_skinparams(graph_clrs09_22_6):
     del opts["skinparams"]
     src = plantuml.render_to_plantuml_src(graph_clrs09_22_6[0], opts)
 
-    hit = re.search(r"skinparam [\w]+ [\w]+", src, re.I)
+    hit = re.search(r"skinparam [\w]+ [\w]+", src, re.IGNORECASE)
     assert hit is None, "puml src gen gave skinparams when shouldn't!"
 
 

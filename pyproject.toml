@@ -110,15 +110,30 @@ select = [
     # extras
     "A",        # don't shadow builtins
     "B",        # enable bugbear
+    "C4",       # use comprehensions
     "COM",      # catch weird comma situations
     "D",        # docstring checks & linting
+    "EM",       # error message standards
+    "ERA",      # commented out code
     "EXE",      # shebang and permissions checks
+    "FA",       # validate __future__ annotate usage
+    "FURB",     # refurbishment & modernization
     "I",        # isort
+    "N",        # pep8 object naming rules
     "PERF",     # performance hits
+    "PIE",      # flake8-pie misc. checks
+    "PLC",      # pylint conventions
+    "PLE",      # pylint errors
+    "PLW",      # pylint warnings
     "PT",       # pytest style control
     "Q",        # quote controls
+    "RET",      # check usage of return
     "RUF",      # ruff-specific rules
     "SIM",      # code simplicity
+    "T10",      # don't leave debugger breakpoints around
+    "T20",      # don't leave print() or pprint() around
+    "TRY",      # better handling of exceptions
+    "YTT",      # year2020: python3 version checks
 ]
 
 ignore = [

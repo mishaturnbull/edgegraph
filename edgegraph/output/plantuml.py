@@ -193,9 +193,9 @@ def is_plantuml_installed(plantuml: str = "plantuml") -> bool:
             env=dict(os.environ, **PLANTUML_INVOKE_ENV),
             check=True,
         )
-        return True
     except (FileNotFoundError, subprocess.CalledProcessError):
         return False
+    return True
 
 
 def _resolve_options(clas, options):
@@ -206,7 +206,8 @@ def _resolve_options(clas, options):
         # we did not find the thing we were looking for
         mro_idx += 1
         if mro_idx >= len(clas.__mro__):
-            raise ValueError(f"Cannot identify useful superclass of {clas}!")
+            msg = f"Cannot identify useful superclass of {clas}!"
+            raise ValueError(msg)
         search = clas.__mro__[mro_idx]
 
     opts = options[search]
@@ -263,8 +264,7 @@ def _one_link_to_puml(lnk, options):
     v1e = opts["v1side"]
     v2e = opts["v2side"]
 
-    out = f"{v1puml} {v1e}--{v2e} {v2puml}\n"
-    return out
+    return f"{v1puml} {v1e}--{v2e} {v2puml}\n"
 
 
 def _one_vert_to_skinparam(vert, options):
@@ -355,9 +355,11 @@ def render_to_image(src: str, out_file: str, plantuml: str = "plantuml"):
     :raises ValueError: If the specified filename is invalid.
     """
     if not out_file.endswith(".png"):
-        raise ValueError("Only PNG's are supported at the moment!")
+        msg = "Only PNG's are supported at the moment!"
+        raise ValueError(msg)
     if not len(src) > 0:
-        raise ValueError("Cannot render PlantUML image with empty string src!")
+        msg = "Cannot render PlantUML image with empty string src!"
+        raise ValueError(msg)
 
     tmpdir = tempfile.mkdtemp(prefix="edgegraph_puml_renderer_")
 
