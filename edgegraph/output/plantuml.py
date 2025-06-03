@@ -173,7 +173,7 @@ PLANTUML_INVOKE_ENV = {"DISPLAY": ""}
 
 def is_plantuml_installed(plantuml: str = "plantuml") -> bool:
     """
-    Checks if PlantUML is installed and usable on this system.
+    Check if PlantUML is installed and usable on this system.
 
     This function checks if the PlantUML program is available for use on the
     current system.  If so, it returns ``True``.  If not, ``False``.

@@ -21,6 +21,11 @@ class WeightedDirectedEdge(DirectedEdge):
     def __init__(
         self, v1=None, v2=None, weight=None, *, uid=None, attributes=None
     ):
+        """
+        Create a weighted directed edge.  All parameters the same as
+        :cls:`~edgegraph.structure.directededge.DirectedEdge`, except the
+        addition of a numerical ``weight``.
+        """
         super().__init__(v1, v2, uid=uid, attributes=attributes)
 
         self.weight = weight

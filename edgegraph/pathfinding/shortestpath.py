@@ -185,7 +185,7 @@ def _route_dijkstra(
 
 def _default_weightfunc(u, v):
     """
-    Default no-other-is-supplied weighting function.
+    Weight function for when no other is supplied.
 
     Always returns 1, no matter the two arguments.
     """

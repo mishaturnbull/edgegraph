@@ -138,6 +138,11 @@ class TrueSingleton(type):
     _TrueSingleton__singleton_instances: ClassVar[dict[Hashable, object]] = {}
 
     def __call__(cls, *args, **kwargs):
+        """
+        Make instances of this class callable.
+
+        This is necessary to operate as a metaclass.
+        """
         if cls not in cls._TrueSingleton__singleton_instances:
             cls._TrueSingleton__singleton_instances[cls] = super(
                 TrueSingleton, cls
@@ -147,7 +152,7 @@ class TrueSingleton(type):
 
 def clear_true_singleton(cls: type | None = None) -> None:
     """
-    Clears TrueSingleton cache for either a specified type, or all
+    Clear TrueSingleton cache for either a specified type, or all
     TrueSingleton types.
 
     This operation is also sometimes referred to as "resetting" a singleton
@@ -318,6 +323,8 @@ def semi_singleton_metaclass(hashfunc: Callable | None = None) -> type:
 
         def hashfunc(args: tuple, kwargs: dict) -> int:
             """
+            Serialize all arguments given.
+
             Default argument hash function for semi-singleton objects.  Causes
             semi-singletons to return new objects if any argument (positional
             or keyword) is different.
@@ -351,8 +358,8 @@ def semi_singleton_metaclass(hashfunc: Callable | None = None) -> type:
 
 
 def add_mapping(obj: object, *args, **kwargs):
-    """
-    Adds another mapping to a semi-singleton instance.
+    r"""
+    Add another mapping to a semi-singleton instance.
 
     This function can be used to add another mapping to an instance of a
     semi-singleton object.  It can be useful for situations where the same
@@ -383,9 +390,9 @@ def add_mapping(obj: object, *args, **kwargs):
     :param obj: The object to map the extra identifier to.  Henceforth after
       this function, this object will be reachable by the identifier given as
       well as any others it may have already had.
-    :param \\*args: Positional arguments as would normally be passed to the
+    :param \*args: Positional arguments as would normally be passed to the
       semi-singleton class instantiation.
-    :param \\**kwargs: Positional arguments as would normally be passed to the
+    :param \**kwargs: Positional arguments as would normally be passed to the
       semi-singleton class instantiation.
     """
     # get the metaclass type
@@ -402,7 +409,7 @@ def add_mapping(obj: object, *args, **kwargs):
 
 
 def drop_semi_singleton_mapping(cls: type, *args, **kwargs):
-    """
+    r"""
     Remove an mapping from the specified semi-singleton instance.
 
     This removes a *single* mapping of a key to instance.  It may be considered
@@ -436,9 +443,9 @@ def drop_semi_singleton_mapping(cls: type, *args, **kwargs):
 
     :param cls: Class to remove the mapping from.  This is typically thought of
       as ``type(some_object)``.
-    :param \\*args: Positional arguments as would normally be passed to the
+    :param \*args: Positional arguments as would normally be passed to the
       semi-singleton class instantiation.
-    :param \\**kwargs: Positional arguments as would normally be passed to the
+    :param \**kwargs: Positional arguments as would normally be passed to the
       semi-singleton class instantiation.
     """
     # get the metaclass type
@@ -453,7 +460,7 @@ def drop_semi_singleton_mapping(cls: type, *args, **kwargs):
 
 
 def check_semi_singleton_entry_exists(cls: type, *args, **kwargs) -> object:
-    """
+    r"""
     Test whether a semisingleton exists for the given mapping without creating
     it.
 
@@ -479,9 +486,9 @@ def check_semi_singleton_entry_exists(cls: type, *args, **kwargs) -> object:
 
     :param cls: Class to test.  This is typically thought of as
       ``type(some_object)``.
-    :param \\*args: Positional arguments as would normally be passed to the
+    :param \*args: Positional arguments as would normally be passed to the
       semi-singleton class instantiation.
-    :param \\**kwargs: Positional arguments as would normally be passed to the
+    :param \**kwargs: Positional arguments as would normally be passed to the
       semi-singleton class instantiation.
     :return: The instance accessible via the given mapping if such exists; else
       ``None``.
@@ -535,7 +542,7 @@ def get_all_semi_singleton_instances(cls: type) -> Generator[object]:
 
 def clear_semi_singleton(cls: type) -> None:
     """
-    Clears a specified semi-singleton.
+    Clear a specified semi-singleton.
 
     This operation is also sometimes referred to as "resetting" a
     (semi-)singleton data type.  It clears the internal hashmap (dictionary)

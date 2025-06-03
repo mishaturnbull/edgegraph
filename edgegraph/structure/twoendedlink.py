@@ -72,13 +72,13 @@ class TwoEndedLink(link.Link):
     @v1.setter
     def v1(self, new: Vertex):
         """
-        Sets one vertex of this edge.
+        Set one vertex of this edge.
         """
         self._set_v1(new)
 
     def _set_v1(self, new: Vertex):
         """
-        Helper method to set v1.
+        Set v1.
 
         Why does this method exist, you ask, instead of just doing it in
         @v1.setter ?  Good question!  I want to use this same code in
@@ -109,13 +109,13 @@ class TwoEndedLink(link.Link):
     @v2.setter
     def v2(self, new: Vertex):
         """
-        Sets the other end of this edge.
+        Set the other end of this edge.
         """
         self._set_v2(new)
 
     def _set_v2(self, new: Vertex):
         """
-        Helper method to set v2.
+        Set v2.
 
         For a brief on why this exists, see
         :py:meth:`~edgegraph.structure.TwoEndedLink._set_v1`.

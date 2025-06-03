@@ -40,7 +40,7 @@ def test_spsp_dijkstra_weighted_nochange(graph_cheapest_is_shortest):
 
 
 def test_spsp_dijkstra_weighted_diff(graph_cheapest_is_longest):
-    """
+    r"""
     Ensure that graphs with a custom weight function A.) work, and B.) solve as
     expected in the case where :math:`weight(u, v) \\neq  1`.
     """

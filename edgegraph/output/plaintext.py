@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Print graphs to an ASCII format.  (Not ASCII "art"!)
+Print graphs to an ASCII format (not ASCII "art"!).
 
 This module provides functionality to "print" a graph.  At present time, only
 one format is supported.  See the sole function for more information.  More

@@ -122,8 +122,9 @@ class BaseObject(object):
 
     def add_to_universe(self, universe: Universe) -> None:
         """
-        Adds this object to a new universe.  If it is already there, no action
-        is taken.
+        Add this object to a new universe.
+
+        If it is already there, no action is taken.
 
         :param universe: the new universe to add this object to
         """
@@ -146,18 +147,18 @@ class BaseObject(object):
     # bobj['y']
     def __getitem__(self, name):
         """
-        Called by :py:`bobj['x']` to get the ``x`` item.
+        Supply the :py:`bobj['x']` operation to get the ``x`` item.
         """
         return getattr(self, name)
 
     def __setitem__(self, name, val):
         """
-        Called by :py:`bobj['x'] = y` to set the ``x`` item.
+        Supply the :py:`bobj['x'] = y` operation to set the ``x`` item.
         """
         setattr(self, name, val)
 
     def __delitem__(self, name):
         """
-        Called by :py:`del bobj['x']` to delete the ``x`` item.
+        Supply the :py:`del bobj['x']` operation to delete the ``x`` item.
         """
         delattr(self, name)

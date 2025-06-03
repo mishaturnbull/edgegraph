@@ -239,7 +239,7 @@ class Universe(vertex.Vertex):
 
     def add_vertex(self, vert: vertex.Vertex):
         """
-        Adds a new vertex to this universe.
+        Add a new vertex to this universe.
 
         The vertex in question will automatically have its universes updated to
         include this one, if needed.  If the vertex is already present, no

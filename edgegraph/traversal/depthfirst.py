@@ -60,7 +60,7 @@ from edgegraph.traversal import helpers
 def _df_preflight_checks(uni: Universe, start: Vertex):
     """
     Perform a few common pre-traversal sanity checks, raising ValueError if
-    they fail.  For internal use only!
+    they fail.  For internal use only.
 
     :param uni: Universe to traverse/search.
     :param start: Vertex to start trav/search at.
@@ -84,7 +84,7 @@ def _dft_recur(
     ff_result: Callable | None = None,
 ) -> Iterator[Vertex]:
     """
-    Recursion helper for :py:func:`dft_recursive`.  For internal use only!
+    Recursion helper for :py:func:`dft_recursive`.  For internal use only.
 
     :meta private:
 
@@ -206,7 +206,7 @@ def _dfs_recur(
     val: object,
 ) -> Vertex | None:
     """
-    Recursion helper for :py:func:`dfs_recursive`.  For internal use only!
+    Recursion helper for :py:func:`dfs_recursive`.  For internal use only.
 
     :meta private:
 

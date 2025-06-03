@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""
+r"""
 Non-recursive pickler / "diller" implementation to be used for serializing
 edgegraph objects.
 

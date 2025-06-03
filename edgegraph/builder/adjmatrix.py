@@ -23,7 +23,7 @@ def load_adj_matrix(
     linktype: type = DirectedEdge,
 ) -> Universe:
     """
-    Loads an adjacency matrix to create a graph structure.
+    Load an adjacency matrix to create a graph structure.
 
     The input structure is expected to be a list of list of booleans.  A "side
     array" is also required, to denote the vertices.  Inputting of the

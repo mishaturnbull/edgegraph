@@ -96,7 +96,7 @@ class Link(base.BaseObject):
 
     def add_vertex(self, new: Vertex):
         """
-        Adds a vertex to this link.
+        Add a vertex to this link.
 
         :param new: the vertex to add to the link
         """

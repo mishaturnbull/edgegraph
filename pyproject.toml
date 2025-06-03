@@ -111,6 +111,7 @@ select = [
     "A",        # don't shadow builtins
     "B",        # enable bugbear
     "COM",      # catch weird comma situations
+    "D",        # docstring checks & linting
     "EXE",      # shebang and permissions checks
     "I",        # isort
     "PERF",     # performance hits
@@ -120,10 +121,11 @@ select = [
     "SIM",      # code simplicity
 ]
 
-#    "D",        # docstring checks & linting
-#]
-
 ignore = [
+    # one-liner doc string should have quotes on the same line.  disabled
+    # purely due to author preference.
+    "D200",
+
     # no blank line between function docstring and code.  removed due to author
     # preference.
     "D202",
@@ -131,6 +133,10 @@ ignore = [
     # requires 1 blank line before class docstring.  removed due to author
     # preference.
     "D203",
+
+    # blank line required between simmary line and description.  removed as
+    # many summary lines are wrapped to 80 cols.
+    "D205",
 
     # requires 1 blank line before class docstring.  incompatible with D211;
     # disabling this one due to author preference.
@@ -152,6 +158,21 @@ ignore = [
 
     # variable naming rules in unit tests are a bit more relaxed
     "E741",
+
+    # relax grammar checks on test-only docstrings.  public API though must be
+    # good.
+    "D400",
+    "D401",
+    "D404",
+    "D415",
+]
+
+# actual unit test files get even more leeway
+"tests/**/test_*.py" = [
+    # missing docstring in public class, and in __init__().  classes in unit
+    # test modules are for test purposes only.
+    "D101",
+    "D107",
 ]
 
 [tool.mypy]

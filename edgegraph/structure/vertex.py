@@ -84,7 +84,7 @@ class Vertex(base.BaseObject):
         universes: Iterator[Universe] | None = None,
     ):
         """
-        Creates a new vertex.
+        Create a new vertex.
 
         Unlike BaseObject, the Vertex class will add itself to Universes
         provided to this method.
@@ -117,8 +117,9 @@ class Vertex(base.BaseObject):
 
     def add_to_universe(self, universe: Universe) -> None:
         """
-        Adds this object to a new universe.  If it is already there, no action
-        is taken.
+        Add this object to a new universe.
+
+        If it is already there, no action is taken.
 
         In addition to the action(s) taken by the superclass
         (:py:meth:`~edgegraph.structure.base.BaseObject.add_to_universe`), this
