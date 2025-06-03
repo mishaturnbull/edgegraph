@@ -68,7 +68,7 @@ class Link(base.BaseObject):
         # alternative instance-but-not-subclass function is available, so here
         # we are.
         # pylint: disable-next=unidiomatic-typecheck
-        if (type(self) == Link) and not _force_creation:
+        if (type(self) is Link) and not _force_creation:
             raise TypeError(
                 "Base class <Link> may not be instantiated directly!"
             )

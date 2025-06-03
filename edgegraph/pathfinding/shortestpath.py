@@ -185,6 +185,14 @@ def _route_dijkstra(
     return S
 
 
+def _default_weightfunc(u, v):
+    """
+    Default no-other-is-supplied weighting function.
+
+    Always returns 1, no matter the two arguments.
+    """
+    return 1
+
 def single_pair_shortest_path(
     uni: Universe,
     start: Vertex,
@@ -306,7 +314,7 @@ def single_pair_shortest_path(
           no distance between an object and itself).
     """
     if weightfunc is None:
-        weightfunc = lambda u, v: 1
+        weightfunc = _default_weightfunc
 
     if start is None:
         raise ValueError("Cannot begin path searching with start=None!")

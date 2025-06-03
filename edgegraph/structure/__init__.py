@@ -5,10 +5,10 @@
 Holds the classes that form graphs.
 """
 
-from .base import BaseObject
-from .vertex import Vertex
-from .universe import Universe
-from .link import Link
-from .twoendedlink import TwoEndedLink
-from .undirectededge import UnDirectedEdge
-from .directededge import DirectedEdge
+from .base import BaseObject as BaseObject
+from .vertex import Vertex as Vertex
+from .universe import Universe as Universe
+from .link import Link as Link
+from .twoendedlink import TwoEndedLink as TwoEndedLink
+from .undirectededge import UnDirectedEdge as UnDirectedEdge
+from .directededge import DirectedEdge as DirectedEdge
