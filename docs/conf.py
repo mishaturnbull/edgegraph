@@ -36,7 +36,10 @@ release = eg_version.__version__
 
 # project started in 2023 Nov and copyright continues through author's life
 year = datetime.datetime.strftime(datetime.datetime.now(), "%Y")
-copyright = f"2023-{year}, Michael Turnbull"
+
+# sphinx's copyright variable unfortunately must be named exactly copyright,
+# shadowing the builtin.  nothing we can do.
+copyright = f"2023-{year}, Michael Turnbull"  # noqa: A001
 
 
 # -- General configuration ---------------------------------------------------

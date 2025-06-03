@@ -87,9 +87,7 @@ def test_adjmatrix_clrs09_22_2():
        v4 --> v4
        v5 --> v5
     """
-    v = []
-    for _ in range(6):
-        v.append(Vertex())
+    v = [Vertex() for _ in range(6)]
 
     mat = [
         [0, 1, 0, 1, 0, 0],

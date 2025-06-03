@@ -69,9 +69,7 @@ def wipe_autosummary_dirs(app, exception):
         toctrees = []
         for lineno in linenos:
             searchin = lines[lineno : lineno + 5]
-            for line in searchin:
-                if TOCTREE_LINE in line:
-                    toctrees.append(line)
+            toctrees.extend(line for line in searchin if TOCTREE_LINE in line)
 
         # we now have the :toctree: lines, do some string math to grab the
         # directory name

@@ -56,7 +56,7 @@ class Vertex(base.BaseObject):
 
         if cls.NEIGHBOR_CACHING:
             totals = [0, 0, 0, 0]
-            for _, stat in cls._CACHE_STATS.items():
+            for stat in cls._CACHE_STATS.values():
                 totals[0] += stat[0]
                 totals[1] += stat[1]
                 totals[2] += stat[2]

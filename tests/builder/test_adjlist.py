@@ -52,9 +52,7 @@ def test_adjlist_build_clrs09_22_1():
        v2 -- v3
        v3 -- v4
     """
-    v = []
-    for _ in range(5):
-        v.append(Vertex())
+    v = [Vertex() for _ in range(5)]
 
     adj = {
         v[0]: [v[1], v[4]],

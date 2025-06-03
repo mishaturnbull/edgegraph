@@ -311,13 +311,12 @@ def idft_iterative(
             if (ff_result and ff_result(v)) or (not ff_result):
                 yield v
 
-            for w in helpers.ineighbors(
+            stack.extend(w for w in helpers.ineighbors(
                 v,
                 direction_sensitive=direction_sensitive,
                 unknown_handling=unknown_handling,
                 filterfunc=ff_via,
-            ):
-                stack.append(w)
+                ))
 
 
 def dft_iterative(
@@ -397,6 +396,5 @@ def dfs_iterative(
                 if v[attrib] == val:
                     return v
             discovered.append(v)
-            for w in helpers.ineighbors(v):
-                stack.append(w)
+            stack.extend(helpers.ineighbors(v))
     return None

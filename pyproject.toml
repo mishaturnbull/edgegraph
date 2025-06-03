@@ -107,11 +107,13 @@ select = [
     # defaults
     "E4", "E7", "E9", "F",
 
-# let's just start here for now, and address warnings group by group...
+    # extras
+    "A",        # don't shadow builtins
+    "B",        # enable bugbear
+    "COM",      # catch weird comma situations
+    "PERF",     # performance hits
 ]
 
-#    "B",        # enable bugbear
-#    "A",        # don't shadow builtins
 #    "EXE",      # shebang and permissions checks
 #    "PT",       # pytest style control
 #    "Q",        # quote controls
@@ -119,8 +121,6 @@ select = [
 #    "I",        # isort
 #    "D",        # docstring checks & linting
 #    "RUF",      # ruff-specific rules
-#    "COM",      # catch weird comma situations
-#    "PERF",     # performance hits
 #]
 
 ignore = [
@@ -139,6 +139,9 @@ ignore = [
     # requires summary line on first line of docstring (with the quotes).
     # incompatible with D213; disabling this one due to author preference.
     "D212",
+
+    # incompatible with ruff formatter
+    "COM812",
 ]
 
 [tool.ruff.lint.extend-per-file-ignores]

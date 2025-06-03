@@ -48,9 +48,7 @@ def test_vertex_create_with_links():
     """
     Ensure we can create vertices with base Link objects in a list.
     """
-    links = []
-    for _ in range(3):
-        links.append(link.Link(_force_creation=True))
+    links = [link.Link(_force_creation=True) for _ in range(3)]
 
     v1 = vertex.Vertex(links=links)
     assert v1._links == links, "vertex did not accept list of links!"
@@ -77,9 +75,7 @@ def test_vertex_create_with_tuple():
     """
     Ensure we can create vertices with base Link objects in a tuple.
     """
-    links = []
-    for _ in range(3):
-        links.append(link.Link(_force_creation=True))
+    links = [link.Link(_force_creation=True) for _ in range(3)]
     links = tuple(links)
 
     v3 = vertex.Vertex(links=links)
@@ -91,9 +87,7 @@ def test_vertex_create_with_generator():
     """
     Ensure we can create vertices with base Link objects in a genexpr.
     """
-    links = []
-    for _ in range(3):
-        links.append(link.Link(_force_creation=True))
+    links = [link.Link(_force_creation=True) for _ in range(3)]
 
     def gen():
         yield from links
@@ -156,9 +150,7 @@ def test_vert_init_with_uni():
     """
     Ensure vertices init'd with universes are members of them.
     """
-    unis = []
-    for _ in range(50):
-        unis.append(universe.Universe())
+    unis = [universe.Universe() for _ in range(50)]
 
     v1 = vertex.Vertex(universes=[unis[0]])
 

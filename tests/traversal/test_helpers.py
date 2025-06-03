@@ -624,9 +624,8 @@ def test_findlinks_stress(n_links):
     """
 
     v1, v2 = Vertex(), Vertex()
-    edges = []
     for _ in range(n_links):
-        edges.append(explicit.link_directed(v1, v2))
+        explicit.link_directed(v1, v2)
 
     iters = 2500
 

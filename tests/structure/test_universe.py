@@ -30,9 +30,7 @@ def test_universe_vertex_add():
     Ensure we can add a vertex to a universe.
     """
     u = universe.Universe()
-    vs = []
-    for i in range(5):
-        vs.append(vertex.Vertex(attributes={str(i): i}))
+    vs = [vertex.Vertex(attributes={str(i): i}) for i in range(5)]
 
     u.add_vertex(vs[0])
     u.add_vertex(vs[1])
@@ -91,9 +89,7 @@ def test_universe_vertex_init():
     """
     Ensure we can pass vertices into a Universe instantiation.
     """
-    vs = []
-    for _ in range(100):
-        vs.append(vertex.Vertex())
+    vs = [vertex.Vertex() for _ in range(100)]
 
     u = universe.Universe(vertices=vs)
 

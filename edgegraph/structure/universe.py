@@ -66,7 +66,11 @@ class UniverseLaws(base.BaseObject):
         #: edge types allowed
         self._edge_whitelist = edge_whitelist
         try:
-            self.edge_whitelist
+            # this seemingly-pointless statement causes the self.edge_whitelist
+            # getter to run, which validates the structuring of the underlying
+            # data.  this access will raise an exception if it is invalid
+            # without duplicating code.
+            self.edge_whitelist  # noqa: B018
         except (ValueError, AttributeError) as exc:
             # re-raise, but with a more clear message of what's happening
             raise ValueError(

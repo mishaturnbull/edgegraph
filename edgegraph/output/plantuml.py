@@ -325,8 +325,7 @@ def render_to_plantuml_src(uni: Universe, options: dict) -> str | None:
     components.append(PLANTUML_AUTOGEN_NOTE)
 
     components.extend(vertex_comps)
-    for link in links:
-        components.append(_one_link_to_puml(link, options))
+    components.extend(_one_link_to_puml(link, options) for link in links)
 
     components.append("@enduml\n")
     return "".join(components)

@@ -216,9 +216,7 @@ def test_base_obj_init_universes_list():
     """
     Ensure we can instantiate a BaseObject with universes given as a list.
     """
-    unis = []
-    for _ in range(3):
-        unis.append(universe.Universe())
+    unis = [universe.Universe() for _ in range(3)]
 
     bo = base.BaseObject(universes=unis)
 
@@ -271,9 +269,7 @@ def test_base_obj_init_universes_generator():
     """
     Ensure we can instantiate a BaseObject with universes given as a genexpr.
     """
-    unis = []
-    for _ in range(3):
-        unis.append(universe.Universe())
+    unis = [universe.Universe() for _ in range(3)]
 
     def gen():
         yield from unis
