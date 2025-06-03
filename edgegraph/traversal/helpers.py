@@ -73,7 +73,7 @@ def ineighbors(
     direction_sensitive: int = DIR_SENS_FORWARD,
     unknown_handling: int = LNK_UNKNOWN_ERROR,
     filterfunc: Callable | None = None,
-    ) -> Generator[Vertex, None, None]:
+) -> Generator[Vertex, None, None]:
     """
     Identify the neighbors of a given vertex (generator).
 
