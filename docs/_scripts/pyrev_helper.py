@@ -25,7 +25,7 @@ def call_one(call):
     Print and make a syscall.
     """
     call = call.format(options=" ".join(DEFAULT_OPTS))
-    os.system(call)
+    os.system(call)  # noqa: S605
 
 
 def main():

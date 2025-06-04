@@ -16,19 +16,10 @@ from edgegraph.output import nrpickler
 from edgegraph.structure import singleton, vertex
 from edgegraph.traversal import breadthfirst
 
-# similarly to the singleton tests, this module tests *a lot* of custom
-# classes.  the classes defined here are never exposed to users of edgegraph,
-# nor any of the edgegraph module, therefore don't need:
-# * any use-case besides their sole existence,
-#   * sufficient public methods (R0903, too-few-public-methods)
-# * docstrings (C0115, missing-class-docstring),
-# * amazing formatting
-#   * class Something: pass  will be allowed (C0321, multiple-statements)
-#
-# therefore:
-# pylint: disable=too-few-public-methods
-# pylint: disable=missing-class-docstring
-# pylint: disable=multiple-statements
+# this module performs a lot of pickling and unpickling.  however, we don't
+# unpickle any permanently stored data, meaning we can't cause risk (even to
+# the system executing tests).
+# ruff: noqa: S301
 
 LOG = logging.getLogger(__name__)
 

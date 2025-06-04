@@ -109,6 +109,7 @@ select = [
     # extras
     "A",        # don't shadow builtins
     "B",        # enable bugbear
+    "BLE",      # blind exception checks
     "C4",       # use comprehensions
     "COM",      # catch weird comma situations
     "D",        # docstring checks & linting
@@ -118,6 +119,7 @@ select = [
     "FA",       # validate __future__ annotate usage
     "FURB",     # refurbishment & modernization
     "I",        # isort
+    "INP",      # packages should have __init__.py
     "N",        # pep8 object naming rules
     "PERF",     # performance hits
     "PIE",      # flake8-pie misc. checks
@@ -128,14 +130,20 @@ select = [
     "Q",        # quote controls
     "RET",      # check usage of return
     "RUF",      # ruff-specific rules
+    "S",        # bandit (security checks)
     "SIM",      # code simplicity
     "T10",      # don't leave debugger breakpoints around
     "T20",      # don't leave print() or pprint() around
+    "TC",       # type checking quality stuff (that mypy doesn't check for)[
     "TRY",      # better handling of exceptions
+    "W",        # pycodestyle warnings
     "YTT",      # year2020: python3 version checks
 ]
 
 ignore = [
+    # incompatible with ruff formatter
+    "COM812",
+
     # one-liner doc string should have quotes on the same line.  disabled
     # purely due to author preference.
     "D200",
@@ -160,8 +168,14 @@ ignore = [
     # incompatible with D213; disabling this one due to author preference.
     "D212",
 
-    # incompatible with ruff formatter
-    "COM812",
+    # edgegraph does not handle encryption; insecure PRNG's are totally fine
+    "S311",
+
+    # typing-only imports are low impact to performance
+    "TC001",
+    "TC002",
+    "TC003",
+
 ]
 
 [tool.ruff.lint.extend-per-file-ignores]
@@ -179,6 +193,9 @@ ignore = [
     "D401",
     "D404",
     "D415",
+
+    # pytest uses assertion checks
+    "S101",
 ]
 
 # actual unit test files get even more leeway
@@ -187,6 +204,12 @@ ignore = [
     # test modules are for test purposes only.
     "D101",
     "D107",
+]
+
+# likewise, python code found in the docs directory is not production code
+"docs/**/*.py" = [
+    # assertions will not be opimized out here
+    "S101",
 ]
 
 [tool.mypy]

@@ -188,7 +188,9 @@ def is_plantuml_installed(plantuml: str = "plantuml") -> bool:
     :return: Whether or not PlantUML is usable.
     """
     try:
-        subprocess.run(
+        # security warning is not applicable here; the consumer of this code
+        # may already execute arbitrary commands.
+        subprocess.run(  # noqa: S603
             [plantuml, *PLANTUML_INVOKE_ARGS, "-version"],
             env=dict(os.environ, **PLANTUML_INVOKE_ENV),
             check=True,
@@ -372,7 +374,9 @@ def render_to_image(src: str, out_file: str, plantuml: str = "plantuml"):
             wfp.write(src)
 
         # https://plantuml.com/command-line
-        subprocess.run(
+        # security warning is not applicable here; the consumer of this code
+        # may already execute arbitrary commands.
+        subprocess.run(  # noqa: S603
             [plantuml, *PLANTUML_INVOKE_ARGS, srcfile],
             env=dict(os.environ, **PLANTUML_INVOKE_ENV),
             capture_output=True,

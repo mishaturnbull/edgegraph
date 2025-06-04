@@ -15,7 +15,7 @@ def _run_cmd(cmd):
     """
     Run a command, capturing and returning its output.
     """
-    out = subprocess.run(
+    out = subprocess.run(  # noqa: S603
         shlex.split(cmd),
         capture_output=True,
         check=True,
