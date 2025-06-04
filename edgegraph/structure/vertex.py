@@ -6,8 +6,8 @@ Holds the Vertex class.
 
 from __future__ import annotations
 
-from collections.abc import Iterator
 from typing import TYPE_CHECKING, Any, ClassVar
+from collections.abc import Iterator
 
 from edgegraph.structure import base
 
