@@ -6,8 +6,8 @@ Holds the Vertex class.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, ClassVar
 from collections.abc import Iterator
+from typing import TYPE_CHECKING, Any, ClassVar
 
 from edgegraph.structure import base
 
@@ -65,7 +65,9 @@ class Vertex(base.BaseObject):
 
             lines.append("=== CACHE STATISTICS OVERALL ===")
             lines.append(f"Size:          {len(Vertex._CACHE_STATS)}")
-            lines.append(f"Hits:          {totals[0]}")
+            lines.append(
+                    f"Hits:          {totals[0]}"
+                    )
             lines.append(f"Misses:        {totals[1]}")
             lines.append(f"Invalidations: {totals[2]}")
             lines.append(f"Insertions:    {totals[3]}")
