@@ -5,17 +5,34 @@ v0.x
 
 This section describes all 0.x.y versions of edgegraph.
 
-.. note::
+.. _changelog/0.11.0:
 
-   This changelog was created after v0.10.0 was released.  Therefore, all
-   entries hereafter are written after-the-fact, based on my own memory and the
-   Git log.
+v0.11.0
+-------
 
+New features:
+
+#. Added single-pair shortest path API, currently only with Dijkstra's method
+   (but architected for more solvers in the future)
+#. Added iterator version of the neighbors function:
+   :py:func:`~edgegraph.traversal.helpers.ineighbors`
+#. Added the changelog
+
+Bugfixes / minor changes:
+
+#. CI tweakes and improvements (switch to ``actions/setup-python@v5`` for 3.13t
+   testing, run type checking on 3.13)
 
 .. _changelog/0.10.0:
 
 v0.10.0
 -------
+
+.. note::
+
+   This changelog was created after v0.10.0 was released.  Therefore, all
+   entries hereafter are written after-the-fact, based on my own memory and the
+   Git log.
 
 New features:
 

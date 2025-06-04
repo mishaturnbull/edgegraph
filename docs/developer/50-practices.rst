@@ -137,7 +137,8 @@ request and upload to PyPI.
    is the ONLY place where the version number is kept.
 #. Ensure all applicable documentation for new features, bugfixes, etc. is
    created, and all prior existing documentation is updated with any relevant
-   changes.  Ensure the :file:`README.md` feature list is up to date.
+   changes.  Ensure the :file:`README.md` feature list and changelog are up to
+   date.
 #. Commit these changes, and push.  GitHub Actions will ensure that all unit
    tests pass, code coverage is at 100%, and documentation build is working.
    Ensure the actual documentation product is as you expect on ReadTheDocs.
@@ -154,7 +155,7 @@ request and upload to PyPI.
    #. :samp:`git tag v{X.Y.Z}`
    #. :samp:`git push origin master`
 
-#. Back-merge the release into the master branch.
+#. Back-merge the release into the develop branch.
 
    #. :samp:`git checkout develop`
    #. :samp:`git merge master`
