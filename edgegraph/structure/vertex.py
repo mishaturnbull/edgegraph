@@ -65,9 +65,7 @@ class Vertex(base.BaseObject):
 
             lines.append("=== CACHE STATISTICS OVERALL ===")
             lines.append(f"Size:          {len(Vertex._CACHE_STATS)}")
-            lines.append(
-                    f"Hits:          {totals[0]}"
-                    )
+            lines.append(f"Hits:          {totals[0]}")
             lines.append(f"Misses:        {totals[1]}")
             lines.append(f"Invalidations: {totals[2]}")
             lines.append(f"Insertions:    {totals[3]}")
