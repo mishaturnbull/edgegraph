@@ -1,35 +1,25 @@
-#!python3
 # -*- coding: utf-8 -*-
 
 """
 Unit tests that ensure all Edgegraph objects are pickleable and unpickleable.
 """
 
+import logging
 import pickle
 import sys
-import logging
 
 import dill
 import pytest
 
-from edgegraph.structure import singleton, vertex, universe, singleton
-from edgegraph.traversal import breadthfirst
 from edgegraph.builder import randgraph
 from edgegraph.output import nrpickler
+from edgegraph.structure import singleton, vertex
+from edgegraph.traversal import breadthfirst
 
-# similarly to the singleton tests, this module tests *a lot* of custom
-# classes.  the classes defined here are never exposed to users of edgegraph,
-# nor any of the edgegraph module, therefore don't need:
-# * any use-case besides their sole existence,
-#   * sufficient public methods (R0903, too-few-public-methods)
-# * docstrings (C0115, missing-class-docstring),
-# * amazing formatting
-#   * class Something: pass  will be allowed (C0321, multiple-statements)
-#
-# therefore:
-# pylint: disable=too-few-public-methods
-# pylint: disable=missing-class-docstring
-# pylint: disable=multiple-statements
+# this module performs a lot of pickling and unpickling.  however, we don't
+# unpickle any permanently stored data, meaning we can't cause risk (even to
+# the system executing tests).
+# ruff: noqa: S301
 
 LOG = logging.getLogger(__name__)
 
@@ -48,10 +38,10 @@ def test_p_up_smoketest():
     assert prepickle is not postpickle, "same object returned from P/UP"
     assert isinstance(serial, bytes), "pickle didn't pickle!"
 
-    pre_v0 = [v for v in prepickle.vertices if v.i == 0][0]
+    pre_v0 = next(v for v in prepickle.vertices if v.i == 0)
     trav_pr = [v.i for v in breadthfirst.bft(prepickle, pre_v0)]
 
-    post_v0 = [v for v in postpickle.vertices if v.i == 0][0]
+    post_v0 = next(v for v in postpickle.vertices if v.i == 0)
     trav_po = [v.i for v in breadthfirst.bft(postpickle, post_v0)]
 
     assert trav_pr == trav_po, "traversal order wrong after P/UP"
@@ -79,9 +69,9 @@ def test_p_up_large(straightline_graph_1k_directed, protocol):
         serial = nrpickler.dumps(uni, protocol=protocol)
         postpickle = pickle.loads(serial)
 
-        assert len(uni.vertices) == len(
-            postpickle.vertices
-        ), "Did not serialize all vertices!"
+        assert len(uni.vertices) == len(postpickle.vertices), (
+            "Did not serialize all vertices!"
+        )
 
     finally:
         # ...but also restore the earlier recursion depth for tests which come
@@ -112,9 +102,9 @@ def test_p_singleton(protocol):
     assert postpickle[0] is not st1, "Post-pickle singleton *IS* pre-pickle!"
     assert postpickle[1] is not st2, "Post-pickle singleton *IS* pre-pickle!"
     assert postpickle[0] is postpickle[1], "Post-pickle singletons differ!"
-    assert isinstance(
-        postpickle[0], SingleTex
-    ), "Class defined in module level didn't unpickle to the same"
+    assert isinstance(postpickle[0], SingleTex), (
+        "Class defined in module level didn't unpickle to the same"
+    )
 
 
 class MultiTex(vertex.Vertex, metaclass=singleton.semi_singleton_metaclass()):
@@ -141,20 +131,20 @@ def test_p_semisingleton(protocol):
     assert postpickle[1].i == 1, "Post-pickle semisingleton has wrong .i"
     assert postpickle[2].i == 2, "Post-pickle semisingleton has wrong .i"
     assert postpickle[3].i == 2, "Post-pickle semisingleton has wrong .i"
-    assert (
-        postpickle[0] is postpickle[1]
-    ), "Post-pickle semisingleton *IS NOT* expected!"
-    assert (
-        postpickle[1] is not postpickle[2]
-    ), "Post-pickle semisingleton *IS NOT* expected!"
-    assert (
-        postpickle[2] is postpickle[3]
-    ), "Post-pickle semisingleton *IS NOT* expected!"
+    assert postpickle[0] is postpickle[1], (
+        "Post-pickle semisingleton *IS NOT* expected!"
+    )
+    assert postpickle[1] is not postpickle[2], (
+        "Post-pickle semisingleton *IS NOT* expected!"
+    )
+    assert postpickle[2] is postpickle[3], (
+        "Post-pickle semisingleton *IS NOT* expected!"
+    )
     assert postpickle[0] is not mt1a, "Post-pickle semisingleton IS pre-pickle!"
     assert postpickle[1] is not mt1b, "Post pickle semisingleton IS pre-pickle!"
-    assert isinstance(
-        postpickle[0], MultiTex
-    ), "Class defined in module level didn't unpickle to the same"
+    assert isinstance(postpickle[0], MultiTex), (
+        "Class defined in module level didn't unpickle to the same"
+    )
 
 
 @pytest.mark.parametrize("protocol", list(range(pickle.HIGHEST_PROTOCOL)))
@@ -224,35 +214,35 @@ def test_p_subclasses(protocol):
     # different, type instances.  therefore, we can't do isinstance() or is
     # checks on them, this is the next best thing
 
-    assert (
-        type(v1).__qualname__ == type(p1).__qualname__
-    ), "post-pickle vt1 wrong qn"
-    assert (
-        type(v2).__qualname__ == type(p2).__qualname__
-    ), "post-pickle vt2 wrong qn"
-    assert (
-        type(v3).__qualname__ == type(p3).__qualname__
-    ), "post-pickle vt3 wrong qn"
-    assert (
-        type(v4).__qualname__ == type(p4).__qualname__
-    ), "post-pickle vt4 wrong qn"
+    assert type(v1).__qualname__ == type(p1).__qualname__, (
+        "post-pickle vt1 wrong qn"
+    )
+    assert type(v2).__qualname__ == type(p2).__qualname__, (
+        "post-pickle vt2 wrong qn"
+    )
+    assert type(v3).__qualname__ == type(p3).__qualname__, (
+        "post-pickle vt3 wrong qn"
+    )
+    assert type(v4).__qualname__ == type(p4).__qualname__, (
+        "post-pickle vt4 wrong qn"
+    )
 
     with pytest.raises(AssertionError):
-        assert isinstance(
-            p1, VertType1
-        ), "p1 not expected to be real instance of VT1"
+        assert isinstance(p1, VertType1), (
+            "p1 not expected to be real instance of VT1"
+        )
     with pytest.raises(AssertionError):
-        assert isinstance(
-            p2, VertType2
-        ), "p2 not expected to be real instance of VT2"
+        assert isinstance(p2, VertType2), (
+            "p2 not expected to be real instance of VT2"
+        )
     with pytest.raises(AssertionError):
-        assert isinstance(
-            p3, VertType3
-        ), "p3 not expected to be real instance of VT3"
+        assert isinstance(p3, VertType3), (
+            "p3 not expected to be real instance of VT3"
+        )
     with pytest.raises(AssertionError):
-        assert isinstance(
-            p4, VertType4
-        ), "p4 not expected to be real instance of VT4"
+        assert isinstance(p4, VertType4), (
+            "p4 not expected to be real instance of VT4"
+        )
 
 
 def _main_func_foo(x):

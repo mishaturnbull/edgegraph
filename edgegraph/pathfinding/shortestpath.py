@@ -1,4 +1,3 @@
-#!/usr/env/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -21,13 +20,13 @@ variants:
 from __future__ import annotations
 
 import heapq
-from typing import TYPE_CHECKING
 from collections.abc import Callable
+from typing import TYPE_CHECKING
 
 from edgegraph.traversal import helpers
 
 if TYPE_CHECKING:
-    from edgegraph.structure import Vertex, Universe
+    from edgegraph.structure import Universe, Vertex
 
 
 METHODS = [
@@ -100,7 +99,7 @@ def _sssp_base_dijkstra(
     dist, prev = _init_single_source(start)
 
     # Set of vertices we've already visited.
-    S = set()
+    s = set()
 
     # The heap elements here have *three* elements, not just priority and item.
     # The first element of each tuple is indeed the priority, and the third
@@ -111,8 +110,8 @@ def _sssp_base_dijkstra(
     # ensures no two heap entries are totally identical, but still maintains
     # sort stability -- that is, of items with equal priority, their insertion
     # order is maintained.
-    Q: list[Vertex] = []
-    heapq.heappush(Q, (0, 0, start))
+    q: list[Vertex] = []
+    heapq.heappush(q, (0, 0, start))
     entry = 1
 
     infinity = float("inf")
@@ -124,12 +123,12 @@ def _sssp_base_dijkstra(
     #    at the start
     # 2. There exists an optional early-break condition if we know the user
     #    wants to only look for a specific vertex (stop_at).
-    while Q:
-        u = heapq.heappop(Q)[2]
+    while q:
+        u = heapq.heappop(q)[2]
 
-        if u in S:
+        if u in s:
             continue
-        S.add(u)
+        s.add(u)
 
         if stop_at and stop_at is u:
             return dist, prev
@@ -141,7 +140,6 @@ def _sssp_base_dijkstra(
             filterfunc=ff_via,
         )
         for v in nbs:
-
             # filter out vertices not a member of the given universe, if any.
             # by putting the `uni is not None` check first, we can
             # short-circuit the container check if it is not needed
@@ -149,7 +147,7 @@ def _sssp_base_dijkstra(
                 continue
 
             # skip already visited nodes
-            if v in S:
+            if v in s:
                 continue
 
             # discover edges on-the-fly
@@ -158,7 +156,7 @@ def _sssp_base_dijkstra(
 
             _relax(dist, prev, u, v, weightfunc)
 
-            heapq.heappush(Q, (dist[v], entry, v))
+            heapq.heappush(q, (dist[v], entry, v))
             entry += 1
 
     return dist, prev
@@ -172,17 +170,26 @@ def _route_dijkstra(
     Given a solved internal base Dijkstra map, identify the actual route
     between source and dest.
     """
-    S: list[Vertex] = []
+    s: list[Vertex] = []
     u: Vertex | None = dest
 
     if u not in prev:
         return None
 
     while u is not None:
-        S.insert(0, u)
+        s.insert(0, u)
         u = prev[u]
 
-    return S
+    return s
+
+
+def _default_weightfunc(u, v):
+    """
+    Weight function for when no other is supplied.
+
+    Always returns 1, no matter the two arguments.
+    """
+    return 1
 
 
 def single_pair_shortest_path(
@@ -306,10 +313,11 @@ def single_pair_shortest_path(
           no distance between an object and itself).
     """
     if weightfunc is None:
-        weightfunc = lambda u, v: 1
+        weightfunc = _default_weightfunc
 
     if start is None:
-        raise ValueError("Cannot begin path searching with start=None!")
+        msg = "Cannot begin path searching with start=None!"
+        raise ValueError(msg)
 
     if start is dest:
         # if the start *is* the destination, then we don't have to do anything
@@ -335,11 +343,9 @@ def single_pair_shortest_path(
 
         # decide whether to return a distance or not.  use a renamed variable
         # to avoid confusing mypy too much.
-        if path is not None:
-            retdist = dist[dest]
-        else:
-            retdist = None
+        retdist = None if path is None else dist[dest]
 
         return (path, retdist)
 
-    raise NotImplementedError(f"method='{method}' is unrecognized")
+    msg = f"method='{method}' is unrecognized"
+    raise NotImplementedError(msg)

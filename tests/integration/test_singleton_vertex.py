@@ -1,25 +1,12 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
 Behavioral tests for singletons and vertices playing together.
 """
 
-from edgegraph.structure import vertex, singleton, universe, directededge
 from edgegraph.builder import adjlist
+from edgegraph.structure import directededge, singleton, universe, vertex
 from edgegraph.traversal import breadthfirst, helpers
-
-# this module is all about testing with classes.  the classes we define in this
-# file are never exposed to users of edgegraph, nor any of the edgegraph
-# module, therefore don't need:
-# * any use-case besides their sole existence,
-#   * sufficient public methods (R0903, too-few-public-methods)
-# * docstrings (C0115, missing-class-docstring),
-# * amazing formatting
-#   * class Something: pass  will be allowed (C0321, multiple-statements)
-#
-# therefore:
-# pylint: disable=R0903, C0115, C0321
 
 
 def test_truesingleton_vertex():
@@ -44,10 +31,6 @@ def test_semisingleton_vertex():
     Apply semi-singleton to a vertex and make sure it doesn't explode.
     """
 
-    # W0612 --> unused variable.  pylint complains that hashfunc_i is unused;
-    #           it most certainly is used.  not sure why this is flagged.
-    # W0613 --> unused argument.  necessary here for signature matching.
-    # pylint: disable-next=W0612, W0613
     def hashfunc_i(args, kwargs):
         return hash(args[0])
 
@@ -73,10 +56,6 @@ def test_semisingleton_vert_graphs():
     Ensure that semi-singleton-ized vertices still work as a graph.
     """
 
-    # W0612 --> unused variable.  pylint complains that hashfunc_i is unused;
-    #           it most certainly is used.  not sure why this is flagged.
-    # W0613 --> unused argument.  necessary here for signature matching.
-    # pylint: disable-next=W0612, W0613
     def hashfunc_i(args, kwargs):
         return hash(args[0])
 
@@ -106,15 +85,15 @@ def test_semisingleton_vert_graphs():
     uni = adjlist.load_adj_dict(adj, directededge.DirectedEdge)
 
     for v, nbs in adj.items():
-        assert set(helpers.neighbors(v)) == set(
-            nbs
-        ), f"Vertex {v.i} neighbors are wrong!"
+        assert set(helpers.neighbors(v)) == set(nbs), (
+            f"Vertex {v.i} neighbors are wrong!"
+        )
 
         m = SemiSingleTex(v.i)
         assert m is v, f"semi-singleton failed on {v.i}"
-        assert helpers.neighbors(v) == helpers.neighbors(
-            m
-        ), "semi-singleton broke neighbors lookup"
+        assert helpers.neighbors(v) == helpers.neighbors(m), (
+            "semi-singleton broke neighbors lookup"
+        )
 
     trav = breadthfirst.bft(uni, q)
     vals = [v.i for v in trav]

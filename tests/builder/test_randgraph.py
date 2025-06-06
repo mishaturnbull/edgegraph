@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -7,9 +6,11 @@ Unit tests for the random graph generator.
 
 import logging
 import time
+
 import pytest
-from edgegraph.structure import DirectedEdge, UnDirectedEdge
+
 from edgegraph.builder import randgraph
+from edgegraph.structure import DirectedEdge, UnDirectedEdge
 
 LOG = logging.getLogger(__name__)
 

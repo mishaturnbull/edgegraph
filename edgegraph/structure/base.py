@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -6,9 +5,10 @@ Contains the BaseObject class.
 """
 
 from __future__ import annotations
-from typing import TYPE_CHECKING
-from collections.abc import Iterator
+
 import uuid
+from collections.abc import Iterator
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from edgegraph.structure.universe import Universe
@@ -80,9 +80,10 @@ class BaseObject(object):
 
         if attributes is not None:
             if not isinstance(attributes, dict):
-                raise TypeError(
+                msg = (
                     f"`attributes` must be a dictionary; got {type(attributes)}"
                 )
+                raise TypeError(msg)
             for key, val in attributes.items():
                 setattr(self, key, val)
 
@@ -122,8 +123,9 @@ class BaseObject(object):
 
     def add_to_universe(self, universe: Universe) -> None:
         """
-        Adds this object to a new universe.  If it is already there, no action
-        is taken.
+        Add this object to a new universe.
+
+        If it is already there, no action is taken.
 
         :param universe: the new universe to add this object to
         """
@@ -143,21 +145,21 @@ class BaseObject(object):
         self._universes.remove(universe)
 
     # These three control attrib access via KEYS; bobj['x'], bobj['y'] = y; del
-    # bobj['y']
+    # bobj['y']  # noqa: ERA001
     def __getitem__(self, name):
         """
-        Called by :py:`bobj['x']` to get the ``x`` item.
+        Supply the :py:`bobj['x']` operation to get the ``x`` item.
         """
         return getattr(self, name)
 
     def __setitem__(self, name, val):
         """
-        Called by :py:`bobj['x'] = y` to set the ``x`` item.
+        Supply the :py:`bobj['x'] = y` operation to set the ``x`` item.
         """
         setattr(self, name, val)
 
     def __delitem__(self, name):
         """
-        Called by :py:`del bobj['x']` to delete the ``x`` item.
+        Supply the :py:`del bobj['x']` operation to delete the ``x`` item.
         """
         delattr(self, name)

@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -6,12 +5,8 @@ Unit tests for structure.base module.
 """
 
 import pytest
-from edgegraph.structure import base, universe
 
-# W0212 is protected-access, or, access to a protected member (starting with a
-# _) of a client class.  In this case, the test objectives require we inspect
-# internal state of the objects, so we need to read these attributes.
-# pylint: disable=W0212
+from edgegraph.structure import base, universe
 
 
 def test_base_obj_creation():
@@ -41,9 +36,9 @@ def test_base_obj_attributes():
         "x": 7,
         "y": 15,
         "z": "Twelve",
-    }.items() <= vars(
-        bo
-    ).items(), "BaseObject attributes were not stored correctly!"
+    }.items() <= vars(bo).items(), (
+        "BaseObject attributes were not stored correctly!"
+    )
 
 
 def test_base_obj_items():
@@ -65,9 +60,9 @@ def test_base_obj_items():
         "x": 7,
         "y": 15,
         "z": "Twelve",
-    }.items() <= vars(
-        bo
-    ).items(), "BaseObject attributes were not stored correctly!"
+    }.items() <= vars(bo).items(), (
+        "BaseObject attributes were not stored correctly!"
+    )
 
 
 def test_base_obj_item_attr_interop():
@@ -100,9 +95,9 @@ def test_base_obj_getitem_protected():
     bo["a"] = 15
 
     assert bo["a"] == 15, "bo['a'] did not getitem!"
-    assert {"a": 15}.items() <= vars(
-        bo
-    ).items(), "bo getitem did not forward to getattr!"
+    assert {"a": 15}.items() <= vars(bo).items(), (
+        "bo getitem did not forward to getattr!"
+    )
 
 
 def test_base_obj_init_attributes():
@@ -144,22 +139,22 @@ def test_base_obj_del_attr():
     b.y = 15
     del b.x
 
-    assert {"y": 15}.items() <= vars(
-        b
-    ).items(), "bo delattr removed other (assigned post-init)"
-    assert not (
-        {"x": 12}.items() <= vars(b).items()
-    ), "bo delattr didn't (assigned post-init)"
+    assert {"y": 15}.items() <= vars(b).items(), (
+        "bo delattr removed other (assigned post-init)"
+    )
+    assert not ({"x": 12}.items() <= vars(b).items()), (
+        "bo delattr didn't (assigned post-init)"
+    )
 
     b1 = base.BaseObject(attributes={"z": 25, "a": 1})
     del b1.z
 
-    assert {"a": 1}.items() <= vars(
-        b1
-    ).items(), "bo delattr removed other (assigned in init)"
-    assert not (
-        {"z": 25}.items() <= vars(b1).items()
-    ), "bo delattr didn't (assigned in init)"
+    assert {"a": 1}.items() <= vars(b1).items(), (
+        "bo delattr removed other (assigned in init)"
+    )
+    assert not ({"z": 25}.items() <= vars(b1).items()), (
+        "bo delattr didn't (assigned in init)"
+    )
 
 
 def test_base_obj_del_item():
@@ -171,22 +166,22 @@ def test_base_obj_del_item():
     b.y = 15
     del b["x"]
 
-    assert {"y": 15}.items() <= vars(
-        b
-    ).items(), "bo delitem removed other (assigned post-init)"
-    assert not (
-        {"x": 12}.items() <= vars(b).items()
-    ), "bo delitem didn't remove (assigned post-init)"
+    assert {"y": 15}.items() <= vars(b).items(), (
+        "bo delitem removed other (assigned post-init)"
+    )
+    assert not ({"x": 12}.items() <= vars(b).items()), (
+        "bo delitem didn't remove (assigned post-init)"
+    )
 
     b1 = base.BaseObject(attributes={"z": 25, "a": 1})
     del b1["z"]
 
-    assert {"a": 1}.items() <= vars(
-        b1
-    ).items(), "bo delitem removed other (assigned in init)"
-    assert not (
-        {"z": 25}.items() <= vars(b1).items()
-    ), "bo delitem didn't remove (assigned in init)"
+    assert {"a": 1}.items() <= vars(b1).items(), (
+        "bo delitem removed other (assigned in init)"
+    )
+    assert not ({"z": 25}.items() <= vars(b1).items()), (
+        "bo delitem didn't remove (assigned in init)"
+    )
 
 
 def test_base_obj_universes():
@@ -208,7 +203,7 @@ def test_base_obj_universes():
     # should fail, as the universe has already been removed.  when trying to
     # remove an object from a list that does not contain it, you get a
     # ValueError
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="not in list"):
         bo.remove_from_universe(uni)
 
 
@@ -216,18 +211,16 @@ def test_base_obj_init_universes_list():
     """
     Ensure we can instantiate a BaseObject with universes given as a list.
     """
-    unis = []
-    for _ in range(3):
-        unis.append(universe.Universe())
+    unis = [universe.Universe() for _ in range(3)]
 
     bo = base.BaseObject(universes=unis)
 
     # sets are unordered, can't just compare to a list
     for obj in bo.universes:
         assert obj in unis, "found something unexpected in .universes"
-    assert len(bo.universes) == len(
-        unis
-    ), "universes passed to __init__ is not same len as .universes!"
+    assert len(bo.universes) == len(unis), (
+        "universes passed to __init__ is not same len as .universes!"
+    )
     assert isinstance(bo.universes, list), ".universes gave wrong type"
 
 
@@ -244,9 +237,9 @@ def test_base_obj_init_universes_set():
     # sets are unordered, can't just compare to a list
     for obj in bo.universes:
         assert obj in unis, "found something unexpected in .universes"
-    assert len(bo.universes) == len(
-        unis
-    ), "universes passed to __init__ is not same len as .universes!"
+    assert len(bo.universes) == len(unis), (
+        "universes passed to __init__ is not same len as .universes!"
+    )
     assert isinstance(bo.universes, list), ".universes gave wrong type"
 
 
@@ -261,9 +254,9 @@ def test_base_obj_init_universes_tuple():
     # sets are unordered, can't just compare to a list
     for obj in bo.universes:
         assert obj in unis, "found something unexpected in .universes"
-    assert len(bo.universes) == len(
-        unis
-    ), "universes passed to __init__ is not same len as .universes!"
+    assert len(bo.universes) == len(unis), (
+        "universes passed to __init__ is not same len as .universes!"
+    )
     assert isinstance(bo.universes, list), ".universes gave wrong type"
 
 
@@ -271,9 +264,7 @@ def test_base_obj_init_universes_generator():
     """
     Ensure we can instantiate a BaseObject with universes given as a genexpr.
     """
-    unis = []
-    for _ in range(3):
-        unis.append(universe.Universe())
+    unis = [universe.Universe() for _ in range(3)]
 
     def gen():
         yield from unis
@@ -283,9 +274,9 @@ def test_base_obj_init_universes_generator():
     # sets are unordered, can't just compare to a list
     for obj in bo.universes:
         assert obj in unis, "found something unexpected in .universes"
-    assert len(bo.universes) == len(
-        unis
-    ), "universes passed to __init__ is not same len as .universes!"
+    assert len(bo.universes) == len(unis), (
+        "universes passed to __init__ is not same len as .universes!"
+    )
     assert isinstance(bo.universes, list), ".universes gave wrong type"
 
 

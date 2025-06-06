@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -6,21 +5,17 @@ Unit tests for UniverseLaws object.
 """
 
 import pytest
-from edgegraph.structure import base, universe
 
-# W0212 is protected-access, or, access to a protected member (starting with a
-# _) of a client class.  In this case, the test objectives require we inspect
-# internal state of the objects, so we need to read these attributes.
-# pylint: disable=W0212
+from edgegraph.structure import base, universe
 
 
 def test_uni_laws_inheritance():
     """
     Ensure UniverseLaws trees up to correct subclass.
     """
-    assert issubclass(
-        universe.UniverseLaws, base.BaseObject
-    ), "UniverseLaws has wrong superclass!"
+    assert issubclass(universe.UniverseLaws, base.BaseObject), (
+        "UniverseLaws has wrong superclass!"
+    )
 
 
 def test_uni_laws_init_defaults():
@@ -57,9 +52,9 @@ def test_uni_laws_init_nondefault():
         "_multipath": False,
         "_multiverse": False,
         "_applies_to": None,
-    }.items() <= vars(
-        l2
-    ).items(), "UniverseLaws did not respect __init__ options!"
+    }.items() <= vars(l2).items(), (
+        "UniverseLaws did not respect __init__ options!"
+    )
 
 
 def test_uni_laws_wrong_edge_rules():
@@ -73,7 +68,7 @@ def test_uni_laws_wrong_edge_rules():
     ]
 
     for wrong in bad:
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="incorrect structure"):
             universe.UniverseLaws(edge_whitelist=wrong)
 
 

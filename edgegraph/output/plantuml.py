@@ -1,4 +1,3 @@
-#!/usr/env/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -58,14 +57,14 @@ handled in three possible ways:
 
 from __future__ import annotations
 
+import datetime
 import os
 import re
-import subprocess
 import shutil
+import subprocess
 import tempfile
-import datetime
 
-from edgegraph.structure import Universe, Vertex, DirectedEdge, UnDirectedEdge
+from edgegraph.structure import DirectedEdge, UnDirectedEdge, Universe, Vertex
 
 PLANTUML_AUTOGEN_NOTE = f"""
 note as n1
@@ -174,7 +173,7 @@ PLANTUML_INVOKE_ENV = {"DISPLAY": ""}
 
 def is_plantuml_installed(plantuml: str = "plantuml") -> bool:
     """
-    Checks if PlantUML is installed and usable on this system.
+    Check if PlantUML is installed and usable on this system.
 
     This function checks if the PlantUML program is available for use on the
     current system.  If so, it returns ``True``.  If not, ``False``.
@@ -189,14 +188,16 @@ def is_plantuml_installed(plantuml: str = "plantuml") -> bool:
     :return: Whether or not PlantUML is usable.
     """
     try:
-        subprocess.run(
+        # security warning is not applicable here; the consumer of this code
+        # may already execute arbitrary commands.
+        subprocess.run(  # noqa: S603
             [plantuml, *PLANTUML_INVOKE_ARGS, "-version"],
             env=dict(os.environ, **PLANTUML_INVOKE_ENV),
             check=True,
         )
-        return True
     except (FileNotFoundError, subprocess.CalledProcessError):
         return False
+    return True
 
 
 def _resolve_options(clas, options):
@@ -207,7 +208,8 @@ def _resolve_options(clas, options):
         # we did not find the thing we were looking for
         mro_idx += 1
         if mro_idx >= len(clas.__mro__):
-            raise ValueError(f"Cannot identify useful superclass of {clas}!")
+            msg = f"Cannot identify useful superclass of {clas}!"
+            raise ValueError(msg)
         search = clas.__mro__[mro_idx]
 
     opts = options[search]
@@ -264,8 +266,7 @@ def _one_link_to_puml(lnk, options):
     v1e = opts["v1side"]
     v2e = opts["v2side"]
 
-    out = f"{v1puml} {v1e}--{v2e} {v2puml}\n"
-    return out
+    return f"{v1puml} {v1e}--{v2e} {v2puml}\n"
 
 
 def _one_vert_to_skinparam(vert, options):
@@ -325,8 +326,7 @@ def render_to_plantuml_src(uni: Universe, options: dict) -> str | None:
     components.append(PLANTUML_AUTOGEN_NOTE)
 
     components.extend(vertex_comps)
-    for link in links:
-        components.append(_one_link_to_puml(link, options))
+    components.extend(_one_link_to_puml(link, options) for link in links)
 
     components.append("@enduml\n")
     return "".join(components)
@@ -357,9 +357,11 @@ def render_to_image(src: str, out_file: str, plantuml: str = "plantuml"):
     :raises ValueError: If the specified filename is invalid.
     """
     if not out_file.endswith(".png"):
-        raise ValueError("Only PNG's are supported at the moment!")
+        msg = "Only PNG's are supported at the moment!"
+        raise ValueError(msg)
     if not len(src) > 0:
-        raise ValueError("Cannot render PlantUML image with empty string src!")
+        msg = "Cannot render PlantUML image with empty string src!"
+        raise ValueError(msg)
 
     tmpdir = tempfile.mkdtemp(prefix="edgegraph_puml_renderer_")
 
@@ -372,7 +374,9 @@ def render_to_image(src: str, out_file: str, plantuml: str = "plantuml"):
             wfp.write(src)
 
         # https://plantuml.com/command-line
-        subprocess.run(
+        # security warning is not applicable here; the consumer of this code
+        # may already execute arbitrary commands.
+        subprocess.run(  # noqa: S603
             [plantuml, *PLANTUML_INVOKE_ARGS, srcfile],
             env=dict(os.environ, **PLANTUML_INVOKE_ENV),
             capture_output=True,

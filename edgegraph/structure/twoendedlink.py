@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -6,7 +5,9 @@ Holds the TwoEndedLink class.
 """
 
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
+
 from edgegraph.structure import link, vertex
 
 if TYPE_CHECKING:
@@ -47,10 +48,12 @@ class TwoEndedLink(link.Link):
              superclass constructor
         """
         if (v1 is not None) and (not issubclass(type(v1), vertex.Vertex)):
-            raise TypeError(f"v1 is not a Vertex object!  got {v1}")
+            msg = f"v1 is not a Vertex object!  got {v1}"
+            raise TypeError(msg)
 
         if (v2 is not None) and (not issubclass(type(v2), vertex.Vertex)):
-            raise TypeError(f"v2 is not a Vertex object!  got {v2}")
+            msg = f"v2 is not a Vertex object!  got {v2}"
+            raise TypeError(msg)
 
         # mypy complains about the vertices list below, that it may contain
         # None if the v1 or v2 arguments were not specified in our constructor
@@ -71,13 +74,13 @@ class TwoEndedLink(link.Link):
     @v1.setter
     def v1(self, new: Vertex):
         """
-        Sets one vertex of this edge.
+        Set one vertex of this edge.
         """
         self._set_v1(new)
 
     def _set_v1(self, new: Vertex):
         """
-        Helper method to set v1.
+        Set v1.
 
         Why does this method exist, you ask, instead of just doing it in
         @v1.setter ?  Good question!  I want to use this same code in
@@ -108,13 +111,13 @@ class TwoEndedLink(link.Link):
     @v2.setter
     def v2(self, new: Vertex):
         """
-        Sets the other end of this edge.
+        Set the other end of this edge.
         """
         self._set_v2(new)
 
     def _set_v2(self, new: Vertex):
         """
-        Helper method to set v2.
+        Set v2.
 
         For a brief on why this exists, see
         :py:meth:`~edgegraph.structure.TwoEndedLink._set_v1`.

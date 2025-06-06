@@ -13,22 +13,28 @@ versions of Python, limited effort may be made to do so.
 Formatting
 ----------
 
-`Black`_ is employed to automatically format code in-place, alongside `pylint`_
-for further code quality checks.  Both are automatically invoked during GitHub
-Actions runs on pull requests and certain branches; but neither (Black
-especially) are configured to automatically commit any changes.  Black *will*
-cause the actions run to fail if files are not formatted; the developer is
-expected to perform this formatting locally before pushing code.  Pylint checks
-are provided for information only, and do not have a failure threshold --
-however, the maintainer of Edgegraph reserves the right to reject pull requests
-if they are sufficiently detrimental in the pylint scorecard :)
+Edgegraph utilizes the `Ruff`_ linter and formatter to ensure code quality.
+Ruff incorporates a number of features, replacing the previously-used Black
+formatter, Pylint linter, and numerous Flake8 extensions.
+
+Both the formatter and linter are invoked during GitHub Actions runs, but
+neither will automatically commit any changes.  Failing format or lint checks
+*will* cause the action to fail; the developer is expected to fix all format
+and lint failures before pushing code.
+
+.. note::
+
+   The *formatter* is only run against the latest Python version in the
+   pipeline.  The *linter* is run on all advertised versions of Python.
 
 You can run these checks locally on your machine with the following invocations:
 
-* :samp:`black --check edgegraph tests docs` to *only check*, without applying
-  any edits, which files (if any) Black will want formatted.
-* :samp:`black edgegraph tests docs` to *apply* Black formatting changes.
-* :samp:`pylint edgegraph tests` to check Pylint results
+* :samp:`ruff check` to run linting checks
+* :samp:`ruff format --check` to *only check*, without applying any edits,
+  which of the files (if any) Ruff will want formatted.
+* :samp:`ruff format` to apply formatting changes
+
+See the `Ruff`_ documentation for more info.
 
 Type checking
 -------------
@@ -161,8 +167,7 @@ request and upload to PyPI.
    #. If the :file:`dist` folder exists, delete it and any of its contents.
    #. Run :samp:`scripts/pypi.sh`
 
-.. _Black: https://black.readthedocs.io/en/stable/
-.. _pylint: https://www.pylint.org/
+.. _Ruff: https://docs.astral.sh/ruff/
 .. _git flow: https://nvie.com/posts/a-successful-git-branching-model/
 .. _MyPy: https://mypy-lang.org/
 

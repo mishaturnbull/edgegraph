@@ -1,16 +1,10 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
 Unit tests for structure.vertex.Vertex class.
 """
 
-from edgegraph.structure import base, vertex, universe, link
-
-# W0212 is protected-access, or, access to a protected member (starting with a
-# _) of a client class.  In this case, the test objectives require we inspect
-# internal state of the objects, so we need to read these attributes.
-# pylint: disable=W0212
+from edgegraph.structure import base, link, universe, vertex
 
 
 def test_vertex_subclass():
@@ -48,9 +42,7 @@ def test_vertex_create_with_links():
     """
     Ensure we can create vertices with base Link objects in a list.
     """
-    links = []
-    for _ in range(3):
-        links.append(link.Link(_force_creation=True))
+    links = [link.Link(_force_creation=True) for _ in range(3)]
 
     v1 = vertex.Vertex(links=links)
     assert v1._links == links, "vertex did not accept list of links!"
@@ -77,9 +69,7 @@ def test_vertex_create_with_tuple():
     """
     Ensure we can create vertices with base Link objects in a tuple.
     """
-    links = []
-    for _ in range(3):
-        links.append(link.Link(_force_creation=True))
+    links = [link.Link(_force_creation=True) for _ in range(3)]
     links = tuple(links)
 
     v3 = vertex.Vertex(links=links)
@@ -91,9 +81,7 @@ def test_vertex_create_with_generator():
     """
     Ensure we can create vertices with base Link objects in a genexpr.
     """
-    links = []
-    for _ in range(3):
-        links.append(link.Link(_force_creation=True))
+    links = [link.Link(_force_creation=True) for _ in range(3)]
 
     def gen():
         yield from links
@@ -136,42 +124,40 @@ def test_vert_rem_from_uni():
     for uni in remove:
         v.remove_from_universe(uni)
 
-        assert (
-            uni not in v.universes
-        ), "remove_from_universe did not remove vert-side!"
-        assert (
-            v not in uni.vertices
-        ), "remove_from_universes did not remove uni-side!"
+        assert uni not in v.universes, (
+            "remove_from_universe did not remove vert-side!"
+        )
+        assert v not in uni.vertices, (
+            "remove_from_universes did not remove uni-side!"
+        )
 
     for uni in stay:
-        assert (
-            uni in v.universes
-        ), "remove_from_universe altered unrequested uni, vert-side!"
-        assert (
-            v in uni.vertices
-        ), "remove_from_universe altered unrequested uni, uni-side!"
+        assert uni in v.universes, (
+            "remove_from_universe altered unrequested uni, vert-side!"
+        )
+        assert v in uni.vertices, (
+            "remove_from_universe altered unrequested uni, uni-side!"
+        )
 
 
 def test_vert_init_with_uni():
     """
     Ensure vertices init'd with universes are members of them.
     """
-    unis = []
-    for _ in range(50):
-        unis.append(universe.Universe())
+    unis = [universe.Universe() for _ in range(50)]
 
     v1 = vertex.Vertex(universes=[unis[0]])
 
-    assert v1.universes == [
-        unis[0]
-    ], "vertex .universes does not match what was given to init!"
+    assert v1.universes == [unis[0]], (
+        "vertex .universes does not match what was given to init!"
+    )
     assert v1 in unis[0].vertices, "vertex did not register itself in universe!"
 
     v2 = vertex.Vertex(universes=unis)
-    assert (
-        v2.universes == unis
-    ), "vertex .universes does not match what was given to init!"
+    assert v2.universes == unis, (
+        "vertex .universes does not match what was given to init!"
+    )
     for uni in unis:
-        assert (
-            v2 in uni.vertices
-        ), "vertex did not register itself in universes!"
+        assert v2 in uni.vertices, (
+            "vertex did not register itself in universes!"
+        )

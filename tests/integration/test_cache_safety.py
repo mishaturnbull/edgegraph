@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -6,10 +5,10 @@ Unit tests that ensure no negative effects of caching are observed.
 """
 
 import pytest
-from edgegraph.traversal import depthfirst, breadthfirst
-from edgegraph.structure import vertex
-from edgegraph.builder import explicit
 
+from edgegraph.builder import explicit
+from edgegraph.structure import vertex
+from edgegraph.traversal import breadthfirst, depthfirst
 
 travs = [
     depthfirst.dft_recursive,

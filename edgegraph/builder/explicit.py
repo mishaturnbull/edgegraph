@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -17,11 +16,12 @@ functions will get the necessary updates to match, and the API stays unchanged.
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
+
 from edgegraph.structure import (
-    Vertex,
     DirectedEdge,
-    UnDirectedEdge,
     TwoEndedLink,
+    UnDirectedEdge,
+    Vertex,
 )
 from edgegraph.traversal import helpers
 
@@ -88,9 +88,6 @@ def unlink(v1: Vertex, v2: Vertex, destroy=True) -> set[TwoEndedLink] | None:
         link.unlink_from(v2)
 
         if not destroy:
-            # `out` is conditionally defined if destroy=False; we use it here
-            # under the same conditions, ergo, no issue.
-            # pylint: disable-next=possibly-used-before-assignment
             out.add(link)
 
     if destroy:
