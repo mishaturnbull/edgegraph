@@ -8,13 +8,6 @@ import pytest
 
 from edgegraph.structure import base, link, vertex
 
-# W0611 is unused-import.  The entire objective of these tests is to ensure we
-# can import the objects; their usage is tested elsewhere.
-# W0212 is protected-access, or, access to a protected member (starting with a
-# _) of a client class.  In this case, the test objectives require we inspect
-# internal state of the objects, so we need to read these attributes.
-# pylint: disable=W0611, W0212
-
 
 def test_link_subclass():
     """

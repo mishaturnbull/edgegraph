@@ -220,10 +220,6 @@ def test_semi_singleton_custom_hashfunc():
     Exercise usage of custom hashfuncs for semi-singleton identification.
     """
 
-    # W0612 --> unused variable.  pylint complains that ign_kw is unused; it
-    #           most certainly is used.  not sure why this is flagged.
-    # W0613 --> unused argument.  necessary here for signature matching.
-    # pylint: disable-next=W0612, W0613
     def ign_kw(args, kwargs):
         return hash(args)
 

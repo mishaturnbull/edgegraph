@@ -289,11 +289,6 @@ class Universe(vertex.Vertex):
 
         # deassignment
         if self._laws is not None and new is None:
-            # pylint (rightfully) complains about the access to a private
-            # member here -- but, since we're still within the library, this is
-            # allowed.  it would, however, be an issue if a user of edgegraph
-            # were accessing this
-            # pylint: disable-next=protected-access
             self._laws._applies_to = None
             self._laws = None
 

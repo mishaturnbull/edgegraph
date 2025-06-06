@@ -6,11 +6,6 @@ Unit tests for structure.vertex.Vertex class.
 
 from edgegraph.structure import base, link, universe, vertex
 
-# W0212 is protected-access, or, access to a protected member (starting with a
-# _) of a client class.  In this case, the test objectives require we inspect
-# internal state of the objects, so we need to read these attributes.
-# pylint: disable=W0212
-
 
 def test_vertex_subclass():
     """

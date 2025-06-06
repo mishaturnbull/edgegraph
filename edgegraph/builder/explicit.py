@@ -88,9 +88,6 @@ def unlink(v1: Vertex, v2: Vertex, destroy=True) -> set[TwoEndedLink] | None:
         link.unlink_from(v2)
 
         if not destroy:
-            # `out` is conditionally defined if destroy=False; we use it here
-            # under the same conditions, ergo, no issue.
-            # pylint: disable-next=possibly-used-before-assignment
             out.add(link)
 
     if destroy:

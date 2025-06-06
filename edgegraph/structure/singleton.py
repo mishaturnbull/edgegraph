@@ -43,14 +43,6 @@ import json
 from collections.abc import Callable, Generator, Hashable
 from typing import ClassVar
 
-# this is one of the rare occurrances of a module-wide pylint ignore... working
-# with shared-state objects, the machinery of which is private, requires
-# frequent access to that private machinery.  at time of writing, this silences
-# 5 pylint warnings.
-# W0212 -> protected-access ("Access to a protected member [...] of a client
-# class"
-# pylint: disable=W0212
-
 # MyPy's type checker does not understand dynamically-computed metaclasses,
 # therefore, some operations surrounding semi-singletons have local typechecker
 # silencing.  This is **NOT** applied to the entire module; it is to be used

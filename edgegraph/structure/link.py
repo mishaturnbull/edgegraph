@@ -61,14 +61,14 @@ class Link(base.BaseObject):
         """
         super().__init__(uid=uid, attributes=attributes)
 
-        # prevent direct usage of this class -- its meaning is undefined
-        # pylint complains about this being unidiomatic, and suggests
+        # prevent direct usage of this class -- its meaning is undefined.
+        #
+        # this is a bit of an odd way to type-check; typically you would use
         # isinstance() instead.  however, isinstance() also returns True when
         # the given object is a *subclass* of the type -- which we don't want
         # here.  no flag or option is available to disable this; and no
         # alternative instance-but-not-subclass function is available, so here
         # we are.
-        # pylint: disable-next=unidiomatic-typecheck
         if (type(self) is Link) and not _force_creation:
             msg = "Base class <Link> may not be instantiated directly!"
             raise TypeError(msg)

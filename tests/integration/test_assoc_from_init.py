@@ -7,11 +7,6 @@ __init__ methods of both classes.
 
 from edgegraph.structure import link, vertex
 
-# W0212 (protected-access) is about accessing protected members (those starting
-# with _) of a client class.  This is performed quite a lot in this test suite,
-# as it is necessary to complete test objectives.
-# pylint: disable=W0212
-
 
 def test_create_link_with_verts():
     """

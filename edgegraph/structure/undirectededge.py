@@ -28,13 +28,12 @@ class UnDirectedEdge(twoendedlink.TwoEndedLink):
          creating these classes directly.
     """
 
-    # pylint correctly complains about this superclass call here, citing it is
-    # useless and the method should just not be overridden.  in the strictest
-    # sense, it is true -- no code changes between this __init__ and the
-    # super().__init__().  however, we *do* want to override the docstring to
-    # specify what this method does versus the more abstract TwoEndedLink
-    # parent class.  so, we do it to change the docstring.
-    # pylint: disable-next=useless-parent-delegation
+    # it is a bit odd that this method exists, as it looks useless and the
+    # method should just not be overridden.  in the strictest sense, it is true
+    # -- no code changes between this __init__ and the super().__init__().
+    # however, we *do* want to override the docstring to specify what this
+    # method does versus the more abstract TwoEndedLink parent class.  so, we
+    # do it to change the docstring.
     def __init__(
         self,
         v1: Vertex | None = None,

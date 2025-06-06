@@ -111,7 +111,6 @@ def test_pyvis_vert_outside_uni_hard(graph_clrs09_22_6):
     uni, verts = graph_clrs09_22_6
     extra = Vertex()
     # inject the variable used to track cross-vertex linking
-    # pylint: disable-next=protected-access
     extra.__make_pyvis_net_i = len(verts)
     explicit.link_directed(verts[0], extra)
 

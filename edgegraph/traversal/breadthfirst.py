@@ -235,8 +235,6 @@ def bft(
 
     return list(
         ibft(
-            # multiple functions have the same arguments... not a duplicate!
-            # pylint: disable=duplicate-code
             uni,
             start,
             direction_sensitive=direction_sensitive,

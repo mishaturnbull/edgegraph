@@ -188,8 +188,6 @@ def dft_recursive(
 
     return list(
         idft_recursive(
-            # multiple functions have the same arguments... not a duplicate!
-            # pylint: disable=duplicate-code
             uni,
             start,
             direction_sensitive=direction_sensitive,

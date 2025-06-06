@@ -174,15 +174,9 @@ def ineighbors(
        neighbors of the specified vertex.
     """
 
-    # pylint complains about this operation, with fairly good reason -- we're
-    # accessing a private member of a client class.  however, since this is
-    # still edgegraph-internal code, this is ok; it would be a problem were the
-    # consumer of edgegraph doing this, though.
-    # pylint: disable-next=protected-access
     cached = vert._qa_neighbors_get(
         direction_sensitive, unknown_handling, filterfunc
     )
-    # pylint: disable-next=protected-access
     if cached is not Vertex._QA_NB_INVALID:
         yield from cached
         return
