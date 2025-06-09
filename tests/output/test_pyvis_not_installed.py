@@ -1,22 +1,20 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
 Unit testing for PyVis not being installed.  Maybe...
 """
 
-import os
-import sys
 import importlib
 import logging
+import os
+import sys
+
 import pytest
 
 # this test module does a few unorthodox imports -- but, that's the point of
 # this single test isolated in its own module.  we don't want the "gonna break
 # everything" test to, well, break everything *else*
-# C0415 = Import outside toplevel
-# W0611 = Unused import
-# pylint: disable=C0415, W0611
+# ruff: noqa: F401
 
 LOG = logging.getLogger(__name__)
 
@@ -36,7 +34,7 @@ def test_pyvis_not_installed(monkeypatch):
 
     LOG.debug("Flushing package caches...")
     for mod in list(sys.modules.keys()):
-        if mod.startswith("pyvis") or mod.startswith("edgegraph"):
+        if mod.startswith(("pyvis", "edgegraph")):
             LOG.debug(f"Deleting {mod} from sys.modules")
             restore_mods[mod] = sys.modules[mod]
             del sys.modules[mod]

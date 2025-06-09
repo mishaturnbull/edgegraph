@@ -45,8 +45,7 @@ development = [
 
     # code quality control
     # pylint is also needed for documentation
-    "pylint",
-    "black",
+    "ruff",
     "mypy",
 
     # and everything else
@@ -72,44 +71,6 @@ Repository = "https://github.com/mishaturnbull/edgegraph"
 [tool.setuptools.dynamic]
 version = {attr = "edgegraph.version.__version__"}
 
-# Pylint settings
-[tool.pylint.main]
-# 0 = automatically detect # of cores for multiprocessing
-jobs = 0
-
-[tool.pylint.format]
-max-line-length = 80
-
-[tool.pylint."messages control"]
-# messages that we don't care about.  justify each entry!
-disable = [
-            # improves readability in some IDEs
-            "trailing-newlines",
-
-            # black handles line length, and is configured for 80 chars
-            "line-too-long",
-
-            # the vast majority of variable names that pylint cares about are
-            # just simply not relevant
-            "invalid-name",
-
-            # "explicit is better than implicit"  - the zen of Python
-            # why is this even a warning??
-            "useless-object-inheritance",
-
-            # see https://github.com/pylint-dev/pylint/issues/8215
-            # using ``from __future__ import annotations`` does not silence
-            # pylint's undefined variable error -- because that is used all
-            # over the place, everything goes to shite if this error isn't
-            # silenced.  instead, i'll assume (hopefully) that such errors are
-            # caught by unit testing.
-            "undefined-variable",
-
-            # performance gain from lazy logging formatting is negligible by
-            # timing tests
-            "logging-fstring-interpolation",
-           ]
-
 [tool.pytest.ini_options]
 markers = [
     "slow: marks tests as slow (deselect with '-m \"not slow\"')",
@@ -130,8 +91,126 @@ exclude_also = [
     "def __repr__",
 ]
 
-[tool.black]
+[tool.ruff]
 line-length = 80
+indent-width = 4
+
+[tool.ruff.format]
+indent-style = "space"
+line-ending = "lf"
+
+[tool.ruff.lint]
+
+# see https://docs.astral.sh/ruff/rules/
+select = [
+    # defaults
+    "E4", "E7", "E9", "F",
+
+    # extras
+    "A",        # don't shadow builtins
+    "B",        # enable bugbear
+    "BLE",      # blind exception checks
+    "C4",       # use comprehensions
+    "COM",      # catch weird comma situations
+    "D",        # docstring checks & linting
+    "EM",       # error message standards
+    "ERA",      # commented out code
+    "EXE",      # shebang and permissions checks
+    "FA",       # validate __future__ annotate usage
+    "FURB",     # refurbishment & modernization
+    "I",        # isort
+    "INP",      # packages should have __init__.py
+    "N",        # pep8 object naming rules
+    "PERF",     # performance hits
+    "PIE",      # flake8-pie misc. checks
+    "PLC",      # pylint conventions
+    "PLE",      # pylint errors
+    "PLW",      # pylint warnings
+    "PT",       # pytest style control
+    "Q",        # quote controls
+    "RET",      # check usage of return
+    "RUF",      # ruff-specific rules
+    "S",        # bandit (security checks)
+    "SIM",      # code simplicity
+    "T10",      # don't leave debugger breakpoints around
+    "T20",      # don't leave print() or pprint() around
+    "TC",       # type checking quality stuff (that mypy doesn't check for)[
+    "TRY",      # better handling of exceptions
+    "W",        # pycodestyle warnings
+    "YTT",      # year2020: python3 version checks
+]
+
+ignore = [
+    # incompatible with ruff formatter
+    "COM812",
+
+    # one-liner doc string should have quotes on the same line.  disabled
+    # purely due to author preference.
+    "D200",
+
+    # no blank line between function docstring and code.  removed due to author
+    # preference.
+    "D202",
+
+    # requires 1 blank line before class docstring.  removed due to author
+    # preference.
+    "D203",
+
+    # blank line required between simmary line and description.  removed as
+    # many summary lines are wrapped to 80 cols.
+    "D205",
+
+    # requires 1 blank line before class docstring.  incompatible with D211;
+    # disabling this one due to author preference.
+    "D211",
+
+    # requires summary line on first line of docstring (with the quotes).
+    # incompatible with D213; disabling this one due to author preference.
+    "D212",
+
+    # edgegraph does not handle encryption; insecure PRNG's are totally fine
+    "S311",
+
+    # typing-only imports are low impact to performance
+    "TC001",
+    "TC002",
+    "TC003",
+
+]
+
+[tool.ruff.lint.extend-per-file-ignores]
+"tests/**/*.py" = [
+    # disabled due to https://github.com/astral-sh/ruff/issues/17386.  VERY
+    # high rate of false positives in the test module
+    "F821",
+
+    # variable naming rules in unit tests are a bit more relaxed
+    "E741",
+
+    # relax grammar checks on test-only docstrings.  public API though must be
+    # good.
+    "D400",
+    "D401",
+    "D404",
+    "D415",
+
+    # pytest uses assertion checks
+    "S101",
+]
+
+# actual unit test files get even more leeway
+"tests/**/test_*.py" = [
+    # missing docstring in public class, and in __init__().  classes in unit
+    # test modules are for test purposes only.
+    "D101",
+    "D107",
+]
+
+# likewise, python code found in the docs directory is not production code
+"docs/**/*.py" = [
+    # assertions will not be opimized out here
+    "S101",
+]
 
 [tool.mypy]
 pretty = true

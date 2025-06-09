@@ -1,4 +1,3 @@
-#!/usr/env/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -51,7 +50,9 @@ visiting v3 before v6) is determined by the structure of the universe.
 """
 
 from __future__ import annotations
+
 from collections.abc import Callable, Iterator
+
 from edgegraph.structure import Universe, Vertex
 from edgegraph.traversal import helpers
 
@@ -59,7 +60,7 @@ from edgegraph.traversal import helpers
 def _df_preflight_checks(uni: Universe, start: Vertex):
     """
     Perform a few common pre-traversal sanity checks, raising ValueError if
-    they fail.  For internal use only!
+    they fail.  For internal use only.
 
     :param uni: Universe to traverse/search.
     :param start: Vertex to start trav/search at.
@@ -67,9 +68,11 @@ def _df_preflight_checks(uni: Universe, start: Vertex):
        in the given universe.
     """
     if (uni is not None) and (len(uni.vertices) == 0):
-        raise ValueError("Universe is empty; cannot perform this operation!")
+        msg = "Universe is empty; cannot perform this operation!"
+        raise ValueError(msg)
     if (uni is not None) and (start not in uni.vertices):
-        raise ValueError("Start vertex not in specified universe!")
+        msg = "Start vertex not in specified universe!"
+        raise ValueError(msg)
 
 
 def _dft_recur(
@@ -83,7 +86,7 @@ def _dft_recur(
     ff_result: Callable | None = None,
 ) -> Iterator[Vertex]:
     """
-    Recursion helper for :py:func:`dft_recursive`.  For internal use only!
+    Recursion helper for :py:func:`dft_recursive`.  For internal use only.
 
     :meta private:
 
@@ -185,8 +188,6 @@ def dft_recursive(
 
     return list(
         idft_recursive(
-            # multiple functions have the same arguments... not a duplicate!
-            # pylint: disable=duplicate-code
             uni,
             start,
             direction_sensitive=direction_sensitive,
@@ -205,7 +206,7 @@ def _dfs_recur(
     val: object,
 ) -> Vertex | None:
     """
-    Recursion helper for :py:func:`dfs_recursive`.  For internal use only!
+    Recursion helper for :py:func:`dfs_recursive`.  For internal use only.
 
     :meta private:
 
@@ -223,9 +224,8 @@ def _dfs_recur(
             continue
         if w not in visited:
             # check for a match first -- then we can exit early
-            if hasattr(w, attrib):
-                if w[attrib] == val:
-                    return w
+            if hasattr(w, attrib) and w[attrib] == val:
+                return w
             ret = _dfs_recur(uni, w, visited, attrib, val)
             if ret:
                 return ret
@@ -263,9 +263,8 @@ def dfs_recursive(
     """
     _df_preflight_checks(uni, start)
 
-    if hasattr(start, attrib):
-        if start[attrib] == val:
-            return start
+    if hasattr(start, attrib) and start[attrib] == val:
+        return start
 
     visited: dict[Vertex, None] = {}
     return _dfs_recur(uni, start, visited, attrib, val)
@@ -311,13 +310,15 @@ def idft_iterative(
             if (ff_result and ff_result(v)) or (not ff_result):
                 yield v
 
-            for w in helpers.ineighbors(
-                v,
-                direction_sensitive=direction_sensitive,
-                unknown_handling=unknown_handling,
-                filterfunc=ff_via,
-            ):
-                stack.append(w)
+            stack.extend(
+                w
+                for w in helpers.ineighbors(
+                    v,
+                    direction_sensitive=direction_sensitive,
+                    unknown_handling=unknown_handling,
+                    filterfunc=ff_via,
+                )
+            )
 
 
 def dft_iterative(
@@ -393,10 +394,8 @@ def dfs_iterative(
         if (uni is not None) and (v not in uni.vertices):
             continue
         if v not in discovered:
-            if hasattr(v, attrib):
-                if v[attrib] == val:
-                    return v
+            if hasattr(v, attrib) and v[attrib] == val:
+                return v
             discovered.append(v)
-            for w in helpers.ineighbors(v):
-                stack.append(w)
+            stack.extend(helpers.ineighbors(v))
     return None

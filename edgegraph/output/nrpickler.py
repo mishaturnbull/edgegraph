@@ -1,7 +1,6 @@
-#!python3
 # -*- coding: utf-8 -*-
 
-"""
+r"""
 Non-recursive pickler / "diller" implementation to be used for serializing
 edgegraph objects.
 
@@ -57,6 +56,7 @@ any attributes of have all been unpacked.
 
 import io
 import pickle
+
 import dill
 
 
@@ -123,9 +123,11 @@ class _NonrecursivePickler(dill.Pickler):
         """
         # do not coverage-test this line, as it's intended to never be run
         if save_persistent_id is not None:  # pragma: no branch
-            raise NotImplementedError(  # pragma: no cover
-                "Edgegraph _NonrecursivePickler does not support save_persistent_id option!"
-            )
+            msg = (
+                "Edgegraph _NonrecursivePickler does not support"
+                "save_persistent_id option!"
+            )  # pragma: no cover
+            raise NotImplementedError(msg)  # pragma: no cover
         self.lazywrites.append(_LazySave(obj))
 
     #: Alias to the true :py:meth:`dill.Pickler.save`.

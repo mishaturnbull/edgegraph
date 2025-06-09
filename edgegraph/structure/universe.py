@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -6,8 +5,10 @@ Holds the Universe class.
 """
 
 from __future__ import annotations
-from typing import TYPE_CHECKING
+
 import types
+from typing import TYPE_CHECKING
+
 from edgegraph.structure import base, vertex
 
 if TYPE_CHECKING:
@@ -66,12 +67,15 @@ class UniverseLaws(base.BaseObject):
         #: edge types allowed
         self._edge_whitelist = edge_whitelist
         try:
-            self.edge_whitelist
+            # this seemingly-pointless statement causes the self.edge_whitelist
+            # getter to run, which validates the structuring of the underlying
+            # data.  this access will raise an exception if it is invalid
+            # without duplicating code.
+            self.edge_whitelist  # noqa: B018
         except (ValueError, AttributeError) as exc:
             # re-raise, but with a more clear message of what's happening
-            raise ValueError(
-                "Given edge_whitelist is of incorrect structure!"
-            ) from exc
+            msg = "Given edge_whitelist is of incorrect structure!"
+            raise ValueError(msg) from exc
 
         #: whether or not mixed link types are allowed
         #:
@@ -100,13 +104,12 @@ class UniverseLaws(base.BaseObject):
         if self._edge_whitelist is None:
             return None
 
-        out = types.MappingProxyType(
+        return types.MappingProxyType(
             {
                 t: types.MappingProxyType(dict(linkset.items()))
                 for t, linkset in self._edge_whitelist.items()
             }
         )
-        return out
 
     @property
     def mixed_links(self) -> bool:
@@ -234,7 +237,7 @@ class Universe(vertex.Vertex):
 
     def add_vertex(self, vert: vertex.Vertex):
         """
-        Adds a new vertex to this universe.
+        Add a new vertex to this universe.
 
         The vertex in question will automatically have its universes updated to
         include this one, if needed.  If the vertex is already present, no
@@ -286,11 +289,6 @@ class Universe(vertex.Vertex):
 
         # deassignment
         if self._laws is not None and new is None:
-            # pylint (rightfully) complains about the access to a private
-            # member here -- but, since we're still within the library, this is
-            # allowed.  it would, however, be an issue if a user of edgegraph
-            # were accessing this
-            # pylint: disable-next=protected-access
             self._laws._applies_to = None
             self._laws = None
 

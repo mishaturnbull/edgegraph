@@ -1,4 +1,3 @@
-#!/usr/env/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -78,11 +77,11 @@ def bfs(
         # empty!
         return None
     if (uni is not None) and (start not in uni.vertices):
-        raise ValueError("Start vertex not in specified universe!")
+        msg = "Start vertex not in specified universe!"
+        raise ValueError(msg)
 
-    if hasattr(start, attrib):
-        if start[attrib] == val:
-            return start
+    if hasattr(start, attrib) and start[attrib] == val:
+        return start
 
     visited = set()
     queue = collections.deque([start])
@@ -91,14 +90,12 @@ def bfs(
     while queue:
         u = queue.popleft()
         for v in helpers.ineighbors(u):
-
             if (uni is not None) and (v not in uni.vertices):
                 continue
 
             # check for a match first -- then we can exit early
-            if hasattr(v, attrib):
-                if v[attrib] == val:
-                    return v
+            if hasattr(v, attrib) and v[attrib] == val:
+                return v
 
             # make sure we don't re-visit as a duplicate
             if v not in visited:
@@ -184,7 +181,8 @@ def ibft(
         # empty!
         return
     if (uni is not None) and (start not in uni.vertices):
-        raise ValueError("Start vertex not in specified universe!")
+        msg = "Start vertex not in specified universe!"
+        raise ValueError(msg)
 
     visited = set()
     queue = collections.deque([start])
@@ -201,7 +199,6 @@ def ibft(
             unknown_handling=unknown_handling,
             filterfunc=ff_via,
         ):
-
             if (uni is not None) and (v not in uni.vertices):
                 continue
 
@@ -236,10 +233,8 @@ def bft(
     :return: A list of vertices in order of a breadth-first traversal.
     """
 
-    out = list(
+    return list(
         ibft(
-            # multiple functions have the same arguments... not a duplicate!
-            # pylint: disable=duplicate-code
             uni,
             start,
             direction_sensitive=direction_sensitive,
@@ -248,4 +243,3 @@ def bft(
             ff_result=ff_result,
         )
     )
-    return out

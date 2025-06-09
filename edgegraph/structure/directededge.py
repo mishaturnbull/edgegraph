@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -6,7 +5,9 @@ Holds the DirectedEdge class.
 """
 
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
+
 from edgegraph.structure import twoendedlink
 
 if TYPE_CHECKING:

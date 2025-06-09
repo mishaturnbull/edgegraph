@@ -1,4 +1,3 @@
-#!/usr/env/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -8,8 +7,9 @@ Procedures for creating random graphs.
 from __future__ import annotations
 
 import random
-from edgegraph.structure import Vertex, DirectedEdge, Universe
+
 from edgegraph.builder import adjlist
+from edgegraph.structure import DirectedEdge, Universe, Vertex
 
 
 def randgraph(
@@ -44,7 +44,6 @@ def randgraph(
 
     adj = {}
     for i in range(count):
-
         k = int(random.randint(1, max(1, i)) * connectivity)
         if ensurelink:
             k = max(k, 1)

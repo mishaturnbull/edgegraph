@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -6,8 +5,10 @@ Holds the Vertex class.
 """
 
 from __future__ import annotations
-from typing import Any, TYPE_CHECKING
+
 from collections.abc import Iterator
+from typing import TYPE_CHECKING, Any, ClassVar
+
 from edgegraph.structure import base
 
 if TYPE_CHECKING:
@@ -32,7 +33,7 @@ class Vertex(base.BaseObject):
     NEIGHBOR_CACHING: bool = False
 
     _QA_NB_INVALID: object = object()
-    _CACHE_STATS: dict[int, list[int]] = {}
+    _CACHE_STATS: ClassVar[dict[int, list[int]]] = {}
 
     @classmethod
     def total_cache_stats(cls) -> str:
@@ -55,9 +56,8 @@ class Vertex(base.BaseObject):
         lines = []
 
         if cls.NEIGHBOR_CACHING:
-
             totals = [0, 0, 0, 0]
-            for _, stat in cls._CACHE_STATS.items():
+            for stat in cls._CACHE_STATS.values():
                 totals[0] += stat[0]
                 totals[1] += stat[1]
                 totals[2] += stat[2]
@@ -84,7 +84,7 @@ class Vertex(base.BaseObject):
         universes: Iterator[Universe] | None = None,
     ):
         """
-        Creates a new vertex.
+        Create a new vertex.
 
         Unlike BaseObject, the Vertex class will add itself to Universes
         provided to this method.
@@ -117,8 +117,9 @@ class Vertex(base.BaseObject):
 
     def add_to_universe(self, universe: Universe) -> None:
         """
-        Adds this object to a new universe.  If it is already there, no action
-        is taken.
+        Add this object to a new universe.
+
+        If it is already there, no action is taken.
 
         In addition to the action(s) taken by the superclass
         (:py:meth:`~edgegraph.structure.base.BaseObject.add_to_universe`), this

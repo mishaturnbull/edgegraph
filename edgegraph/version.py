@@ -1,8 +1,7 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
-This file defines version information for edgegraph.
+Define version information for edgegraph.
 
 This is the ONLY place version information should be updated!!
 """

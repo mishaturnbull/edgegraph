@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -8,10 +7,12 @@ generation.
 
 import copy
 import re
+
 import pytest
-from edgegraph.structure import Vertex, DirectedEdge, Universe
+
 from edgegraph.builder import adjlist
 from edgegraph.output import plantuml
+from edgegraph.structure import DirectedEdge, Universe, Vertex
 
 
 def test_plantuml_src_empty():
@@ -68,21 +69,21 @@ def test_plantuml_class_option_resolution():
 
     src = plantuml.render_to_plantuml_src(uni, opts)
 
-    assert (
-        "Vertex-STSKP-1<<Vertex>> Foo" in src
-    ), "puml src gen Vertex->Vertex lookup did not work right!"
-    assert (
-        "A-STSKP-1<<A>> Bar" in src
-    ), "puml src gen A->A lookup did not work right!"
-    assert (
-        "B-STSKP-1<<B>> Baz" in src
-    ), "puml src gen B->B lookup did not work right!"
-    assert (
-        "B-STSKP-1<<C>> Baz" in src
-    ), "puml src gen C->B lookup did not work right!"
-    assert (
-        "B-STSKP-1<<D>> Baz" in src
-    ), "puml src gen D->B lookup did not work right!"
+    assert "Vertex-STSKP-1<<Vertex>> Foo" in src, (
+        "puml src gen Vertex->Vertex lookup did not work right!"
+    )
+    assert "A-STSKP-1<<A>> Bar" in src, (
+        "puml src gen A->A lookup did not work right!"
+    )
+    assert "B-STSKP-1<<B>> Baz" in src, (
+        "puml src gen B->B lookup did not work right!"
+    )
+    assert "B-STSKP-1<<C>> Baz" in src, (
+        "puml src gen C->B lookup did not work right!"
+    )
+    assert "B-STSKP-1<<D>> Baz" in src, (
+        "puml src gen D->B lookup did not work right!"
+    )
 
 
 def test_plantuml_class_option_resolution_fail(graph_clrs09_22_6):
@@ -92,7 +93,9 @@ def test_plantuml_class_option_resolution_fail(graph_clrs09_22_6):
     opts = copy.deepcopy(plantuml.PLANTUML_RENDER_OPTIONS)
     del opts[Vertex]
 
-    with pytest.raises(ValueError):
+    with pytest.raises(
+        ValueError, match="Cannot identify (useful )?superclass of"
+    ):
         plantuml.render_to_plantuml_src(graph_clrs09_22_6[0], opts)
 
 
@@ -103,12 +106,12 @@ def test_plantuml_user_render_func(graph_clrs09_22_6):
 
     def urf(*args, **kwargs):
         assert len(args) == 2, "puml src gen URF was not called right!"
-        assert isinstance(
-            args[0], Vertex
-        ), "puml src gen URF was not given vertex object!"
-        assert isinstance(
-            args[1], dict
-        ), "puml src gen URF was not given render options!"
+        assert isinstance(args[0], Vertex), (
+            "puml src gen URF was not given vertex object!"
+        )
+        assert isinstance(args[1], dict), (
+            "puml src gen URF was not given render options!"
+        )
         return f"URF {id(args[0])}\n"
 
     opts = copy.deepcopy(plantuml.PLANTUML_RENDER_OPTIONS)
@@ -116,9 +119,9 @@ def test_plantuml_user_render_func(graph_clrs09_22_6):
 
     src = plantuml.render_to_plantuml_src(graph_clrs09_22_6[0], opts)
     urfcalls = [l for l in src.splitlines() if l.startswith("URF")]
-    assert len(urfcalls) == len(
-        graph_clrs09_22_6[1]
-    ), "puml src gen URF was not called right number of times!"
+    assert len(urfcalls) == len(graph_clrs09_22_6[1]), (
+        "puml src gen URF was not called right number of times!"
+    )
 
 
 def test_plantuml_no_skinparams(graph_clrs09_22_6):
@@ -129,7 +132,7 @@ def test_plantuml_no_skinparams(graph_clrs09_22_6):
     del opts["skinparams"]
     src = plantuml.render_to_plantuml_src(graph_clrs09_22_6[0], opts)
 
-    hit = re.search(r"skinparam [\w]+ [\w]+", src, re.I)
+    hit = re.search(r"skinparam [\w]+ [\w]+", src, re.IGNORECASE)
     assert hit is None, "puml src gen gave skinparams when shouldn't!"
 
 
@@ -148,9 +151,9 @@ def test_plantuml_no_stereotype_skinparams(graph_clrs09_22_6):
     hits = [re.search(skp, src) for skp in skps]
     hit = any(hits)
 
-    assert (
-        hit is False
-    ), "puml src gen gave stereotype skinparams when shouldn't!"
+    assert hit is False, (
+        "puml src gen gave stereotype skinparams when shouldn't!"
+    )
 
 
 def test_plantuml_title_format(graph_clrs09_22_6):
@@ -162,9 +165,9 @@ def test_plantuml_title_format(graph_clrs09_22_6):
     src = plantuml.render_to_plantuml_src(graph_clrs09_22_6[0], opts)
 
     hits = re.findall(r"object vertex_nondefault_title_\d <<Vertex>> {", src)
-    assert len(hits) == len(
-        graph_clrs09_22_6[1]
-    ), "puml src gen output wrong number of objects!"
-    assert len(set(hits)) == len(
-        hits
-    ), "puml src gen output duplicate object titles!"
+    assert len(hits) == len(graph_clrs09_22_6[1]), (
+        "puml src gen output wrong number of objects!"
+    )
+    assert len(set(hits)) == len(hits), (
+        "puml src gen output duplicate object titles!"
+    )

@@ -1,16 +1,10 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
 Unit tests for linking vertices to vertices.
 """
 
-from edgegraph.structure import vertex, link
-
-# W0212 (protected-access) is about accessing protected members (those starting
-# with _) of a client class.  This is performed quite a lot in this test suite,
-# as it is necessary to complete test objectives.
-# pylint: disable=W0212
+from edgegraph.structure import link, vertex
 
 
 def test_assoc_from_link():
@@ -110,9 +104,9 @@ def test_link_dup_verts():
     for _ in range(100):
         l.add_vertex(v1)
 
-    assert (
-        len(l.vertices) == 100
-    ), "Link did not accept duplicate (``is``) vertices!"
+    assert len(l.vertices) == 100, (
+        "Link did not accept duplicate (``is``) vertices!"
+    )
     for vert in l.vertices:
         assert vert is v1, "Link did not bind to duplicate (``is``) vertices!"
 
@@ -129,22 +123,18 @@ def test_link_removal_by_vertex():
 
     v1.remove_from_link(l)
 
-    assert (
-        v1.links == tuple()
-    ), "Vertex remove_from_link did not unassociate link!"
-    assert l.vertices == (
-        v2,
-    ), "Vertex remove_from_link did not unassociate vertex from link!"
+    assert v1.links == (), "Vertex remove_from_link did not unassociate link!"
+    assert l.vertices == (v2,), (
+        "Vertex remove_from_link did not unassociate vertex from link!"
+    )
 
     # test that removing something not present has no action
     v1.remove_from_link(l)
 
-    assert (
-        v1.links == tuple()
-    ), "Removing link-not-present from vertex readded it??"
-    assert l.vertices == (
-        v2,
-    ), "Removing link-not-present from vertex reassoc'd it to link??"
+    assert v1.links == (), "Removing link-not-present from vertex readded it??"
+    assert l.vertices == (v2,), (
+        "Removing link-not-present from vertex reassoc'd it to link??"
+    )
 
 
 def test_link_removal_by_link():
@@ -157,17 +147,17 @@ def test_link_removal_by_link():
 
     l.unlink_from(v1)
 
-    assert (
-        v1.links == tuple()
-    ), "Link unlink_from did not unassociate link from vertex!"
+    assert v1.links == (), (
+        "Link unlink_from did not unassociate link from vertex!"
+    )
     assert l.vertices == (v2,), "Link unlink_from did not unassociate link!"
 
     # test that removing something not present has no action
     l.unlink_from(v1)
 
-    assert (
-        v1.links == tuple()
-    ), "Removing vertex-not-present from link reassoc'd it to vert??"
-    assert l.vertices == (
-        v2,
-    ), "Removing vertex-not-present from link readded it??"
+    assert v1.links == (), (
+        "Removing vertex-not-present from link reassoc'd it to vert??"
+    )
+    assert l.vertices == (v2,), (
+        "Removing vertex-not-present from link readded it??"
+    )

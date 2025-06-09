@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -6,12 +5,7 @@ Unit tests for linking vertices to vertices, specifically created in the
 __init__ methods of both classes.
 """
 
-from edgegraph.structure import vertex, link
-
-# W0212 (protected-access) is about accessing protected members (those starting
-# with _) of a client class.  This is performed quite a lot in this test suite,
-# as it is necessary to complete test objectives.
-# pylint: disable=W0212
+from edgegraph.structure import link, vertex
 
 
 def test_create_link_with_verts():
@@ -62,12 +56,12 @@ def test_create_link_with_vert_then_add():
         v2,
         v3,
     ), "Link did not accept vertices from both __init__ and adding!"
-    assert v1.links == (
-        l,
-    ), "Link (presumably) unbound from vertex after __init__!"
-    assert v2.links == (
-        l,
-    ), "Link (presumably) unbound from vertex after __init__!"
+    assert v1.links == (l,), (
+        "Link (presumably) unbound from vertex after __init__!"
+    )
+    assert v2.links == (l,), (
+        "Link (presumably) unbound from vertex after __init__!"
+    )
     assert v3.links == (l,), "Link did not bind to vertex after __init__!"
 
 
@@ -89,10 +83,10 @@ def test_create_vert_with_link_then_add():
         l2,
         l3,
     ), "Vertex did not accept links from both __init__ and adding!"
-    assert l1.vertices == (
-        v,
-    ), "Vertex (presumably) unbound from link after __init__!"
-    assert l2.vertices == (
-        v,
-    ), "Vertex (presumably) unbound from link after __init__!"
+    assert l1.vertices == (v,), (
+        "Vertex (presumably) unbound from link after __init__!"
+    )
+    assert l2.vertices == (v,), (
+        "Vertex (presumably) unbound from link after __init__!"
+    )
     assert l3.vertices == (v,), "Vertex did not bind to link after __init__!"

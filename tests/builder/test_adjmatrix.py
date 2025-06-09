@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -6,8 +5,9 @@ Unit tests for structure.twoendedlink.TwoEndedLink class.
 """
 
 import pytest
-from edgegraph.structure import Vertex, UnDirectedEdge
+
 from edgegraph.builder import adjmatrix
+from edgegraph.structure import UnDirectedEdge, Vertex
 
 
 def test_adjmatrix_edgetype():
@@ -45,7 +45,7 @@ def test_adjmatrix_nonsquare():
         [0, 1, 0],
     ]
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="given matrix was not a square"):
         adjmatrix.load_adj_matrix(mat, v)
 
 
@@ -60,8 +60,9 @@ def test_adjmatrix_sidelen():
         [0, 1, 0],
         [0, 1, 0],
     ]
-
-    with pytest.raises(ValueError):
+    with pytest.raises(
+        ValueError, match=r"needs len\(vertices\) to be matrix len"
+    ):
         adjmatrix.load_adj_matrix(mat, v)
 
 
@@ -87,9 +88,7 @@ def test_adjmatrix_clrs09_22_2():
        v4 --> v4
        v5 --> v5
     """
-    v = []
-    for _ in range(6):
-        v.append(Vertex())
+    v = [Vertex() for _ in range(6)]
 
     mat = [
         [0, 1, 0, 1, 0, 0],
@@ -111,13 +110,13 @@ def test_adjmatrix_clrs09_22_2():
 
     # v1 links
     assert len(v[1].links) == 3, "v1 has wrong # of links"
-    assert (
-        v[1].links[0].other(v[1]) is v[0]
-    ), "v1 -- v0 (back) link is not right!"
+    assert v[1].links[0].other(v[1]) is v[0], (
+        "v1 -- v0 (back) link is not right!"
+    )
     assert v[1].links[1].other(v[1]) is v[4], "v1 -- v4 link is not right!"
-    assert (
-        v[1].links[2].other(v[1]) is v[3]
-    ), "v1 -- v3 (back) link is not right!"
+    assert v[1].links[2].other(v[1]) is v[3], (
+        "v1 -- v3 (back) link is not right!"
+    )
 
     # v2 links
     assert len(v[2].links) == 2, "v2 has wrong # of links"
@@ -126,29 +125,29 @@ def test_adjmatrix_clrs09_22_2():
 
     # v3 links
     assert len(v[3].links) == 3, "v3 has wrong # of links"
-    assert (
-        v[3].links[0].other(v[3]) is v[0]
-    ), "v3 -- v0 (back) link is not right!"
+    assert v[3].links[0].other(v[3]) is v[0], (
+        "v3 -- v0 (back) link is not right!"
+    )
     assert v[3].links[1].other(v[3]) is v[1], "v3 -- v1 link is not right!"
-    assert (
-        v[3].links[2].other(v[3]) is v[4]
-    ), "v3 -- v4 (back) link is not right!"
+    assert v[3].links[2].other(v[3]) is v[4], (
+        "v3 -- v4 (back) link is not right!"
+    )
 
     # v4 links
     assert len(v[4].links) == 3, "v4 has wrong # of links!"
-    assert (
-        v[4].links[0].other(v[4]) is v[1]
-    ), "v4 -- v1 (back) link is not right!"
-    assert (
-        v[4].links[1].other(v[4]) is v[2]
-    ), "v4 -- v2 (back) link is not right!"
+    assert v[4].links[0].other(v[4]) is v[1], (
+        "v4 -- v1 (back) link is not right!"
+    )
+    assert v[4].links[1].other(v[4]) is v[2], (
+        "v4 -- v2 (back) link is not right!"
+    )
     assert v[4].links[2].other(v[4]) is v[3], "v4 -- v3 link is not right!"
 
     # v5 links
     assert len(v[5].links) == 2, "v5 has wrong # of links!"
-    assert (
-        v[5].links[0].other(v[5]) is v[2]
-    ), "v5 -- v2 (back) link is not right!"
-    assert (
-        v[5].links[1].other(v[5]) is v[5]
-    ), "v5 -- v5 (self) link is not right!"
+    assert v[5].links[0].other(v[5]) is v[2], (
+        "v5 -- v2 (back) link is not right!"
+    )
+    assert v[5].links[1].other(v[5]) is v[5], (
+        "v5 -- v5 (self) link is not right!"
+    )

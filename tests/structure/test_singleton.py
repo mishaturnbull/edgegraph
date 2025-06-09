@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -11,19 +10,10 @@ import pytest
 
 from edgegraph.structure import singleton
 
-# this module is all about testing with classes.  the classes we define in this
-# file are never exposed to users of edgegraph, nor any of the edgegraph
-# module, therefore don't need:
-# * any use-case besides their sole existence,
-#   * sufficient public methods (R0903, too-few-public-methods)
-# * docstrings (C0115, missing-class-docstring),
-# * amazing formatting
-#   * class Something: pass  will be allowed (C0321, multiple-statements)
-#
-# therefore:
-# pylint: disable=too-few-public-methods
-# pylint: disable=missing-class-docstring
-# pylint: disable=multiple-statements
+# Many of the variables defined in this class are not used; only stored for
+# brief local testing to ensure objects are not garbage collected.  Further,
+# many brief variable names are used for the same reason.
+# ruff: noqa: F841
 
 
 def test_true_singleton_smoketest():
@@ -230,10 +220,6 @@ def test_semi_singleton_custom_hashfunc():
     Exercise usage of custom hashfuncs for semi-singleton identification.
     """
 
-    # W0612 --> unused variable.  pylint complains that ign_kw is unused; it
-    #           most certainly is used.  not sure why this is flagged.
-    # W0613 --> unused argument.  necessary here for signature matching.
-    # pylint: disable-next=W0612, W0613
     def ign_kw(args, kwargs):
         return hash(args)
 
@@ -454,9 +440,9 @@ def test_semi_singleton_get():
 
     check = singleton.get_all_semi_singleton_instances(SemiSingle)
 
-    assert set(insts) == set(
-        check
-    ), "Did not get expected semi-singleton insts!"
+    assert set(insts) == set(check), (
+        "Did not get expected semi-singleton insts!"
+    )
 
 
 def test_semi_singleton_multiname_smoketest():

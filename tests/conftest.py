@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -11,11 +10,13 @@ https://docs.pytest.org/en/latest/reference/fixtures.html#conftest-py-sharing-fi
 from __future__ import annotations
 
 import logging
+
 import pytest
 
-# guido, forgive me
-from .fixtures import *
+from edgegraph.structure import Vertex
 
+# guido, forgive me
+from .fixtures import *  # noqa: F403
 
 LOG = logging.getLogger(__name__)
 
@@ -23,8 +24,16 @@ LOG = logging.getLogger(__name__)
 # https://docs.pytest.org/en/stable/how-to/fixtures.html#fixture-parametrize
 # use strings for the params ("cache" and "nocache") instead of raw booleans
 # to improve readability in the test output ("what's this random [True]??")
-@pytest.fixture(scope="function", params=["cache", "nocache"], autouse=True)
+@pytest.fixture(params=["cache", "nocache"], autouse=True)
 def enforce_cache_testing(request):
+    """
+    Run *all* tests both with and without vertex neighbor caching,
+    automatically.
+
+    This fixture is automatically applied to every test function, and
+    parameterizes it to run both with and without ``Vertex.NEIGHBOR_CACHING``
+    enabled.
+    """
     enable = request.param == "cache"
     Vertex.NEIGHBOR_CACHING = enable
 

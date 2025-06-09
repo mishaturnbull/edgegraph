@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -6,16 +5,17 @@ Unit tests for structure.undirectededge.UnDirectedEdge class.
 """
 
 import pytest
-from edgegraph.structure import vertex, link, undirectededge
+
+from edgegraph.structure import link, undirectededge, vertex
 
 
 def test_undiedge_subclass():
     """
     Ensure UnDirectedEdge trees up to the correct superclass.
     """
-    assert issubclass(
-        undirectededge.UnDirectedEdge, link.Link
-    ), "UnDirectedEdge has wrong superclass!"
+    assert issubclass(undirectededge.UnDirectedEdge, link.Link), (
+        "UnDirectedEdge has wrong superclass!"
+    )
 
     v1 = vertex.Vertex()
     v2 = vertex.Vertex()
