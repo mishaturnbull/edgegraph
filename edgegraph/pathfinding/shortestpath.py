@@ -30,6 +30,7 @@ if TYPE_CHECKING:
 
 
 METHODS = [
+    "bellman_ford",
     "dijkstra",
 ]
 
@@ -78,6 +79,40 @@ def _relax(
         dist[v] = dist[u] + w
         prev[v] = u
 
+
+def _sssp_base_bellmanford(
+        uni: Universe,
+        start: Vertex,
+        weightfunc: Callable,
+        ):
+    dist, prev = _init_single_source(start)
+
+    edges = set()
+    q = []
+    s = set()
+    heapq.heappush(q, (0, 0, start))
+    entry = 1
+    infinity = float('inf')
+    
+    while q:
+        u = heapq.heappop(q)[2]
+
+        nbs = helpers.neighbors(u)
+
+        for v in nbs:
+            # discover edges on the fly
+            if v not in dist:
+                dist[v] = infinity
+            if v in s:
+                continue
+            s.add(v)
+            _relax(dist, prev, u, v, weightfunc)
+
+            heapq.heappush(q, (dist[v], entry, v))
+            entry += 1
+
+    return dist, prev
+    
 
 def _sssp_base_dijkstra(
     uni: Universe,
@@ -343,6 +378,15 @@ def single_pair_shortest_path(
 
         # decide whether to return a distance or not.  use a renamed variable
         # to avoid confusing mypy too much.
+        retdist = None if path is None else dist[dest]
+
+        return (path, retdist)
+
+    if method == "bellman_ford":
+        dist, prev = _sssp_base_bellmanford(
+            uni, start, weightfunc
+        )
+        path = _route_dijkstra(prev, dest)
         retdist = None if path is None else dist[dest]
 
         return (path, retdist)
