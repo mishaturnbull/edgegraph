@@ -7,6 +7,7 @@ Holds the Link class.
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
+import threading
 
 from edgegraph.structure import base
 
@@ -73,14 +74,17 @@ class Link(base.BaseObject):
             msg = "Base class <Link> may not be instantiated directly!"
             raise TypeError(msg)
 
+        self._verts_link = threading.RLock()
+
         #: Vertices that this link links
         #:
         #: This is a list of vertex objects that are linked together by this
         #: class.
-        self._vertices: list[Vertex] = []
-        if vertices is not None:
-            for vert in vertices:
-                self.add_vertex(vert)
+        with self._verts_link:
+            self._vertices: list[Vertex] = []
+            if vertices is not None:
+                for vert in vertices:
+                    self.add_vertex(vert)
 
     @property
     def vertices(self) -> tuple[Vertex, ...]:
@@ -91,7 +95,8 @@ class Link(base.BaseObject):
         objects using this attribute is not intended; it is meant to be
         immutable.
         """
-        return tuple(self._vertices)
+        with self._verts_link:
+            return tuple(self._vertices)
 
     def add_vertex(self, new: Vertex):
         """
@@ -99,9 +104,10 @@ class Link(base.BaseObject):
 
         :param new: the vertex to add to the link
         """
-        self._vertices.append(new)
-        if (new is not None) and (self not in new.links):
-            new.add_to_link(self)
+        with self._verts_link:
+            self._vertices.append(new)
+            if (new is not None) and (self not in new.links):
+                new.add_to_link(self)
 
     def unlink_from(self, kill: Vertex):
         """
@@ -113,8 +119,9 @@ class Link(base.BaseObject):
 
         :param kill: the vertex to unlink
         """
-        if kill in self._vertices:
-            self._vertices.remove(kill)
+        with self._verts_link:
+            if kill in self._vertices:
+                self._vertices.remove(kill)
 
-            if kill is not None:
-                kill.remove_from_link(self)
+                if kill is not None:
+                    kill.remove_from_link(self)
