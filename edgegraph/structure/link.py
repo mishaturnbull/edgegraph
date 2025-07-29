@@ -74,7 +74,11 @@ class Link(base.BaseObject):
             msg = "Base class <Link> may not be instantiated directly!"
             raise TypeError(msg)
 
-        self._verts_link = threading.RLock()
+        # would love to use regular threading.RLock() here, but it breaks
+        # dill...
+        # https://github.com/uqfoundation/dill/issues/321
+        # https://github.com/fal-ai/dbt-fal/pull/850
+        self._verts_link = threading._PyRLock()
 
         #: Vertices that this link links
         #:

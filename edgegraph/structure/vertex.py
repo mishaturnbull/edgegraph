@@ -35,7 +35,11 @@ class Vertex(base.BaseObject):
 
     _QA_NB_INVALID: object = object()
     _CACHE_STATS: ClassVar[dict[int, list[int]]] = {}
-    _CACHE_STATS_LOCK = threading.RLock()
+
+    # would love to use regular threading.RLock() here, but it breaks dill...
+    # https://github.com/uqfoundation/dill/issues/321
+    # https://github.com/fal-ai/dbt-fal/pull/850
+    _CACHE_STATS_LOCK = threading._PyRLock()
 
     @classmethod
     def total_cache_stats(cls) -> str:
@@ -104,8 +108,12 @@ class Vertex(base.BaseObject):
         with self._CACHE_STATS_LOCK:
             self._CACHE_STATS.update({self.uid: [0, 0, 0, 0]})
 
-        self._links_lock = threading.RLock()
-        self._qanb_cache_lock = threading.RLock()
+        # would love to use regular threading.RLock() here, but it breaks
+        # dill...
+        # https://github.com/uqfoundation/dill/issues/321
+        # https://github.com/fal-ai/dbt-fal/pull/850
+        self._links_lock = threading._PyRLock()
+        self._qanb_cache_lock = threading._PyRLock()
 
         #: Links that this vertex is associated with
         #:
