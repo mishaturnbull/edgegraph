@@ -4,16 +4,16 @@
 Ensure graph operations are thread-safe.
 """
 
-from concurrent import futures
 import os
 import threading
 import time
+from concurrent import futures
 
 import pytest
 
-from edgegraph.traversal import helpers, breadthfirst, depthfirst, breadthfirst
-from edgegraph.structure import DirectedEdge
 from edgegraph.builder import explicit
+from edgegraph.structure import DirectedEdge
+from edgegraph.traversal import breadthfirst, depthfirst, helpers
 
 travs = [
     depthfirst.dft_recursive,
@@ -32,7 +32,13 @@ def barricaded_call(barrier, func, *args, **kwargs):
     barrier.wait()
     return func(*args, **kwargs)
 
+
 def routine_cft(graph_clrs09_22_6, trav, singlethread_answer):
+    """
+    Test routine for concurrent-futures-trav tests.  Isolated into its own
+    function for easier variability in how many times this routine is run per
+    unit test.
+    """
     uni, verts = graph_clrs09_22_6
     all_futures = []
 
@@ -48,14 +54,11 @@ def routine_cft(graph_clrs09_22_6, trav, singlethread_answer):
             all_futures.append(future)
 
         for future in futures.as_completed(all_futures):
-            try:
-                data = future.result()
-            except Exception as exc:
-                raise exc
-            else:
-                assert data == singlethread_answer, (
-                    "Did not get the same answer as single-threaded run!"
-                )
+            data = future.result()
+            assert data == singlethread_answer, (
+                "Did not get the same answer as single-threaded run!"
+            )
+
 
 @pytest.mark.parametrize("trav", travs)
 def test_concurrent_futures_trav_fast(graph_clrs09_22_6, trav):
@@ -72,6 +75,7 @@ def test_concurrent_futures_trav_fast(graph_clrs09_22_6, trav):
 
     while time.monotonic_ns() - t_start < 5 * NANO:
         routine_cft(graph_clrs09_22_6, trav, singlethread_answer)
+
 
 @pytest.mark.slow
 @pytest.mark.parametrize("trav", travs)
@@ -93,6 +97,11 @@ def test_concurrent_futures_trav_slow(graph_clrs09_22_6, trav):
 
 
 def routine_cfb(graph_clrs09_22_6):
+    """
+    Test routine for concurrent-futures-build tests.  Isolated into its own
+    function for easier variability in how many times this routine is run per
+    unit test.
+    """
     uni, verts = graph_clrs09_22_6
 
     def proc(barrier):
@@ -114,16 +123,13 @@ def routine_cfb(graph_clrs09_22_6):
 
         links = []
         for future in futures.as_completed(all_futures):
-            try:
-                data = future.result()
-            except Exception as exc:
-                raise exc
-            else:
-                links.append(data)
+            data = future.result()
+            links.append(data)
 
     assert len(links) == N_WORKERS * 2, (
         "Did not create correct amount of links!"
     )
+
 
 def test_concurrent_futures_build_fast(graph_clrs09_22_6):
     """
@@ -134,6 +140,7 @@ def test_concurrent_futures_build_fast(graph_clrs09_22_6):
     t_start = time.monotonic_ns()
     while time.monotonic_ns() - t_start < 5 * NANO:
         routine_cfb(graph_clrs09_22_6)
+
 
 @pytest.mark.slow
 def test_concurrent_futures_build_slow(graph_clrs09_22_6):

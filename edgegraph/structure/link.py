@@ -6,8 +6,8 @@ Holds the Link class.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
 import threading
+from typing import TYPE_CHECKING
 
 from edgegraph.structure import base
 
@@ -76,8 +76,7 @@ class Link(base.BaseObject):
 
         # would love to use regular threading.RLock() here, but it breaks
         # dill...
-        # https://github.com/uqfoundation/dill/issues/321
-        # https://github.com/fal-ai/dbt-fal/pull/850
+        # https://github.com/mishaturnbull/edgegraph/issues/118
         self._verts_link = threading._PyRLock()
 
         #: Vertices that this link links

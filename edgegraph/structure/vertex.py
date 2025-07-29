@@ -6,9 +6,9 @@ Holds the Vertex class.
 
 from __future__ import annotations
 
+import threading
 from collections.abc import Iterator
 from typing import TYPE_CHECKING, Any, ClassVar
-import threading
 
 from edgegraph.structure import base
 
@@ -37,8 +37,7 @@ class Vertex(base.BaseObject):
     _CACHE_STATS: ClassVar[dict[int, list[int]]] = {}
 
     # would love to use regular threading.RLock() here, but it breaks dill...
-    # https://github.com/uqfoundation/dill/issues/321
-    # https://github.com/fal-ai/dbt-fal/pull/850
+    # https://github.com/mishaturnbull/edgegraph/issues/118
     _CACHE_STATS_LOCK = threading._PyRLock()
 
     @classmethod
@@ -110,8 +109,7 @@ class Vertex(base.BaseObject):
 
         # would love to use regular threading.RLock() here, but it breaks
         # dill...
-        # https://github.com/uqfoundation/dill/issues/321
-        # https://github.com/fal-ai/dbt-fal/pull/850
+        # https://github.com/mishaturnbull/edgegraph/issues/118
         self._links_lock = threading._PyRLock()
         self._qanb_cache_lock = threading._PyRLock()
 
