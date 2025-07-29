@@ -14,7 +14,7 @@ import pytest
 # this test module does a few unorthodox imports -- but, that's the point of
 # this single test isolated in its own module.  we don't want the "gonna break
 # everything" test to, well, break everything *else*
-# ruff: noqa: F401
+# ruff: noqa: F401, PLC0415
 
 LOG = logging.getLogger(__name__)
 

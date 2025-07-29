@@ -6,7 +6,7 @@ Unit tests to ensure module structure is operable.
 
 # disable import-related checks; everything imported here is unused.  that's
 # fine.
-# ruff: noqa: F401
+# ruff: noqa: F401, PLC0415
 
 
 def test_full_qual_imports():
