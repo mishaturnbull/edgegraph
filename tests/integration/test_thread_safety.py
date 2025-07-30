@@ -5,6 +5,7 @@ Ensure graph operations are thread-safe.
 """
 
 import os
+import sys
 import threading
 import time
 from concurrent import futures
@@ -21,7 +22,10 @@ travs = [
     breadthfirst.bft,
 ]
 
-N_WORKERS = min(32, (os.process_cpu_count() or 1) + 4)
+if sys.version_info <= (3, 13):
+    N_WORKERS = min(32, (os.process_cpu_count() or 1) + 4)
+else:
+    N_WORKERS = min(32, len(os.sched_getaffinity(0)))
 NANO = 1_000_000_000
 
 

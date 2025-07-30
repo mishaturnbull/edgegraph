@@ -77,13 +77,13 @@ class Link(base.BaseObject):
         # would love to use regular threading.RLock() here, but it breaks
         # dill...
         # https://github.com/mishaturnbull/edgegraph/issues/118
-        self._verts_link = threading._PyRLock()
+        self._verts_lock = threading._PyRLock()
 
         #: Vertices that this link links
         #:
         #: This is a list of vertex objects that are linked together by this
         #: class.
-        with self._verts_link:
+        with self._verts_lock:
             self._vertices: list[Vertex] = []
             if vertices is not None:
                 for vert in vertices:
@@ -98,7 +98,7 @@ class Link(base.BaseObject):
         objects using this attribute is not intended; it is meant to be
         immutable.
         """
-        with self._verts_link:
+        with self._verts_lock:
             return tuple(self._vertices)
 
     def add_vertex(self, new: Vertex):
@@ -107,7 +107,7 @@ class Link(base.BaseObject):
 
         :param new: the vertex to add to the link
         """
-        with self._verts_link:
+        with self._verts_lock:
             self._vertices.append(new)
             if (new is not None) and (self not in new.links):
                 new.add_to_link(self)
@@ -122,7 +122,7 @@ class Link(base.BaseObject):
 
         :param kill: the vertex to unlink
         """
-        with self._verts_link:
+        with self._verts_lock:
             if kill in self._vertices:
                 self._vertices.remove(kill)
 
