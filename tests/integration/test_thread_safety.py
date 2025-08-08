@@ -22,7 +22,7 @@ travs = [
     breadthfirst.bft,
 ]
 
-if sys.version_info <= (3, 13):
+if sys.version_info >= (3, 13):
     N_WORKERS = min(32, (os.process_cpu_count() or 1) + 4)
 else:
     N_WORKERS = min(32, len(os.sched_getaffinity(0)))
