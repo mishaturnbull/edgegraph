@@ -54,6 +54,7 @@ class Link(base.BaseObject):
         :param vertices: list of Vertex objects that this link links
         :param _force_creation: force the instantiation of this object without
            error
+        :concurrency: Thread-safe
 
         .. seealso::
 
@@ -97,6 +98,8 @@ class Link(base.BaseObject):
         A tuple object is given because the addition or removal of vertex
         objects using this attribute is not intended; it is meant to be
         immutable.
+
+        :concurrency: Thread-safe
         """
         with self._verts_lock:
             return tuple(self._vertices)
@@ -106,6 +109,7 @@ class Link(base.BaseObject):
         Add a vertex to this link.
 
         :param new: the vertex to add to the link
+        :concurrency: Thread-safe
         """
         with self._verts_lock:
             self._vertices.append(new)
@@ -121,6 +125,7 @@ class Link(base.BaseObject):
         taken.
 
         :param kill: the vertex to unlink
+        :concurrency: Thread-safe
         """
         with self._verts_lock:
             if kill in self._vertices:

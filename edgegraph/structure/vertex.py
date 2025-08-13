@@ -57,6 +57,7 @@ class Vertex(base.BaseObject):
 
         :return: Human-readable string indicating size, hits, misses,
            invalidations, and insertions to the vertex neighbor cache.
+        :concurrency: Thread-safe
         """
         lines = []
 
@@ -96,6 +97,7 @@ class Vertex(base.BaseObject):
         provided to this method.
 
         :param links: iterable of link objects to associate this vertex with
+        :concurrency: Thread-safe
 
         .. seealso::
 
@@ -142,6 +144,7 @@ class Vertex(base.BaseObject):
         if needed.
 
         :param universe: the new universe to add this object to
+        :concurrency: **Unsafe**
         """
         super().add_to_universe(universe)
         if self not in universe.vertices:
@@ -154,6 +157,8 @@ class Vertex(base.BaseObject):
 
         A tuple is given specifically to prevent the addition or removal of
         link objects using this attribute; it is intended to be immutable.
+
+        :concurrency: Thread-safe
         """
         with self._links_lock:
             return tuple(self._links)
@@ -171,6 +176,7 @@ class Vertex(base.BaseObject):
 
         :param args: Arguments passed to neighbors() function.
         :return: Cached data if available, else :py:attr:`_QA_NB_INVALID`.
+        :concurrency: Thread-safe
         """
         if not self.NEIGHBOR_CACHING:
             return self._QA_NB_INVALID
@@ -194,6 +200,8 @@ class Vertex(base.BaseObject):
         This MUST be called when the vertex's neighbors are modified in any way
         -- linked, unlinked, or anything else, to maintain cache integrity and
         prevent stale data.
+
+        :concurrency: Thread-safe
         """
         if not self.NEIGHBOR_CACHING:
             return
@@ -213,6 +221,7 @@ class Vertex(base.BaseObject):
 
         :param answer: the neighbors of this object
         :param *args: Arguments passed to the neighbors() function
+        :concurrency: Thread-safe
         """
         if not self.NEIGHBOR_CACHING:
             return
@@ -239,6 +248,7 @@ class Vertex(base.BaseObject):
            duplicate links are allowed, ``is`` duplicate links are ignored.
 
         :param link: the link to add this vertex to
+        :concurrency: Thread-safe
         """
         with self._links_lock:
             if link not in self._links:
@@ -253,6 +263,7 @@ class Vertex(base.BaseObject):
         Remove this vertex from a link.
 
         :param link: the link to remove this vertex from.
+        :concurrency: Thread-safe
         """
 
         with self._links_lock:
@@ -272,6 +283,7 @@ class Vertex(base.BaseObject):
 
         :param universe: the universe that this vertex will be removed from
         :raises KeyError: if this object is not present in the given universe
+        :concurrency: **Unsafe**
         """
         super().remove_from_universe(universe)
         if self in universe.vertices:
