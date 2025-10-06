@@ -7,6 +7,7 @@ Holds the Universe class.
 from __future__ import annotations
 
 import types
+import threading
 from typing import TYPE_CHECKING
 
 from edgegraph.structure import base, vertex
@@ -211,6 +212,8 @@ class Universe(vertex.Vertex):
             self._laws = UniverseLaws(applies_to=self)
         self._laws.applies_to = self
 
+        self._verts_lock = threading._PyRLock()
+
         #: Internal set of vertices
         self._vertices: list[Vertex] = []
         if vertices is not None:
@@ -233,7 +236,8 @@ class Universe(vertex.Vertex):
         :return: vertices belonging to this universe, ordered by insertion
            order.
         """
-        return list(self._vertices)
+        with self._verts_lock:
+            return list(self._vertices)
 
     def add_vertex(self, vert: vertex.Vertex):
         """
@@ -250,12 +254,13 @@ class Universe(vertex.Vertex):
 
         :param vert: the vertex to be added
         """
-        if vert in self._vertices:
-            return
+        with self._verts_lock:
+            if vert in self._vertices:
+                return
 
-        self._vertices.append(vert)
-        if self not in vert.universes:
-            vert.add_to_universe(self)
+            self._vertices.append(vert)
+            if self not in vert.universes:
+                vert.add_to_universe(self)
 
     def remove_vertex(self, vert: vertex.Vertex):
         """
@@ -267,9 +272,10 @@ class Universe(vertex.Vertex):
 
         :param vert: the vertex to be removed
         """
-        self._vertices.remove(vert)
-        if self in vert.universes:
-            vert.remove_from_universe(self)
+        with self._verts_lock:
+            self._vertices.remove(vert)
+            if self in vert.universes:
+                vert.remove_from_universe(self)
 
     @property
     def laws(self) -> UniverseLaws | None:

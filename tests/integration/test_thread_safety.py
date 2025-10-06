@@ -13,7 +13,7 @@ from concurrent import futures
 import pytest
 
 from edgegraph.builder import explicit
-from edgegraph.structure import DirectedEdge
+from edgegraph.structure import DirectedEdge, Universe, BaseObject
 from edgegraph.traversal import breadthfirst, depthfirst, helpers
 
 travs = [
@@ -156,3 +156,56 @@ def test_concurrent_futures_build_slow(graph_clrs09_22_6):
     n_tries = 128
     for _ in range(n_tries):
         routine_cfb(graph_clrs09_22_6)
+
+
+def routine_universes():
+    """
+    Test routine for baseobject-in-universe thread safety.
+    """
+    uni = Universe()
+    bos = [BaseObject()] * 32
+
+    def proc_add(barrier_add, uni, bos):
+        barrier_add.wait()
+        for bo in bos:
+            bo.add_to_universe(uni)
+
+    def proc_rem(barrier_rem, uni, bos):
+        barrier_rem.wait()
+        for bo in bos:
+            bo.remove_from_universe(uni)
+
+    all_futures = []
+
+    with futures.ThreadPoolExecutor(max_workers=N_WORKERS * 2) as executor:
+        barrier_add = threading.Barrier(N_WORKERS * 2)
+        barrier_rem = threading.Barrier(N_WORKERS * 2)
+
+        for _ in range(N_WORKERS * 2):
+            future = executor.submit(proc_add, barrier_add, uni, bos)
+            all_futures.append(future)
+
+        for future in futures.as_completed(all_futures):
+            future.result()
+
+        for bo in bos:
+            assert bo.universes == [uni], "Did not add correctly!"
+
+        all_futures = []
+        for _ in range(N_WORKERS * 2):
+            future = executor.submit(proc_rem, barrier_rem, uni, bos)
+            all_futures.append(future)
+
+        for future in futures.as_completed(all_futures):
+            future.result()
+
+    for i, bo in enumerate(bos):
+        assert bo.universes == [], "Wrong universes!"
+
+
+@pytest.mark.timeout(10)
+def test_concurrent_futures_universe_fast():
+    t_start = time.monotonic_ns()
+    while time.monotonic_ns() - t_start < 5 * NANO:
+        routine_universes()
+

@@ -9,6 +9,7 @@ from __future__ import annotations
 import uuid
 from collections.abc import Iterator
 from typing import TYPE_CHECKING
+import threading
 
 if TYPE_CHECKING:
     from edgegraph.structure.universe import Universe
@@ -87,6 +88,8 @@ class BaseObject(object):
             for key, val in attributes.items():
                 setattr(self, key, val)
 
+        self._universes_lock = threading._PyRLock()
+
         #: Internal reference to the universes this object is a part of
         #:
         #: :meta private:
@@ -119,7 +122,8 @@ class BaseObject(object):
            :py:meth:`~edgegraph.structure.base.BaseObject.remove_from_universe`
            to add or remove this object from a given universe
         """
-        return list(self._universes)
+        with self._universes_lock:
+            return list(self._universes)
 
     def add_to_universe(self, universe: Universe) -> None:
         """
@@ -129,11 +133,12 @@ class BaseObject(object):
 
         :param universe: the new universe to add this object to
         """
-        # do not accept duplicates
-        if universe in self._universes:
-            return
+        with self._universes_lock:
+            # do not accept duplicates
+            if universe in self._universes:
+                return
 
-        self._universes.append(universe)
+            self._universes.append(universe)
 
     def remove_from_universe(self, universe: Universe) -> None:
         """
@@ -142,7 +147,12 @@ class BaseObject(object):
         :param universe: the universe that this object will be removed from
         :raises ValueError: if this object is not present in the given universe
         """
-        self._universes.remove(universe)
+        with self._universes_lock:
+            try:
+                self._universes.remove(universe)
+            except ValueError:
+                # already was not present; no action required
+                pass
 
     # These three control attrib access via KEYS; bobj['x'], bobj['y'] = y; del
     # bobj['y']  # noqa: ERA001

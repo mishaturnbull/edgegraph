@@ -200,11 +200,9 @@ def test_base_obj_universes():
     assert uni not in bo.universes, "remove_from_universe didn't!"
     assert uni not in bo._universes, "remove_from_universe didn't!"
 
-    # should fail, as the universe has already been removed.  when trying to
-    # remove an object from a list that does not contain it, you get a
-    # ValueError
-    with pytest.raises(ValueError, match="not in list"):
-        bo.remove_from_universe(uni)
+    # call it again to make sure we don't get any errors (this used to raise a
+    # ValueError)
+    bo.remove_from_universe(uni)
 
 
 def test_base_obj_init_universes_list():
