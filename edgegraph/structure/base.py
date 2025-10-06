@@ -6,10 +6,10 @@ Contains the BaseObject class.
 
 from __future__ import annotations
 
+import threading
 import uuid
 from collections.abc import Iterator
 from typing import TYPE_CHECKING
-import threading
 
 if TYPE_CHECKING:
     from edgegraph.structure.universe import Universe
@@ -148,7 +148,10 @@ class BaseObject(object):
         :raises ValueError: if this object is not present in the given universe
         """
         with self._universes_lock:
-            try:
+            # SIM105 suggests use of contextlib.suppress(ValueError) instead of
+            # this try-except-pass pattern.  however, this does have a slight
+            # performance impact -- which i want to avoid here.
+            try:  # noqa: SIM105
                 self._universes.remove(universe)
             except ValueError:
                 # already was not present; no action required

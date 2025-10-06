@@ -13,7 +13,7 @@ from concurrent import futures
 import pytest
 
 from edgegraph.builder import explicit
-from edgegraph.structure import DirectedEdge, Universe, BaseObject
+from edgegraph.structure import BaseObject, DirectedEdge, Universe
 from edgegraph.traversal import breadthfirst, depthfirst, helpers
 
 travs = [
@@ -106,7 +106,7 @@ def routine_cfb(graph_clrs09_22_6):
     function for easier variability in how many times this routine is run per
     unit test.
     """
-    uni, verts = graph_clrs09_22_6
+    _, verts = graph_clrs09_22_6
 
     def proc(barrier):
         barrier.wait()
@@ -140,7 +140,6 @@ def test_concurrent_futures_build_fast(graph_clrs09_22_6):
     Ensure writing to a graph is safe across many threads concurrently for 5
     seconds.
     """
-    uni, verts = graph_clrs09_22_6
     t_start = time.monotonic_ns()
     while time.monotonic_ns() - t_start < 5 * NANO:
         routine_cfb(graph_clrs09_22_6)
@@ -152,7 +151,6 @@ def test_concurrent_futures_build_slow(graph_clrs09_22_6):
     Ensure writing to a graph is safe across many threads concurrently 128
     times.
     """
-    uni, verts = graph_clrs09_22_6
     n_tries = 128
     for _ in range(n_tries):
         routine_cfb(graph_clrs09_22_6)
@@ -199,13 +197,16 @@ def routine_universes():
         for future in futures.as_completed(all_futures):
             future.result()
 
-    for i, bo in enumerate(bos):
+    for bo in bos:
         assert bo.universes == [], "Wrong universes!"
 
 
 @pytest.mark.timeout(10)
 def test_concurrent_futures_universe_fast():
+    """
+    Ensure BaseObject and Universe linkages are handled in a thread-safe
+    manner, concurreently for 5 seconds (this is the fast version of the test).
+    """
     t_start = time.monotonic_ns()
     while time.monotonic_ns() - t_start < 5 * NANO:
         routine_universes()
-

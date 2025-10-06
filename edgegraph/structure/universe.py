@@ -6,8 +6,8 @@ Holds the Universe class.
 
 from __future__ import annotations
 
-import types
 import threading
+import types
 from typing import TYPE_CHECKING
 
 from edgegraph.structure import base, vertex
