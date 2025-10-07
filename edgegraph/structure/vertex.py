@@ -144,9 +144,12 @@ class Vertex(base.BaseObject):
         if needed.
 
         :param universe: the new universe to add this object to
-        :concurrency: **Unsafe**
+        :concurrency: Thread-safe.
         """
         super().add_to_universe(universe)
+
+        # both universe.vertices and universe.add_vertex use internal locks, so
+        # these calls are thread-safe by nature
         if self not in universe.vertices:
             universe.add_vertex(self)
 
@@ -283,8 +286,11 @@ class Vertex(base.BaseObject):
 
         :param universe: the universe that this vertex will be removed from
         :raises KeyError: if this object is not present in the given universe
-        :concurrency: **Unsafe**
+        :concurrency: Thread-safe.
         """
         super().remove_from_universe(universe)
+
+        # both universe.vertices and universe.remove_vertex use internal locks,
+        # so these calls are thread-safe with no extra action on our part
         if self in universe.vertices:
             universe.remove_vertex(self)
