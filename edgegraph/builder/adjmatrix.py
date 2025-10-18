@@ -13,9 +13,10 @@ adjacency matrix structure, as is common in graph algorithms and software.
 
 from __future__ import annotations
 
+from collections.abc import Callable
+
 from edgegraph.builder import explicit
 from edgegraph.structure import DirectedEdge, UnDirectedEdge, Universe, Vertex
-from edgegraph.traversal import helpers
 
 
 def load_adj_matrix(
@@ -110,6 +111,11 @@ def load_adj_matrix(
        This is an implementation detail, not a part of the API specification,
        and may be changed without notice!
 
+    .. seealso::
+
+       :py:func:`create_adj_matrix` is more-or-less the inverse of this
+       function, producing an adjacency matrix form an already-formed graph.
+
     :param matrix: The adjacency matrix.  Each individual "cell" is tested for
        truthy-ness -- if :py:`bool(x)` would return ``True``, a link is
        created.
@@ -151,9 +157,91 @@ def load_adj_matrix(
 
     return uni
 
-def create_adj_matrix(uni, sort_key=None):
+
+def create_adj_matrix(uni: Universe, sort_key: Callable[[Vertex], int]) -> list[list[bool]]:
+    """
+    Create an adjacency matrix from a given universe.
+
+    This function creates and returns an adjacency matrix from a given
+    already-formed graph.  The structure and meaning of the matrix is the same
+    as in :py:func:`load_adj_matrix`.
+
+    Note that this function requires not only the universe graph container, but
+    also a sort key.  This sort key controls the order of rows and columns
+    within the output matrix.  Consider the following matrix, which clearly
+    labels rows and columns:
+
+    +----+-------+-------+-------+-------+-------+-------+
+    |    | v0    | v1    | v2    | v3    | v4    | v5    |
+    +----+-------+-------+-------+-------+-------+-------+
+    | v0 | False | True  | True  | True  | False | False |
+    +----+-------+-------+-------+-------+-------+-------+
+    | v1 | False | False | True  | True  | True  | False |
+    +----+-------+-------+-------+-------+-------+-------+
+    | v2 | False | False | False | True  | True  | True  |
+    +----+-------+-------+-------+-------+-------+-------+
+    | v3 | False | False | False | True  | False | False |
+    +----+-------+-------+-------+-------+-------+-------+
+    | v4 | False | False | False | False | False | False |
+    +----+-------+-------+-------+-------+-------+-------+
+    | v5 | False | False | False | False | False | False |
+    +----+-------+-------+-------+-------+-------+-------+
+
+    Now, if this is the matrix you wish to get out of this function, you must
+    tell it which vertex is v0, which is v1, which is v2, etc..  This is what
+    the sort_key argument is for.  It is passed directly to the builtin
+    :py:func:`sorted`'s ``key`` argument.
+
+    Note that if you are using a custom subclass of
+    :py:class:`~edgegraph.structure.vertex.Vertex` which implements rich
+    comparison methods, you may pass ``None`` to this argument to relegate
+    sorting to these rich comparisons.
+
+    .. seealso::
+
+       * Python rich comparison methods:
+         https://docs.python.org/3/reference/datamodel.html#object.__lt__
+       * :py:func:`sorted` builtin, which is used internally in this method
+
+    .. note::
+
+        In some scenarios, with the right arguments, this function and
+        :py:func:`load_adj_matrix` can perform exactly inverse operations.  The
+        requirements for this to occur are:
+
+        #. The ``sort_key`` parameter given here excatly replicates the order
+           of vertices given in the ``vertices`` argument to
+           :py:func:`load_adj_matrix`
+        #. Either:
+
+           #. Directed edges are used throughout the graph, or
+           #. Both:
+
+              #. Undirected edges are used throughout the graph
+              #. The matrix given to :py:func:`load_adj_matrix` is symmetric
+                 over the diagonal
+
+        In all other cases, it is **NOT GUARANTEED** that these two functions
+        perform precisely inverse operations.  This may return matrices that
+        are slightly different, especially when using undirected edges.
+
+        This is expected and desired behavior.
+
+    .. seealso::
+
+       The :py:func:`load_adj_matrix` function is *nearly* the inverse of this
+       one.
+
+    :param uni: The Universe graph container to analyze.
+    :param sort_key: A function of one argument which specifies a comparison
+       key for each vertex in the given universe.  It may be set to ``None`` if
+       the vertices are of a custom subtype which implements rich comparison
+       operators.
+    :return: A square 2-dimensional array (matrix), representing adjacency
+       within the graph.  The elements are set to either ``True`` or ``False``
+       to indicate a link.
+    """
     sorted_verts = sorted(uni.vertices, key=sort_key)
-    n_verts = len(sorted_verts)
     matrix = []
 
     for vert in sorted_verts:
@@ -167,5 +255,3 @@ def create_adj_matrix(uni, sort_key=None):
                 row[sorted_verts.index(link.other(vert))] = True
 
     return matrix
-    
-

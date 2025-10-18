@@ -34,21 +34,6 @@ def test_adjmatrix_edgetype():
     assert l1to1.vertices == (v[1], v[1]), "v1 -- v1 (self) link is wrong!"
 
 
-def test_create_adjmat_dir():
-    v = [Vertex(), Vertex(), Vertex()]
-    mat = [
-        [False, True, False],
-        [False, True, False],
-        [False, False, False],
-    ]
-
-    uni = adjmatrix.load_adj_matrix(mat, v, DirectedEdge)
-
-    reverse = adjmatrix.create_adj_matrix(uni, sort_key=v.index)
-
-    assert reverse == mat
-
-
 def test_adjmatrix_nonsquare():
     """
     Ensure adjmatrix throws an error when the given matrix is not square.
@@ -166,3 +151,47 @@ def test_adjmatrix_clrs09_22_2():
     assert v[5].links[1].other(v[5]) is v[5], (
         "v5 -- v5 (self) link is not right!"
     )
+
+
+def test_create_adjmat_dir():
+    """
+    Validate creation of adjacency matrices from a universe with only directed
+    edges.
+    """
+    v = [Vertex(), Vertex(), Vertex()]
+    mat = [
+        [False, True, False],
+        [False, True, False],
+        [False, False, False],
+    ]
+
+    uni = adjmatrix.load_adj_matrix(mat, v, DirectedEdge)
+
+    reverse = adjmatrix.create_adj_matrix(uni, sort_key=v.index)
+
+    assert reverse == mat, "create_adj_matrix gave wrong result!"
+
+
+def test_create_adjmat_undir():
+    """
+    Validate creation of adjacency matrices from a universe with only
+    undirected edges.
+    """
+    v = [Vertex(), Vertex(), Vertex()]
+    mat = [
+        [False, True, False],
+        [False, True, False],
+        [False, False, False],
+    ]
+
+    uni = adjmatrix.load_adj_matrix(mat, v, UnDirectedEdge)
+
+    reverse = adjmatrix.create_adj_matrix(uni, sort_key=v.index)
+
+    expected = [
+        [False, True, False],
+        [True, True, False],
+        [False, False, False],
+    ]
+
+    assert reverse == expected, "create_adj_matrix gave wrong result!"
