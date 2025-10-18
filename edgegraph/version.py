@@ -3,6 +3,17 @@
 """
 Define version information for edgegraph.
 
+You may also import the following constants from the :py:mod:`edgegraph` module
+directly:
+
+.. code-block:: python
+
+   import edgegraph
+   from edgegraph import version
+
+   edgegraph.VERSION_MAJOR == version.VERSION_MAJOR  # True
+   edgegraph.__version__ == version.__version__  # True
+
 This is the ONLY place version information should be updated!!
 """
 
@@ -25,6 +36,9 @@ VERSION_MINOR = 11
 #: :type: int
 VERSION_PATCH = 0
 
+#: complete module version number
+#:
+#: :type: str
 __version__ = f"{VERSION_MAJOR}.{VERSION_MINOR}.{VERSION_PATCH}"
 
 # Figure out what variables have been added, and export them to __all__
