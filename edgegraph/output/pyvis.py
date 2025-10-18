@@ -97,13 +97,13 @@ def make_pyvis_net(
        will not be labelled.
     :param network_kwargs: An optional dictionary of keyword arguments to pass
       to :py:class:`pyvis.network.Network`.  If not supplied, the default will
-      select ``"cdn_resources": "local"`` and nothing else.
+      select ``"cdn_resources": "in_line"`` and nothing else.
     :return: A :py:class:`pyvis.network.Network` instance containing the data
        found in the given universe.
     """
 
     if network_kwargs is None:
-        network_kwargs = {"cdn_resources": "local"}
+        network_kwargs = {"cdn_resources": "in_line"}
     net = network.Network(**network_kwargs)
     verts = list(uni.vertices)
     for i, vert in enumerate(verts):
