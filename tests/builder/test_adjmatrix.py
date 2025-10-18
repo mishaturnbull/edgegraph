@@ -7,7 +7,7 @@ Unit tests for structure.twoendedlink.TwoEndedLink class.
 import pytest
 
 from edgegraph.builder import adjmatrix
-from edgegraph.structure import UnDirectedEdge, Vertex
+from edgegraph.structure import DirectedEdge, UnDirectedEdge, Vertex
 
 
 def test_adjmatrix_edgetype():
@@ -32,6 +32,21 @@ def test_adjmatrix_edgetype():
     assert l0to1.vertices == (v[0], v[1]), "v0 -- v1 link is wrong!"
     assert isinstance(l1to1, UnDirectedEdge), "v0 -- v1 link is wrong class!"
     assert l1to1.vertices == (v[1], v[1]), "v1 -- v1 (self) link is wrong!"
+
+
+def test_create_adjmat_dir():
+    v = [Vertex(), Vertex(), Vertex()]
+    mat = [
+        [False, True, False],
+        [False, True, False],
+        [False, False, False],
+    ]
+
+    uni = adjmatrix.load_adj_matrix(mat, v, DirectedEdge)
+
+    reverse = adjmatrix.create_adj_matrix(uni, sort_key=v.index)
+
+    assert reverse == mat
 
 
 def test_adjmatrix_nonsquare():

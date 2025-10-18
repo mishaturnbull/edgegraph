@@ -14,7 +14,8 @@ adjacency matrix structure, as is common in graph algorithms and software.
 from __future__ import annotations
 
 from edgegraph.builder import explicit
-from edgegraph.structure import DirectedEdge, Universe, Vertex
+from edgegraph.structure import DirectedEdge, UnDirectedEdge, Universe, Vertex
+from edgegraph.traversal import helpers
 
 
 def load_adj_matrix(
@@ -149,3 +150,22 @@ def load_adj_matrix(
                 explicit.link_from_to(vertices[i], linktype, vertices[j])
 
     return uni
+
+def create_adj_matrix(uni, sort_key=None):
+    sorted_verts = sorted(uni.vertices, key=sort_key)
+    n_verts = len(sorted_verts)
+    matrix = []
+
+    for vert in sorted_verts:
+        row = [False] * len(sorted_verts)
+        matrix.append(row)
+        for link in vert.links:
+            if isinstance(link, DirectedEdge) and vert is link.v1:
+                row[sorted_verts.index(link.v2)] = True
+
+            elif isinstance(link, UnDirectedEdge):
+                row[sorted_verts.index(link.other(vert))] = True
+
+    return matrix
+    
+
