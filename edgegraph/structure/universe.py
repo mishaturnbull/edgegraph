@@ -7,10 +7,9 @@ Holds the Universe class.
 from __future__ import annotations
 
 import threading
-import types
 from typing import TYPE_CHECKING
 
-from edgegraph.structure import base, vertex
+from edgegraph.structure import vertex
 
 if TYPE_CHECKING:
     Vertex = vertex.Vertex
