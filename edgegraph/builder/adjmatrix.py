@@ -158,7 +158,9 @@ def load_adj_matrix(
     return uni
 
 
-def create_adj_matrix(uni: Universe, sort_key: Callable[[Vertex], int]) -> list[list[bool]]:
+def create_adj_matrix(
+    uni: Universe, sort_key: Callable[[Vertex], int]
+) -> list[list[bool]]:
     """
     Create an adjacency matrix from a given universe.
 
