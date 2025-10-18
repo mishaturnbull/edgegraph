@@ -63,7 +63,7 @@ def test_p_up_large(straightline_graph_1k_directed, protocol):
     test_rcr_depth = sys.getrecursionlimit()
     LOG.debug(f"test_rcr_depth = {test_rcr_depth}")
 
-    uni, verts = straightline_graph_1k_directed
+    uni, _ = straightline_graph_1k_directed
 
     try:
         serial = nrpickler.dumps(uni, protocol=protocol)
@@ -305,7 +305,7 @@ def test_p_up_file(protocol, tmp_path, straightline_graph_1k_directed):
         nrpickler.dump((uni, verts), wfp)
 
     with open(fname, "rb") as rfp:
-        puni, pverts = pickle.load(rfp)
+        _, pverts = pickle.load(rfp)
 
     assert len(pverts) == len(verts), "Wrong length of vertices"
 

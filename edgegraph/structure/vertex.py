@@ -6,6 +6,7 @@ Holds the Vertex class.
 
 from __future__ import annotations
 
+import threading
 from collections.abc import Iterator
 from typing import TYPE_CHECKING, Any, ClassVar
 
@@ -35,6 +36,10 @@ class Vertex(base.BaseObject):
     _QA_NB_INVALID: object = object()
     _CACHE_STATS: ClassVar[dict[int, list[int]]] = {}
 
+    # would love to use regular threading.RLock() here, but it breaks dill...
+    # https://github.com/mishaturnbull/edgegraph/issues/118
+    _CACHE_STATS_LOCK = threading._PyRLock()
+
     @classmethod
     def total_cache_stats(cls) -> str:
         """
@@ -52,16 +57,18 @@ class Vertex(base.BaseObject):
 
         :return: Human-readable string indicating size, hits, misses,
            invalidations, and insertions to the vertex neighbor cache.
+        :concurrency: Thread-safe
         """
         lines = []
 
         if cls.NEIGHBOR_CACHING:
             totals = [0, 0, 0, 0]
-            for stat in cls._CACHE_STATS.values():
-                totals[0] += stat[0]
-                totals[1] += stat[1]
-                totals[2] += stat[2]
-                totals[3] += stat[3]
+            with cls._CACHE_STATS_LOCK:
+                for stat in cls._CACHE_STATS.values():
+                    totals[0] += stat[0]
+                    totals[1] += stat[1]
+                    totals[2] += stat[2]
+                    totals[3] += stat[3]
 
             lines.append("=== CACHE STATISTICS OVERALL ===")
             lines.append(f"Size:          {len(Vertex._CACHE_STATS)}")
@@ -90,6 +97,7 @@ class Vertex(base.BaseObject):
         provided to this method.
 
         :param links: iterable of link objects to associate this vertex with
+        :concurrency: Thread-safe
 
         .. seealso::
 
@@ -98,22 +106,31 @@ class Vertex(base.BaseObject):
         """
         super().__init__(uid=uid, attributes=attributes, universes=universes)
 
-        self._CACHE_STATS.update({self.uid: [0, 0, 0, 0]})
+        with self._CACHE_STATS_LOCK:
+            self._CACHE_STATS.update({self.uid: [0, 0, 0, 0]})
+
+        # would love to use regular threading.RLock() here, but it breaks
+        # dill...
+        # https://github.com/mishaturnbull/edgegraph/issues/118
+        self._links_lock = threading._PyRLock()
+        self._qanb_cache_lock = threading._PyRLock()
 
         #: Links that this vertex is associated with
         #:
         #: This is a list of links that include this vertex as one of the
         #: linked vertices.
-        self._links: list[Link] = []
-        if links is not None:
-            for link in links:
-                self.add_to_link(link)
+        with self._links_lock:
+            self._links: list[Link] = []
+            if links is not None:
+                for link in links:
+                    self.add_to_link(link)
 
         # ensure that we add ourselves to the universes given
         for uni in self.universes:
             uni.add_vertex(self)
 
-        self.__qa_nb_cache: dict[tuple[Any, ...], list[Vertex]] = {}
+        with self._qanb_cache_lock:
+            self.__qa_nb_cache: dict[tuple[Any, ...], list[Vertex]] = {}
 
     def add_to_universe(self, universe: Universe) -> None:
         """
@@ -127,8 +144,12 @@ class Vertex(base.BaseObject):
         if needed.
 
         :param universe: the new universe to add this object to
+        :concurrency: Thread-safe.
         """
         super().add_to_universe(universe)
+
+        # both universe.vertices and universe.add_vertex use internal locks, so
+        # these calls are thread-safe by nature
         if self not in universe.vertices:
             universe.add_vertex(self)
 
@@ -139,8 +160,11 @@ class Vertex(base.BaseObject):
 
         A tuple is given specifically to prevent the addition or removal of
         link objects using this attribute; it is intended to be immutable.
+
+        :concurrency: Thread-safe
         """
-        return tuple(self._links)
+        with self._links_lock:
+            return tuple(self._links)
 
     def _qa_neighbors_get(self, *args):
         """
@@ -155,17 +179,19 @@ class Vertex(base.BaseObject):
 
         :param args: Arguments passed to neighbors() function.
         :return: Cached data if available, else :py:attr:`_QA_NB_INVALID`.
+        :concurrency: Thread-safe
         """
         if not self.NEIGHBOR_CACHING:
             return self._QA_NB_INVALID
 
-        if args in self.__qa_nb_cache:
-            self._CACHE_STATS[self.uid][0] += 1
+        with self._qanb_cache_lock, self._CACHE_STATS_LOCK:
+            if args in self.__qa_nb_cache:
+                self._CACHE_STATS[self.uid][0] += 1
 
-            return self.__qa_nb_cache[args]
+                return self.__qa_nb_cache[args]
 
-        self._CACHE_STATS[self.uid][1] += 1
-        return self._QA_NB_INVALID
+            self._CACHE_STATS[self.uid][1] += 1
+            return self._QA_NB_INVALID
 
     def _qa_neighbors_invalidate(self):
         """
@@ -177,11 +203,15 @@ class Vertex(base.BaseObject):
         This MUST be called when the vertex's neighbors are modified in any way
         -- linked, unlinked, or anything else, to maintain cache integrity and
         prevent stale data.
+
+        :concurrency: Thread-safe
         """
         if not self.NEIGHBOR_CACHING:
             return
-        self._CACHE_STATS[self.uid][2] += 1
-        self.__qa_nb_cache = {}
+
+        with self._qanb_cache_lock, self._CACHE_STATS_LOCK:
+            self._CACHE_STATS[self.uid][2] += 1
+            self.__qa_nb_cache = {}
 
     def _qa_neighbors_insert(self, answer, *args):
         """
@@ -194,11 +224,14 @@ class Vertex(base.BaseObject):
 
         :param answer: the neighbors of this object
         :param *args: Arguments passed to the neighbors() function
+        :concurrency: Thread-safe
         """
         if not self.NEIGHBOR_CACHING:
             return
-        self._CACHE_STATS[self.uid][3] += 1
-        self.__qa_nb_cache[args] = answer
+
+        with self._qanb_cache_lock, self._CACHE_STATS_LOCK:
+            self._CACHE_STATS[self.uid][3] += 1
+            self.__qa_nb_cache[args] = answer
 
     def add_to_link(self, link: Link):
         """
@@ -218,11 +251,13 @@ class Vertex(base.BaseObject):
            duplicate links are allowed, ``is`` duplicate links are ignored.
 
         :param link: the link to add this vertex to
+        :concurrency: Thread-safe
         """
-        if link not in self._links:
-            self._links.append(link)
-            if self not in link.vertices:
-                link.add_vertex(self)
+        with self._links_lock:
+            if link not in self._links:
+                self._links.append(link)
+                if self not in link.vertices:
+                    link.add_vertex(self)
 
         self._qa_neighbors_invalidate()
 
@@ -231,11 +266,13 @@ class Vertex(base.BaseObject):
         Remove this vertex from a link.
 
         :param link: the link to remove this vertex from.
+        :concurrency: Thread-safe
         """
 
-        if link in self._links:
-            self._links.remove(link)
-            link.unlink_from(self)
+        with self._links_lock:
+            if link in self._links:
+                self._links.remove(link)
+                link.unlink_from(self)
 
         self._qa_neighbors_invalidate()
 
@@ -249,7 +286,11 @@ class Vertex(base.BaseObject):
 
         :param universe: the universe that this vertex will be removed from
         :raises KeyError: if this object is not present in the given universe
+        :concurrency: Thread-safe.
         """
         super().remove_from_universe(universe)
+
+        # both universe.vertices and universe.remove_vertex use internal locks,
+        # so these calls are thread-safe with no extra action on our part
         if self in universe.vertices:
             universe.remove_vertex(self)

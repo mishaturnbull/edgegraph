@@ -142,7 +142,7 @@ def test_trav_versus(graph_clrs09_22_6, trav):
     Test traversal methods on the same graph and time results.
     """
     howmany = 100000
-    uni, verts = graph_clrs09_22_6
+    _, verts = graph_clrs09_22_6
     fname = trav.__name__
     times = [None] * howmany
 

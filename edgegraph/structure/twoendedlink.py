@@ -76,6 +76,7 @@ class TwoEndedLink(link.Link):
         """
         Set one vertex of this edge.
         """
+        # no lock here; it's acquired in _set_v1
         self._set_v1(new)
 
     def _set_v1(self, new: Vertex):
@@ -92,11 +93,13 @@ class TwoEndedLink(link.Link):
         all is well.  Except the access to a private method... but it seems the
         least bad option, IMO.
         """
-        v2 = self.v2
-        self.unlink_from(self.v1)
-        self._vertices = []
-        self.add_vertex(new)
-        self._vertices.append(v2)
+
+        with self._verts_lock:
+            v2 = self.v2
+            self.unlink_from(self.v1)
+            self._vertices = []
+            self.add_vertex(new)
+            self._vertices.append(v2)
 
     @property
     def v2(self) -> Vertex:
@@ -106,13 +109,15 @@ class TwoEndedLink(link.Link):
         Setting this attribute automatically handles link-vertex assocation
         updates; no extra effort is necessary.
         """
-        return self.vertices[1]
+        with self._verts_lock:
+            return self.vertices[1]
 
     @v2.setter
     def v2(self, new: Vertex):
         """
         Set the other end of this edge.
         """
+        # no lock here; it's acquired in _set_v2
         self._set_v2(new)
 
     def _set_v2(self, new: Vertex):
@@ -122,10 +127,11 @@ class TwoEndedLink(link.Link):
         For a brief on why this exists, see
         :py:meth:`~edgegraph.structure.TwoEndedLink._set_v1`.
         """
-        v1 = self.v1
-        self.unlink_from(self.v2)
-        self._vertices = [v1]
-        self.add_vertex(new)
+        with self._verts_lock:
+            v1 = self.v1
+            self.unlink_from(self.v2)
+            self._vertices = [v1]
+            self.add_vertex(new)
 
     def other(self, end: Vertex) -> Vertex | None:
         """
@@ -141,9 +147,11 @@ class TwoEndedLink(link.Link):
         :param end: one end of this edge
         :return: the other end of this edge, or None
         """
-        if end is self.v1:
-            return self.v2
-        if end is self.v2:
-            return self.v1
+
+        with self._verts_lock:
+            if end is self.v1:
+                return self.v2
+            if end is self.v2:
+                return self.v1
 
         return None
