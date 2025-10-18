@@ -69,7 +69,7 @@ Homepage = "https://edgegraph.readthedocs.io/en/latest/"
 Repository = "https://github.com/mishaturnbull/edgegraph"
 
 [tool.setuptools.dynamic]
-version = {attr = "edgegraph.version.__version__"}
+version = {attr = "edgegraph.__version__"}
 
 [tool.pytest.ini_options]
 markers = [
