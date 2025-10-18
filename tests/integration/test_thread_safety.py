@@ -64,6 +64,7 @@ def routine_cft(graph_clrs09_22_6, trav, singlethread_answer):
             )
 
 
+@pytest.mark.timeout(10)
 @pytest.mark.parametrize("trav", travs)
 def test_concurrent_futures_trav_fast(graph_clrs09_22_6, trav):
     """
@@ -135,6 +136,7 @@ def routine_cfb(graph_clrs09_22_6):
     )
 
 
+@pytest.mark.timeout(10)
 def test_concurrent_futures_build_fast(graph_clrs09_22_6):
     """
     Ensure writing to a graph is safe across many threads concurrently for 5
@@ -209,4 +211,14 @@ def test_concurrent_futures_universe_fast():
     """
     t_start = time.monotonic_ns()
     while time.monotonic_ns() - t_start < 5 * NANO:
+        routine_universes()
+
+@pytest.mark.slow
+def test_concurrent_futures_universe_slow():
+    """
+    Ensure BaseObject and Universe linkages are safe across many threads
+    concurrently; test runs 128 times.
+    """
+    n_tries = 128
+    for _ in range(n_tries):
         routine_universes()
