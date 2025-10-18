@@ -213,6 +213,7 @@ def test_concurrent_futures_universe_fast():
     while time.monotonic_ns() - t_start < 5 * NANO:
         routine_universes()
 
+
 @pytest.mark.slow
 def test_concurrent_futures_universe_slow():
     """
