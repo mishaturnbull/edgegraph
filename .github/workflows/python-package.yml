@@ -13,6 +13,8 @@ jobs:
       matrix:
         # check on all non-end-of-life python versions
         python-version: [
+          "3.14t",
+          "3.14",
           "3.13t",
           "3.13",
           "3.12",
@@ -25,6 +27,7 @@ jobs:
 
         include:
         - { python-version: "3.13t", disable-gil: true }
+        - { python-version: "3.14t", disable-gil: true }
 
     steps:
     # get everything set up
