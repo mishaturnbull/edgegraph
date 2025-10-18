@@ -50,7 +50,7 @@ jobs:
         python -m pip freeze
 
     - name: Documentation coverage
-      if: ${{ matrix.python-version == '3.13' }}
+      if: ${{ matrix.python-version == '3.14' }}
       run: |
         cd docs
         make coverage
@@ -66,13 +66,13 @@ jobs:
       # it's the same code no matter what, and black performs the same analysis
       # (except on py3.7, which predates reading from pyproject.toml and
       # missing some configs)
-      if: ${{ matrix.python-version == '3.13' }}
+      if: ${{ matrix.python-version == '3.14' }}
       run: |
         ruff format --check
 
     - name: MyPy type-hinting check
       # similarly to black, we only need to run this on latest version
-      if: ${{ matrix.python-version == '3.13' }}
+      if: ${{ matrix.python-version == '3.14' }}
       run: |
         # hide it behind || true to mask mypy lacking an --exit-zero esque flag
         mypy edgegraph || true
