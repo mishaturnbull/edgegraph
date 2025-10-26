@@ -196,6 +196,7 @@ def test_create_adjmat_undir():
 
     assert reverse == expected, "create_adj_matrix gave wrong result!"
 
+
 def test_create_adjmat_mixed():
     """
     Test creation of an adjacency matrix from a universe with both directed and
@@ -223,4 +224,3 @@ def test_create_adjmat_mixed():
     ]
 
     assert reverse == expected, "create_adj_matrix gave wrong result!"
-
