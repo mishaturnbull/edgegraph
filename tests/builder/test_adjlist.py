@@ -4,7 +4,7 @@
 Unit tests for structure.twoendedlink.TwoEndedLink class.
 """
 
-from edgegraph.builder import adjlist
+from edgegraph.builder import adjlist, explicit
 from edgegraph.structure import DirectedEdge, UnDirectedEdge, Vertex
 
 
@@ -131,7 +131,7 @@ def test_create_adj_dict_dir():
 
     rev = adjlist.create_adj_dict(uni)
 
-    assert adj == rev
+    assert adj == rev, "Got the wrong adjacency dict for directed edges!"
 
 
 def test_create_adj_dict_undir():
@@ -140,7 +140,7 @@ def test_create_adj_dict_undir():
     graph works.
     """
 
-    v = [Vertex(attributes={"i": i}) for i in range(5)]
+    v = [Vertex() for _ in range(5)]
     adj = {
         v[0]: [v[1], v[4]],
         v[1]: [v[2], v[3], v[4]],
@@ -160,4 +160,37 @@ def test_create_adj_dict_undir():
 
     rev = adjlist.create_adj_dict(uni)
 
-    assert ans == rev
+    assert ans == rev, "Got the wrong adjacency dict for undirected edges!"
+
+
+def test_create_adj_dict_mixed():
+    """
+    Test whether creating an adjacency dict works when using mixed directed and
+    undirected edges.
+    """
+
+    v = [Vertex() for _ in range(5)]
+    adj = {
+        v[0]: [v[1], v[4]],
+        v[1]: [v[2], v[3], v[4]],
+        v[2]: [v[3]],
+        v[3]: [v[4]],
+        v[4]: [],
+    }
+    ans = {
+        v[0]: [v[1], v[4]],
+        v[1]: [v[0], v[2], v[3], v[4]],
+        v[2]: [v[1], v[3]],
+        v[3]: [v[1], v[2], v[4]],
+        v[4]: [v[0], v[3]],
+    }
+
+    # use mostly directed edges, except for a few that we'll override directly
+    uni = adjlist.load_adj_dict(adj, UnDirectedEdge)
+
+    explicit.unlink(v[1], v[4])
+    explicit.link_directed(v[1], v[4])
+
+    rev = adjlist.create_adj_dict(uni)
+
+    assert ans == rev, "Got the wrong adjacency dict for mixed dir/undir edges!"

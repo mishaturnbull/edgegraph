@@ -3,8 +3,13 @@
 """
 Build graphs from adjacency matrices.
 
-This module provides helper functions to construct a graph from a given
-adjacency matrix structure, as is common in graph algorithms and software.
+Helper functions for working with adjacency matrices.
+
+This module provides functions for working with adjacency matrices.  These are
+two-dimensional lists (lists of lists) which define a graph's structure, using
+a grid of boolean values to determine whether two vertices (represented by rows
+and columns) are reachable from each other.  See the functions' documentation
+for examples.
 
 .. seealso::
 

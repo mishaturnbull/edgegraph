@@ -3,8 +3,13 @@
 """
 Build graphs from adjacency lists.
 
-This module provides helper functions to construct a graph from a given
-adjacency list structure, as is common in graph algorithms and software.
+Helper functions for working with adjacency lists.
+
+This module provides functions for working with adjacency lists (henceforth
+called "adjacency dicts" in this module, as they use dictionaries in this
+implementation).  These are dictionaries which define a graph's structure,
+using every vertex as a key in the dictionary and a list of vertices reachable
+from it as the values.  See the functions' documentation for examples.
 
 .. seealso::
 
