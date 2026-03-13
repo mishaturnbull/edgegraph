@@ -10,7 +10,7 @@ import threading
 from typing import TYPE_CHECKING
 
 from edgegraph.structure import vertex
-from edgegraph.structure.collections_.sortedset import SortedSet
+from edgegraph.structure.collections_.sortedset import SortedSet, SortedSetView
 
 if TYPE_CHECKING:
     Vertex = vertex.Vertex
@@ -66,7 +66,7 @@ class Universe(vertex.Vertex):
                 self.add_vertex(v)
 
     @property
-    def vertices(self) -> list[vertex.Vertex]:
+    def vertices(self) -> SortedSetView[vertex.Vertex]:
         """
         Return a list of vertices that this universe contains.
 
@@ -82,7 +82,7 @@ class Universe(vertex.Vertex):
            order.
         """
         with self._verts_lock:
-            return list(self._vertices)
+            return self._vertices.get_view()
 
     def add_vertex(self, vert: vertex.Vertex):
         """

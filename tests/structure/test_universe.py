@@ -5,6 +5,7 @@ Unit tests for Universe object.
 """
 
 from edgegraph.structure import universe, vertex
+from edgegraph.structure.collections_.sortedset import SortedSetView
 
 
 def test_universe_subclass():
@@ -35,7 +36,7 @@ def test_universe_vertex_add():
     u.add_vertex(vs[1])
     u.add_vertex(vs[0])
 
-    assert isinstance(u.vertices, list), (
+    assert isinstance(u.vertices, SortedSetView), (
         f"universe.vertices gave wrong type {type(u.vertices)}"
     )
 
@@ -50,13 +51,6 @@ def test_universe_vertex_add():
     )
     assert u in vs[1].universes, (
         "universes.add_vertex did not set u in vertex.universes"
-    )
-
-    # try adding one the wrong way to make sure it doesn't work
-    u.vertices.append(vs[2])
-    assert vs[2] not in u.vertices, "should not be able to add vertex directly"
-    assert u not in vs[2].universes, (
-        "backwards effects of adding vertices improperly"
     )
 
 
@@ -92,7 +86,9 @@ def test_universe_vertex_init():
 
     u = universe.Universe(vertices=vs)
 
-    assert isinstance(u.vertices, list), "universe.vertices gave wrong type"
+    assert isinstance(u.vertices, SortedSetView), (
+        "universe.vertices gave wrong type"
+    )
     assert len(u.vertices) == 100, (
         "wrong number of objects in universe.vertices (from __init__)"
     )

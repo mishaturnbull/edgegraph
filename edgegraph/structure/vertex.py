@@ -11,7 +11,7 @@ from collections.abc import Iterator
 from typing import TYPE_CHECKING, Any, ClassVar, Iterable
 
 from edgegraph.structure import base
-from edgegraph.structure.collections_.sortedset import SortedSet
+from edgegraph.structure.collections_.sortedset import SortedSet, SortedSetView
 
 if TYPE_CHECKING:
     from edgegraph.structure.link import Link
@@ -155,7 +155,7 @@ class Vertex(base.BaseObject):
             universe.add_vertex(self)
 
     @property
-    def links(self) -> tuple[Link, ...]:
+    def links(self) -> SortedSetView[Link]:
         """
         Return a tuple of links that are attached to this object.
 
@@ -165,7 +165,7 @@ class Vertex(base.BaseObject):
         :concurrency: Thread-safe
         """
         with self._links_lock:
-            return tuple(self._links)
+            return self._links.get_view()
 
     def _qa_neighbors_get(self, *args):
         """

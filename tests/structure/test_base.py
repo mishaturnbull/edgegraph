@@ -7,6 +7,7 @@ Unit tests for structure.base module.
 import pytest
 
 from edgegraph.structure import base, universe
+from edgegraph.structure.collections_.sortedset import SortedSetView
 
 
 def test_base_obj_creation():
@@ -219,7 +220,7 @@ def test_base_obj_init_universes_list():
     assert len(bo.universes) == len(unis), (
         "universes passed to __init__ is not same len as .universes!"
     )
-    assert isinstance(bo.universes, list), ".universes gave wrong type"
+    assert isinstance(bo.universes, SortedSetView), ".universes gave wrong type"
 
 
 def test_base_obj_init_universes_set():
@@ -238,7 +239,7 @@ def test_base_obj_init_universes_set():
     assert len(bo.universes) == len(unis), (
         "universes passed to __init__ is not same len as .universes!"
     )
-    assert isinstance(bo.universes, list), ".universes gave wrong type"
+    assert isinstance(bo.universes, SortedSetView), ".universes gave wrong type"
 
 
 def test_base_obj_init_universes_tuple():
@@ -255,7 +256,7 @@ def test_base_obj_init_universes_tuple():
     assert len(bo.universes) == len(unis), (
         "universes passed to __init__ is not same len as .universes!"
     )
-    assert isinstance(bo.universes, list), ".universes gave wrong type"
+    assert isinstance(bo.universes, SortedSetView), ".universes gave wrong type"
 
 
 def test_base_obj_init_universes_generator():
@@ -275,7 +276,7 @@ def test_base_obj_init_universes_generator():
     assert len(bo.universes) == len(unis), (
         "universes passed to __init__ is not same len as .universes!"
     )
-    assert isinstance(bo.universes, list), ".universes gave wrong type"
+    assert isinstance(bo.universes, SortedSetView), ".universes gave wrong type"
 
 
 def test_base_obj_init_universes_deduplicate():

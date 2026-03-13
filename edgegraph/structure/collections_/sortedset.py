@@ -51,6 +51,30 @@ class SortedSetView(Generic[T], Sequence):
     def __getitem__(self, index):
         return self._set.__getitem__(index)
 
+    @override
+    def __eq__(self, value):
+        if isinstance(value, SortedSetView):
+            return self._set == value._set
+        if isinstance(value, set):
+            return self._set == value
+        if isinstance(value, list):
+            return self._set._list == value
+        if isinstance(value, tuple):
+            return tuple(self._set) == value
+        return super().__eq__(value)
+
+    @override
+    def __ne__(self, value):
+        if isinstance(value, SortedSetView):
+            return self._set != value._set
+        if isinstance(value, set):
+            return self._set != value
+        if isinstance(value, list):
+            return self._set._list != value
+        if isinstance(value, tuple):
+            return tuple(self._set) != value
+        return super().__ne__(value)
+
 
 class SortedSet(set[T], Sequence[T]):
     """
@@ -63,11 +87,11 @@ class SortedSet(set[T], Sequence[T]):
 
     @override
     def __init__(self, iterable: Iterable[T] | None = None):
+        super().__init__()
         if isinstance(iterable, Iterable):
             self._list = list(iterable)
-            super().__init__(self._list)
+            super().update(self._list)
         elif iterable is None:
-            super().__init__()
             self._list = []
         else:
             msg = f"Unable to initialize {self.__class__} from value"

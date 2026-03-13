@@ -11,6 +11,8 @@ import uuid
 from collections.abc import Iterator
 from typing import TYPE_CHECKING
 
+from edgegraph.structure.collections_.sortedset import SortedSet, SortedSetView
+
 if TYPE_CHECKING:
     from edgegraph.structure.universe import Universe
 
@@ -93,13 +95,7 @@ class BaseObject(object):
         #: Internal reference to the universes this object is a part of
         #:
         #: :meta private:
-        self._universes: list[Universe] = (
-            list(universes) if universes is not None else []
-        )
-
-        # deduplicate it while keeping order
-        # https://stackoverflow.com/a/17016257
-        self._universes = [*dict.fromkeys(self._universes)]
+        self._universes: SortedSet[Universe] = SortedSet(universes)
 
     @property
     def uid(self) -> int:
@@ -109,7 +105,7 @@ class BaseObject(object):
         return self._uid
 
     @property
-    def universes(self) -> list[Universe]:
+    def universes(self) -> SortedSetView[Universe]:
         """
         Get the universes this object belongs to.
 
@@ -123,7 +119,7 @@ class BaseObject(object):
            to add or remove this object from a given universe
         """
         with self._universes_lock:
-            return list(self._universes)
+            return self._universes.get_view()
 
     def add_to_universe(self, universe: Universe) -> None:
         """
@@ -138,7 +134,7 @@ class BaseObject(object):
             if universe in self._universes:
                 return
 
-            self._universes.append(universe)
+            self._universes.add(universe)
 
     def remove_from_universe(self, universe: Universe) -> None:
         """
