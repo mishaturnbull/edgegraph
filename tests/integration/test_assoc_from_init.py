@@ -32,7 +32,9 @@ def test_create_vert_with_links():
 
     v = vertex.Vertex(links=[l1, l2])
 
-    assert v._links == {l1, l2}, "Vertex did not accept links from __init__!"
+    assert list(v._links) == [l1, l2], (
+        "Vertex did not accept links from __init__!"
+    )
 
     assert l1.vertices == (v,), "Vertex did not bind to link during __init__!"
     assert l2.vertices == (v,), "Vertex did not bind to link during __init__!"

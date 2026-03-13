@@ -46,7 +46,7 @@ def test_vertex_create_with_links():
     links = [link.Link(_force_creation=True) for _ in range(3)]
 
     v1 = vertex.Vertex(links=links)
-    assert v1._links == set(links), "vertex did not accept list of links!"
+    assert list(v1._links) == links, "vertex did not accept list of links!"
     assert v1.links == links, "vertex did not return tuple of links!"
 
 
@@ -63,7 +63,9 @@ def test_vertex_create_with_links_set():
     for obj in v2.links:
         assert obj in links, "found unexpected linkin vertex links!"
     assert len(v2.links) == len(links), "vertex links is not expected length!"
-    assert isinstance(v2.links, SortedSetView), "vertex links is not correct type!"
+    assert isinstance(v2.links, SortedSetView), (
+        "vertex links is not correct type!"
+    )
 
 
 def test_vertex_create_with_tuple():
@@ -74,7 +76,9 @@ def test_vertex_create_with_tuple():
 
     v3 = vertex.Vertex(links=links)
     assert v3.links == links, "vertex .links did not equal expected!"
-    assert isinstance(v3.links, SortedSetView), "vertex links is not correct type!"
+    assert isinstance(v3.links, SortedSetView), (
+        "vertex links is not correct type!"
+    )
 
 
 def test_vertex_create_with_generator():
@@ -88,7 +92,9 @@ def test_vertex_create_with_generator():
 
     v4 = vertex.Vertex(links=gen())
     assert v4.links == links, "vertex .links did not equal expected!"
-    assert isinstance(v4.links, SortedSetView), "vertex links is not correct type!"
+    assert isinstance(v4.links, SortedSetView), (
+        "vertex links is not correct type!"
+    )
 
 
 def test_vert_add_to_uni():

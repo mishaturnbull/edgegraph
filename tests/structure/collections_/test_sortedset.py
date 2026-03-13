@@ -30,7 +30,7 @@ def test_sortedset_init_sequence():
     assert len(set_) == num
     assert set_._list
     assert set_._list == a
-    assert set_ == set(a)
+    assert list(set_) == a
 
 
 def test_sortedset_init_generator():
@@ -47,7 +47,7 @@ def test_sortedset_init_generator():
     assert len(set_) == num
     assert set_._list
     assert set_._list == a
-    assert set_ == set(a)
+    assert list(set_) == a
 
 
 def test_sortedset_init_repeated():
@@ -68,7 +68,7 @@ def test_sortedset_init_repeated():
     assert len(set_) == half
     assert set_._list
     assert set_._list == a
-    assert set_ == set(a)
+    assert list(set_) == a
 
 
 def test_sortedset_init_bad_type():

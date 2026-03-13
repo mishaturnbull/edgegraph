@@ -59,7 +59,7 @@ class SortedSetView(Generic[T], Sequence):
         if isinstance(value, set):
             return self._set == value
         if isinstance(value, list):
-            return self._set._list == value
+            return list(self._set) == value
         if isinstance(value, tuple):
             return tuple(self._set) == value
         return super().__eq__(value)
@@ -71,15 +71,19 @@ class SortedSetView(Generic[T], Sequence):
         if isinstance(value, set):
             return self._set != value
         if isinstance(value, list):
-            return self._set._list != value
+            return list(self._set) != value
         if isinstance(value, tuple):
             return tuple(self._set) != value
         return super().__ne__(value)
 
+    @override
+    def __hash__(self):
+        return object.__hash__(self)
+
 
 class SortedSet(set[T], Sequence[T]):
     """
-    Basic implementation of a set that maintains insertion order.
+    Implementation of a set that maintains insertion order.
     Contents are accessible by index and all set operations are
     implemented to maintain combined ordering.
     """
@@ -116,8 +120,8 @@ class SortedSet(set[T], Sequence[T]):
 
     @override
     def remove(self, element):
-        self._list.remove(element)
         super().remove(element)
+        self._list.remove(element)
 
     def _combined_values(self, *s: Iterable[T]) -> Generator[T]:
         """
@@ -192,6 +196,8 @@ class SortedSet(set[T], Sequence[T]):
         super().remove(i)
         return i
 
+    pop.__doc__ = list.pop.__doc__
+
     @override
     def copy(self):
         return self.__class__(self._list)
@@ -204,7 +210,7 @@ class SortedSet(set[T], Sequence[T]):
 
     def get_list(self) -> list[T]:
         """
-        Return a copy of the underlying list.
+        Return a shallow copy of the underlying list.
         """
         return self._list.copy()
 
@@ -281,3 +287,19 @@ class SortedSet(set[T], Sequence[T]):
     @override
     def __setstate__(self, state):
         self.update(state)
+
+    @override
+    def __eq__(self, value):
+        if isinstance(value, SortedSet):
+            return self._list == value._list
+        return False
+
+    @override
+    def __ne__(self, value):
+        if isinstance(value, SortedSet):
+            return self._list != value._list
+        return True
+
+    @override
+    def __hash__(self):
+        return object.__hash__(self)

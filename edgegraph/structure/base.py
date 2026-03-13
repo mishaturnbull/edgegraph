@@ -149,7 +149,7 @@ class BaseObject(object):
             # performance impact -- which i want to avoid here.
             try:  # noqa: SIM105
                 self._universes.remove(universe)
-            except ValueError:
+            except KeyError:
                 # already was not present; no action required
                 pass
 
