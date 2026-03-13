@@ -4,6 +4,7 @@ Sorted Set Implementation.
 
 from __future__ import annotations
 
+import itertools
 from typing import (
     TYPE_CHECKING,
     Callable,
@@ -88,14 +89,13 @@ class SortedSet(set[T], Sequence[T]):
     @override
     def __init__(self, iterable: Iterable[T] | None = None):
         super().__init__()
+        self._list: list[T] = []
+
         if isinstance(iterable, Iterable):
-            self._list = list(iterable)
-            super().update(self._list)
-        elif iterable is None:
-            self._list = []
-        else:
-            msg = f"Unable to initialize {self.__class__} from value"
-            raise ValueError(msg)
+            self.update(iterable)
+        elif iterable is not None:
+            msg = f"{type(iterable)} object is not iterable"
+            raise TypeError(msg)
 
     @override
     def add(self, element):
@@ -119,61 +119,72 @@ class SortedSet(set[T], Sequence[T]):
         self._list.remove(element)
         super().remove(element)
 
-    def _combined_generator(self, *s: Iterable[T]) -> Generator[T]:
+    def _combined_values(self, *s: Iterable[T]) -> Generator[T]:
+        """
+        Yield from the current values of the sorted set
+        and the values of the passed iterables.
+        """
         yield from self._list
         for i in s:
             yield from i
 
-    def _ordered_combined_generator(
-        self, set_: set[T], *s: Iterable[T]
-    ) -> Generator[T]:
-        comb_list = self._combined_generator(*s)
-        for i in comb_list:
+    def _filter_values(self, set_: set[T], s: Iterable[T]) -> Generator[T]:
+        """
+        Yield values from the passed iterable only once
+        if they are in the passed set.
+        """
+        for i in s:
             if i in set_:
                 set_.remove(i)
                 yield i
 
     @override
     def difference(self, *s):
-        new_set = super().difference(*s)
-        return self.__class__(filter(lambda x: x in new_set, self._list))
+        i, j = itertools.tee(self._combined_values(*s), 2)
+        new_set = super().difference(i)
+        return self.__class__(filter(lambda x: x in new_set, j))
 
     @override
     def difference_update(self, *s):
-        super().difference_update(*s)
-        self._list[:] = filter(lambda x: x in self, self._list)
+        i, j = itertools.tee(self._combined_values(*s), 2)
+        super().difference_update(i)
+        self._list[:] = filter(lambda x: x in self, j)
 
     @override
     def intersection(self, *s):
-        new_set = super().intersection(*s)
-        return self.__class__(filter(lambda x: x in new_set, self._list))
+        i, j = itertools.tee(self._combined_values(*s), 2)
+        new_set = super().intersection(i)
+        return self.__class__(filter(lambda x: x in new_set, j))
 
     @override
     def intersection_update(self, *s):
-        super().intersection_update(*s)
-        self._list[:] = filter(lambda x: x in self, self._list)
+        i, j = itertools.tee(self._combined_values(*s), 2)
+        super().intersection_update(i)
+        self._list[:] = filter(lambda x: x in self, j)
 
     @override
     def symmetric_difference(self, s):
-        new_set = super().symmetric_difference(s)
-        comb_list = self._combined_generator(s)
-        return self.__class__(filter(lambda x: x in new_set, comb_list))
+        i, j = itertools.tee(self._combined_values(s), 2)
+        new_set = super().symmetric_difference(i)
+        return self.__class__(self._filter_values(new_set, j))
 
     @override
     def symmetric_difference_update(self, s):
-        super().symmetric_difference_update(s)
-        comb_list = self._combined_generator(s)
-        self._list[:] = filter(lambda x: x in self, comb_list)
+        i, j = itertools.tee(self._combined_values(s), 2)
+        super().symmetric_difference_update(i)
+        self._list[:] = self._filter_values(super().copy(), j)
 
     @override
     def union(self, *s):
-        new_set = super().union(*s)
-        return self.__class__(self._ordered_combined_generator(new_set, *s))
+        i, j = itertools.tee(self._combined_values(*s), 2)
+        new_set = super().union(i)
+        return self.__class__(self._filter_values(new_set, j))
 
     @override
     def update(self, *s):
-        super().update(*s)
-        self._list[:] = self._ordered_combined_generator(super().copy(), *s)
+        i, j = itertools.tee(self._combined_values(*s), 2)
+        super().update(i)
+        self._list[:] = self._filter_values(super().copy(), j)
 
     @override
     def pop(self, index: int = -1):
