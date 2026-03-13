@@ -42,7 +42,7 @@ def test_vertex_create_with_links():
     """
     Ensure we can create vertices with base Link objects in a list.
     """
-    links = [link.Link(_force_creation=True) for _ in range(3)]
+    links = {link.Link(_force_creation=True) for _ in range(3)}
 
     v1 = vertex.Vertex(links=links)
     assert v1._links == links, "vertex did not accept list of links!"

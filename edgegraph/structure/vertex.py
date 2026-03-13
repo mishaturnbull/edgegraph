@@ -8,9 +8,10 @@ from __future__ import annotations
 
 import threading
 from collections.abc import Iterator
-from typing import TYPE_CHECKING, Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar, Iterable
 
 from edgegraph.structure import base
+from edgegraph.structure.collections_.sortedset import SortedSet
 
 if TYPE_CHECKING:
     from edgegraph.structure.link import Link
@@ -85,7 +86,7 @@ class Vertex(base.BaseObject):
     def __init__(
         self,
         *,
-        links: list[Link] | None = None,
+        links: Iterable[Link] | None = None,
         uid: int | None = None,
         attributes: dict | None = None,
         universes: Iterator[Universe] | None = None,
@@ -120,7 +121,7 @@ class Vertex(base.BaseObject):
         #: This is a list of links that include this vertex as one of the
         #: linked vertices.
         with self._links_lock:
-            self._links: list[Link] = []
+            self._links: SortedSet[Link] = SortedSet()
             if links is not None:
                 for link in links:
                     self.add_to_link(link)
@@ -255,7 +256,7 @@ class Vertex(base.BaseObject):
         """
         with self._links_lock:
             if link not in self._links:
-                self._links.append(link)
+                self._links.add(link)
                 if self not in link.vertices:
                     link.add_vertex(self)
 
