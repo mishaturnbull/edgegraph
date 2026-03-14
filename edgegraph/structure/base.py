@@ -109,7 +109,7 @@ class BaseObject(object):
         return data
 
     @override
-    def __setstate(self, value: dict) -> None:
+    def __setstate__(self, value: dict) -> None:
         self.__dict__.update(value)
         self.__dict__["_universes_lock"] = threading.RLock()
 
