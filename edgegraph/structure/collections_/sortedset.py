@@ -13,6 +13,7 @@ from typing import (
     Iterable,
     Sequence,
     TypeVar,
+    overload,
     override,
 )
 
@@ -22,7 +23,7 @@ if TYPE_CHECKING:
 T = TypeVar("T")
 
 
-class SortedSetView(Generic[T], Sequence):
+class SortedSetView(Generic[T], Sequence[T]):
     """
     A view on the SortedSet.
 
@@ -48,6 +49,10 @@ class SortedSetView(Generic[T], Sequence):
     def __iter__(self):
         return self._set.__iter__()
 
+    @overload
+    def __getitem__(self, i: int) -> T: ...
+    @overload
+    def __getitem__(self, s: slice[int, int, int]) -> list[T]: ...
     @override
     def __getitem__(self, index):
         return self._set.__getitem__(index)
@@ -55,7 +60,7 @@ class SortedSetView(Generic[T], Sequence):
     @override
     def __eq__(self, value):
         if isinstance(value, SortedSetView):
-            return self._set == value._set
+            return True if self._set is value._set else self._set == value._set
         if isinstance(value, set):
             return self._set == value
         if isinstance(value, list):
@@ -67,7 +72,7 @@ class SortedSetView(Generic[T], Sequence):
     @override
     def __ne__(self, value):
         if isinstance(value, SortedSetView):
-            return self._set != value._set
+            return False if self._set is value._set else self._set != value._set
         if isinstance(value, set):
             return self._set != value
         if isinstance(value, list):
@@ -104,91 +109,78 @@ class SortedSet(set[T], Sequence[T]):
     @override
     def add(self, element):
         if element not in self:
-            self._list.append(element)
             super().add(element)
+            self._list.append(element)
 
     @override
     def clear(self):
-        self._list.clear()
         super().clear()
+        self._list.clear()
 
     @override
     def discard(self, element):
         if element in self:
+            super().discard(element)
             self._list.remove(element)
-        super().discard(element)
 
     @override
     def remove(self, element):
         super().remove(element)
         self._list.remove(element)
 
-    def _combined_values(self, *s: Iterable[T]) -> Generator[T]:
-        """
-        Yield from the current values of the sorted set
-        and the values of the passed iterables.
-        """
-        yield from self._list
-        for i in s:
-            yield from i
+    @override
+    def difference(self, *s):
+        new_set = super().difference(*s)
+        return self.__class__(filter(lambda x: x in new_set, self._list))
+
+    @override
+    def difference_update(self, *s):
+        super().difference_update(*s)
+        self._list[:] = filter(lambda x: x in self, self._list)
+
+    @override
+    def intersection(self, *s):
+        new_set = super().intersection(*s)
+        return self.__class__(filter(lambda x: x in new_set, self._list))
+
+    @override
+    def intersection_update(self, *s):
+        super().intersection_update(*s)
+        self._list[:] = filter(lambda x: x in self, self._list)
 
     def _filter_values(self, set_: set[T], s: Iterable[T]) -> Generator[T]:
         """
         Yield values from the passed iterable only once
         if they are in the passed set.
         """
-        for i in s:
+        for i in itertools.chain(self._list, s):
             if i in set_:
                 set_.remove(i)
                 yield i
 
     @override
-    def difference(self, *s):
-        i, j = itertools.tee(self._combined_values(*s), 2)
-        new_set = super().difference(i)
-        return self.__class__(filter(lambda x: x in new_set, j))
-
-    @override
-    def difference_update(self, *s):
-        i, j = itertools.tee(self._combined_values(*s), 2)
-        super().difference_update(i)
-        self._list[:] = filter(lambda x: x in self, j)
-
-    @override
-    def intersection(self, *s):
-        i, j = itertools.tee(self._combined_values(*s), 2)
-        new_set = super().intersection(i)
-        return self.__class__(filter(lambda x: x in new_set, j))
-
-    @override
-    def intersection_update(self, *s):
-        i, j = itertools.tee(self._combined_values(*s), 2)
-        super().intersection_update(i)
-        self._list[:] = filter(lambda x: x in self, j)
-
-    @override
     def symmetric_difference(self, s):
-        i, j = itertools.tee(self._combined_values(s), 2)
+        i, j = itertools.tee(s, 2)
         new_set = super().symmetric_difference(i)
         return self.__class__(self._filter_values(new_set, j))
 
     @override
     def symmetric_difference_update(self, s):
-        i, j = itertools.tee(self._combined_values(s), 2)
+        i, j = itertools.tee(s, 2)
         super().symmetric_difference_update(i)
         self._list[:] = self._filter_values(super().copy(), j)
 
     @override
     def union(self, *s):
-        i, j = itertools.tee(self._combined_values(*s), 2)
-        new_set = super().union(i)
-        return self.__class__(self._filter_values(new_set, j))
+        copy_ = self.copy()
+        for i in itertools.chain.from_iterable(s):
+            copy_.add(i)
+        return copy_
 
     @override
     def update(self, *s):
-        i, j = itertools.tee(self._combined_values(*s), 2)
-        super().update(i)
-        self._list[:] = self._filter_values(super().copy(), j)
+        for i in itertools.chain.from_iterable(s):
+            self.add(i)
 
     @override
     def pop(self, index: int = -1):
@@ -235,6 +227,10 @@ class SortedSet(set[T], Sequence[T]):
     def __reversed__(self):
         return self._list.__reversed__()
 
+    @overload
+    def __getitem__(self, i: int) -> T: ...
+    @overload
+    def __getitem__(self, s: slice[int, int, int]) -> list[T]: ...
     @override
     def __getitem__(self, index):
         return self._list.__getitem__(index)
@@ -258,15 +254,6 @@ class SortedSet(set[T], Sequence[T]):
         return self
 
     @override
-    def __or__(self, value):
-        return self.union(value)
-
-    @override
-    def __ior__(self, value):
-        self.update(value)
-        return self
-
-    @override
     def __xor__(self, value):
         return self.symmetric_difference(value)
 
@@ -276,29 +263,38 @@ class SortedSet(set[T], Sequence[T]):
         return self
 
     @override
+    def __or__(self, value):
+        return self.union(value)
+
+    @override
+    def __ior__(self, value):
+        self.update(value)
+        return self
+
+    @override
     def __repr__(self):
         vals = [f"{key}" for key in self._list]
         return f"{{{', '.join(vals)}}}"
 
     @override
     def __getstate__(self):
-        return self._list.__getstate__()
+        return {"elements": self._list}
 
     @override
     def __setstate__(self, state):
-        self.update(state)
+        self.update(state["elements"])
 
     @override
     def __eq__(self, value):
         if isinstance(value, SortedSet):
             return self._list == value._list
-        return False
+        return super().__eq__(value)
 
     @override
     def __ne__(self, value):
         if isinstance(value, SortedSet):
             return self._list != value._list
-        return True
+        return super().__ne__(value)
 
     @override
     def __hash__(self):
