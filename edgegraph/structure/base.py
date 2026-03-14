@@ -118,8 +118,7 @@ class BaseObject(object):
            :py:meth:`~edgegraph.structure.base.BaseObject.remove_from_universe`
            to add or remove this object from a given universe
         """
-        with self._universes_lock:
-            return self._universes.get_view()
+        return self._universes.get_view(self._universes_lock)
 
     def add_to_universe(self, universe: Universe) -> None:
         """

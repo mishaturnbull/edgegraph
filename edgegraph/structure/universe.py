@@ -81,8 +81,7 @@ class Universe(vertex.Vertex):
         :return: vertices belonging to this universe, ordered by insertion
            order.
         """
-        with self._verts_lock:
-            return self._vertices.get_view()
+        return self._vertices.get_view(self._verts_lock)
 
     def add_vertex(self, vert: vertex.Vertex):
         """

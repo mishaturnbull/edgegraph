@@ -164,8 +164,7 @@ class Vertex(base.BaseObject):
 
         :concurrency: Thread-safe
         """
-        with self._links_lock:
-            return self._links.get_view()
+        return self._links.get_view(self._links_lock)
 
     def _qa_neighbors_get(self, *args):
         """

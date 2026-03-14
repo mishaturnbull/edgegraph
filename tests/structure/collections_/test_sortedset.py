@@ -5,6 +5,7 @@ Unit tests for structure.collections.sortedset module.
 import itertools
 import pickle
 import random
+from threading import RLock
 
 import pytest
 
@@ -572,7 +573,7 @@ def test_sortedset_get_view():
     Test getting the sorted set's view
     """
     a = SortedSet()
-    b = a.get_view()
+    b = a.get_view(RLock())
     assert b._set is a
 
 
@@ -803,7 +804,7 @@ def test_sortedsetview_dunder():
     num = 50
     vals = list(range(num))
     a = SortedSet(vals)
-    view1 = a.get_view()
+    view1 = a.get_view(RLock())
 
     assert len(view1) == num
     assert 0 in view1
@@ -823,8 +824,9 @@ def test_sortedsetview_comparsion():
     vals = list(range(num))
 
     a = SortedSet(vals)
-    view1 = a.get_view()
-    view2 = a.get_view()
+    lock = RLock()
+    view1 = a.get_view(lock)
+    view2 = a.get_view(lock)
 
     assert view1 is not view2
     assert view1 == view2
@@ -836,7 +838,7 @@ def test_sortedsetview_comparsion():
 
     vals.pop()
     c = SortedSet(vals)
-    view3 = c.get_view()
+    view3 = c.get_view(RLock())
 
     assert view1 is not view3
     assert view1 != view3
@@ -851,8 +853,9 @@ def test_sortedsetview_hash():
     Test using the sorted sets hash method
     """
     set_ = SortedSet()
-    a = set_.get_view()
-    b = set_.get_view()
+    lock = RLock()
+    a = set_.get_view(lock)
+    b = set_.get_view(lock)
     assert a is not b
     set_ = {a, b}
     assert len(set_) == 2

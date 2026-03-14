@@ -5,6 +5,7 @@ Sorted Set Implementation.
 from __future__ import annotations
 
 import itertools
+from threading import Lock
 from typing import (
     TYPE_CHECKING,
     Callable,
@@ -25,29 +26,33 @@ T = TypeVar("T")
 
 class SortedSetView(Generic[T], Sequence[T]):
     """
-    A view on the SortedSet.
+    A threadsafe view on the SortedSet.
 
     The view allows for observing the data in the underlying
     SortedSet, without the ability to modify what it contains.
     """
 
-    __slots__ = ("_set",)
+    __slots__ = ("_lock", "_set")
 
     @override
-    def __init__(self, set_: SortedSet[T]):
+    def __init__(self, set_: SortedSet[T], lock: Lock):
         self._set = set_
+        self._lock = lock
 
     @override
     def __len__(self):
-        return len(self._set)
+        with self._lock:
+            return len(self._set)
 
     @override
     def __contains__(self, element):
-        return element in self._set
+        with self._lock:
+            return element in self._set
 
     @override
     def __iter__(self):
-        return self._set.__iter__()
+        with self._lock:
+            return self._set.__iter__()
 
     @overload
     def __getitem__(self, i: int) -> T: ...
@@ -55,31 +60,38 @@ class SortedSetView(Generic[T], Sequence[T]):
     def __getitem__(self, s: slice[int, int, int]) -> list[T]: ...
     @override
     def __getitem__(self, index):
-        return self._set.__getitem__(index)
+        with self._lock:
+            return self._set.__getitem__(index)
 
     @override
     def __eq__(self, value):
-        if isinstance(value, SortedSetView):
-            return True if self._set is value._set else self._set == value._set
-        if isinstance(value, set):
-            return self._set == value
-        if isinstance(value, list):
-            return list(self._set) == value
-        if isinstance(value, tuple):
-            return tuple(self._set) == value
-        return super().__eq__(value)
+        with self._lock:
+            if isinstance(value, SortedSetView):
+                if self._set is value._set:
+                    return True
+                return self._set == value._set
+            if isinstance(value, set):
+                return self._set == value
+            if isinstance(value, list):
+                return list(self._set) == value
+            if isinstance(value, tuple):
+                return tuple(self._set) == value
+            return super().__eq__(value)
 
     @override
     def __ne__(self, value):
-        if isinstance(value, SortedSetView):
-            return False if self._set is value._set else self._set != value._set
-        if isinstance(value, set):
-            return self._set != value
-        if isinstance(value, list):
-            return list(self._set) != value
-        if isinstance(value, tuple):
-            return tuple(self._set) != value
-        return super().__ne__(value)
+        with self._lock:
+            if isinstance(value, SortedSetView):
+                if self._set is value._set:
+                    return False
+                return self._set != value._set
+            if isinstance(value, set):
+                return self._set != value
+            if isinstance(value, list):
+                return list(self._set) != value
+            if isinstance(value, tuple):
+                return tuple(self._set) != value
+            return super().__ne__(value)
 
     @override
     def __hash__(self):
@@ -194,11 +206,11 @@ class SortedSet(set[T], Sequence[T]):
     def copy(self):
         return self.__class__(self._list)
 
-    def get_view(self) -> SortedSetView[T]:
+    def get_view(self, lock: Lock) -> SortedSetView[T]:
         """
         Return a view on the SortedSet.
         """
-        return SortedSetView(self)
+        return SortedSetView(self, lock)
 
     def get_list(self) -> list[T]:
         """
