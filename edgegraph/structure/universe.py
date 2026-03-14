@@ -7,7 +7,8 @@ Holds the Universe class.
 from __future__ import annotations
 
 import threading
-from typing import TYPE_CHECKING
+
+from typing_extensions import TYPE_CHECKING, override
 
 from edgegraph.structure import vertex
 
@@ -64,11 +65,13 @@ class Universe(vertex.Vertex):
             for v in vertices:
                 self.add_vertex(v)
 
+    @override
     def __getstate__(self) -> dict:
         data = self.__dict__.copy()
         data.pop("_verts_lock")
         return data
 
+    @override
     def __setstate__(self, value: dict) -> None:
         self.__dict__.update(value)
         self.__dict__["_verts_lock"] = threading.RLock()

@@ -9,7 +9,8 @@ from __future__ import annotations
 import threading
 import uuid
 from collections.abc import Iterator
-from typing import TYPE_CHECKING
+
+from typing_extensions import TYPE_CHECKING, override
 
 if TYPE_CHECKING:
     from edgegraph.structure.universe import Universe
@@ -101,11 +102,13 @@ class BaseObject(object):
         # https://stackoverflow.com/a/17016257
         self._universes = [*dict.fromkeys(self._universes)]
 
+    @override
     def __getstate__(self) -> dict:
         data = self.__dict__.copy()
         data.pop("_universes_lock")
         return data
 
+    @override
     def __setstate(self, value: dict) -> None:
         self.__dict__.update(value)
         self.__dict__["_universes_lock"] = threading.RLock()

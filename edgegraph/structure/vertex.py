@@ -8,7 +8,8 @@ from __future__ import annotations
 
 import threading
 from collections.abc import Iterator
-from typing import TYPE_CHECKING, Any, ClassVar
+
+from typing_extensions import TYPE_CHECKING, Any, ClassVar, override
 
 from edgegraph.structure import base
 
@@ -132,16 +133,18 @@ class Vertex(base.BaseObject):
         with self._qanb_cache_lock:
             self.__qa_nb_cache: dict[tuple[Any, ...], list[Vertex]] = {}
 
+    @override
     def __getstate__(self) -> dict:
         data = self.__dict__.copy()
         data.pop("_links_lock")
         data.pop("_qanb_cache_lock")
         return data
 
+    @override
     def __setstate__(self, value: dict) -> None:
         self.__dict__.update(value)
-        self.__dict__['_links_lock'] = threading.RLock()
-        self.__dict__['_qanb_cache_lock'] = threading.RLock()
+        self.__dict__["_links_lock"] = threading.RLock()
+        self.__dict__["_qanb_cache_lock"] = threading.RLock()
 
     def add_to_universe(self, universe: Universe) -> None:
         """
