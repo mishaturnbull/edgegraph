@@ -56,13 +56,22 @@ class Universe(vertex.Vertex):
         """
         super().__init__(uid=uid, attributes=attributes)
 
-        self._verts_lock = threading._PyRLock()
+        self._verts_lock = threading.RLock()
 
         #: Internal set of vertices
         self._vertices: list[Vertex] = []
         if vertices is not None:
             for v in vertices:
                 self.add_vertex(v)
+
+    def __getstate__(self) -> dict:
+        data = self.__dict__.copy()
+        data.pop("_verts_lock")
+        return data
+
+    def __setstate__(self, value: dict) -> None:
+        self.__dict__.update(value)
+        self.__dict__["_verts_lock"] = threading.RLock()
 
     @property
     def vertices(self) -> list[vertex.Vertex]:

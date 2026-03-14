@@ -88,7 +88,7 @@ class BaseObject(object):
             for key, val in attributes.items():
                 setattr(self, key, val)
 
-        self._universes_lock = threading._PyRLock()
+        self._universes_lock = threading.RLock()
 
         #: Internal reference to the universes this object is a part of
         #:
@@ -100,6 +100,15 @@ class BaseObject(object):
         # deduplicate it while keeping order
         # https://stackoverflow.com/a/17016257
         self._universes = [*dict.fromkeys(self._universes)]
+
+    def __getstate__(self) -> dict:
+        data = self.__dict__.copy()
+        data.pop("_universes_lock")
+        return data
+
+    def __setstate(self, value: dict) -> None:
+        self.__dict__.update(value)
+        self.__dict__["_universes_lock"] = threading.RLock()
 
     @property
     def uid(self) -> int:

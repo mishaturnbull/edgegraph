@@ -78,7 +78,7 @@ class Link(base.BaseObject):
         # would love to use regular threading.RLock() here, but it breaks
         # dill...
         # https://github.com/mishaturnbull/edgegraph/issues/118
-        self._verts_lock = threading._PyRLock()
+        self._verts_lock = threading.RLock()
 
         #: Vertices that this link links
         #:
@@ -89,6 +89,15 @@ class Link(base.BaseObject):
             if vertices is not None:
                 for vert in vertices:
                     self.add_vertex(vert)
+
+    def __getstate__(self) -> dict:
+        data = self.__dict__.copy()
+        data.pop("_verts_lock")
+        return data
+
+    def __setstate__(self, value: dict) -> None:
+        self.__dict__.update(value)
+        self.__dict__["_verts_lock"] = threading.RLock()
 
     @property
     def vertices(self) -> tuple[Vertex, ...]:

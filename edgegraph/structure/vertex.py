@@ -38,7 +38,7 @@ class Vertex(base.BaseObject):
 
     # would love to use regular threading.RLock() here, but it breaks dill...
     # https://github.com/mishaturnbull/edgegraph/issues/118
-    _CACHE_STATS_LOCK = threading._PyRLock()
+    _CACHE_STATS_LOCK = threading.RLock()
 
     @classmethod
     def total_cache_stats(cls) -> str:
@@ -112,8 +112,8 @@ class Vertex(base.BaseObject):
         # would love to use regular threading.RLock() here, but it breaks
         # dill...
         # https://github.com/mishaturnbull/edgegraph/issues/118
-        self._links_lock = threading._PyRLock()
-        self._qanb_cache_lock = threading._PyRLock()
+        self._links_lock = threading.RLock()
+        self._qanb_cache_lock = threading.RLock()
 
         #: Links that this vertex is associated with
         #:
@@ -131,6 +131,17 @@ class Vertex(base.BaseObject):
 
         with self._qanb_cache_lock:
             self.__qa_nb_cache: dict[tuple[Any, ...], list[Vertex]] = {}
+
+    def __getstate__(self) -> dict:
+        data = self.__dict__.copy()
+        data.pop("_links_lock")
+        data.pop("_qanb_cache_lock")
+        return data
+
+    def __setstate__(self, value: dict) -> None:
+        self.__dict__.update(value)
+        self.__dict__['_links_lock'] = threading.RLock()
+        self.__dict__['_qanb_cache_lock'] = threading.RLock()
 
     def add_to_universe(self, universe: Universe) -> None:
         """
