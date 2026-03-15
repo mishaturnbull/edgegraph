@@ -7,7 +7,8 @@ Holds the Universe class.
 from __future__ import annotations
 
 import threading
-from typing import TYPE_CHECKING
+
+from typing_extensions import TYPE_CHECKING, override
 
 from edgegraph.structure import vertex
 
@@ -56,13 +57,43 @@ class Universe(vertex.Vertex):
         """
         super().__init__(uid=uid, attributes=attributes)
 
-        self._verts_lock = threading._PyRLock()
+        self._verts_lock = threading.RLock()
 
         #: Internal set of vertices
         self._vertices: list[Vertex] = []
         if vertices is not None:
             for v in vertices:
                 self.add_vertex(v)
+
+    @override
+    def __getstate__(self) -> dict:
+        """
+        Remove ``RLock`` attributes from this object during pickling.
+
+        ``RLock``s are known to not properly deserialize when using dill;
+        remove them here as this object is being pickled.  See
+        https://github.com/mishaturnbull/edgegraph/issues/118 .
+        """
+        # let the superclass handle its RLocks too
+        data = super().__getstate__()
+
+        data.pop("_verts_lock")
+        return data
+
+    @override
+    def __setstate__(self, value: dict) -> None:
+        """
+        Recreate ``RLock`` attributes during unpickling.
+
+        ``RLock``s are knwn to not work properly with dill when deserializing,
+        and we removed them when we got this object's state in __getstate__.
+        So, we need to re-add the here.  See
+        https://github.com/mishaturnbull/edgegraph/issues/118 .
+        """
+        # let the superclass recreate its RLocks too
+        super().__setstate__(value)
+
+        self.__dict__["_verts_lock"] = threading.RLock()
 
     @property
     def vertices(self) -> list[vertex.Vertex]:

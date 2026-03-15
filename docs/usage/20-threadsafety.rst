@@ -55,11 +55,9 @@ For example, consider the following:
    you may often need to use reentrant locks (RLocks).
 
    In addition, if you intend to pickle objects containing RLocks, be aware
-   that it doesn't seem to work in conjunction with edgegraph's
-   :py:mod:`non-recursive pickler <edgegraph.output.nrpickler>`.  Internally,
-   edgegraph faces this very problem - and uses ``threading._PyRLock`` to work
-   around it.  It's not a good practice, but seems to be necessary.  See
-   https://github.com/mishaturnbull/edgegraph/issues/118.
+   that you need to remove them before pickling and re-add them afterwards.
+   See the :py:mod:`non-recursive pickler <edgegraph.output.nrpickler>` for
+   more information and references to examples.
 
 Async and Multiprocessing
 -------------------------

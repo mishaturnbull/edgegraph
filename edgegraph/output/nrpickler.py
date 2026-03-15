@@ -52,6 +52,20 @@ Usage of this pickler should be similar to the built-in one::
 At this point, the ``unpacked`` object is a Universe identical in every way to
 ``graph``, except it is a different instance.  All of its vertices, links, and
 any attributes of have all been unpacked.
+
+.. note::
+
+   If you intend to pickle / unpickle objects which use
+   :py:class:`~threading.RLock`, you must implement special handling of
+   ``__getstate__`` and ``__setstate__`` (or equivalent) customization rules
+   which remove these locks before pickling and re-add them to your instance
+   after unpickling.  See https://github.com/mishaturnbull/edgegraph/issues/118
+   for some background on this and the associated PR for an example of what it
+   looks like (I suggest in particular the ``vertex.py`` changes as a good
+   example).
+
+   Ensure you call the superclass ``__getstate__`` and ``__setstate__`` from
+   yours!
 """
 
 import io
