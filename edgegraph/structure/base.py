@@ -117,7 +117,8 @@ class BaseObject(object):
         data.pop("_universes_lock")
         return data
 
-    @override
+    # Note: no @override here.  object() declares __getstate__, but not
+    # __setstate__!
     def __setstate__(self, value: dict) -> None:
         """
         Set the state of this object as it's being unpickled.
