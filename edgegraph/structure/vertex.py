@@ -135,14 +135,14 @@ class Vertex(base.BaseObject):
 
     @override
     def __getstate__(self) -> dict:
-        data = self.__dict__.copy()
+        data = super().__getstate__()
         data.pop("_links_lock")
         data.pop("_qanb_cache_lock")
         return data
 
     @override
     def __setstate__(self, value: dict) -> None:
-        self.__dict__.update(value)
+        super().__setstate__(value)
         self.__dict__["_links_lock"] = threading.RLock()
         self.__dict__["_qanb_cache_lock"] = threading.RLock()
 

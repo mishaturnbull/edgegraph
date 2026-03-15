@@ -67,13 +67,13 @@ class Universe(vertex.Vertex):
 
     @override
     def __getstate__(self) -> dict:
-        data = self.__dict__.copy()
+        data = super().__getstate__()
         data.pop("_verts_lock")
         return data
 
     @override
     def __setstate__(self, value: dict) -> None:
-        self.__dict__.update(value)
+        super().__setstate__(value)
         self.__dict__["_verts_lock"] = threading.RLock()
 
     @property
