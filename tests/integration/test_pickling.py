@@ -331,6 +331,12 @@ def test_p_up_thread_safety(protocol, straightline_graph_1k_directed):
     """
     There are known issues around pickling and unpickling threading.RLock()
     with the dill module.  Ensure they do not affect Edgegraph's structure.
+
+    If you find that this test fails with a timeout, it is likely an indicator
+    that the bug in question has been hit and not a simple timing failure.
+    Investigate it instead of simply upping the timeout!  See
+    https://github.com/mishaturnbull/issues/118 and the issue(s) it references
+    for more information.
     """
     uni, verts = straightline_graph_1k_directed
     serial = nrpickler.dumps((uni, verts), protocol=protocol)
@@ -338,7 +344,9 @@ def test_p_up_thread_safety(protocol, straightline_graph_1k_directed):
 
     assert p1[0] is not uni, "Dill deserialized same object!"
 
-    assert len(p1[0].vertices) == len(verts)
-    assert p1[1][0].links is not None
-    assert len(p1[1][0].universes) == 1
-    assert p1[1][0] in p1[1][0].universes[0].vertices
+    assert len(p1[0].vertices) == len(verts), "Could not acquire _verts_lock"
+    assert p1[1][0].links is not None, "Could not acquire _links_lock"
+    assert len(p1[1][0].universes) == 1, "Could not acquire _universes_lock"
+    assert p1[1][0] in p1[1][0].universes[0].vertices, (
+        "Could not acquire _verts_lock"
+    )

@@ -93,13 +93,33 @@ class Link(base.BaseObject):
 
     @override
     def __getstate__(self) -> dict:
+        """
+        Remove ``RLock`` attributes from this object during pickling.
+
+        ``RLock``s are known to not properly un-dill; we need to remove them
+        here as this object is being pickled.  See
+        https://github.com/mishaturnbull/edgegraph/issues/118 .
+        """
+        # let parent superclass also handle its RLocks as needed
         data = super().__getstate__()
+
         data.pop("_verts_lock")
         return data
 
     @override
     def __setstate__(self, value: dict) -> None:
+        """
+        Re-apply ``RLock`` attributes to this object during unpickling.
+
+        ``RLock``s are known to not work properly with dill when deserializing,
+        and we removed them when we got this object's state in __getstate__.
+        So, we need to re-add them here.  See
+        https://github.com/mishaturnbull/edgegraph/issues/118 .
+        """
+        # parent class also has some RLocks it needs to recreate; ensure it
+        # does so
         super().__setstate__(value)
+
         self.__dict__["_verts_lock"] = threading.RLock()
 
     @property

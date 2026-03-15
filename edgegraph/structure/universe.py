@@ -67,13 +67,32 @@ class Universe(vertex.Vertex):
 
     @override
     def __getstate__(self) -> dict:
+        """
+        Remove ``RLock`` attributes from this object during pickling.
+
+        ``RLock``s are known to not properly deserialize when using dill;
+        remove them here as this object is being pickled.  See
+        https://github.com/mishaturnbull/edgegraph/issues/118 .
+        """
+        # let the superclass handle its RLocks too
         data = super().__getstate__()
+
         data.pop("_verts_lock")
         return data
 
     @override
     def __setstate__(self, value: dict) -> None:
+        """
+        Recreate ``RLock`` attributes during unpickling.
+
+        ``RLock``s are knwn to not work properly with dill when deserializing,
+        and we removed them when we got this object's state in __getstate__.
+        So, we need to re-add the here.  See
+        https://github.com/mishaturnbull/edgegraph/issues/118 .
+        """
+        # let the superclass recreate its RLocks too
         super().__setstate__(value)
+
         self.__dict__["_verts_lock"] = threading.RLock()
 
     @property
