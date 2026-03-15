@@ -323,3 +323,22 @@ def test_up_with_dill(protocol, straightline_graph_1k_directed):
 
     for i in range(len(verts)):
         assert p1[1][i].i == verts[i].i, "dill deserialized wrong order!"
+
+
+@pytest.mark.timeout(1)
+@pytest.mark.parametrize("protocol", list(range(pickle.HIGHEST_PROTOCOL)))
+def test_p_up_thread_safety(protocol, straightline_graph_1k_directed):
+    """
+    There are known issues around pickling and unpickling threading.RLock()
+    with the dill module.  Ensure they do not affect Edgegraph's structure.
+    """
+    uni, verts = straightline_graph_1k_directed
+    serial = nrpickler.dumps((uni, verts), protocol=protocol)
+    p1 = dill.loads(serial)
+
+    assert p1[0] is not uni, "Dill deserialized same object!"
+
+    assert len(p1[0].vertices) == len(verts)
+    assert p1[1][0].links is not None
+    assert len(p1[1][0].universes) == 1
+    assert p1[1][0] in p1[1][0].universes[0].vertices
