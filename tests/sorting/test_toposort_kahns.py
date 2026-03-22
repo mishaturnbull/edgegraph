@@ -13,4 +13,3 @@ def test_kahn_smoketest(graph_clrs09_22_8):
 
     breakpoint()
 
-

@@ -15,6 +15,7 @@ if TYPE_CHECKING:
 
 METHODS = [
         "kahn",
+        "dfs",
         ]
 
 class CycleError(Exception):
@@ -64,6 +65,43 @@ def _topo_base_kahns(
     return topological_ordering
 
 
+def _topo_base_dfs(
+        uni: Universe
+        ) -> list[Vertex]:
+
+    unvisited = set(uni.vertices)
+    temporary_marks = set()
+    topological_ordering = []
+    
+    def visit(vert):
+        if vert not in unvisited:
+            return
+
+        if vert in temporary_marks:
+            raise CycleError
+
+        temporary_marks.add(vert)
+
+        for neighbor in helpers.neighbors(
+                vert,
+                direction_sensitive=helpers.DIR_SENS_FORWARD,
+                filterfunc=lambda l, u: u in uni.vertices,
+                ):
+            visit(neighbor)
+
+        unvisited.remove(vert)
+        topological_ordering.insert(0, vert)
+
+    while unvisited:
+        # similar to unvisited.pop(), but does not remove from the list
+        # see https://stackoverflow.com/a/48874729
+        for vert in unvisited:
+            break
+        visit(vert)
+
+    return topological_ordering
+
+
 def topological_ordering(
         uni: Universe,
         method="kahn"
@@ -71,6 +109,8 @@ def topological_ordering(
 
     if method == "kahn":
         return _topo_base_kahns(uni)
+    elif method == "dfs":
+        return _topo_base_dfs(uni)
 
 
 
