@@ -20,20 +20,36 @@ METHODS = [
 ]
 
 
-def _topo_base_kahns(uni: Universe) -> list[Vertex]:
+def _topo_base_kahns(
+        uni: Universe,
+        *,
+        direction_sensitive: int = helpers.DIR_SENS_BACKWARD,
+        unknown_handling: int = helpers.LNK_UNKNOWN_ERROR,
+        ff_via: Callable | None = None,
+        ) -> list[Vertex]:
 
     incoming_links_count = {}
     queue = []
     topological_ordering = []
     visited = 0
 
+    if direction_sensitive == helpers.DIR_SENS_FORWARD:
+        incoming_edge_direction = helpers.DIR_SENS_BACKWARD
+    elif direction_sensitive == helpers.DIR_SENS_BACKWARD:
+        incoming_edge_direction = helpers.DIR_SENS_FORWARD
+    else:
+        msg = "Kahns algorithm topological support only supports " \
+                "DIR_SENS_FORWARD and DIR_SENS_BACKWARD for " \
+                "direction_sensitive option!"
+        raise ValueError(msg)
+
     for vert in uni.vertices:
         incoming_links_count[vert] = 0
 
         for _ in helpers.neighbors(
             vert,
-            direction_sensitive=helpers.DIR_SENS_BACKWARD,
-            filterfunc=lambda link, vert2: vert2 in uni.vertices,
+            direction_sensitive=incoming_edge_direction,
+            filterfunc=ff_via,
         ):
             incoming_links_count[vert] += 1
 
@@ -48,8 +64,8 @@ def _topo_base_kahns(uni: Universe) -> list[Vertex]:
 
         for neighbor in helpers.neighbors(
             vert,
-            direction_sensitive=helpers.DIR_SENS_FORWARD,
-            filterfunc=lambda link, vert2: vert2 in uni.vertices,
+            direction_sensitive=direction_sensitive,
+            filterfunc=ff_via,
         ):
             incoming_links_count[neighbor] -= 1
             if incoming_links_count[neighbor] == 0:
@@ -65,7 +81,13 @@ def _topo_base_kahns(uni: Universe) -> list[Vertex]:
     return topological_ordering
 
 
-def _topo_base_dfs(uni: Universe) -> list[Vertex]:
+def _topo_base_dfs(
+        uni: Universe,
+        *,
+        direction_sensitive: int = helpers.DIR_SENS_BACKWARD,
+        unknown_handling: int = helpers.LNK_UNKNOWN_ERROR,
+        ff_via: Callable | None = None,
+        ) -> list[Vertex]:
 
     unvisited = set(uni.vertices)
     marks = set()
@@ -86,8 +108,8 @@ def _topo_base_dfs(uni: Universe) -> list[Vertex]:
 
         for neighbor in helpers.neighbors(
             vert,
-            direction_sensitive=helpers.DIR_SENS_FORWARD,
-            filterfunc=lambda link, vert2: vert2 in uni.vertices,
+            direction_sensitive=direction_sensitive,
+            filterfunc=ff_via,
         ):
             visit(neighbor)
 
@@ -104,12 +126,37 @@ def _topo_base_dfs(uni: Universe) -> list[Vertex]:
     return topological_ordering
 
 
-def topological_ordering(uni: Universe, method="kahn"):
+def topological_ordering(
+        uni: Universe,
+        *,
+        direction_sensitive: int = helpers.DIR_SENS_FORWARD,
+        unknown_handling: int = helpers.LNK_UNKNOWN_ERROR,
+        ff_via: Callable | None = None,
+        method="kahn"
+        ) -> list[Vertex]:
+
+    # and-gate custom filterfuncs to enforce universe containment
+    if ff_via is not None:
+        def ff_via(link, vert):
+            return (vert in uni.vertices) and ff_via(link, vert)
+    else:
+        def ff_via(_, vert):
+            return vert in uni.vertices
 
     if method == "kahn":
-        return _topo_base_kahns(uni)
+        return _topo_base_kahns(
+                uni,
+                direction_sensitive=direction_sensitive,
+                unknown_handling=unknown_handling,
+                ff_via=ff_via,
+                )
     if method == "dfs":
-        return _topo_base_dfs(uni)
+        return _topo_base_dfs(
+                uni,
+                direction_sensitive=direction_sensitive,
+                unknown_handling=unknown_handling,
+                ff_via=ff_via,
+                )
 
     # If we reach this point, we didn't select a valid backend in method
     msg = f"{method} is not a known topological sort backend!"
