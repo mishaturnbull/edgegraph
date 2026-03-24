@@ -15,7 +15,8 @@ from edgegraph.traversal import helpers
 
 
 @pytest.mark.parametrize("algo", toposort.METHODS)
-def test_toposort_ordering(algo, graph_clrs09_22_8):
+@pytest.mark.parametrize("direction", [helpers.DIR_SENS_FORWARD, helpers.DIR_SENS_BACKWARD])
+def test_toposort_ordering(algo, direction, graph_clrs09_22_8):
     """
     Borderline smoke-test level check of topological sort correctness.
 
@@ -26,13 +27,21 @@ def test_toposort_ordering(algo, graph_clrs09_22_8):
     """
     uni, verts = graph_clrs09_22_8
 
-    topo = toposort.topological_ordering(uni, method=algo)
+    topo = toposort.topological_ordering(
+            uni,
+            direction_sensitive=direction,
+            )
+
+    # flip-flop direction for incoming edge assessment
+    incoming_dir = helpers.DIR_SENS_BACKWARD
+    if direction == incoming_dir:
+        incoming_dir = helpers.DIR_SENS_FORWARD
 
     # make sure no nodes have unfinished inbound edges
     seen = set()
     for vert in topo:
         incoming = helpers.neighbors(
-            vert, direction_sensitive=helpers.DIR_SENS_BACKWARD
+            vert, direction_sensitive=incoming_dir,
         )
         for ivert in incoming:
             assert ivert in seen, "Toposort was incorrect!"
@@ -53,3 +62,9 @@ def test_toposort_die_on_cycle(algo, graph_clrs09_22_6):
 
     with pytest.raises(exceptions.GraphContainsCyclesError):
         toposort.topological_ordering(uni, method=algo)
+
+def test_toposort_die_on_unknown_backend(graph_clrs09_22_8):
+    uni, _ = graph_clrs09_22_8
+
+    with pytest.raises(ValueError):
+        toposort.topological_ordering(uni, method="My favorite color is blue")

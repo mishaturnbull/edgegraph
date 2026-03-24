@@ -49,6 +49,7 @@ def _topo_base_kahns(
         for _ in helpers.neighbors(
             vert,
             direction_sensitive=incoming_edge_direction,
+            unknown_handling=unknown_handling,
             filterfunc=ff_via,
         ):
             incoming_links_count[vert] += 1
@@ -65,6 +66,7 @@ def _topo_base_kahns(
         for neighbor in helpers.neighbors(
             vert,
             direction_sensitive=direction_sensitive,
+            unknown_handling=unknown_handling,
             filterfunc=ff_via,
         ):
             incoming_links_count[neighbor] -= 1
@@ -109,6 +111,7 @@ def _topo_base_dfs(
         for neighbor in helpers.neighbors(
             vert,
             direction_sensitive=direction_sensitive,
+            unknown_handling=unknown_handling,
             filterfunc=ff_via,
         ):
             visit(neighbor)
