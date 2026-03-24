@@ -44,11 +44,12 @@ def test_sortedset_init_sequence():
     a = list(range(num))
 
     set_ = SortedSet(a)
-    assert isinstance(set_, set)
-    assert len(set_) == num
-    assert set_._list
-    assert set_._list == a
-    assert list(set_) == a
+    assert isinstance(set_, set), "sorted set inited incorrectly?"
+    assert len(set_) == num, "set was not inited to the right length"
+    assert set_._list, "list was empty"
+    assert len(set_._list) == num, "list was not inited to the right length"
+    assert set_._list == a, "list did not init to the expected sequence"
+    assert list(set_) == a, "sorted set did not cast to the expected sequence"
 
 
 def test_sortedset_init_generator():
@@ -61,11 +62,12 @@ def test_sortedset_init_generator():
     gen = (i for i in a)
 
     set_ = SortedSet(gen)
-    assert isinstance(set_, set)
-    assert len(set_) == num
-    assert set_._list
-    assert set_._list == a
-    assert list(set_) == a
+    assert isinstance(set_, set), "sorted set inited incorrectly?"
+    assert len(set_) == num, "set was not inited to the right length"
+    assert set_._list, "list was empty"
+    assert len(set_._list) == num, "list was not inited to the right length"
+    assert set_._list == a, "list did not init to the expected sequence"
+    assert list(set_) == a, "sorted set did not cast to the expected sequence"
 
 
 def test_sortedset_init_repeated():
@@ -82,11 +84,12 @@ def test_sortedset_init_repeated():
         assert b.count(i) == 2
 
     set_ = SortedSet(b)
-    assert isinstance(set_, set)
-    assert len(set_) == half
-    assert set_._list
-    assert set_._list == a
-    assert list(set_) == a
+    assert isinstance(set_, set), "sorted set inited incorrectly?"
+    assert len(set_) == half, "set was not inited to the right length"
+    assert set_._list, "list was empty"
+    assert len(set_._list) == half, "list was not inited to the right length"
+    assert set_._list == a, "list did not init to the expected sequence"
+    assert list(set_) == a, "sorted set did not cast to the expected sequence"
 
 
 def test_sortedset_init_bad_type():
@@ -105,14 +108,14 @@ def test_sortedset_basic_add():
     val = 1
 
     a = SortedSet()
-    assert len(a) == 0
-    assert len(a._list) == 0
+    assert len(a) == 0, "set was not empty"
+    assert len(a._list) == 0, "list was not empty"
 
     a.add(val)
 
-    assert len(a) == 1
-    assert len(a._list) == 1
-    assert a[0] == 1
+    assert len(a) == 1, "incorrect number of values in set"
+    assert len(a._list) == 1, "incorrect number of values in list"
+    assert a[0] == 1, "incorrect value at index"
 
 
 def test_sortedset_duplicated_add():
@@ -122,14 +125,15 @@ def test_sortedset_duplicated_add():
     val = 1
 
     a = SortedSet((1,))
-    assert len(a) == 1
-    assert len(a._list) == 1
+    assert len(a) == 1, "incorrect number of values in set"
+    assert len(a._list) == 1, "incorrect number of values in list"
+    assert a[0] == val, "incorrect value at index"
 
     a.add(val)
 
-    assert len(a) == 1
-    assert len(a._list) == 1
-    assert a[0] == 1
+    assert len(a) == 1, "incorrect number of values in set"
+    assert len(a._list) == 1, "incorrect number of values in set"
+    assert a[0] == val, "incorrect value at index"
 
 
 def test_sortedset_add_order():
@@ -150,7 +154,8 @@ def test_sortedset_add_order():
         if len(vals) >= 30:
             break
 
-    assert a._list == vals
+    assert a._list == vals, "underlying list was in incorrect sequence"
+    assert list(a) == vals, "sorted set did not cast to the expected sequence"
 
 
 def test_sortedset_clear():
@@ -159,12 +164,12 @@ def test_sortedset_clear():
     """
     num = 50
     a = SortedSet(range(num))
-    assert len(a) == num
-    assert len(a._list) == num
+    assert len(a) == num, "sorted set inited to with incorrect length"
+    assert len(a._list) == num, "list of sorted set inited to incorrect length"
 
     a.clear()
-    assert len(a) == 0
-    assert len(a._list) == 0
+    assert len(a) == 0, "length of sorted set was not zero"
+    assert len(a._list) == 0, "length of underlying list was not zero"
 
 
 def test_sortedset_discard():
@@ -173,16 +178,18 @@ def test_sortedset_discard():
     """
     num = 50
     a = SortedSet(range(num))
-    assert len(a) == num
-    assert len(a._list) == num
+    assert len(a) == num, "sorted set inited to with incorrect length"
+    assert len(a._list) == num, "list of sorted set inited to incorrect length"
 
+    # Test removing a value in the sorted set
     a.discard(0)
-    assert len(a) == num - 1
-    assert len(a._list) == num - 1
+    assert len(a) == num - 1, "sorted set did not decrease in length"
+    assert len(a._list) == num - 1, "list did not decrease in length"
 
+    # Test discarding a value that doesn't exist in the sorted set
     a.discard(0)
-    assert len(a) == num - 1
-    assert len(a._list) == num - 1
+    assert len(a) == num - 1, "sorted set should not have decreased in length"
+    assert len(a._list) == num - 1, "list should not have decreased in length"
 
 
 def test_sortedset_remove():
@@ -191,12 +198,12 @@ def test_sortedset_remove():
     """
     num = 50
     a = SortedSet(range(num))
-    assert len(a) == num
-    assert len(a._list) == num
+    assert len(a) == num, "sorted set inited to with incorrect length"
+    assert len(a._list) == num, "list did not decrease in length"
 
     a.remove(0)
-    assert len(a) == num - 1
-    assert len(a._list) == num - 1
+    assert len(a) == num - 1, "sorted set did not decrease in length"
+    assert len(a._list) == num - 1, "list did not decrease in length"
 
     with pytest.raises(KeyError):
         a.remove(0)
@@ -212,9 +219,11 @@ def test_sortedset_difference_single_iterable():
     a = SortedSet(A)
     c = a.difference(B)
 
-    assert c == c_test
-    assert c._list == list(filter(lambda x: x not in B, A))
-    assert c is not a
+    assert c == c_test, "failed to get expected set from operation"
+    assert c._list == list(filter(lambda x: x not in B, A)), (
+        "failed to get expected sorted list from operation"
+    )
+    assert c is not a, "failed to create a new set"
 
 
 def test_sortedset_difference_multiple_iterable():
@@ -227,9 +236,11 @@ def test_sortedset_difference_multiple_iterable():
     a = SortedSet(A)
     c = a.difference(B, D)
 
-    assert c == c_test
-    assert c._list == list(filter(lambda x: x not in B, A))
-    assert c is not a
+    assert c == c_test, "failed to get expected set from operation"
+    assert c._list == list(filter(lambda x: x not in B, A)), (
+        "failed to get expected sorted list from operation"
+    )
+    assert c is not a, "failed to create a new set"
 
 
 def test_sortedset_difference_generator():
@@ -242,9 +253,11 @@ def test_sortedset_difference_generator():
     a = SortedSet(A)
     c = a.difference(b_generator())
 
-    assert c == c_test
-    assert c._list == list(filter(lambda x: x not in B, A))
-    assert c is not a
+    assert c == c_test, "failed to get expected set from operation"
+    assert c._list == list(filter(lambda x: x not in B, A)), (
+        "failed to get expected sorted list from operation"
+    )
+    assert c is not a, "failed to create a new set"
 
 
 def test_sortedset_difference_update_single_iterable():
@@ -257,8 +270,10 @@ def test_sortedset_difference_update_single_iterable():
     a = SortedSet(A)
     a.difference_update(B)
 
-    assert a == a_test
-    assert a._list == list(filter(lambda x: x not in B, A))
+    assert a == a_test, "failed to get expected set from operation"
+    assert a._list == list(filter(lambda x: x not in B, A)), (
+        "failed to get expected sorted list from operation"
+    )
 
 
 def test_sortedset_difference_update_multiple_iterable():
@@ -271,7 +286,7 @@ def test_sortedset_difference_update_multiple_iterable():
     a = SortedSet(A)
     a.difference_update(B, D)
 
-    assert a == a_test
+    assert a == a_test, "failed to get expected set from operation"
     assert a._list == list(filter(lambda x: x not in B, A))
 
 
@@ -285,8 +300,10 @@ def test_sortedset_difference_update_generator():
     a = SortedSet(A)
     a.difference_update(b_generator())
 
-    assert a == a_test
-    assert a._list == list(filter(lambda x: x not in B, A))
+    assert a == a_test, "failed to get expected set from operation"
+    assert a._list == list(filter(lambda x: x not in B, A)), (
+        "failed to get expected sorted list from operation"
+    )
 
 
 def test_sortedset_intersection_single_iterable():
@@ -299,9 +316,11 @@ def test_sortedset_intersection_single_iterable():
     a = SortedSet(A)
     c = a.intersection(B)
 
-    assert c == c_test
-    assert c._list == list(filter(lambda x: x in B, A))
-    assert c is not a
+    assert c == c_test, "failed to get expected set from operation"
+    assert c._list == list(filter(lambda x: x in B, A)), (
+        "failed to get expected sorted list from operation"
+    )
+    assert c is not a, "failed to create a new set"
 
 
 def test_sortedset_intersection_multiple_iterable():
@@ -314,9 +333,9 @@ def test_sortedset_intersection_multiple_iterable():
     a = SortedSet(A)
     c = a.intersection(B, D)
 
-    assert c == c_test
+    assert c == c_test, "failed to get expected set from operation"
     assert not c._list
-    assert c is not a
+    assert c is not a, "failed to create a new set"
 
 
 def test_sortedset_intersection_generator():
@@ -329,9 +348,11 @@ def test_sortedset_intersection_generator():
     a = SortedSet(A)
     c = a.intersection(b_generator())
 
-    assert c == c_test
-    assert c._list == list(filter(lambda x: x in B, A))
-    assert c is not a
+    assert c == c_test, "failed to get expected set from operation"
+    assert c._list == list(filter(lambda x: x in B, A)), (
+        "failed to get expected sorted list from operation"
+    )
+    assert c is not a, "failed to create a new set"
 
 
 def test_sortedset_intersection_update_single_iterable():
@@ -344,8 +365,10 @@ def test_sortedset_intersection_update_single_iterable():
     a = SortedSet(A)
     a.intersection_update(B)
 
-    assert a == a_test
-    assert a._list == list(filter(lambda x: x in B, A))
+    assert a == a_test, "failed to get expected set from operation"
+    assert a._list == list(filter(lambda x: x in B, A)), (
+        "failed to get expected sorted list from operation"
+    )
 
 
 def test_sortedset_intersection_update_multiple_iterable():
@@ -358,8 +381,8 @@ def test_sortedset_intersection_update_multiple_iterable():
     a = SortedSet(A)
     a.intersection_update(B, D)
 
-    assert a == a_test
-    assert not a._list
+    assert a == a_test, "failed to get expected set from operation"
+    assert not a._list, "failed to create a new set"
 
 
 def test_sortedset_intersection_update_generator():
@@ -372,8 +395,10 @@ def test_sortedset_intersection_update_generator():
     a = SortedSet(A)
     a.intersection_update(b_generator())
 
-    assert a == a_test
-    assert a._list == list(filter(lambda x: x in B, A))
+    assert a == a_test, "failed to get expected set from operation"
+    assert a._list == list(filter(lambda x: x in B, A)), (
+        "failed to get expected sorted list from operation"
+    )
 
 
 def test_sortedset_symmetric_difference():
@@ -386,11 +411,11 @@ def test_sortedset_symmetric_difference():
     a = SortedSet(A)
     c = a.symmetric_difference(B)
 
-    assert c == c_test
+    assert c == c_test, "failed to get expected set from operation"
     assert c._list == list(filter(lambda x: x not in B, A)) + list(
         filter(lambda x: x not in A, B)
-    )
-    assert c is not a
+    ), "failed to get expected sorted list from operation"
+    assert c is not a, "failed to create a new set"
 
 
 def test_sortedset_symmetric_difference_generator():
@@ -403,11 +428,11 @@ def test_sortedset_symmetric_difference_generator():
     a = SortedSet(A)
     c = a.symmetric_difference(b_generator())
 
-    assert c == c_test
+    assert c == c_test, "failed to get expected set from operation"
     assert c._list == list(filter(lambda x: x not in B, A)) + list(
-        filter(lambda x: x not in A, B)
-    )
-    assert c is not a
+        filter(lambda x: x not in A, B),
+    ), "failed to get expected sorted list from operation"
+    assert c is not a, "failed to create a new set"
 
 
 def test_sortedset_symmetric_difference_update():
@@ -420,10 +445,10 @@ def test_sortedset_symmetric_difference_update():
     a = SortedSet(A)
     a.symmetric_difference_update(B)
 
-    assert a == a_test
+    assert a == a_test, "failed to get expected set from operation"
     assert a._list == list(filter(lambda x: x not in B, A)) + list(
-        filter(lambda x: x not in A, B)
-    )
+        filter(lambda x: x not in A, B),
+    ), "failed to get expected sorted list from operation"
 
 
 def test_sortedset_symmetric_difference_update_generator():
@@ -436,10 +461,10 @@ def test_sortedset_symmetric_difference_update_generator():
     a = SortedSet(A)
     a.symmetric_difference_update(b_generator())
 
-    assert a == a_test
+    assert a == a_test, "failed to get expected set from operation"
     assert a._list == list(filter(lambda x: x not in B, A)) + list(
-        filter(lambda x: x not in A, B)
-    )
+        filter(lambda x: x not in A, B),
+    ), "failed to get expected sorted list from operation"
 
 
 def test_sortedset_union_single_iterable():
@@ -452,9 +477,9 @@ def test_sortedset_union_single_iterable():
     a = SortedSet(A)
     c = a.union(B)
 
-    assert c == c_test
-    assert c._list == C
-    assert c is not a
+    assert c == c_test, "failed to get expected set from operation"
+    assert c._list == C, "failed to get expected sorted list from operation"
+    assert c is not a, "failed to create a new set"
 
 
 def test_sortedset_union_multiple_iterable():
@@ -467,9 +492,9 @@ def test_sortedset_union_multiple_iterable():
     a = SortedSet(A)
     c = a.union(B, D)
 
-    assert c == c_test
-    assert c._list == E
-    assert c is not a
+    assert c == c_test, "failed to get expected set from operation"
+    assert c._list == E, "failed to get expected sorted list from operation"
+    assert c is not a, "failed to create a new set"
 
 
 def test_sortedset_union_generator():
@@ -482,9 +507,9 @@ def test_sortedset_union_generator():
     a = SortedSet(A)
     c = a.union(b_generator())
 
-    assert c == c_test
-    assert c._list == C
-    assert c is not a
+    assert c == c_test, "failed to get expected set from operation"
+    assert c._list == C, "failed to get expected sorted list from operation"
+    assert c is not a, "failed to create a new set"
 
 
 def test_sortedset_update_single_iterable():
@@ -497,8 +522,8 @@ def test_sortedset_update_single_iterable():
     a = SortedSet(A)
     a.update(B)
 
-    assert a == a_test
-    assert a._list == C
+    assert a == a_test, "failed to get expected set from operation"
+    assert a._list == C, "failed to get expected sorted list from operation"
 
 
 def test_sortedset_update_multiple_iterable():
@@ -511,8 +536,8 @@ def test_sortedset_update_multiple_iterable():
     a = SortedSet(A)
     a.update(B, D)
 
-    assert a == a_test
-    assert a._list == E
+    assert a == a_test, "failed to get expected set from operation"
+    assert a._list == E, "failed to get expected sorted list from operation"
 
 
 def test_sortedset_update_generator():
@@ -525,8 +550,8 @@ def test_sortedset_update_generator():
     a = SortedSet(A)
     a.update(b_generator())
 
-    assert a == a_test
-    assert a._list == C
+    assert a == a_test, "failed to get expected set from operation"
+    assert a._list == C, "failed to get expected sorted list from operation"
 
 
 def test_sortedset_pop():
@@ -536,32 +561,32 @@ def test_sortedset_pop():
     num = 50
     a = SortedSet(range(num))
 
-    assert len(a) == num
-    assert len(a._list) == num
+    assert len(a) == num, "set did not init to correct size"
+    assert len(a._list) == num, "list did not init to the correct size"
 
     # Setup popping value at end of set
     val = a[-1]
-    assert a[-1] is val
-    assert a.pop() == val
+    assert a[-1] is val, "unexpected value at last index"
+    assert a.pop() is val, "popped unexpected value"
 
     # Verify pop
-    assert a[-1] is not val
-    assert len(a) == num - 1
-    assert len(a._list) == num - 1
-    assert val not in a
-    assert val not in a._list
+    assert a[-1] is not val, "value at last index was unchanged"
+    assert len(a) == num - 1, "size of set did not change"
+    assert len(a._list) == num - 1, "size of list did not change"
+    assert val not in a, "value remained in set after popping"
+    assert val not in a._list, "value remained in list after popping"
 
     # Setup popping value in middle of set
     val = a[10]
-    assert a[10] is val
-    assert a.pop(10) == val
+    assert a[10] is val, "unexpected value at index 10"
+    assert a.pop(10) is val, "popped unexpected value"
 
     # Verify pop
-    assert a[10] is not val
-    assert len(a) == num - 2
-    assert len(a._list) == num - 2
-    assert val not in a
-    assert val not in a._list
+    assert a[10] is not val, "value at index 10 was unchanged"
+    assert len(a) == num - 2, "size of set did not change"
+    assert len(a._list) == num - 2, "size of list did not change"
+    assert val not in a, "value remained in set after popping"
+    assert val not in a._list, "value remained in list after popping"
 
     # Attempt to pop value outside of index
     with pytest.raises(IndexError):
@@ -574,7 +599,7 @@ def test_sortedset_get_view():
     """
     a = SortedSet()
     b = a.get_view(RLock())
-    assert b._set is a
+    assert b._set is a, "view is of wrong object"
 
 
 def test_sortedset_get_list():
@@ -585,11 +610,11 @@ def test_sortedset_get_list():
     a = SortedSet(vals)
     b = a.get_list()
 
-    assert b == vals
-    assert b is not vals
+    assert b is not vals, "b is the same object as vals"
+    assert b == vals, "list of objects in sorted set does not match"
 
-    assert b == a._list
-    assert b is not a._list
+    assert b is not a._list, "b is the same object as the set's list"
+    assert b == a._list, "b does not match a's list"
 
 
 def test_sortedset_iter():
@@ -600,11 +625,11 @@ def test_sortedset_iter():
     a = SortedSet(vals)
 
     for i, j in enumerate(a):
-        assert j == vals[i]
+        assert j == vals[i], "non-matching value in iterable"
 
     inv_vals = list(reversed(vals))
     for i, j in enumerate(reversed(a)):
-        assert j == inv_vals[i]
+        assert j == inv_vals[i], "non-matching value in reversed iterable"
 
 
 def test_sortedset_sort():
@@ -616,18 +641,18 @@ def test_sortedset_sort():
         count = itertools.count()
 
         def __init__(self):
-            self.int = next(self.count)
+            self.val = next(self.count)
 
     vals = [_Temp() for _ in range(50)]
     a = SortedSet(reversed(vals))
 
-    assert a[0].int == 49
-    assert a[-1].int == 0
+    assert a[0].val == 49, "unexpected value at first index in set"
+    assert a[-1].val == 0, "unexpected value at last index in set"
 
-    a.sort(key=lambda x: x.int)
+    a.sort(key=lambda x: x.val)
 
-    assert a[0].int == 0
-    assert a[-1].int == 49
+    assert a[0].val == 0, "unexpected value at first index in set after sort"
+    assert a[-1].val == 49, "unexpected value at last index in set after sort"
 
 
 def test_sortedset_operator_difference():
@@ -640,8 +665,10 @@ def test_sortedset_operator_difference():
     a = SortedSet(A)
     c = a - SortedSet(B)
 
-    assert c == c_test
-    assert c._list == list(filter(lambda x: x not in B, A))
+    assert c == c_test, "set with operator did not match set without operator"
+    assert c._list == c_test._list, (
+        "list with operator did not match list without operator"
+    )
 
 
 def test_sortedset_operator_difference_update():
@@ -654,8 +681,10 @@ def test_sortedset_operator_difference_update():
     a = SortedSet(A)
     a -= SortedSet(B)
 
-    assert a == a_test
-    assert a._list == list(filter(lambda x: x not in B, A))
+    assert a == a_test, "set with operator did not match set without operator"
+    assert a._list == a_test._list, (
+        "list with operator did not match list without operator"
+    )
 
 
 def test_sortedset_operator_intersection():
@@ -668,8 +697,10 @@ def test_sortedset_operator_intersection():
     a = SortedSet(A)
     c = a & SortedSet(B)
 
-    assert c == c_test
-    assert c._list == list(filter(lambda x: x in B, A))
+    assert c == c_test, "set with operator did not match set without operator"
+    assert c._list == c_test._list, (
+        "list with operator did not match list without operator"
+    )
 
 
 def test_sortedset_operator_intersection_update():
@@ -682,8 +713,10 @@ def test_sortedset_operator_intersection_update():
     a = SortedSet(A)
     a &= SortedSet(B)
 
-    assert a == a_test
-    assert a._list == list(filter(lambda x: x in B, A))
+    assert a == a_test, "set with operator did not match set without operator"
+    assert a._list == a_test._list, (
+        "list with operator did not match list without operator"
+    )
 
 
 def test_sortedset_operator_symmetric_difference():
@@ -696,9 +729,9 @@ def test_sortedset_operator_symmetric_difference():
     a = SortedSet(A)
     c = a ^ SortedSet(B)
 
-    assert c == c_test
-    assert c._list == list(filter(lambda x: x not in B, A)) + list(
-        filter(lambda x: x not in A, B)
+    assert c == c_test, "set with operator did not match set without operator"
+    assert c._list == c_test._list, (
+        "list with operator did not match list without operator"
     )
 
 
@@ -706,15 +739,15 @@ def test_sortedset_operator_symmetric_difference_update():
     """
     Test using the operator for symmetric difference update
     """
-    a_test = set(A)
+    a_test = SortedSet(A)
     a_test.symmetric_difference_update(SortedSet(B))
 
     a = SortedSet(A)
     a ^= SortedSet(B)
 
-    assert a == a_test
-    assert a._list == list(filter(lambda x: x not in B, A)) + list(
-        filter(lambda x: x not in A, B)
+    assert a == a_test, "set with operator did not match set without operator"
+    assert a._list == a_test._list, (
+        "list with operator did not match list without operator"
     )
 
 
@@ -728,22 +761,26 @@ def test_sortedset_operator_union():
     a = SortedSet(A)
     c = a | SortedSet(B)
 
-    assert c == c_test
-    assert c._list == C
+    assert c == c_test, "set with operator did not match set without operator"
+    assert c._list == c_test._list, (
+        "list with operator did not match list without operator"
+    )
 
 
 def test_sortedset_operator_update():
     """
     Test using the operator for updates
     """
-    a_test = set(A)
+    a_test = SortedSet(A)
     a_test.update(B)
 
     a = SortedSet(A)
     a |= SortedSet(B)
 
-    assert a == a_test
-    assert a._list == C
+    assert a == a_test, "set with operator did not match set without operator"
+    assert a._list == a_test._list, (
+        "list with operator did not match list without operator"
+    )
 
 
 def test_sortedset_pickle():
@@ -752,10 +789,10 @@ def test_sortedset_pickle():
     """
     a = SortedSet(range(50))
     pickled = pickle.dumps(a)
-    b = pickle.loads(pickled)
+    b = pickle.loads(pickled)  # noqa: S301
 
-    assert a is not b
-    assert a == b
+    assert a is not b, "a and b were the same object"
+    assert a == b, "a and b were not equivalent"
 
 
 def test_sortedset_comparsion():
@@ -765,13 +802,13 @@ def test_sortedset_comparsion():
     a = SortedSet()
     b = SortedSet()
 
-    assert a == b
+    assert a == b, "empty sets were not equal"
 
     a.add(1)
-    assert a != b
+    assert a != b, "empty sets were equal"
 
     b.add(1)
-    assert a == b
+    assert a == b, "sets should be equal with adding values in same order"
 
     a.add(2)
     a.add(3)
@@ -779,11 +816,17 @@ def test_sortedset_comparsion():
     b.add(3)
     b.add(2)
 
-    assert a != b
-    assert a == {1, 2, 3}
-    assert b == {1, 2, 3}
-    assert a != [1, 2, 3]
-    assert b != [1, 3, 2]
+    assert a != b, (
+        "a and b should not be equal with values added in different orders"
+    )
+    assert a == {1, 2, 3}, "a's set was not equal to the expected set"
+    assert b == {1, 2, 3}, "b's set was not equal to the expected set"
+    assert a != [1, 2, 3], (
+        "a should be not equal to a list with equivalent ordering"
+    )
+    assert b != [1, 3, 2], (
+        "b should be not equal to a list with equivalent ordering"
+    )
 
 
 def test_sortedset_hash():
@@ -792,9 +835,10 @@ def test_sortedset_hash():
     """
     a = SortedSet()
     b = SortedSet()
-    assert a is not b
-    set_ = {a, b}
-    assert len(set_) == 2
+    assert a == b, "a was not equivalent to b"
+    assert hash(a) != hash(b), (
+        "equivalent mutable objects should have different hashes"
+    )
 
 
 def test_sortedsetview_dunder():
@@ -806,14 +850,18 @@ def test_sortedsetview_dunder():
     a = SortedSet(vals)
     view1 = a.get_view(RLock())
 
-    assert len(view1) == num
-    assert 0 in view1
-    assert 100 not in view1
+    assert len(view1) == num, "length of view was not equal to the set's length"
+    assert 0 in view1, "value in set not in view"
+    assert 100 not in view1, "value not in set is in view"
+    assert view1 == a, "view's values not equivalent to set"
 
-    assert list(view1) == vals
-    assert view1[-1] == vals[-1]
-    assert view1[0] == vals[0]
-    assert view1[0] != vals[-1]
+    assert list(view1) == vals, "casted view not equivalent to expected values"
+    assert view1[-1] == vals[-1], (
+        "last index of view not equal to expected value"
+    )
+    assert view1[0] == vals[0], (
+        "first index of view not equal to expected value"
+    )
 
 
 def test_sortedsetview_comparsion():
@@ -828,24 +876,32 @@ def test_sortedsetview_comparsion():
     view1 = a.get_view(lock)
     view2 = a.get_view(lock)
 
-    assert view1 is not view2
-    assert view1 == view2
+    assert view1 is not view2, "views are not different objects"
+    assert view1 == view2, "views are not equivalent"
 
-    assert view1 == set(vals)
-    assert view1 == list(vals)
-    assert view1 == tuple(vals)
-    assert not view1 == 0
+    assert view1 == set(vals), (
+        "view was not equivlent to set of expected values"
+    )
+    assert view1 == list(vals), (
+        "view was not equivlent to list of expected values"
+    )
+    assert view1 == tuple(vals), (
+        "view was not equivlent to tuple of expected values"
+    )
+    assert not view1 == 0, "view is not equivlent to non supported comparsion"  # noqa: SIM201
 
     vals.pop()
     c = SortedSet(vals)
     view3 = c.get_view(RLock())
 
-    assert view1 is not view3
-    assert view1 != view3
-    assert view1 != set(vals)
-    assert view1 != list(vals)
-    assert view1 != tuple(vals)
-    assert view1 != 0
+    assert view1 is not view3, "views are not different objects"
+    assert view1 != view3, "views are equivalent"
+    assert view1 != set(vals), "view was equivlent to set of expected values"
+    assert view1 != list(vals), "view was equivlent to list of expected values"
+    assert view1 != tuple(vals), (
+        "view was equivlent to tuple of expected values"
+    )
+    assert view1 != 0, "view is equivlent to non supported comparsion"
 
 
 def test_sortedsetview_hash():
@@ -856,6 +912,7 @@ def test_sortedsetview_hash():
     lock = RLock()
     a = set_.get_view(lock)
     b = set_.get_view(lock)
-    assert a is not b
-    set_ = {a, b}
-    assert len(set_) == 2
+    assert a == b, "a was not equivalent to b"
+    assert hash(a) != hash(b), (
+        "equivalent mutable objects should have different hashes"
+    )
