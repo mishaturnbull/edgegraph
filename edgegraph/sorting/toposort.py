@@ -168,11 +168,11 @@ def topological_ordering(
     # and-gate custom filterfuncs to enforce universe containment
     if ff_via is not None:
 
-        def ff_via(link, vert):
+        def _ff_via(link, vert):
             return (vert in uni.vertices) and ff_via(link, vert)
     else:
 
-        def ff_via(_, vert):
+        def _ff_via(_, vert):
             return vert in uni.vertices
 
     if method == "kahn":
@@ -180,14 +180,14 @@ def topological_ordering(
             uni,
             direction_sensitive=direction_sensitive,
             unknown_handling=unknown_handling,
-            ff_via=ff_via,
+            ff_via=_ff_via,
         )
     if method == "dfs":
         return _topo_base_dfs(
             uni,
             direction_sensitive=direction_sensitive,
             unknown_handling=unknown_handling,
-            ff_via=ff_via,
+            ff_via=_ff_via,
         )
 
     # If we reach this point, we didn't select a valid backend in method

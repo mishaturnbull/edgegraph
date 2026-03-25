@@ -12,6 +12,7 @@ import pytest
 from edgegraph import exceptions
 from edgegraph.sorting import toposort
 from edgegraph.traversal import helpers
+from edgegraph.builder import explicit
 
 
 @pytest.mark.parametrize("algo", toposort.METHODS)
@@ -48,7 +49,9 @@ def test_toposort_ordering(algo, direction, graph_clrs09_22_8):
             direction_sensitive=incoming_dir,
         )
         for ivert in incoming:
-            assert ivert in seen, "Toposort was incorrect!"
+            assert ivert in seen, (
+                f"v{vert.i} depends on v{ivert.i} but was not observed!"
+            )
 
         seen.add(vert)
 
@@ -73,3 +76,46 @@ def test_toposort_die_on_unknown_backend(graph_clrs09_22_8):
 
     with pytest.raises(ValueError):
         toposort.topological_ordering(uni, method="My favorite color is blue")
+
+@pytest.mark.parametrize("algo", toposort.METHODS)
+def test_toposort_ff_via(algo, graph_clrs09_22_8):
+    """
+    Check the filterfunc-traverse-via operator of the topological sorts works
+    as intended.
+    """
+    uni, verts = graph_clrs09_22_8
+
+    # add a link which creates a cycle in the graph.  This makes it easy to
+    # spot whether ff_via is working or not -- if we get a cycle error, it was
+    # ignored; if it returns normally, then ff_via works.
+    new_link = explicit.link_directed(verts[7], verts[0])
+
+    def filterfunc(link, vert):
+        return link is not new_link
+
+    # try sorting without the filter.  We expect a cycle error.
+    with pytest.raises(exceptions.GraphContainsCyclesError):
+        toposort.topological_ordering(uni, method=algo)
+
+    # try sorting with the filter.  We expect a valid ordering now.
+    topo = toposort.topological_ordering(uni, method=algo, ff_via=filterfunc)
+
+    seen = set()
+    for vert in topo:
+        incoming = helpers.neighbors(
+            vert,
+            direction_sensitive=helpers.DIR_SENS_BACKWARD,
+
+            # we need to provide the same filterfunc here, otherwise the
+            # checker will incorrectly surmise we want v0 to depend on v7
+            filterfunc=filterfunc,
+        )
+        for ivert in incoming:
+            assert ivert in seen, (
+                f"v{vert.i} depends on v{ivert.i} but was not observed!"
+            )
+
+        seen.add(vert)
+
+    assert seen == set(verts), "Did not examine all vertices in the sort!"
+
