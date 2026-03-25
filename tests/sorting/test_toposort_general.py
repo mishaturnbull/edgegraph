@@ -10,9 +10,9 @@ their own modules.
 import pytest
 
 from edgegraph import exceptions
+from edgegraph.builder import explicit
 from edgegraph.sorting import toposort
 from edgegraph.traversal import helpers
-from edgegraph.builder import explicit
 
 
 @pytest.mark.parametrize("algo", toposort.METHODS)
@@ -77,6 +77,7 @@ def test_toposort_die_on_unknown_backend(graph_clrs09_22_8):
     with pytest.raises(ValueError):
         toposort.topological_ordering(uni, method="My favorite color is blue")
 
+
 @pytest.mark.parametrize("algo", toposort.METHODS)
 def test_toposort_ff_via(algo, graph_clrs09_22_8):
     """
@@ -105,7 +106,6 @@ def test_toposort_ff_via(algo, graph_clrs09_22_8):
         incoming = helpers.neighbors(
             vert,
             direction_sensitive=helpers.DIR_SENS_BACKWARD,
-
             # we need to provide the same filterfunc here, otherwise the
             # checker will incorrectly surmise we want v0 to depend on v7
             filterfunc=filterfunc,
@@ -118,4 +118,3 @@ def test_toposort_ff_via(algo, graph_clrs09_22_8):
         seen.add(vert)
 
     assert seen == set(verts), "Did not examine all vertices in the sort!"
-
