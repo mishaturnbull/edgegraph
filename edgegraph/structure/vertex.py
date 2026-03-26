@@ -8,7 +8,8 @@ from __future__ import annotations
 
 import threading
 from collections.abc import Iterator
-from typing import TYPE_CHECKING, Any, ClassVar, Iterable
+
+from typing_extensions import TYPE_CHECKING, Any, ClassVar, Iterable, override
 
 from edgegraph.structure import base
 from edgegraph.structure.collections_.sortedset import SortedSet, SortedSetView
@@ -39,7 +40,7 @@ class Vertex(base.BaseObject):
 
     # would love to use regular threading.RLock() here, but it breaks dill...
     # https://github.com/mishaturnbull/edgegraph/issues/118
-    _CACHE_STATS_LOCK = threading._PyRLock()
+    _CACHE_STATS_LOCK = threading.RLock()
 
     @classmethod
     def total_cache_stats(cls) -> str:
@@ -110,11 +111,8 @@ class Vertex(base.BaseObject):
         with self._CACHE_STATS_LOCK:
             self._CACHE_STATS.update({self.uid: [0, 0, 0, 0]})
 
-        # would love to use regular threading.RLock() here, but it breaks
-        # dill...
-        # https://github.com/mishaturnbull/edgegraph/issues/118
-        self._links_lock = threading._PyRLock()
-        self._qanb_cache_lock = threading._PyRLock()
+        self._links_lock = threading.RLock()
+        self._qanb_cache_lock = threading.RLock()
 
         #: Links that this vertex is associated with
         #:
@@ -132,6 +130,40 @@ class Vertex(base.BaseObject):
 
         with self._qanb_cache_lock:
             self.__qa_nb_cache: dict[tuple[Any, ...], list[Vertex]] = {}
+
+    @override
+    def __getstate__(self) -> dict:
+        """
+        Remove ``RLock`` attributes from this object during pickling.
+
+        ``RLock``s are known to not properly un-dill; we need to remove them
+        here as this object is being pickled.  See
+        https://github.com/mishaturnbull/edgegraph/issues/118 .
+        """
+        # parent class has some RLocks it also needs to remove; let it handle
+        # those
+        data = super().__getstate__()
+
+        data.pop("_links_lock")
+        data.pop("_qanb_cache_lock")
+        return data
+
+    @override
+    def __setstate__(self, value: dict) -> None:
+        """
+        Re-apply ``RLock`` attributes to this object during unpickling.
+
+        ``RLock``s are known to not work properly with dill when deserializing,
+        and we removed them when we got this object's state in __getstate__.
+        So, we need to re-add them here.  See
+        https://github.com/mishaturnbull/edgegraph/issues/118 .
+        """
+        # parent class also has some RLocks it needs to recreate; ensure it
+        # does so
+        super().__setstate__(value)
+
+        self.__dict__["_links_lock"] = threading.RLock()
+        self.__dict__["_qanb_cache_lock"] = threading.RLock()
 
     def add_to_universe(self, universe: Universe) -> None:
         """

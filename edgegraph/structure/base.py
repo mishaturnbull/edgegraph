@@ -9,7 +9,8 @@ from __future__ import annotations
 import threading
 import uuid
 from collections.abc import Iterator
-from typing import TYPE_CHECKING
+
+from typing_extensions import TYPE_CHECKING, override
 
 from edgegraph.structure.collections_.sortedset import SortedSet, SortedSetView
 
@@ -90,12 +91,42 @@ class BaseObject(object):
             for key, val in attributes.items():
                 setattr(self, key, val)
 
-        self._universes_lock = threading._PyRLock()
+        self._universes_lock = threading.RLock()
 
         #: Internal reference to the universes this object is a part of
         #:
         #: :meta private:
         self._universes: SortedSet[Universe] = SortedSet(universes)
+
+    @override
+    def __getstate__(self) -> dict:
+        """
+        Get the state of this object for pickling to a binary stream.
+
+        This is part of the pickling protocol wherein objects are converted to
+        binary streams; ``__getstate__`` usage allows customization of which
+        attributes of this object are pickled and which aren't.  We use it here
+        to avoid pickling ``RLock`` objects, which are known to not properly
+        un-dill.  See https://github.com/mishaturnbull/edgegraph/issues/118 .
+        """
+        data = self.__dict__.copy()
+        data.pop("_universes_lock")
+        return data
+
+    # Note: no @override here.  object() declares __getstate__, but not
+    # __setstate__!
+    def __setstate__(self, value: dict) -> None:
+        """
+        Set the state of this object as it's being unpickled.
+
+        This is part of the picling protocol wherein objects are given an
+        opportunity to control happenings as they're reinstantiated coming out
+        of the binary stream.  We use it here to re-apply ``RLock`` attributes,
+        which are known to not properly un-dill.  See
+        https://github.com/mishaturnbull/edgegraph/issues/118 .
+        """
+        self.__dict__.update(value)
+        self.__dict__["_universes_lock"] = threading.RLock()
 
     @property
     def uid(self) -> int:
