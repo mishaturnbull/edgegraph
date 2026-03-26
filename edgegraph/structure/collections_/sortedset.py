@@ -11,9 +11,9 @@ from typing_extensions import (
     TYPE_CHECKING,
     Callable,
     Generator,
-    Generic,
     Iterable,
     Sequence,
+    Set,
     TypeVar,
     overload,
     override,
@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 T = TypeVar("T")
 
 
-class SortedSetView(Generic[T], Sequence[T]):
+class SortedSetView(Sequence[T]):
     """
     A threadsafe view on the SortedSet.
 
@@ -99,7 +99,7 @@ class SortedSetView(Generic[T], Sequence[T]):
         return object.__hash__(self)
 
 
-class SortedSet(set[T], Sequence[T]):
+class SortedSet(Set[T], Sequence[T]):
     """
     Implementation of a set that maintains insertion order.
     Contents are accessible by index and all set operations are

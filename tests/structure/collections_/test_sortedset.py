@@ -872,12 +872,15 @@ def test_sortedsetview_comparsion():
     vals = list(range(num))
 
     a = SortedSet(vals)
+    b = SortedSet(vals)
     lock = RLock()
     view1 = a.get_view(lock)
     view2 = a.get_view(lock)
+    view3 = b.get_view(RLock())
 
     assert view1 is not view2, "views are not different objects"
     assert view1 == view2, "views are not equivalent"
+    assert not view1 != view2, "views are not equivalent"  # noqa: SIM202
 
     assert view1 == set(vals), (
         "view was not equivlent to set of expected values"
@@ -890,12 +893,15 @@ def test_sortedsetview_comparsion():
     )
     assert not view1 == 0, "view is not equivlent to non supported comparsion"  # noqa: SIM201
 
+    assert view1 is not view3, "views are not different objects"
+    assert view1 == view3, "views are not equivalent"
+
     vals.pop()
     c = SortedSet(vals)
-    view3 = c.get_view(RLock())
+    view4 = c.get_view(RLock())
 
-    assert view1 is not view3, "views are not different objects"
-    assert view1 != view3, "views are equivalent"
+    assert view1 is not view4, "views are not different objects"
+    assert view1 != view4, "views are equivalent"
     assert view1 != set(vals), "view was equivlent to set of expected values"
     assert view1 != list(vals), "view was equivlent to list of expected values"
     assert view1 != tuple(vals), (
