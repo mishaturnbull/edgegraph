@@ -6,7 +6,8 @@ from __future__ import annotations
 
 import itertools
 from threading import Lock
-from typing import (
+
+from typing_extensions import (
     TYPE_CHECKING,
     Callable,
     Generator,
