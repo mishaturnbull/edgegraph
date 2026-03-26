@@ -290,24 +290,6 @@ class SortedSet(Set[T], Sequence[T]):
         return f"{{{', '.join(vals)}}}"
 
     @override
-    def __getstate__(self):
-        return tuple(self._list)
-
-    @override
-    def __setstate__(self, state):
-        self.update(state)
-
-    # __reduce__ doesn't call __getstate__ by default for
-    # built-in types before 3.11
-    @override
-    def __reduce__(self):
-        args = super().__reduce__()
-        state = self.__getstate__()
-        args_ = list(args)
-        args_[2] = state
-        return tuple(args_)
-
-    @override
     def __eq__(self, value):
         if isinstance(value, SortedSet):
             return self._list == value._list

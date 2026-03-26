@@ -218,3 +218,8 @@ pretty = true
 hide_error_codes = false
 show_error_code_links = true
 
+[tool.coverage.run]
+exclude_lines = [
+    "pragma: no cover",
+    "@overload",
+]
