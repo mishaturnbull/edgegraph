@@ -205,8 +205,10 @@ def _topo_base_dfs(
         # ruff does not particularly appreciate this; until sorted sets come
         # in, this is measurably the fastest way to perform this operation,
         # which is important in this spot -- it may be called many times in a
-        # sort operation.
-        for vert in unvisited:  # noqa: B007
+        # sort operation.  Likewise, the tail call optimizer eliminates the
+        # break call here and it never shows up in coverage, even for an empty
+        # graph.
+        for vert in unvisited:  # noqa: B007  # pragma: no cover
             break
 
         _topo_dfs_visit(

@@ -12,6 +12,7 @@ import pytest
 from edgegraph import exceptions
 from edgegraph.builder import explicit
 from edgegraph.sorting import toposort
+from edgegraph.structure import universe
 from edgegraph.traversal import helpers
 
 
@@ -124,3 +125,15 @@ def test_toposort_ff_via(algo, graph_clrs09_22_8):
         seen.add(vert)
 
     assert seen == set(verts), "Did not examine all vertices in the sort!"
+
+
+@pytest.mark.parametrize("algo", toposort.METHODS)
+def test_toposort_empty(algo):
+    """
+    Verify expected behavior when passing in an empty graph (empty return).
+    """
+    uni = universe.Universe()
+
+    topo = toposort.topological_ordering(uni, method=algo)
+
+    assert len(topo) == 0, "Toposort materialized vertices out of nowhere!"
