@@ -72,9 +72,15 @@ def test_toposort_die_on_cycle(algo, graph_clrs09_22_6):
 
 
 def test_toposort_die_on_unknown_backend(graph_clrs09_22_8):
+    """
+    Tests topological sort throws an appropriate error when the user selects a
+    backend that doesn't exist.
+    """
     uni, _ = graph_clrs09_22_8
 
-    with pytest.raises(ValueError):
+    with pytest.raises(
+        ValueError, match="not a known topological sort backend"
+    ):
         toposort.topological_ordering(uni, method="My favorite color is blue")
 
 

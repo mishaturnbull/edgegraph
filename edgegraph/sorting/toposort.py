@@ -179,7 +179,7 @@ def _topo_base_dfs(
     ff_via: Callable | None = None,
 ) -> list[Vertex]:
     """
-    Modified DFS topo-sort algorithm backend.
+    Compute topo-sort using a modified DFS backend.
 
     This is an internal-use-only backend for topological sorting based on DFS.
 
@@ -202,8 +202,13 @@ def _topo_base_dfs(
     while unvisited:
         # similar to unvisited.pop(), but does not remove from the list
         # see https://stackoverflow.com/a/48874729
-        for vert in unvisited:
+        # ruff does not particularly appreciate this; until sorted sets come
+        # in, this is measurably the fastest way to perform this operation,
+        # which is important in this spot -- it may be called many times in a
+        # sort operation.
+        for vert in unvisited:  # noqa: B007
             break
+
         _topo_dfs_visit(
             vert,
             topo_ordered,
