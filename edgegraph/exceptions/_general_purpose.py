@@ -4,7 +4,7 @@
 The bulk of general-purpose exception types, for use all across edgegraph.
 """
 
-_dir_before = dir()
+_dir_before = set(dir())
 
 
 class GraphContainsCyclesError(Exception):
@@ -16,6 +16,8 @@ class GraphContainsCyclesError(Exception):
     """
 
 
-_dir_after = dir()
-_all_objs = set(_dir_after) - set(_dir_before) - {"_dir_after", "_dir_before"}
-__all__ = list(_all_objs)
+_dir_after = set(dir())
+_all = _dir_after - _dir_before - {"_dir_after", "_dir_before"}
+
+# Ruff does not seem to realize that sorted() does actually return a list.
+__all__ = sorted(_all)  # noqa: PLE0605

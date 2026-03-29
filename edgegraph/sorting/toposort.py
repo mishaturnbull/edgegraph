@@ -238,7 +238,7 @@ def topological_ordering(
     This function is a frontend for various implementations / algorithms for
     computing a topological ordering of a graph; that is, a linear ordering of
     a graph such that for every directed edge :math:`(u, v)`, :math:`u` comes
-    before :math;`v` in the ordered list.
+    before :math:`v` in the ordered list.
 
     Note that in many cases, multiple such ordering exist for a given graph.
     This function does not (currently) declare sorting stability; that is, it
