@@ -14,17 +14,25 @@ New features:
 
 #. Expose version constants at module level
 #. Added topological sorting algorithms and toposort API
+#. CI testing and official support for Python 3.14 and 3.14t
 
 Bugfixes / minor changes:
 
 #. Apply Ruff formatter to entire codebase (in place of Black)
 #. Apply Ruff linter ruleset to entire codebase (in place of pylint)
 #. Added a manual trigger for GitHub Actions
+#. Fixes use of `threading._PyRLock` (replaced with regular `threading.RLock`)
+#. Fixes free-threading intermittent safety issues
 
 **Removed**:
 
 #. ``UniverseLaws`` and associated machinery are deleted in this release due to
    lack of use cases and general lack of enforcement of their rules
+
+Other notes:
+
+#. Added `typing_extensions` as a dependency (see
+   https://github.com/mishaturnbull/edgegraph/pull/132 for why)
 
 .. _changelog/0.11.0:
 
