@@ -124,8 +124,6 @@ request and upload to PyPI.
 
 #. A version number is identified.  This number shall increment in accordance
    with :ref:`Edgegraph's versioning standard <versioning>`.
-#. Create a new branch from ``develop``, named :samp:`release/v{version
-   number}`.  For example, ``release/v0.4.0`` would be correct.
 #. Create a new branch:
 
    #. For normal releases (that is, major and minor releases), branch from
