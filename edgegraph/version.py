@@ -29,7 +29,7 @@ VERSION_MAJOR = 0
 #: minor version number (the Y in vX.Y.Z)
 #:
 #: :type: int
-VERSION_MINOR = 11
+VERSION_MINOR = 12
 
 #: patch version number (the Z in vX.Y.Z)
 #:
