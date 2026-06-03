@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -14,8 +13,8 @@ adjacency matrix structure, as is common in graph algorithms and software.
 
 from __future__ import annotations
 
-from edgegraph.structure import Universe, Vertex, DirectedEdge
 from edgegraph.builder import explicit
+from edgegraph.structure import DirectedEdge, Universe, Vertex
 
 
 def load_adj_matrix(
@@ -24,7 +23,7 @@ def load_adj_matrix(
     linktype: type = DirectedEdge,
 ) -> Universe:
     """
-    Loads an adjacency matrix to create a graph structure.
+    Load an adjacency matrix to create a graph structure.
 
     The input structure is expected to be a list of list of booleans.  A "side
     array" is also required, to denote the vertices.  Inputting of the
@@ -126,16 +125,17 @@ def load_adj_matrix(
     # make sure the side array is the same size as the matrix
     matrixlen = len(matrix)
     if len(vertices) != matrixlen:
-        raise ValueError(
-            "load_adj_matrix needs len(vertices) to be matrix len!"
-        )
+        msg = "load_adj_matrix needs len(vertices) to be matrix len!"
+        raise ValueError(msg)
+
     # and make sure that the matrix is a square
     for i, row in enumerate(matrix):
         if len(row) != matrixlen:
-            raise ValueError(
-                f"given matrix was not a square!  row {i} had "
-                f"len {len(row)}, should have {matrixlen}"
+            msg = (
+                f"given matrix was not a square!  row {i} had len {len(row)}"
+                ",should have {matrixlen}"
             )
+            raise ValueError(msg)
     # okay, good enough!
 
     uni = Universe()

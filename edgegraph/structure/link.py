@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -6,7 +5,11 @@ Holds the Link class.
 """
 
 from __future__ import annotations
-from typing import TYPE_CHECKING
+
+import threading
+
+from typing_extensions import TYPE_CHECKING, override
+
 from edgegraph.structure import base
 
 if TYPE_CHECKING:
@@ -52,6 +55,7 @@ class Link(base.BaseObject):
         :param vertices: list of Vertex objects that this link links
         :param _force_creation: force the instantiation of this object without
            error
+        :concurrency: Thread-safe
 
         .. seealso::
 
@@ -60,27 +64,63 @@ class Link(base.BaseObject):
         """
         super().__init__(uid=uid, attributes=attributes)
 
-        # prevent direct usage of this class -- its meaning is undefined
-        # pylint complains about this being unidiomatic, and suggests
+        # prevent direct usage of this class -- its meaning is undefined.
+        #
+        # this is a bit of an odd way to type-check; typically you would use
         # isinstance() instead.  however, isinstance() also returns True when
         # the given object is a *subclass* of the type -- which we don't want
         # here.  no flag or option is available to disable this; and no
         # alternative instance-but-not-subclass function is available, so here
         # we are.
-        # pylint: disable-next=unidiomatic-typecheck
-        if (type(self) == Link) and not _force_creation:
-            raise TypeError(
-                "Base class <Link> may not be instantiated directly!"
-            )
+        if (type(self) is Link) and not _force_creation:
+            msg = "Base class <Link> may not be instantiated directly!"
+            raise TypeError(msg)
+
+        # would love to use regular threading.RLock() here, but it breaks
+        # dill...
+        # https://github.com/mishaturnbull/edgegraph/issues/118
+        self._verts_lock = threading.RLock()
 
         #: Vertices that this link links
         #:
         #: This is a list of vertex objects that are linked together by this
         #: class.
-        self._vertices: list[Vertex] = []
-        if vertices is not None:
-            for vert in vertices:
-                self.add_vertex(vert)
+        with self._verts_lock:
+            self._vertices: list[Vertex] = []
+            if vertices is not None:
+                for vert in vertices:
+                    self.add_vertex(vert)
+
+    @override
+    def __getstate__(self) -> dict:
+        """
+        Remove ``RLock`` attributes from this object during pickling.
+
+        ``RLock``s are known to not properly un-dill; we need to remove them
+        here as this object is being pickled.  See
+        https://github.com/mishaturnbull/edgegraph/issues/118 .
+        """
+        # let parent superclass also handle its RLocks as needed
+        data = super().__getstate__()
+
+        data.pop("_verts_lock")
+        return data
+
+    @override
+    def __setstate__(self, value: dict) -> None:
+        """
+        Re-apply ``RLock`` attributes to this object during unpickling.
+
+        ``RLock``s are known to not work properly with dill when deserializing,
+        and we removed them when we got this object's state in __getstate__.
+        So, we need to re-add them here.  See
+        https://github.com/mishaturnbull/edgegraph/issues/118 .
+        """
+        # parent class also has some RLocks it needs to recreate; ensure it
+        # does so
+        super().__setstate__(value)
+
+        self.__dict__["_verts_lock"] = threading.RLock()
 
     @property
     def vertices(self) -> tuple[Vertex, ...]:
@@ -90,18 +130,23 @@ class Link(base.BaseObject):
         A tuple object is given because the addition or removal of vertex
         objects using this attribute is not intended; it is meant to be
         immutable.
+
+        :concurrency: Thread-safe
         """
-        return tuple(self._vertices)
+        with self._verts_lock:
+            return tuple(self._vertices)
 
     def add_vertex(self, new: Vertex):
         """
-        Adds a vertex to this link.
+        Add a vertex to this link.
 
         :param new: the vertex to add to the link
+        :concurrency: Thread-safe
         """
-        self._vertices.append(new)
-        if (new is not None) and (self not in new.links):
-            new.add_to_link(self)
+        with self._verts_lock:
+            self._vertices.append(new)
+            if (new is not None) and (self not in new.links):
+                new.add_to_link(self)
 
     def unlink_from(self, kill: Vertex):
         """
@@ -112,9 +157,11 @@ class Link(base.BaseObject):
         taken.
 
         :param kill: the vertex to unlink
+        :concurrency: Thread-safe
         """
-        if kill in self._vertices:
-            self._vertices.remove(kill)
+        with self._verts_lock:
+            if kill in self._vertices:
+                self._vertices.remove(kill)
 
-            if kill is not None:
-                kill.remove_from_link(self)
+                if kill is not None:
+                    kill.remove_from_link(self)

@@ -8,11 +8,15 @@ https://www.sphinx-doc.org/en/master/usage/configuration.html
 import datetime
 import os
 import sys
+
 import tomlkit
 
 topdir = os.path.split(os.path.split(__file__)[0])[0]
 sys.path.insert(0, topdir)
-from edgegraph import version as eg_version
+
+# cannot put this at the top of the file, as it needs the sys path messed with
+from docs._scripts import git, nitpick_warn_list, pyrev_helper  # noqa: E402
+from edgegraph import version as eg_version  # noqa: E402
 
 with open(os.path.join(topdir, "pyproject.toml"), "r") as ppyfile:
     pyproject = tomlkit.parse(ppyfile.read())
@@ -20,8 +24,6 @@ with open(os.path.join(topdir, "pyproject.toml"), "r") as ppyfile:
 # -- PyReverse calls ---------------------------------------------------------
 # import and run the helper script that generates the plantuml diagrams, which
 # are then rendered by sphinx-plantuml.
-
-from docs._scripts import pyrev_helper, git, nitpick_warn_list
 
 pyrev_helper.main()
 
@@ -35,7 +37,10 @@ release = eg_version.__version__
 
 # project started in 2023 Nov and copyright continues through author's life
 year = datetime.datetime.strftime(datetime.datetime.now(), "%Y")
-copyright = f"2023-{year}, Michael Turnbull"
+
+# sphinx's copyright variable unfortunately must be named exactly copyright,
+# shadowing the builtin.  nothing we can do.
+copyright = f"2023-{year}, Michael Turnbull"  # noqa: A001
 
 
 # -- General configuration ---------------------------------------------------

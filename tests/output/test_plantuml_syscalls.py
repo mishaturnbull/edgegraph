@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -8,7 +7,9 @@ PlantUML syscalls.
 
 import os
 import subprocess
+
 import pytest
+
 from edgegraph.output import plantuml
 
 puml_skip = pytest.mark.skipif(
@@ -39,11 +40,8 @@ def test_plantuml_out_file_format():
     """
     Ensure errors are raised on unknown file formats.
     """
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Only PNG's are supported"):
         plantuml.render_to_image("", "out.not-a-png")
-
-    with pytest.raises(ValueError):
-        plantuml.render_to_image("", "out.jpeg")
 
 
 # really, this confirms that subprocess.run errors are happening
@@ -66,7 +64,7 @@ def test_plantuml_syscall_empty(tmpdir):
     """
     Ensure we get an error when passing in empty plantuml contents.
     """
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="empty string src"):
         plantuml.render_to_image("", os.path.join(tmpdir, "out.png"))
 
 

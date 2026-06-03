@@ -1,4 +1,3 @@
-#!/usr/env/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -9,11 +8,12 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from typing import Generator
+
 from edgegraph.structure import (
-    Vertex,
-    Link,
     DirectedEdge,
+    Link,
     UnDirectedEdge,
+    Vertex,
 )
 
 #: Unknown edge classes treated as non-neighbors.
@@ -174,15 +174,9 @@ def ineighbors(
        neighbors of the specified vertex.
     """
 
-    # pylint complains about this operation, with fairly good reason -- we're
-    # accessing a private member of a client class.  however, since this is
-    # still edgegraph-internal code, this is ok; it would be a problem were the
-    # consumer of edgegraph doing this, though.
-    # pylint: disable-next=protected-access
     cached = vert._qa_neighbors_get(
         direction_sensitive, unknown_handling, filterfunc
     )
-    # pylint: disable-next=protected-access
     if cached is not Vertex._QA_NB_INVALID:
         yield from cached
         return
@@ -190,13 +184,11 @@ def ineighbors(
     cache = []
 
     for link in vert.links:
-
         v2 = link.other(vert)
 
         if direction_sensitive == DIR_SENS_FORWARD:
             # undirected edges don't matter
             if issubclass(type(link), UnDirectedEdge):
-
                 # we'll use boolean short-circuiting to prevent an unnecessary
                 # call into a default filterfunc if one is not provided.  such
                 # a default would always return True, but be an unnecessary
@@ -211,20 +203,18 @@ def ineighbors(
                         cache.append(v2)
                     yield v2
                 else:
-
                     # this is not detectable by coverage.py, due to a ~~bug~~
                     # side effect of the python peephole optimizer.  continue
                     # statements inside else: blocks are often skipped /
                     # replaced with a jump opcode.  see
                     # https://github.com/nedbat/coveragepy/issues/198#issuecomment-399705984
                     # for more info.  for proof that this IS run, uncomment:
-                    # raise Exception("look, ma!  this happened!")
+                    # raise Exception("look, ma!  this happened!")  # noqa: ERA001
                     # and re-run unit tests.  You'll get that exception.
                     continue  # pragma: no cover
 
             # for directed edges, only add the neighbor if vert is the origin
             elif issubclass(type(link), DirectedEdge) and (link.v1 is vert):
-
                 # see above notes on short-circuiting filterfunc() if it's not
                 # provided
                 if filterfunc is None or filterfunc(link, v2):
@@ -251,14 +241,11 @@ def ineighbors(
                         cache.append(yld)
                     yield yld
                 else:
-                    raise NotImplementedError(
-                        f"Unknown link class {type(link)}"
-                    )
+                    msg = f"Unknown link class {type(link)}"
+                    raise NotImplementedError(msg)
 
         elif direction_sensitive == DIR_SENS_BACKWARD:
-
             if issubclass(type(link), UnDirectedEdge):
-
                 if filterfunc is None or filterfunc(link, v2):
                     if Vertex.NEIGHBOR_CACHING:
                         cache.append(v2)
@@ -270,7 +257,6 @@ def ineighbors(
 
             # for directed edges, only add the neighbor if vert is the origin
             elif issubclass(type(link), DirectedEdge) and (link.v2 is vert):
-
                 # see above notes on short-circuiting filterfunc() if it's not
                 # provided
                 if filterfunc is None or filterfunc(link, v2):
@@ -297,9 +283,8 @@ def ineighbors(
                         cache.append(yld)
                     yield yld
                 else:
-                    raise NotImplementedError(
-                        f"Unknown link class {type(link)}"
-                    )
+                    msg = f"Unknown link class {type(link)}"
+                    raise NotImplementedError(msg)
 
         elif direction_sensitive == DIR_SENS_ANY:
             # see above notes on short-circuiting filterfunc() if it's not
@@ -310,9 +295,8 @@ def ineighbors(
                 yield v2
 
         else:
-            raise ValueError(
-                f"Unknown option for direction_sensitive = {direction_sensitive}"
-            )
+            msg = f"Unknown option for direction_sensitive = {direction_sensitive}"
+            raise ValueError(msg)
 
     vert._qa_neighbors_insert(
         cache, direction_sensitive, unknown_handling, filterfunc
@@ -429,15 +413,12 @@ def find_links(
 
     links = set()
     for link in v1.links:
-
         # no matter what the other options are, don't care!
         if link.other(v1) is not v2:
             continue
 
         if direction_sensitive:
-
             if issubclass(type(link), UnDirectedEdge):
-
                 # short-circuit operation, just like in neighbors()
                 if filterfunc is None or filterfunc(link):
                     links.add(link)
@@ -447,7 +428,6 @@ def find_links(
                     continue  # pragma: no cover
 
             elif issubclass(type(link), DirectedEdge):
-
                 if link.v1 is not v1:
                     # this is a link from v2 to v1, not the way we want
                     continue
@@ -465,9 +445,8 @@ def find_links(
                 if unknown_handling == LNK_UNKNOWN_NEIGHBOR:
                     links.add(link)
                 else:
-                    raise NotImplementedError(
-                        f"Unknown link class {type(link)}"
-                    )
+                    msg = f"Unknown link class {type(link)}"
+                    raise NotImplementedError(msg)
 
         else:
             # see above notes on short-circuiting filterfunc() if it's not

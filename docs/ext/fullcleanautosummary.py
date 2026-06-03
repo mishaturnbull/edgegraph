@@ -1,4 +1,3 @@
-#!python3
 # -*- coding: utf-8 -*-
 
 """
@@ -35,6 +34,7 @@ I'm not happy about this.
 
 import os
 import shutil
+
 from sphinx.util import logging
 
 LOG = logging.getLogger(__name__)
@@ -55,7 +55,6 @@ def wipe_autosummary_dirs(app, exception):
     to_delete = set()
 
     for docname in files:
-
         with open(docname + ".rst", "r") as fp:
             lines = fp.readlines()
 
@@ -70,9 +69,7 @@ def wipe_autosummary_dirs(app, exception):
         toctrees = []
         for lineno in linenos:
             searchin = lines[lineno : lineno + 5]
-            for line in searchin:
-                if TOCTREE_LINE in line:
-                    toctrees.append(line)
+            toctrees.extend(line for line in searchin if TOCTREE_LINE in line)
 
         # we now have the :toctree: lines, do some string math to grab the
         # directory name

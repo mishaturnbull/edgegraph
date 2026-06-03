@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -6,10 +5,12 @@ Unit tests for traversal.depthfirst module.
 """
 
 import itertools
+
 import pytest
-from edgegraph.structure import Vertex, Universe
-from edgegraph.traversal import depthfirst
+
 from edgegraph.builder import explicit
+from edgegraph.structure import Universe, Vertex
+from edgegraph.traversal import depthfirst
 
 ###############################################################################
 # traversals!
@@ -28,7 +29,7 @@ dftr_data = [
 ]
 
 
-@pytest.mark.parametrize("start,expected", dftr_data)
+@pytest.mark.parametrize(("start", "expected"), dftr_data)
 def test_dftr_from(graph_clrs09_22_6, start, expected):
     """
     Test traversing from a given starting point, using the recursive
@@ -55,7 +56,7 @@ dfti_data = [
 ]
 
 
-@pytest.mark.parametrize("start,expected", dfti_data)
+@pytest.mark.parametrize(("start", "expected"), dfti_data)
 def test_dfti_from(graph_clrs09_22_6, start, expected):
     """
     Test traversing from a given starting point, using the iterative
@@ -82,7 +83,7 @@ def test_dft_empty(func):
     """
     uni = Universe()
     start = None
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Universe is empty"):
         func(uni, start)
 
 
@@ -94,7 +95,7 @@ def test_dft_nonuniverse(graph_clrs09_22_6, func):
     uni, _ = graph_clrs09_22_6
     extra = Vertex(attributes={"i": -1})
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="vertex not in specified universe"):
         func(uni, extra)
 
 
@@ -158,7 +159,7 @@ def test_dft_ff_result(graph_clrs09_22_6, func):
     """
     _, verts = graph_clrs09_22_6
     trav = func(None, verts[1], ff_result=lambda v: v.i > 5)
-    trav = set(v.i for v in trav)
+    trav = {v.i for v in trav}
     assert trav == {6, 7, 8, 9}
 
 
@@ -169,7 +170,7 @@ def test_dft_ff_via(graph_clrs09_22_6, func):
     """
     _, verts = graph_clrs09_22_6
     trav = func(None, verts[1], ff_via=lambda e, v2: v2.i % 2 == 0)
-    trav = set(v.i for v in trav)
+    trav = {v.i for v in trav}
     assert trav == {0, 1, 2, 4, 6, 8}
 
 
@@ -186,7 +187,7 @@ def test_dft_ff_via_and_result(graph_clrs09_22_6, func):
         ff_via=lambda e, v2: v2.i % 2 == 0,
         ff_result=lambda v: v.i > 5,
     )
-    trav = set(v.i for v in trav)
+    trav = {v.i for v in trav}
     assert trav == {6, 8}
 
 
@@ -202,7 +203,9 @@ dfs_data[1][1] = False
 dfs_data[4][1] = False
 
 
-@pytest.mark.parametrize("func,sdat", itertools.product(searches, dfs_data))
+@pytest.mark.parametrize(
+    ("func", "sdat"), itertools.product(searches, dfs_data)
+)
 def test_dfs_search_for(graph_clrs09_22_6, func, sdat):
     """
     Test that we find vertices we should, and don't we shouldn't.
@@ -229,7 +232,7 @@ def test_dfs_empty(func):
     """
     uni = Universe()
     start = None
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Universe is empty"):
         func(uni, start, "i", 15)
 
 
@@ -241,7 +244,7 @@ def test_dfs_nonuniverse(graph_clrs09_22_6, func):
     uni, _ = graph_clrs09_22_6
     extra = Vertex(attributes={"i": -1})
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="vertex not in specified universe"):
         func(uni, extra, "i", -1)
 
 
@@ -267,9 +270,9 @@ def test_dfs_search_wrong_attr(graph_clrs09_22_6, func):
     verts[6].j = 10
     search = func(uni, verts[0], "i", 10)
     right = func(uni, verts[0], "j", 10)
-    assert (
-        search is None
-    ), f"{func} found an answer when shouldn't: i={search.i}"
+    assert search is None, (
+        f"{func} found an answer when shouldn't: i={search.i}"
+    )
     assert right is verts[6], f"{func} did not find right answer!"
 
 
@@ -313,6 +316,6 @@ def test_dft_stress(graph_clrs09_22_6, combo):
     func, answer = combo
     for _ in range(10000):
         trav = func(uni, verts[0])
-        assert [
-            v.i for v in trav
-        ] == answer, "Depth-first traversal gave wrong answer in stress test!"
+        assert [v.i for v in trav] == answer, (
+            "Depth-first traversal gave wrong answer in stress test!"
+        )

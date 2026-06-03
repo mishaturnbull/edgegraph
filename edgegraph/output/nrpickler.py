@@ -1,7 +1,6 @@
-#!python3
 # -*- coding: utf-8 -*-
 
-"""
+r"""
 Non-recursive pickler / "diller" implementation to be used for serializing
 edgegraph objects.
 
@@ -53,10 +52,25 @@ Usage of this pickler should be similar to the built-in one::
 At this point, the ``unpacked`` object is a Universe identical in every way to
 ``graph``, except it is a different instance.  All of its vertices, links, and
 any attributes of have all been unpacked.
+
+.. note::
+
+   If you intend to pickle / unpickle objects which use
+   :py:class:`~threading.RLock`, you must implement special handling of
+   ``__getstate__`` and ``__setstate__`` (or equivalent) customization rules
+   which remove these locks before pickling and re-add them to your instance
+   after unpickling.  See https://github.com/mishaturnbull/edgegraph/issues/118
+   for some background on this and the associated PR for an example of what it
+   looks like (I suggest in particular the ``vertex.py`` changes as a good
+   example).
+
+   Ensure you call the superclass ``__getstate__`` and ``__setstate__`` from
+   yours!
 """
 
 import io
 import pickle
+
 import dill
 
 
@@ -123,9 +137,11 @@ class _NonrecursivePickler(dill.Pickler):
         """
         # do not coverage-test this line, as it's intended to never be run
         if save_persistent_id is not None:  # pragma: no branch
-            raise NotImplementedError(  # pragma: no cover
-                "Edgegraph _NonrecursivePickler does not support save_persistent_id option!"
-            )
+            msg = (
+                "Edgegraph _NonrecursivePickler does not support"
+                "save_persistent_id option!"
+            )  # pragma: no cover
+            raise NotImplementedError(msg)  # pragma: no cover
         self.lazywrites.append(_LazySave(obj))
 
     #: Alias to the true :py:meth:`dill.Pickler.save`.

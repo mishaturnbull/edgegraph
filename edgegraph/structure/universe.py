@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -6,157 +5,15 @@ Holds the Universe class.
 """
 
 from __future__ import annotations
-from typing import TYPE_CHECKING
-import types
-from edgegraph.structure import base, vertex
+
+import threading
+
+from typing_extensions import TYPE_CHECKING, override
+
+from edgegraph.structure import vertex
 
 if TYPE_CHECKING:
     Vertex = vertex.Vertex
-
-
-class UniverseLaws(base.BaseObject):
-    """
-    Defines the rules that apply to a universe.
-
-    This class is effectively a namespace that controls the rules / constraints
-    that a universe must obey.
-
-    Pay close attention to the difference in meaning between the
-    :py:attr:`applies_to` and :py:attr:`universes` attributes.  The former
-    (applies_to) refers to the universe that these laws apply to.  This object
-    is not necessarily a vertex / object present in that universe.  The latter
-    (universes) is the set of universes this object *appears in*; see also
-    :py:attr:`edgegraph.structure.base.BaseObject.universes`, where the latter
-    (universes) is inherited from.
-
-    Likewise, the :py:meth:`add_to_universe` and
-    :py:meth:`remove_from_universe` are inherited from
-    :py:meth:`edgegraph.structure.base.BaseObject.add_to_universe` and
-    :py:meth:`edgegraph.structure.base.BaseObject.remove_from_universe`.
-    """
-
-    def __init__(
-        self,
-        edge_whitelist: dict | None = None,
-        mixed_links: bool = False,
-        cycles: bool = True,
-        multipath: bool = True,
-        multiverse: bool = False,
-        applies_to: Universe | None = None,
-    ):
-        """
-        Instantiate a set of universal laws.
-
-        .. important::
-
-           After creation / instantiation, the attributes of this object become
-           read-only!
-
-        :param edge_whitelist: dictionary of types of links allowed
-        :param mixed_links: whether or not mixed link types are allowed
-        :param cycles: whether or not cycles are allowed
-        :param multipath: whether or not multiple paths between nodes are
-            allowed (not necessarily cycles)
-        :param multiverse: whether or not universes may be connected inside
-            this universe
-        :param applies_to: the universe these laws apply to
-        """
-        super().__init__()
-
-        #: edge types allowed
-        self._edge_whitelist = edge_whitelist
-        try:
-            self.edge_whitelist
-        except (ValueError, AttributeError) as exc:
-            # re-raise, but with a more clear message of what's happening
-            raise ValueError(
-                "Given edge_whitelist is of incorrect structure!"
-            ) from exc
-
-        #: whether or not mixed link types are allowed
-        #:
-        #: TODO: is this functionality covered by edge_whitelist ??
-        self._mixed_links = mixed_links
-
-        #: whether or not cycles are allowed
-        self._cycles = cycles
-
-        #: whether or not multipaths are allowed
-        self._multipath = multipath
-
-        #: whether or not universes may be vertices in this universe
-        self._multiverse = multiverse
-
-        #: the universe these laws apply to
-        self._applies_to = applies_to
-
-    @property
-    def edge_whitelist(self):
-        """
-        Returns an immutable copy of the edge whitelist rules.
-
-        :rtype: types.MappingProxyType[type, types.MappingProxyType[type, type]] or None
-        """
-        if self._edge_whitelist is None:
-            return None
-
-        out = types.MappingProxyType(
-            {
-                t: types.MappingProxyType(dict(linkset.items()))
-                for t, linkset in self._edge_whitelist.items()
-            }
-        )
-        return out
-
-    @property
-    def mixed_links(self) -> bool:
-        """
-        Returns whether or not mixed types of links are allowed here.
-        """
-        return self._mixed_links
-
-    @property
-    def cycles(self) -> bool:
-        """
-        Returns whether or not cycles are allowed in this universe.
-        """
-        return self._cycles
-
-    @property
-    def multipath(self) -> bool:
-        """
-        Returns whether or not multiple paths between nodes are allowed in this
-        universe.
-        """
-        return self._multipath
-
-    @property
-    def multiverse(self) -> bool:
-        """
-        Returns whether ot not this is a "multiverse" -- that is, whether other
-        Universes are allowed to be vertices in this graph.
-        """
-        return self._multiverse
-
-    @property
-    def applies_to(self) -> Universe | None:
-        """
-        Returns the universe that these laws apply to.
-        """
-        return self._applies_to
-
-    @applies_to.setter
-    def applies_to(self, new: Universe):
-        """
-        Set the universe these laws apply to.
-        """
-        if new is self._applies_to:
-            return
-
-        self._applies_to = new
-
-        if self._applies_to is not None:
-            self._applies_to.laws = self
 
 
 class Universe(vertex.Vertex):
@@ -185,7 +42,6 @@ class Universe(vertex.Vertex):
         self,
         *,
         vertices: set[vertex.Vertex] | None = None,
-        laws: UniverseLaws | None = None,
         uid: int | None = None,
         attributes: dict | None = None,
     ):
@@ -193,7 +49,6 @@ class Universe(vertex.Vertex):
         Instantiate a Universe.
 
         :param vertices: a set of vertices to link to this universe
-        :param laws: the laws of nature that apply to this universe
 
         .. seealso::
 
@@ -202,17 +57,43 @@ class Universe(vertex.Vertex):
         """
         super().__init__(uid=uid, attributes=attributes)
 
-        #: Laws of the universe
-        self._laws: UniverseLaws | None = laws
-        if self._laws is None:
-            self._laws = UniverseLaws(applies_to=self)
-        self._laws.applies_to = self
+        self._verts_lock = threading.RLock()
 
         #: Internal set of vertices
         self._vertices: list[Vertex] = []
         if vertices is not None:
             for v in vertices:
                 self.add_vertex(v)
+
+    @override
+    def __getstate__(self) -> dict:
+        """
+        Remove ``RLock`` attributes from this object during pickling.
+
+        ``RLock``s are known to not properly deserialize when using dill;
+        remove them here as this object is being pickled.  See
+        https://github.com/mishaturnbull/edgegraph/issues/118 .
+        """
+        # let the superclass handle its RLocks too
+        data = super().__getstate__()
+
+        data.pop("_verts_lock")
+        return data
+
+    @override
+    def __setstate__(self, value: dict) -> None:
+        """
+        Recreate ``RLock`` attributes during unpickling.
+
+        ``RLock``s are knwn to not work properly with dill when deserializing,
+        and we removed them when we got this object's state in __getstate__.
+        So, we need to re-add the here.  See
+        https://github.com/mishaturnbull/edgegraph/issues/118 .
+        """
+        # let the superclass recreate its RLocks too
+        super().__setstate__(value)
+
+        self.__dict__["_verts_lock"] = threading.RLock()
 
     @property
     def vertices(self) -> list[vertex.Vertex]:
@@ -230,11 +111,12 @@ class Universe(vertex.Vertex):
         :return: vertices belonging to this universe, ordered by insertion
            order.
         """
-        return list(self._vertices)
+        with self._verts_lock:
+            return list(self._vertices)
 
     def add_vertex(self, vert: vertex.Vertex):
         """
-        Adds a new vertex to this universe.
+        Add a new vertex to this universe.
 
         The vertex in question will automatically have its universes updated to
         include this one, if needed.  If the vertex is already present, no
@@ -247,12 +129,13 @@ class Universe(vertex.Vertex):
 
         :param vert: the vertex to be added
         """
-        if vert in self._vertices:
-            return
+        with self._verts_lock:
+            if vert in self._vertices:
+                return
 
-        self._vertices.append(vert)
-        if self not in vert.universes:
-            vert.add_to_universe(self)
+            self._vertices.append(vert)
+            if self not in vert.universes:
+                vert.add_to_universe(self)
 
     def remove_vertex(self, vert: vertex.Vertex):
         """
@@ -264,41 +147,7 @@ class Universe(vertex.Vertex):
 
         :param vert: the vertex to be removed
         """
-        self._vertices.remove(vert)
-        if self in vert.universes:
-            vert.remove_from_universe(self)
-
-    @property
-    def laws(self) -> UniverseLaws | None:
-        """
-        Get the laws of this universe.
-        """
-        return self._laws
-
-    @laws.setter
-    def laws(self, new: UniverseLaws):
-        """
-        Set the laws of this universe.
-        """
-        # covers the None-and-None case as well as already-assigned
-        if new is self._laws:
-            return
-
-        # deassignment
-        if self._laws is not None and new is None:
-            # pylint (rightfully) complains about the access to a private
-            # member here -- but, since we're still within the library, this is
-            # allowed.  it would, however, be an issue if a user of edgegraph
-            # were accessing this
-            # pylint: disable-next=protected-access
-            self._laws._applies_to = None
-            self._laws = None
-
-        # new- and re-assignment
-        else:
-            # mypy can't seem to figure out the type-narrowing here.  in this
-            # else clause, self._laws won't be none
-            self._laws.applies_to = None  # type: ignore
-
-            self._laws = new
-            self._laws.applies_to = self
+        with self._verts_lock:
+            self._vertices.remove(vert)
+            if self in vert.universes:
+                vert.remove_from_universe(self)

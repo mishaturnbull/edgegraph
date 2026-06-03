@@ -1,17 +1,16 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
 Unit tests for builder.explicit module.
 """
 
-from edgegraph.structure import (
-    Vertex,
-    TwoEndedLink,
-    DirectedEdge,
-    UnDirectedEdge,
-)
 from edgegraph.builder import explicit
+from edgegraph.structure import (
+    DirectedEdge,
+    TwoEndedLink,
+    UnDirectedEdge,
+    Vertex,
+)
 from edgegraph.traversal import helpers
 
 
@@ -23,8 +22,8 @@ def test_link_basecls():
     v2 = Vertex()
 
     # make sure the preconditions are as expected
-    assert v1.links == tuple(), "v1 had links after __init__??"
-    assert v2.links == tuple(), "v2 had links after __init__??"
+    assert v1.links == (), "v1 had links after __init__??"
+    assert v2.links == (), "v2 had links after __init__??"
 
     # call test func!
     lnk = explicit.link_from_to(v1, TwoEndedLink, v2)
@@ -52,8 +51,8 @@ def test_link_directed():
     v2 = Vertex()
 
     # make sure the preconditions are as expected
-    assert v1.links == tuple(), "v1 had links after __init__??"
-    assert v2.links == tuple(), "v2 had links after __init__??"
+    assert v1.links == (), "v1 had links after __init__??"
+    assert v2.links == (), "v2 had links after __init__??"
 
     lnk = explicit.link_directed(v1, v2)
 
@@ -68,8 +67,8 @@ def test_link_undirected():
     v2 = Vertex()
 
     # make sure the preconditions are as expected
-    assert v1.links == tuple(), "v1 had links after __init__??"
-    assert v2.links == tuple(), "v2 had links after __init__??"
+    assert v1.links == (), "v1 had links after __init__??"
+    assert v2.links == (), "v2 had links after __init__??"
 
     lnk = explicit.link_undirected(v1, v2)
 
@@ -97,13 +96,9 @@ def test_unlink_multiple():
     """
     v1 = Vertex()
     v2 = Vertex()
-    links = []
-    for _ in range(30):
-        links.append(explicit.link_directed(v1, v2))
-    for _ in range(30):
-        links.append(explicit.link_undirected(v1, v2))
-    for _ in range(30):
-        links.append(explicit.link_from_to(v1, TwoEndedLink, v2))
+    links = [explicit.link_directed(v1, v2) for _ in range(30)]
+    links.extend(explicit.link_undirected(v1, v2) for _ in range(30))
+    links.extend(explicit.link_from_to(v1, TwoEndedLink, v2) for _ in range(30))
 
     assert len(v1.links) == len(links), "wrong starting conditions!"
     assert len(v2.links) == len(links), "wrong starting conditions!"
@@ -192,8 +187,8 @@ def test_link_basecls_chain():
 
     assert verts[0].links == (l1,), "verts[0] has wrong links"
     assert verts[1].links == (l1,), "verts[1] has wrong links"
-    assert verts[2].links == tuple(), "verts[2] has wrong links"
-    assert verts[3].links == tuple(), "verts[3] has wrong links"
+    assert verts[2].links == (), "verts[2] has wrong links"
+    assert verts[3].links == (), "verts[3] has wrong links"
     assert l1.vertices == (verts[0], verts[1]), "l1 has wrong vertices"
 
     l2 = explicit.link_from_to(verts[1], TwoEndedLink, verts[2])
@@ -201,7 +196,7 @@ def test_link_basecls_chain():
     assert verts[0].links == (l1,), "verts[0] has wrong links"
     assert verts[1].links == (l1, l2), "verts[1] has wrong links"
     assert verts[2].links == (l2,), "verts[2] has wrong links"
-    assert verts[3].links == tuple(), "verts[3] has wrong links"
+    assert verts[3].links == (), "verts[3] has wrong links"
     assert l1.vertices == (verts[0], verts[1]), "l1 has wrong vertices"
     assert l2.vertices == (verts[1], verts[2]), "l2 has wrong vertices"
 

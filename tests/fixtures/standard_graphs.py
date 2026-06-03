@@ -1,4 +1,3 @@
-#!python3
 # -*- coding: utf-8 -*-
 
 """
@@ -6,9 +5,11 @@ Various "standard" graphs that you might find on your local whiteboard.
 """
 
 from __future__ import annotations
+
 import pytest
-from edgegraph.structure import Universe, Vertex
+
 from edgegraph.builder import explicit
+from edgegraph.structure import Universe, Vertex
 
 
 @pytest.fixture

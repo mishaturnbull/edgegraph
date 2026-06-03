@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -6,7 +5,8 @@ Ensure the versioning constants are valid.
 """
 
 import re
-from edgegraph import version
+
+import edgegraph
 
 
 def test_version():
@@ -18,15 +18,15 @@ def test_version():
     """
 
     for attr in [
-        version.VERSION_MAJOR,
-        version.VERSION_MINOR,
-        version.VERSION_PATCH,
+        edgegraph.VERSION_MAJOR,
+        edgegraph.VERSION_MINOR,
+        edgegraph.VERSION_PATCH,
     ]:
         assert isinstance(attr, int)
         assert attr >= 0
 
     # 5 is the minimum possible length, of "0.0.0"
-    assert len(version.__version__) >= 5
+    assert len(edgegraph.__version__) >= 5
 
 
 def test_python_version_compliance():
@@ -41,4 +41,4 @@ def test_python_version_compliance():
         r'^([1-9][0-9]*!)?(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*))*((a|b|rc)"'
         r"(0|[1-9][0-9]*))?(\.post(0|[1-9][0-9]*))?(\.dev(0|[1-9][0-9]*))?$"
     )
-    assert re.match(ptrn, version.__version__)
+    assert re.match(ptrn, edgegraph.__version__)

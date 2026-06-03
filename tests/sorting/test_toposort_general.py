@@ -1,0 +1,139 @@
+# -*- coding: utf-8 -*-
+
+"""
+Unit tests for topological sorts which work on all toposorting algorithms.
+
+Quirks unique to specific algorithms (Kahns, DFS-based, etc) are tested in
+their own modules.
+"""
+
+import pytest
+
+from edgegraph import exceptions
+from edgegraph.builder import explicit
+from edgegraph.sorting import toposort
+from edgegraph.structure import universe
+from edgegraph.traversal import helpers
+
+
+@pytest.mark.parametrize("algo", toposort.METHODS)
+@pytest.mark.parametrize(
+    "direction", [helpers.DIR_SENS_FORWARD, helpers.DIR_SENS_BACKWARD]
+)
+def test_toposort_ordering(algo, direction, graph_clrs09_22_8):
+    """
+    Borderline smoke-test level check of topological sort correctness.
+
+    Call the function, then verify that running through it in order doesn't
+    give any dependency issues.
+
+    This graph fixture (22.8) does not contain any cycles.
+    """
+    uni, verts = graph_clrs09_22_8
+
+    topo = toposort.topological_ordering(
+        uni,
+        direction_sensitive=direction,
+        method=algo,
+    )
+
+    # flip-flop direction for incoming edge assessment
+    incoming_dir = helpers.DIR_SENS_BACKWARD
+    if direction == incoming_dir:
+        incoming_dir = helpers.DIR_SENS_FORWARD
+
+    # make sure no nodes have unfinished inbound edges
+    seen = set()
+    for vert in topo:
+        incoming = helpers.neighbors(
+            vert,
+            direction_sensitive=incoming_dir,
+        )
+        for ivert in incoming:
+            assert ivert in seen, (
+                f"v{vert.i} depends on v{ivert.i} but was not observed!"
+            )
+
+        seen.add(vert)
+
+    assert seen == set(verts), "Did not examine all vertices in the sort!"
+
+
+@pytest.mark.parametrize("algo", toposort.METHODS)
+def test_toposort_die_on_cycle(algo, graph_clrs09_22_6):
+    """
+    Check that a contains-cycles error is raised when a graph contains a cycle.
+
+    This graph fixture (22.6) *does* contain cycles.
+    """
+    uni, _ = graph_clrs09_22_6
+
+    with pytest.raises(exceptions.GraphContainsCyclesError):
+        toposort.topological_ordering(uni, method=algo)
+
+
+def test_toposort_die_on_unknown_backend(graph_clrs09_22_8):
+    """
+    Tests topological sort throws an appropriate error when the user selects a
+    backend that doesn't exist.
+    """
+    uni, _ = graph_clrs09_22_8
+
+    with pytest.raises(
+        ValueError, match="not a known topological sort backend"
+    ):
+        toposort.topological_ordering(uni, method="My favorite color is blue")
+
+
+@pytest.mark.parametrize("algo", toposort.METHODS)
+def test_toposort_ff_via(algo, graph_clrs09_22_8):
+    """
+    Check the filterfunc-traverse-via operator of the topological sorts works
+    as intended.
+    """
+    uni, verts = graph_clrs09_22_8
+
+    # add a link which creates a cycle in the graph.  This makes it easy to
+    # spot whether ff_via is working or not -- if we get a cycle error, it was
+    # ignored; if it returns normally, then ff_via works.
+    new_link = explicit.link_directed(verts[7], verts[0])
+
+    def filterfunc(link, vert):
+        return link is not new_link
+
+    # try sorting without the filter.  We expect a cycle error.
+    with pytest.raises(exceptions.GraphContainsCyclesError):
+        toposort.topological_ordering(uni, method=algo)
+
+    # try sorting with the filter.  We expect a valid ordering now.
+    topo = toposort.topological_ordering(uni, method=algo, ff_via=filterfunc)
+
+    seen = set()
+    for vert in topo:
+        incoming = helpers.neighbors(
+            vert,
+            direction_sensitive=helpers.DIR_SENS_BACKWARD,
+            # we need to provide the same filterfunc here, otherwise the
+            # checker will incorrectly surmise we want v0 to depend on v7
+            filterfunc=filterfunc,
+        )
+        for ivert in incoming:
+            assert ivert in seen, (
+                f"v{vert.i} depends on v{ivert.i} but was not observed!"
+            )
+
+        seen.add(vert)
+
+    assert seen == set(verts), "Did not examine all vertices in the sort!"
+
+
+@pytest.mark.parametrize("algo", toposort.METHODS)
+def test_toposort_empty(algo):
+    """
+    Verify expected behavior when passing in an empty graph (empty return).
+    """
+    uni = universe.Universe()
+
+    topo = toposort.topological_ordering(uni, method=algo)
+
+    assert len(topo) == 0, "Toposort materialized vertices out of nowhere!"

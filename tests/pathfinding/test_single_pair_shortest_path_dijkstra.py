@@ -1,12 +1,11 @@
-#!python3
 # -*- coding: utf-8 -*-
 
 """
 Unit tests for the single_pair_shortest_path() function.
 """
 
-from edgegraph.traversal import helpers
 from edgegraph.pathfinding import shortestpath
+from edgegraph.traversal import helpers
 
 
 def _getweight(u, v):
@@ -41,9 +40,9 @@ def test_spsp_dijkstra_weighted_nochange(graph_cheapest_is_shortest):
 
 
 def test_spsp_dijkstra_weighted_diff(graph_cheapest_is_longest):
-    """
+    r"""
     Ensure that graphs with a custom weight function A.) work, and B.) solve as
-    expected in the case where :math:`weight(u, v) \\neq  1`.
+    expected in the case where :math:`weight(u, v) \neq  1`.
     """
     uni, verts = graph_cheapest_is_longest
 

@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -6,9 +5,12 @@ Contains the BaseObject class.
 """
 
 from __future__ import annotations
-from typing import TYPE_CHECKING
-from collections.abc import Iterator
+
+import threading
 import uuid
+from collections.abc import Iterator
+
+from typing_extensions import TYPE_CHECKING, override
 
 if TYPE_CHECKING:
     from edgegraph.structure.universe import Universe
@@ -80,11 +82,14 @@ class BaseObject(object):
 
         if attributes is not None:
             if not isinstance(attributes, dict):
-                raise TypeError(
+                msg = (
                     f"`attributes` must be a dictionary; got {type(attributes)}"
                 )
+                raise TypeError(msg)
             for key, val in attributes.items():
                 setattr(self, key, val)
+
+        self._universes_lock = threading.RLock()
 
         #: Internal reference to the universes this object is a part of
         #:
@@ -96,6 +101,36 @@ class BaseObject(object):
         # deduplicate it while keeping order
         # https://stackoverflow.com/a/17016257
         self._universes = [*dict.fromkeys(self._universes)]
+
+    @override
+    def __getstate__(self) -> dict:
+        """
+        Get the state of this object for pickling to a binary stream.
+
+        This is part of the pickling protocol wherein objects are converted to
+        binary streams; ``__getstate__`` usage allows customization of which
+        attributes of this object are pickled and which aren't.  We use it here
+        to avoid pickling ``RLock`` objects, which are known to not properly
+        un-dill.  See https://github.com/mishaturnbull/edgegraph/issues/118 .
+        """
+        data = self.__dict__.copy()
+        data.pop("_universes_lock")
+        return data
+
+    # Note: no @override here.  object() declares __getstate__, but not
+    # __setstate__!
+    def __setstate__(self, value: dict) -> None:
+        """
+        Set the state of this object as it's being unpickled.
+
+        This is part of the picling protocol wherein objects are given an
+        opportunity to control happenings as they're reinstantiated coming out
+        of the binary stream.  We use it here to re-apply ``RLock`` attributes,
+        which are known to not properly un-dill.  See
+        https://github.com/mishaturnbull/edgegraph/issues/118 .
+        """
+        self.__dict__.update(value)
+        self.__dict__["_universes_lock"] = threading.RLock()
 
     @property
     def uid(self) -> int:
@@ -118,20 +153,23 @@ class BaseObject(object):
            :py:meth:`~edgegraph.structure.base.BaseObject.remove_from_universe`
            to add or remove this object from a given universe
         """
-        return list(self._universes)
+        with self._universes_lock:
+            return list(self._universes)
 
     def add_to_universe(self, universe: Universe) -> None:
         """
-        Adds this object to a new universe.  If it is already there, no action
-        is taken.
+        Add this object to a new universe.
+
+        If it is already there, no action is taken.
 
         :param universe: the new universe to add this object to
         """
-        # do not accept duplicates
-        if universe in self._universes:
-            return
+        with self._universes_lock:
+            # do not accept duplicates
+            if universe in self._universes:
+                return
 
-        self._universes.append(universe)
+            self._universes.append(universe)
 
     def remove_from_universe(self, universe: Universe) -> None:
         """
@@ -140,24 +178,32 @@ class BaseObject(object):
         :param universe: the universe that this object will be removed from
         :raises ValueError: if this object is not present in the given universe
         """
-        self._universes.remove(universe)
+        with self._universes_lock:
+            # SIM105 suggests use of contextlib.suppress(ValueError) instead of
+            # this try-except-pass pattern.  however, this does have a slight
+            # performance impact -- which i want to avoid here.
+            try:  # noqa: SIM105
+                self._universes.remove(universe)
+            except ValueError:
+                # already was not present; no action required
+                pass
 
     # These three control attrib access via KEYS; bobj['x'], bobj['y'] = y; del
-    # bobj['y']
+    # bobj['y']  # noqa: ERA001
     def __getitem__(self, name):
         """
-        Called by :py:`bobj['x']` to get the ``x`` item.
+        Supply the :py:`bobj['x']` operation to get the ``x`` item.
         """
         return getattr(self, name)
 
     def __setitem__(self, name, val):
         """
-        Called by :py:`bobj['x'] = y` to set the ``x`` item.
+        Supply the :py:`bobj['x'] = y` operation to set the ``x`` item.
         """
         setattr(self, name, val)
 
     def __delitem__(self, name):
         """
-        Called by :py:`del bobj['x']` to delete the ``x`` item.
+        Supply the :py:`del bobj['x']` operation to delete the ``x`` item.
         """
         delattr(self, name)

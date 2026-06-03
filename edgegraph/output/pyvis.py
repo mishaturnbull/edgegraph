@@ -1,4 +1,3 @@
-#!/usr/env/python3
 # -*- coding: utf-8 -*-
 
 """
@@ -39,15 +38,13 @@ Generally, the usage pattern for this module is intended to be as:
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
 from collections.abc import Callable
+from typing import TYPE_CHECKING, Any
 
 try:
-
     from pyvis import network
 
 except ImportError as exc:
-
     import sys
 
     msg = (
@@ -57,7 +54,7 @@ except ImportError as exc:
     )
     raise ImportError(msg) from exc
 
-from edgegraph.structure import Universe, DirectedEdge
+from edgegraph.structure import DirectedEdge, Universe
 
 if TYPE_CHECKING:
     import pyvis
@@ -115,14 +112,10 @@ def make_pyvis_net(
         else:
             net.add_node(i, label=hex(id(vert)))
 
-        # store a temporary attribute on the object that we will use for fast
-        # lookup of this vertex's index later on
-        # pylint: disable-next=protected-access
         vert.__make_pyvis_net_i = i
 
     for i, vert in enumerate(verts):
         for edge in vert.links:
-
             # only draw arrows when we're at the *from* node
             if vert is edge.v2:
                 continue
@@ -130,7 +123,6 @@ def make_pyvis_net(
             other = edge.other(vert)
             try:
                 # this is *much* faster than something like verts.index(other)
-                # pylint: disable-next=protected-access
                 j = other.__make_pyvis_net_i
             except AttributeError:
                 # not a member
