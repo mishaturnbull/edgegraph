@@ -5,7 +5,7 @@ Sorted Set Implementation.
 from __future__ import annotations
 
 import itertools
-from threading import Lock
+from threading import Lock, RLock
 
 from typing_extensions import (
     TYPE_CHECKING,
@@ -36,7 +36,7 @@ class SortedSetView(Sequence[T]):
     __slots__ = ("_lock", "_set")
 
     @override
-    def __init__(self, set_: SortedSet[T], lock: Lock):
+    def __init__(self, set_: SortedSet[T], lock: Lock | RLock):
         self._set = set_
         self._lock = lock
 
@@ -56,9 +56,11 @@ class SortedSetView(Sequence[T]):
             return self._set.__iter__()
 
     @overload
-    def __getitem__(self, i: int) -> T: ...
+    def __getitem__(self, i: int) -> T: ...  # pragma: no cover
     @overload
-    def __getitem__(self, s: slice[int, int, int]) -> list[T]: ...
+    def __getitem__(  # pragma: no cover
+        self, s: slice[int, int, int]
+    ) -> list[T]: ...
     @override
     def __getitem__(self, index):
         with self._lock:
@@ -207,7 +209,7 @@ class SortedSet(Set[T], Sequence[T]):
     def copy(self):
         return self.__class__(self._list)
 
-    def get_view(self, lock: Lock) -> SortedSetView[T]:
+    def get_view(self, lock: Lock | RLock) -> SortedSetView[T]:
         """
         Return a view on the SortedSet.
         """
@@ -241,9 +243,11 @@ class SortedSet(Set[T], Sequence[T]):
         return self._list.__reversed__()
 
     @overload
-    def __getitem__(self, i: int) -> T: ...
+    def __getitem__(self, i: int) -> T: ...  # pragma: no cover
     @overload
-    def __getitem__(self, s: slice[int, int, int]) -> list[T]: ...
+    def __getitem__(
+        self, s: slice[int, int, int]
+    ) -> list[T]: ...  # pragma: no cover
     @override
     def __getitem__(self, index):
         return self._list.__getitem__(index)
