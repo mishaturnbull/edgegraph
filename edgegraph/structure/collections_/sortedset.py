@@ -5,6 +5,7 @@ Sorted Set Implementation.
 from __future__ import annotations
 
 import itertools
+import sys
 from threading import Lock, RLock
 
 from typing_extensions import (
@@ -43,7 +44,7 @@ class SortedSetView(Sequence[T]):
     @override
     def __len__(self):
         with self._lock:
-            return len(self._set)
+            return self._set.__len__()
 
     @override
     def __contains__(self, element):
@@ -53,7 +54,22 @@ class SortedSetView(Sequence[T]):
     @override
     def __iter__(self):
         with self._lock:
-            return self._set.__iter__()
+            yield from self._set.__iter__()
+
+    @override
+    def __reversed__(self):
+        with self._lock:
+            yield from self._set.__reversed__()
+
+    @override
+    def index(self, value, start=0, stop=sys.maxsize):
+        with self._lock:
+            return self._set.index(value, start, stop)
+
+    @override
+    def count(self, value):
+        with self._lock:
+            return self._set.count(value)
 
     @overload
     def __getitem__(self, i: int) -> T: ...  # pragma: no cover
@@ -204,6 +220,18 @@ class SortedSet(Set[T], Sequence[T]):
         return i
 
     pop.__doc__ = list.pop.__doc__
+
+    @override
+    def count(self, value):
+        return 1 if value in self else 0
+
+    count.__doc__ = list.count.__doc__
+
+    @override
+    def index(self, value, start=0, stop=sys.maxsize):
+        return self._list.index(value, start, stop)
+
+    index.__doc__ = list.index.__doc__
 
     @override
     def copy(self):

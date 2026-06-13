@@ -593,6 +593,36 @@ def test_sortedset_pop():
         a.pop(49)
 
 
+def test_sortedset_count():
+    """
+    Test using the sorted set's count method
+    """
+    num = 50
+    a = SortedSet(range(num))
+    assert a.count(0) == 1, "An instance of 0 not found in set"
+    assert a.count(1) == 1, "An instance of 1 not found in set"
+    assert a.count(49) == 1, "An instance of 49 not found in set"
+    assert a.count(50) == 0, "An instance of 50 was found in set"
+
+    a.add(1)
+    assert a.count(1) == 1, "There was multiple instances of 1 in the set"
+
+
+def test_sortedset_index():
+    """
+    Test using the sorted set's index method
+    """
+    num = 50
+    a = SortedSet(range(num))
+
+    assert a.index(0) == 0, "An istance of 0 was not found at index 0"
+    assert a.index(1) == 1, "An istance of 1 was not found at index 1"
+    assert a.index(49) == 49, "An instance of 49 was not found at index 49"
+
+    with pytest.raises(ValueError, match="x not in list"):
+        a.index(50)
+
+
 def test_sortedset_get_view():
     """
     Test getting the sorted set's view
@@ -910,9 +940,55 @@ def test_sortedsetview_comparsion():
     assert view1 != 0, "view is equivlent to non supported comparsion"
 
 
+def test_sortedsetview_count():
+    """
+    Test using the sorted set view's count method
+    """
+    num = 50
+    set_ = SortedSet(range(num))
+    a = set_.get_view(RLock())
+
+    assert a.count(0) == 1, "An instance of 0 not found in set"
+    assert a.count(1) == 1, "An instance of 1 not found in set"
+    assert a.count(49) == 1, "An instance of 49 not found in set"
+    assert a.count(50) == 0, "An instance of 50 was found in set"
+
+    set_.add(1)
+    assert a.count(1) == 1, "There was multiple instances of 1 in the set"
+
+
+def test_sortedsetview_index():
+    """
+    Test using the sorted set view's hash method
+    """
+    num = 50
+    set_ = SortedSet(range(num))
+    a = set_.get_view(RLock())
+
+    assert a.index(0) == 0, "An istance of 0 was not found at index 0"
+    assert a.index(1) == 1, "An istance of 1 was not found at index 1"
+    assert a.index(49) == 49, "An instance of 49 was not found at index 49"
+
+    with pytest.raises(ValueError, match="x not in list"):
+        a.index(50)
+
+
+def test_sortedsetview_reversed():
+    """
+    Test the sorted set view's __reversed__ dunder method
+    """
+
+    num = 50
+    set_ = SortedSet(range(num))
+    a = set_.get_view(RLock())
+
+    for i, j in zip(reversed(a), range(num - 1, -1, -1), strict=True):
+        assert i == j, "Reversed values do not match"
+
+
 def test_sortedsetview_hash():
     """
-    Test using the sorted sets hash method
+    Test using the sorted set view's hash method
     """
     set_ = SortedSet()
     lock = RLock()
