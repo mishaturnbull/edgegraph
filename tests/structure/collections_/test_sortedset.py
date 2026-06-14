@@ -619,7 +619,7 @@ def test_sortedset_index():
     assert a.index(1) == 1, "An istance of 1 was not found at index 1"
     assert a.index(49) == 49, "An instance of 49 was not found at index 49"
 
-    with pytest.raises(ValueError, match="x not in list"):
+    with pytest.raises(ValueError, match="not in list"):
         a.index(50)
 
 
@@ -969,7 +969,7 @@ def test_sortedsetview_index():
     assert a.index(1) == 1, "An istance of 1 was not found at index 1"
     assert a.index(49) == 49, "An instance of 49 was not found at index 49"
 
-    with pytest.raises(ValueError, match="x not in list"):
+    with pytest.raises(ValueError, match="not in list"):
         a.index(50)
 
 
