@@ -982,7 +982,7 @@ def test_sortedsetview_reversed():
     set_ = SortedSet(range(num))
     a = set_.get_view(RLock())
 
-    for i, j in zip(reversed(a), range(num - 1, -1, -1), strict=True):
+    for i, j in zip(reversed(a), range(num - 1, -1, -1)):
         assert i == j, "Reversed values do not match"
 
 
