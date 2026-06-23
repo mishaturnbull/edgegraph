@@ -20,6 +20,16 @@ from .fixtures import *  # noqa: F403
 
 LOG = logging.getLogger(__name__)
 
+# monkey-patch Vertex to pretty-repr itself with the `i` attribute if
+# available, since so many unit tests use this pattern.  Makes for MUUUUCH
+# easier debugging; but I don't want to make this a global API feature of
+# Vertex -- so for the unittests only!
+def new_repr(inst):
+    if hasattr(inst, 'i') and isinstance(inst.i, int):
+        return f"<Vertex i={inst.i} @ {hex(id(inst))}>"
+    return super().__repr__(inst)
+Vertex.__repr__ = new_repr
+
 
 # https://docs.pytest.org/en/stable/how-to/fixtures.html#fixture-parametrize
 # use strings for the params ("cache" and "nocache") instead of raw booleans
