@@ -27,7 +27,7 @@ LOG = logging.getLogger(__name__)
 def new_repr(inst):
     if hasattr(inst, 'i') and isinstance(inst.i, int):
         return f"<Vertex i={inst.i} @ {hex(id(inst))}>"
-    return super().__repr__(inst)
+    return super(Vertex, inst).__repr__()
 Vertex.__repr__ = new_repr
 
 
