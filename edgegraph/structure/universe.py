@@ -11,6 +11,7 @@ import threading
 from typing_extensions import TYPE_CHECKING, override
 
 from edgegraph.structure import vertex
+from edgegraph.structure.collections_.sortedset import SortedSet, SortedSetView
 
 if TYPE_CHECKING:
     Vertex = vertex.Vertex
@@ -60,7 +61,7 @@ class Universe(vertex.Vertex):
         self._verts_lock = threading.RLock()
 
         #: Internal set of vertices
-        self._vertices: list[Vertex] = []
+        self._vertices: SortedSet[Vertex] = SortedSet()
         if vertices is not None:
             for v in vertices:
                 self.add_vertex(v)
@@ -96,7 +97,7 @@ class Universe(vertex.Vertex):
         self.__dict__["_verts_lock"] = threading.RLock()
 
     @property
-    def vertices(self) -> list[vertex.Vertex]:
+    def vertices(self) -> SortedSetView[vertex.Vertex]:
         """
         Return a list of vertices that this universe contains.
 
@@ -111,8 +112,7 @@ class Universe(vertex.Vertex):
         :return: vertices belonging to this universe, ordered by insertion
            order.
         """
-        with self._verts_lock:
-            return list(self._vertices)
+        return self._vertices.get_view(self._verts_lock)
 
     def add_vertex(self, vert: vertex.Vertex):
         """
@@ -133,7 +133,7 @@ class Universe(vertex.Vertex):
             if vert in self._vertices:
                 return
 
-            self._vertices.append(vert)
+            self._vertices.add(vert)
             if self not in vert.universes:
                 vert.add_to_universe(self)
 

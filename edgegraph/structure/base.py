@@ -12,6 +12,8 @@ from collections.abc import Iterator
 
 from typing_extensions import TYPE_CHECKING, override
 
+from edgegraph.structure.collections_.sortedset import SortedSet, SortedSetView
+
 if TYPE_CHECKING:
     from edgegraph.structure.universe import Universe
 
@@ -94,13 +96,7 @@ class BaseObject(object):
         #: Internal reference to the universes this object is a part of
         #:
         #: :meta private:
-        self._universes: list[Universe] = (
-            list(universes) if universes is not None else []
-        )
-
-        # deduplicate it while keeping order
-        # https://stackoverflow.com/a/17016257
-        self._universes = [*dict.fromkeys(self._universes)]
+        self._universes: SortedSet[Universe] = SortedSet(universes)
 
     @override
     def __getstate__(self) -> dict:
@@ -140,7 +136,7 @@ class BaseObject(object):
         return self._uid
 
     @property
-    def universes(self) -> list[Universe]:
+    def universes(self) -> SortedSetView[Universe]:
         """
         Get the universes this object belongs to.
 
@@ -153,8 +149,7 @@ class BaseObject(object):
            :py:meth:`~edgegraph.structure.base.BaseObject.remove_from_universe`
            to add or remove this object from a given universe
         """
-        with self._universes_lock:
-            return list(self._universes)
+        return self._universes.get_view(self._universes_lock)
 
     def add_to_universe(self, universe: Universe) -> None:
         """
@@ -169,7 +164,7 @@ class BaseObject(object):
             if universe in self._universes:
                 return
 
-            self._universes.append(universe)
+            self._universes.add(universe)
 
     def remove_from_universe(self, universe: Universe) -> None:
         """
@@ -184,7 +179,7 @@ class BaseObject(object):
             # performance impact -- which i want to avoid here.
             try:  # noqa: SIM105
                 self._universes.remove(universe)
-            except ValueError:
+            except KeyError:
                 # already was not present; no action required
                 pass
 
