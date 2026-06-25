@@ -8,7 +8,7 @@ from edgegraph.pathfinding import shortestpath
 from edgegraph.traversal import helpers
 
 METHODS = [
-    "dijkstra",
+        "bellman-ford-dag",
 ]
 
 
@@ -24,7 +24,7 @@ def single_pair_longest_path(
     direction_sensitive=helpers.DIR_SENS_FORWARD,
     unknown_handling=helpers.LNK_UNKNOWN_ERROR,
     ff_via=None,
-    method="dijkstra",
+    method="bellman-ford-dag",
 ):
 
     if weightfunc is None:

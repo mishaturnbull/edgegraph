@@ -24,6 +24,7 @@ from collections.abc import Callable
 from typing import TYPE_CHECKING
 
 from edgegraph.traversal import helpers
+from edgegraph.sorting import toposort
 
 if TYPE_CHECKING:
     from edgegraph.structure import Universe, Vertex
@@ -31,6 +32,7 @@ if TYPE_CHECKING:
 
 METHODS = [
     "dijkstra",
+    "bellman-ford-dag"
 ]
 
 
@@ -75,6 +77,7 @@ def _relax(
     """
     w = weightfunc(u, v)
     if dist[v] > dist[u] + w:
+        print(f"Relax ({u}, {v})")
         dist[v] = dist[u] + w
         prev[v] = u
 
@@ -182,6 +185,60 @@ def _route_dijkstra(
 
     return s
 
+
+def _sssp_base_bellmanford_dag(
+        uni: Universe,
+        start: Vertex,
+        weightfunc: Callable,
+        stop_at: Vertex | None = None,
+        direction_sensitive: int = helpers.DIR_SENS_FORWARD,
+        ff_via: Callable | None = None,
+        unknown_handling: int = helpers.LNK_UNKNOWN_ERROR,
+        ):
+    topo = toposort.topological_ordering(
+            uni,
+            direction_sensitive=direction_sensitive,
+            unknown_handling=unknown_handling,
+            ff_via=ff_via,
+            method='kahn',
+            )
+    print(f"BF Pre-topo: {topo}")
+
+    infinity = float('inf')
+    
+    dist, prev = _init_single_source(start)
+
+    for v in topo:
+
+        print(f"BF v={v}")
+
+        # discover edges on-the-fly
+        if v not in dist:
+            dist[v] = infinity
+
+        nbs = helpers.neighbors(
+                v,
+                direction_sensitive=direction_sensitive,
+                unknown_handling=unknown_handling,
+                filterfunc=ff_via,
+                )
+
+        for u in nbs:
+            print(f"BF     u={u}")
+            # filter out vertices not a member of the given universe, if any.
+            # by putting the `uni is not None` check first, we can
+            # short-circuit the container check if it is not needed
+            if (uni is not None) and (u not in uni.vertices):
+                print("BF    uni skip")
+                continue
+
+            # discover edges on-the-fly
+            if u not in dist:
+                dist[u] = infinity
+
+            _relax(dist, prev, v, u, weightfunc)
+
+    return dist, prev
 
 def _default_weightfunc(u, v):
     """
@@ -339,6 +396,25 @@ def single_pair_shortest_path(
             direction_sensitive=direction_sensitive,
             ff_via=ff_via,
         )
+        path = _route_dijkstra(prev, dest)
+
+        # decide whether to return a distance or not.  use a renamed variable
+        # to avoid confusing mypy too much.
+        retdist = None if path is None else dist[dest]
+
+        return (path, retdist)
+
+    elif method == "bellman-ford-dag":
+        dist, prev = _sssp_base_bellmanford_dag(
+            uni,
+            start,
+            weightfunc,
+            stop_at=dest,
+            unknown_handling=unknown_handling,
+            direction_sensitive=direction_sensitive,
+            ff_via=ff_via,
+        )
+        # bellman-ford's pathfinder works the same way as dijkstra's
         path = _route_dijkstra(prev, dest)
 
         # decide whether to return a distance or not.  use a renamed variable
