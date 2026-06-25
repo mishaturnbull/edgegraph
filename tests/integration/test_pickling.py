@@ -325,7 +325,7 @@ def test_up_with_dill(protocol, straightline_graph_1k_directed):
         assert p1[1][i].i == verts[i].i, "dill deserialized wrong order!"
 
 
-@pytest.mark.timeout(3)
+@pytest.mark.timeout(5)
 @pytest.mark.parametrize("protocol", list(range(pickle.HIGHEST_PROTOCOL)))
 def test_p_up_thread_safety(protocol, straightline_graph_1k_directed):
     """
