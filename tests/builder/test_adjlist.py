@@ -4,7 +4,7 @@
 Unit tests for structure.twoendedlink.TwoEndedLink class.
 """
 
-from edgegraph.builder import adjlist
+from edgegraph.builder import adjlist, explicit
 from edgegraph.structure import DirectedEdge, UnDirectedEdge, Vertex
 
 
@@ -110,3 +110,87 @@ def test_adjlist_build_clrs09_22_1():
     assert v[4].links[2].other(v[4]) is v[3], (
         "v4 -- v3 (back) link is not right!"
     )
+
+
+def test_create_adj_dict_dir():
+    """
+    Test whether creating an adjacency dictionary (list) from a directed graph
+    works.
+    """
+
+    v = [Vertex() for _ in range(5)]
+    adj = {
+        v[0]: [v[1], v[4]],
+        v[1]: [v[2], v[3], v[4]],
+        v[2]: [v[3]],
+        v[3]: [v[4]],
+        v[4]: [],
+    }
+
+    uni = adjlist.load_adj_dict(adj, DirectedEdge)
+
+    rev = adjlist.create_adj_dict(uni)
+
+    assert adj == rev, "Got the wrong adjacency dict for directed edges!"
+
+
+def test_create_adj_dict_undir():
+    """
+    Test whether creating an adjacency dictionary (list) from an undirected
+    graph works.
+    """
+
+    v = [Vertex() for _ in range(5)]
+    adj = {
+        v[0]: [v[1], v[4]],
+        v[1]: [v[2], v[3], v[4]],
+        v[2]: [v[3]],
+        v[3]: [v[4]],
+        v[4]: [],
+    }
+    ans = {
+        v[0]: [v[1], v[4]],
+        v[1]: [v[0], v[2], v[3], v[4]],
+        v[2]: [v[1], v[3]],
+        v[3]: [v[1], v[2], v[4]],
+        v[4]: [v[0], v[1], v[3]],
+    }
+
+    uni = adjlist.load_adj_dict(adj, UnDirectedEdge)
+
+    rev = adjlist.create_adj_dict(uni)
+
+    assert ans == rev, "Got the wrong adjacency dict for undirected edges!"
+
+
+def test_create_adj_dict_mixed():
+    """
+    Test whether creating an adjacency dict works when using mixed directed and
+    undirected edges.
+    """
+
+    v = [Vertex() for _ in range(5)]
+    adj = {
+        v[0]: [v[1], v[4]],
+        v[1]: [v[2], v[3], v[4]],
+        v[2]: [v[3]],
+        v[3]: [v[4]],
+        v[4]: [],
+    }
+    ans = {
+        v[0]: [v[1], v[4]],
+        v[1]: [v[0], v[2], v[3], v[4]],
+        v[2]: [v[1], v[3]],
+        v[3]: [v[1], v[2], v[4]],
+        v[4]: [v[0], v[3]],
+    }
+
+    # use mostly directed edges, except for a few that we'll override directly
+    uni = adjlist.load_adj_dict(adj, UnDirectedEdge)
+
+    explicit.unlink(v[1], v[4])
+    explicit.link_directed(v[1], v[4])
+
+    rev = adjlist.create_adj_dict(uni)
+
+    assert ans == rev, "Got the wrong adjacency dict for mixed dir/undir edges!"

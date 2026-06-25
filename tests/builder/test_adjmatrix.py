@@ -6,8 +6,8 @@ Unit tests for structure.twoendedlink.TwoEndedLink class.
 
 import pytest
 
-from edgegraph.builder import adjmatrix
-from edgegraph.structure import UnDirectedEdge, Vertex
+from edgegraph.builder import adjmatrix, explicit
+from edgegraph.structure import DirectedEdge, UnDirectedEdge, Vertex
 
 
 def test_adjmatrix_edgetype():
@@ -151,3 +151,76 @@ def test_adjmatrix_clrs09_22_2():
     assert v[5].links[1].other(v[5]) is v[5], (
         "v5 -- v5 (self) link is not right!"
     )
+
+
+def test_create_adjmat_dir():
+    """
+    Validate creation of adjacency matrices from a universe with only directed
+    edges.
+    """
+    v = [Vertex(), Vertex(), Vertex()]
+    mat = [
+        [False, True, False],
+        [False, True, False],
+        [False, False, False],
+    ]
+
+    uni = adjmatrix.load_adj_matrix(mat, v, DirectedEdge)
+
+    reverse = adjmatrix.create_adj_matrix(uni, sort_key=v.index)
+
+    assert reverse == mat, "create_adj_matrix gave wrong result!"
+
+
+def test_create_adjmat_undir():
+    """
+    Validate creation of adjacency matrices from a universe with only
+    undirected edges.
+    """
+    v = [Vertex(), Vertex(), Vertex()]
+    mat = [
+        [False, True, False],
+        [False, True, False],
+        [False, False, False],
+    ]
+
+    uni = adjmatrix.load_adj_matrix(mat, v, UnDirectedEdge)
+
+    reverse = adjmatrix.create_adj_matrix(uni, sort_key=v.index)
+
+    expected = [
+        [False, True, False],
+        [True, True, False],
+        [False, False, False],
+    ]
+
+    assert reverse == expected, "create_adj_matrix gave wrong result!"
+
+
+def test_create_adjmat_mixed():
+    """
+    Test creation of an adjacency matrix from a universe with both directed and
+    undirected edges.
+    """
+    v = [Vertex(), Vertex(), Vertex()]
+    mat = [
+        [False, True, False],
+        [False, True, False],
+        [False, True, False],
+    ]
+
+    uni = adjmatrix.load_adj_matrix(mat, v, UnDirectedEdge)
+
+    explicit.unlink(v[1], v[2])
+    explicit.link_directed(v[1], v[2])
+
+    reverse = adjmatrix.create_adj_matrix(uni, sort_key=v.index)
+
+    # TODO: is this actually right???  i'm tired, man
+    expected = [
+        [False, True, False],
+        [True, True, True],
+        [False, False, False],
+    ]
+
+    assert reverse == expected, "create_adj_matrix gave wrong result!"

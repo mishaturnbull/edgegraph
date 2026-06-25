@@ -129,7 +129,7 @@ def test_pyvis_create_with_options(graph_clrs09_22_6):
     uni, _ = graph_clrs09_22_6
 
     default = pyvis.make_pyvis_net(uni)
-    assert default.cdn_resources == "local", "Wrong default CDN resources!"
+    assert default.cdn_resources == "in_line", "Wrong default CDN resources!"
 
     modded = pyvis.make_pyvis_net(
         uni, network_kwargs={"cdn_resources": "remote"}
